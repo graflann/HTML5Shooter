@@ -1,0 +1,83 @@
+goog.provide('AnimationUtility');
+
+/**
+*Wraps createjs.BitmapAnimation to control framerate using createjs.Ticker
+*@constructor
+*/
+AnimationUtility = function(name, bmpAnimation, frequency) {
+	this.name = name;
+
+	this.bmpAnimation = bmpAnimation;
+
+	this.frequency = frequency || 1;
+
+	this.spriteSheet = this.bmpAnimation.spriteSheet;
+
+	this.animation = this.spriteSheet.getAnimation(this.name);
+
+	this.currentFrame = 0;
+
+	this.maxFrames = this.spriteSheet.getNumFrames(this.name);
+
+	this.isPlaying = false;
+
+	this.isLooping = false;
+
+	this.init();
+};
+
+/**
+*@public
+*/
+AnimationUtility.prototype.init = function() {
+	this.animation.frequency = this.frequency;
+};
+
+AnimationUtility.prototype.update = function() {
+	if(this.isPlaying && createjs.Ticker.getTicks() % this.frequency == 0) {
+		this.currentFrame++;
+
+		if(this.currentFrame >= this.maxFrames) {
+			this.currentFrame = 0;
+
+			if(!this.isLooping) {
+				this.stop();
+			}
+		}
+
+		this.bmpAnimation.gotoAndStop(this.currentFrame);
+	}
+};
+
+/**
+*@public
+*/
+AnimationUtility.prototype.play = function() {
+	this.isPlaying = true;
+};
+
+/**
+*@public
+*/
+AnimationUtility.prototype.stop = function(currentFrame) {
+	this.currentFrame = currentFrame || 0;
+
+	this.isPlaying = false;
+
+	this.bmpAnimation.gotoAndStop(this.currentFrame);
+};
+
+/**
+*@public
+*/
+AnimationUtility.prototype.loop = function(value) {
+	this.isLooping = value;
+};
+
+AnimationUtility.prototype.clear = function() {
+	this.animations = null;
+	this.spriteSheet = null;
+	this.bmpAnimation = null;
+};
+
+goog.exportSymbol('AnimationUtility', AnimationUtility);

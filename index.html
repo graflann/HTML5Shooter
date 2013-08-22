@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Shooter</title>
+
+	<link rel="stylesheet" href="css/styles.css" type="text/css" />
+</head>
+<body>
+	<div id="gameContainer" style="padding-top:64px">
+		<!--<canvas id="stage" width="480" height="640" tabindex="1"></canvas>-->
+	</div>
+	
+	<!--SCRIPTS-->
+	<!--#1 - DEV------------------------>
+	<script type="text/javascript" >var CLOSURE_NO_DEPS = true;</script>
+	<script type="text/javascript" src="../../lib/closure/closure-library/closure/goog/base.js"></script>
+	<script type="text/javascript" src="bin/dependencies/deps.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="http://code.createjs.com/createjs-2013.05.14.min.js"></script>
+	<script type="text/javascript" src="../../lib/BoxBlurFilter.js"></script>
+	<script type="text/javascript" src="../../lib/Box2dWeb-2.1.a.3.js"></script>
+	<script type="text/javascript" src="js/independent/main.js"></script>
+	<!-------------------------->
+	
+	<!--#2 - DEBUG - (WHITESPACE COMPILATION)------------------------>
+	<!--<script type="text/javascript" >var CLOSURE_NO_DEPS = true;</script>
+	<script type="text/javascript" src="js/compiled/shooterDebug.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="http://code.createjs.com/createjs-2013.05.14.min.js"></script>
+	<script type="text/javascript" src="js/independent/main.js"></script>-->
+	<!-------------------------->
+
+	<!--#3 - PRODUCTION - (ALL COMPILED)------------------------>
+	<!--<script type="text/javascript" >var CLOSURE_NO_DEPS = true;</script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="http://code.createjs.com/createjs-2013.05.14.min.js"></script>
+	<script type="text/javascript" src="js/compiled/shooterProduction.js"></script>-->
+	<!-------------------------->
+</body>
+</html>
