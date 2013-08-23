@@ -22,8 +22,10 @@ BladeTurret.prototype.init = function() {
 	this.fireThreshold = 2;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.shape = new createjs.Shape();
-	this.shape.graphics.ss(2).s(this.color).f("#F00").dr(-4, 0, 8, -32).f("#F00").dc(0, 0, 12);
+	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["bladeTurret"]);
+	this.shape.regX = 16;
+	this.shape.regY = 44;
+	this.shape.gotoAndStop(0);
 };
 
 BladeTurret.prototype.fire = function() {

@@ -61,7 +61,7 @@ BladeProjectile.prototype.update = function(options)
 		this.shape.x = this.body.GetWorldCenter().x * scale;
 		this.shape.y = this.body.GetWorldCenter().y * scale;
 
-		this.shape.alpha += 0.125;
+		this.shape.alpha += 0.25;
 
 		if(++this.timer > this.timerThreshold) {
 			this.timer = 0;
