@@ -9,8 +9,7 @@ goog.require('EventNames');
 *@constructor
 *Entity that loads / retrieves w/external data
 */
-AssetsProxy = function()
-{	
+AssetsProxy = function() {	
 	/**
 	*PreloadJS file-loading object; sets useXHR to false to load some file types by tag
     *@type {LoadQueue}
@@ -35,7 +34,8 @@ AssetsProxy = function()
 		'assets/finished/vulcanTurret.json',
 		'assets/finished/spreadTurret.json',
 		'assets/finished/railTurret.json',
-		'assets/finished/bladeTurret.json'
+		'assets/finished/bladeTurret.json',
+		'assets/finished/copter.json'
 	];
 
 	/**
@@ -50,7 +50,8 @@ AssetsProxy = function()
 		{id: "vulcanTurret",		src: "assets/finished/vulcanTurret.png"},
 		{id: "spreadTurret",		src: "assets/finished/spreadTurret.png"},
 		{id: "railTurret",			src: "assets/finished/railTurret.png"},
-		{id: "bladeTurret",			src: "assets/finished/bladeTurret.png"}
+		{id: "bladeTurret",			src: "assets/finished/bladeTurret.png"},
+		{id: "copter",				src: "assets/finished/copter.png"}
 	];
 
 	/**
@@ -65,8 +66,7 @@ goog.inherits(AssetsProxy, goog.events.EventTarget);
 /**
 *@private
 */
-AssetsProxy.prototype.load = function()
-{
+AssetsProxy.prototype.load = function() {
 	var proxy = this;
 
 	//event handling
@@ -87,7 +87,7 @@ AssetsProxy.prototype.load = function()
  * (PreloaderJS loadManifest does not allow XHR calls to JSON (and other) data file types)
  * @return {[type]} [description]
  */
-AssetsProxy.prototype.loadXHR = function(){
+AssetsProxy.prototype.loadXHR = function() {
 	var proxy = this;
 
 	$.get(proxy.arrSpriteSheetData[proxy.assetIndex], function(data) {
@@ -123,16 +123,14 @@ AssetsProxy.prototype.loadXHR = function(){
 /**
 *@private
 */
-AssetsProxy.prototype.onComplete = function(e)
-{ 
+AssetsProxy.prototype.onComplete = function(e) { 
 	this.loadXHR();
 };
 
 /**
 *@private
 */
-AssetsProxy.prototype.onProgress = function(e)
-{
+AssetsProxy.prototype.onProgress = function(e) {
 	console.log("progress...");
 	//show progress of loading and remove when complete
 };
@@ -140,8 +138,7 @@ AssetsProxy.prototype.onProgress = function(e)
 /**
 *@private
 */
-AssetsProxy.prototype.onFileLoad = function(e)
-{
+AssetsProxy.prototype.onFileLoad = function(e) {
 	console.log("fileLoaded...");
 	console.log(e);
 	//show progress of loading and remove when complete
@@ -150,8 +147,7 @@ AssetsProxy.prototype.onFileLoad = function(e)
 /**
 *@private
 */
-AssetsProxy.prototype.onError = function(e)
-{
+AssetsProxy.prototype.onError = function(e) {
 	console.log(e);
 	console.log(e.item.id.toString() + " haz mad queue loading errorz dawg");
 };

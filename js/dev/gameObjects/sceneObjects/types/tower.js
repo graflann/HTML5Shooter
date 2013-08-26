@@ -97,12 +97,6 @@ Tower.prototype.update = function(options) {
 	//update enemy on tower
 	if(this.enemy && this.enemy.isAlive) {
 		this.enemy.setPosition(floor.x, floor.y);
-
-		//update the enemy reticle particle if applicable
-		if(this.enemy.reticle) {
-			this.enemy.reticle.shape.x = floor.x + this.enemy.offset;
-			this.enemy.reticle.shape.y = floor.y + this.enemy.offset;
-		}
 	}
 };
 

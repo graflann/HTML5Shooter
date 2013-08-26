@@ -79,7 +79,8 @@ EnemySystem.prototype.generate = function(options) {
 		
 		if (enemy) {
 
-			if(EnemyTypes.TANK) {
+			//set enemy position; varies by type
+			if(enemy instanceof EnemyTank) {
 				enemy.setPosition(
 					new app.b2Vec2(
 						(this.position.x + 
@@ -97,7 +98,8 @@ EnemySystem.prototype.generate = function(options) {
 				);
 			}
 
-			if(enemy instanceof EnemyTurret) {
+			//set spawn position
+			if(enemy instanceof EnemyTurret || enemy instanceof EnemyCopter) {
 				app.layers.getStage(LayerTypes.FOREGROUND).addChild(enemy.container);
 			} else {
 				app.layers.getStage(LayerTypes.MAIN).addChild(enemy.container);

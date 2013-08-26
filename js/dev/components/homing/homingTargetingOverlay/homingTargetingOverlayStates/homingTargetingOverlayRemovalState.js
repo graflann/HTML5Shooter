@@ -17,7 +17,7 @@ HomingTargetingOverlayRemovalState.KEY = "removal";
 /**
 *@public
 */
-HomingTargetingOverlayRemovalState.prototype.enter = function() {
+HomingTargetingOverlayRemovalState.prototype.enter = function(options) {
 
 };
 
@@ -46,7 +46,7 @@ HomingTargetingOverlayRemovalState.prototype.update = function(options) {
 /**
 *@public
 */
-HomingTargetingOverlayRemovalState.prototype.exit = function() {
+HomingTargetingOverlayRemovalState.prototype.exit = function(options) {
 	this.hto.background.graphics.clear();
 
 	//this.container.alpha = 0;

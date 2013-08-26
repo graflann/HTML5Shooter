@@ -14,7 +14,7 @@ State.KEY = "void";
 /**
 *@public
 */
-State.prototype.enter = function() {};
+State.prototype.enter = function(options) {};
 
 /**
 *@public
@@ -24,6 +24,6 @@ State.prototype.update = function(options) {};
 /**
 *@public
 */
-State.prototype.exit = function() {};
+State.prototype.exit = function(options) {};
 
 goog.exportSymbol('State', State);

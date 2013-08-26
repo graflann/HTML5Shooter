@@ -19,8 +19,7 @@ EnemyTurret = function(projectileSystem) {
 
 	this.categoryBits = CollisionCategories.AIR_ENEMY;
 
-	this.maskBits = 
-		CollisionCategories.HOMING_PROJECTILE | CollisionCategories.HOMING_OVERLAY;
+	this.maskBits = CollisionCategories.HOMING_PROJECTILE | CollisionCategories.HOMING_OVERLAY;
 
 	this.shape = null;
 
@@ -60,8 +59,6 @@ EnemyTurret.prototype.init = function() {
 	this.container.addChild(this.shape);
 	this.container.addChild(this.turret.shape);
 
-	this.offset = this.width * 0.5;
-
 	this.setPhysics();
 	
 	this.setIsAlive(false);
@@ -74,6 +71,12 @@ EnemyTurret.prototype.init = function() {
 EnemyTurret.prototype.update = function(options) {
 	if(this.isAlive) {
 		this.turret.update(options);
+
+		//update the homing reticle particle if applicable
+		if(this.reticle) {
+			this.reticle.shape.x = this.position.x;
+			this.reticle.shape.y = this.position.y;
+		}
 	}
 };
 

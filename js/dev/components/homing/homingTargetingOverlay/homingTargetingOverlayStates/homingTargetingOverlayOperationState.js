@@ -19,7 +19,7 @@ HomingTargetingOverlayOperationState.KEY = "operation";
 /**
 *@public
 */
-HomingTargetingOverlayOperationState.prototype.enter = function() {
+HomingTargetingOverlayOperationState.prototype.enter = function(options) {
 	var hto = this.hto;
 
 	//TOP RETICLE
@@ -98,7 +98,7 @@ HomingTargetingOverlayOperationState.prototype.update = function(options) {
 /**
 *@public
 */
-HomingTargetingOverlayOperationState.prototype.exit = function() {
+HomingTargetingOverlayOperationState.prototype.exit = function(options) {
 	var hto = this.hto;
 
 	hto.container.removeChild(hto.arrReticles[0]);

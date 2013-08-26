@@ -17,7 +17,7 @@ HomingTargetingOverlayInitializationState.KEY = "initialization";
 /**
 *@public
 */
-HomingTargetingOverlayInitializationState.prototype.enter = function() {
+HomingTargetingOverlayInitializationState.prototype.enter = function(options) {
 	this.hto.isActive = true;
 
 	if(this.hto.background.graphics.isEmpty()) {
@@ -59,7 +59,7 @@ HomingTargetingOverlayInitializationState.prototype.update = function(options) {
 /**
 *@public
 */
-HomingTargetingOverlayInitializationState.prototype.exit = function() {
+HomingTargetingOverlayInitializationState.prototype.exit = function(options) {
 
 };
 

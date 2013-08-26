@@ -37,6 +37,11 @@ Level = function(options) {
 			enemyTurret: {
 				max: 21,
 				projectileSystem: "vulcan"
+			},
+
+			enemyCopter: {
+				max: 1,
+				projectileSystem: "vulcan"
 			}
 		},
 		waves : [
@@ -48,7 +53,7 @@ Level = function(options) {
 				// 	type: "enemyDrone", intervalTime: 0, intervalQuantity: 1, targetQuantity: 1
 				// },
 				{ 
-					type: "enemyTank", intervalTime: 0, intervalQuantity: 1, targetQuantity: 1,
+					type: "enemyCopter", intervalTime: 0, intervalQuantity: 1, targetQuantity: 1,
 					positionX: 360, positionY: 100
 				}
 			]/*,
@@ -281,6 +286,7 @@ Level.prototype.clear = function() {
 
 Level.prototype.removeReticles = function() {
 	this.arrEnemySystems[EnemyTypes.TURRET].removeReticles();
+	this.arrEnemySystems[EnemyTypes.COPTER].removeReticles();
 };
 
 /**
