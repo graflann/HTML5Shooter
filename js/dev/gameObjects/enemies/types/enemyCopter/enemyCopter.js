@@ -32,9 +32,11 @@ EnemyCopter = function(projectileSystem) {
 
 	this.fireCounter = 0;
 
-	this.hasTarget = false;
+	this.arrFireOffsets = [-10, 10];
 
-	this.firingPosition = new app.b2Vec2();
+	this.ammoDistance = 60 / app.physicsScale;
+
+	this.minDistance = Math.pow(160, 2);
 
 	this.stateMachine = null;
 
@@ -53,9 +55,9 @@ EnemyCopter.prototype.init = function() {
 	this.width = 89;
 	this.height = 107;
 
-	this.velocityMod = 1;
+	this.velocityMod = 3;
 
-	this.fireThreshold = 15;
+	this.fireThreshold = 30;
 
 	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["copter"]);
 	this.shape.regX = 44;
@@ -90,13 +92,8 @@ EnemyCopter.prototype.update = function(options) {
 		var target = options.target,
 			i = -1;
 
+		//update current state
 		this.stateMachine.update(options);
-
-		if(!this.hasTarget && target != null) {
-			this.hasTarget = true;
-
-			this.stateMachine.setState(EnemyCopterSeekingState.KEY);
-		}
 
 		//rotors always rotate...
 		while(++i < this.arrRotors.length) {
@@ -127,6 +124,7 @@ EnemyCopter.prototype.updateSeeking = function(options) {
 		deg,
 		sin,
 		cos,
+		distance,
 		table = app.trigTable;
 
 	//only calculates homing to target on selected frames
@@ -142,6 +140,12 @@ EnemyCopter.prototype.updateSeeking = function(options) {
 		this.velocity.y = (table.sin(deg) * this.velocityMod);
 
 		this.container.rotation = deg + 90;
+
+		distance = this.position.DistanceSqrt(target.position);
+
+		if(distance < this.minDistance) {
+			this.stateMachine.setState(EnemyCopterFiringState.KEY);
+		}
 	}
 
 	this.container.x += this.velocity.x;
@@ -151,12 +155,29 @@ EnemyCopter.prototype.updateSeeking = function(options) {
 };
 
 /**
+ *Face player and fire in bursts
 *@public
 */
 EnemyCopter.prototype.updateFiring = function(options) {
-	//face player and fire in bursts
+	var target = options.target,
+		deg,
+		sin,
+		cos,
+		table = app.trigTable;
 
-	//handle fire
+	//only calculates facing target on selected frames
+	if(target && createjs.Ticker.getTicks() % this.homingRate == 0) {
+		deg = Math.radToDeg(
+			Math.atan2(
+				target.position.y - this.position.y, 
+				target.position.x - this.position.x
+			)
+		);
+
+		this.container.rotation = deg + 90;
+	}
+
+	//check fire
 	if(this.fireCounter++ > this.fireThreshold) {
 		this.fire();
 		this.fireCounter = 0;
@@ -167,7 +188,51 @@ EnemyCopter.prototype.updateFiring = function(options) {
 *@public
 */
 EnemyCopter.prototype.fire = function() {
-	
+	//console.log("Firing :" + createjs.Ticker.getTicks());
+	var deg,
+		sin,
+		cos,
+		firingPosDeg,
+		firingPosSin,
+		firingPOsCos,
+		vector2D = new app.b2Vec2(),
+		trigTable = app.trigTable,
+		stage = app.layers.getStage(LayerTypes.FOREGROUND),
+		projectile = null,
+		i = -1,
+		length = this.arrFireOffsets.length;
+
+	while(++i < length) {
+		projectile = this.projectileSystem.getProjectile();
+
+		if(projectile) {			
+			//zero out existing linear velocity
+			projectile.body.SetLinearVelocity(app.vecZero);
+			
+			//acquire rotation of Turret instance in degrees and add ammo at table-referenced distance			
+			deg = this.container.rotation - 90;
+			sin = trigTable.sin(deg);
+			cos = trigTable.cos(deg);
+
+			//acquire values to determine firing position
+			firingPosDeg = (deg + this.arrFireOffsets[i]);
+			firingPosSin = trigTable.sin(firingPosDeg);
+			firingPosCos = trigTable.cos(firingPosDeg); 
+			
+			vector2D.x = (this.position.x / app.physicsScale) + (firingPosCos * this.ammoDistance);
+			vector2D.y = (this.position.y / app.physicsScale) + (firingPosSin * this.ammoDistance);				
+			projectile.body.SetPosition(vector2D);
+			
+			vector2D.x = cos * projectile.velocityMod;
+			vector2D.y = sin * projectile.velocityMod;		
+			projectile.body.ApplyForce(vector2D, projectile.body.GetWorldCenter());
+
+			projectile.setIsAlive(true);
+			
+			projectile.shape.rotation = this.container.rotation;
+			stage.addChild(projectile.shape);
+		}
+	}
 };
 
 /**
@@ -206,24 +271,18 @@ EnemyCopter.prototype.setStateMachine = function() {
 	this.stateMachine = new StateMachine();
 
 	this.stateMachine.addState(
-		State.KEY,
-		new State(),
-		[ EnemyCopterSeekingState.KEY ]
-	);
-
-	this.stateMachine.addState(
 		EnemyCopterSeekingState.KEY,
 		new EnemyCopterSeekingState(this),
-		[ State.KEY, EnemyCopterFiringState.KEY ]
+		[ EnemyCopterFiringState.KEY ]
 	);
 
 	this.stateMachine.addState(
 		EnemyCopterFiringState.KEY,
 		new EnemyCopterFiringState(this),
-		[ State.KEY, EnemyCopterSeekingState.KEY ]
+		[ EnemyCopterSeekingState.KEY ]
 	);
 	
-	this.stateMachine.setState(State.KEY);
+	this.stateMachine.setState(EnemyCopterSeekingState.KEY);
 };
 
 /**

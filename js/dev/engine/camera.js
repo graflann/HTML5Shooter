@@ -72,8 +72,6 @@ Camera.prototype.init = function() {
 *@public
 */
 Camera.prototype.update = function() {
-
-
 	this.prevPosition.x = this.position.x;
 	this.prevPosition.y = this.position.y;
 

@@ -73,7 +73,6 @@ SpreadTurret.prototype.fire = function() {
 			
 			projectile.shape.rotation = this.shape.rotation;
 			stage.addChild(projectile.shape);
-			//projectile.shape.play();
 		}
 	}
 };

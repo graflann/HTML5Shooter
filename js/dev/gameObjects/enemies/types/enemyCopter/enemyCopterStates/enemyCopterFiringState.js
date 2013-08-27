@@ -18,14 +18,18 @@ EnemyCopterFiringState.KEY = "firing";
 *@public
 */
 EnemyCopterFiringState.prototype.enter = function(options) {
+	var self = this;
 
+	setTimeout(function() {
+		self.enemy.stateMachine.setState(EnemyCopterSeekingState.KEY);
+	}, 2000);
 };
 
 /**
 *@public
 */
 EnemyCopterFiringState.prototype.update = function(options) {
-	
+	this.enemy.updateFiring(options);
 };
 
 /**

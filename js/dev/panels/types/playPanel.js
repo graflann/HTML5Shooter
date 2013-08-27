@@ -74,6 +74,9 @@ PlayPanel = function() {
 
 	this.hud = null
 
+	/**
+	*@type {HomingTargetingOverlay}
+	*/
 	this.hto = null;
 
 	this.init();
@@ -102,10 +105,19 @@ PlayPanel.prototype.init = function() {
 *@protected
 */
 PlayPanel.prototype.update = function() {
-	this.updatePlayer();
-	this.updateLevel({ target: this.player, camera: this.camera });
-	this.updateParticles();
-	this.updatePhysics();
+	var options = {
+		player: this.player,
+		target: this.player,
+		camera: this.camera,
+		hto: this.hto,
+		homingList: this.collisionManager.homingList
+		//homingTarget: this.collisionManager.homingTargetPosition
+	};
+
+	this.updatePlayer(options);
+	this.updateLevel(options);
+	this.updateParticles(options);
+	this.updatePhysics(options);
 	this.camera.update();
 	this.updateLayers();
 };
@@ -143,17 +155,13 @@ PlayPanel.prototype.updateLayers = function() {
 /**
 *@private
 */
-PlayPanel.prototype.updatePlayer = function() {
-	this.player.update({ hto: this.hto });
+PlayPanel.prototype.updatePlayer = function(options) {
+	this.player.update(options);
 	this.player.currentProjectileSystem.update();
 
-	this.player.homingProjectileSystem.update({ 
-		target: this.collisionManager.homingTargetPosition
-	});
+	this.player.homingProjectileSystem.update(options);
 
-	this.hto.update({ 
-		player: this.player
-	});
+	this.hto.update(options);
 };
 
 /**
@@ -175,7 +183,7 @@ PlayPanel.prototype.updateParticles = function() {
 /**
 *@private
 */
-PlayPanel.prototype.updatePhysics = function() {
+PlayPanel.prototype.updatePhysics = function(options) {
 	//BOX2D STEP////////////////////////////////
 	app.physicsWorld.Step(this.timeStep, 10, 10);
 	
@@ -186,9 +194,7 @@ PlayPanel.prototype.updatePhysics = function() {
 	app.physicsWorld.ClearForces();
 	////////////////////////////////////////////
 
-	this.collisionManager.update({ 
-		player: this.player
-	});
+	this.collisionManager.update(options);
 };
 
 PlayPanel.prototype.setLayers = function() {
@@ -379,7 +385,10 @@ PlayPanel.prototype.setCamera = function() {
 			app.layers.getStage(LayerTypes.HOMING)
 		],
 		app.layers.getDebugContext(),
-		new app.b2Vec2((Constants.WIDTH * 0.5) - 24, (Constants.HEIGHT * 0.5) - 32),
+		new app.b2Vec2(
+			(Constants.WIDTH * 0.5) - (this.player.width * 0.5), 
+			(Constants.HEIGHT * 0.5) - (this.player.height * 0.5)
+		),
 		new app.b2Vec2(-(Constants.WIDTH * 3), - Constants.HEIGHT),
 		new app.b2Vec2()
 	);

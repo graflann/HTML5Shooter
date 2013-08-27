@@ -69,7 +69,7 @@ CollisionManager.prototype.init = function() {
 };
 
 CollisionManager.prototype.update = function(options) {
-    this.updateHoming(options);
+    this.updateHomingList(options);
     this.updateKills();
 };
 
@@ -81,17 +81,14 @@ CollisionManager.prototype.resetHomingList = function() {
     this.homingList.length = 0;
 };
 
-CollisionManager.prototype.updateHoming = function(options) {
+CollisionManager.prototype.updateHomingList = function(options) {
     //Initial check ensures homing projectiles are in play
     if(options.player.homingProjectileSystem.getIsAlive()) {
         var player = options.player,
-            killLength = this.killList.length,
             homingLength = this.homingList.length,
+            killLength = this.killList.length,
             i = -1,
-            j = -1,
-            enemyPosition,
-            prevDistance = Number.MAX_VALUE,
-            distance = 0;
+            j = -1;
 
         //TODO: compare killList elements against homingList and 
         //remove matches from homingList, because they're dead...
@@ -99,37 +96,12 @@ CollisionManager.prototype.updateHoming = function(options) {
             j = -1;
 
             while(++j < killLength) {
-                if(this.homingList[i] === this.killList[j]){
-                    //remove from the homing list as enemy is set to die
+                if(this.homingList[i] === this.killList[j]) {
+                    //remove enemy from the homing list it is set to die
                     this.homingList.splice(i, 1);
                     i--;
                 }
             }
-        }
-
-        //reset homing length
-        homingLength = this.homingList.length
-
-        //if there are enemies in the homing list, need to determine which is closest;
-        //that becomes the homing target
-        if(homingLength > 0) {
-            i = -1;
-            while(++i < homingLength) {
-                enemyPosition = this.homingList[i].position;
-
-                //care only of distance magnitude, not actual value
-                distance = player.position.DistanceSqrt(enemyPosition);
-
-                if(distance < prevDistance) {
-                    prevDistance = distance;
-                    this.homingTargetPosition = enemyPosition;
-                }
-            }
-        } else {      
-            //if homing projectiles are alive but there's no targets,
-            //an artificial position is determined
-            this.homingTargetPosition.x = player.position.x;
-            this.homingTargetPosition.y = -Number.MAX_VALUE;
         }
     }
 };

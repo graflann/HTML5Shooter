@@ -28,6 +28,8 @@ HomingProjectile = function(colors, categoryBits, maskBits) {
 
 	this.homingRate = 5;
 
+	this.homingTargetPosition = new app.b2Vec2();
+
 	this.minRadius = 10;
 	this.maxRadius = 5;
 	this.trailRadius = 6;
@@ -36,6 +38,8 @@ HomingProjectile = function(colors, categoryBits, maskBits) {
 	this.frameCacheTotal = 15;
 	this.frameCacheIndex = 0;
 	this.isFrameCacheMaxed = false;
+
+	this.deg = 0;
 	
 	this.init();
 };
@@ -80,10 +84,10 @@ HomingProjectile.prototype.init = function() {
 */
 HomingProjectile.prototype.update = function(options) {
 	if(this.isAlive) {
-		var target = options.target,
+		var //target = options.homingTarget,
+			homingList = options.homingList,
 			scale = app.physicsScale,
 			rad,
-			deg,
 			mainStage = app.layers.getStage(LayerTypes.MAIN),
 			homingStage = app.layers.getStage(LayerTypes.HOMING),
 			trigTable = app.trigTable,
@@ -91,6 +95,8 @@ HomingProjectile.prototype.update = function(options) {
 
 		//only do homing checks and dynamic drawing after delay
 		if(++this.delayTimer > this.delay) {
+			//determine homing target
+			this.setHomingTarget(homingList);
 
 			//swap stages when the projectile starts to home
 			if(mainStage.getChildIndex(this.shape) > 0) {
@@ -100,11 +106,14 @@ HomingProjectile.prototype.update = function(options) {
 
 			//only update homing velocity every so many frames
 			if(createjs.Ticker.getTicks() % this.homingRate == 0) {
-				rad = Math.atan2(target.y - this.position.y, target.x - this.position.x),
-				deg = Math.radToDeg(rad);
+				rad = Math.atan2(
+					this.homingTargetPosition.y - this.position.y, 
+					this.homingTargetPosition.x - this.position.x
+				),
+				this.deg = Math.radToDeg(rad);
 
-				this.velocity.x = trigTable.cos(deg) * this.velocityMod;
-				this.velocity.y = trigTable.sin(deg) * this.velocityMod;
+				this.velocity.x = trigTable.cos(this.deg) * this.velocityMod;
+				this.velocity.y = trigTable.sin(this.deg) * this.velocityMod;
 			}
 
 			//draw head
@@ -169,6 +178,37 @@ HomingProjectile.prototype.checkBounds = function() {
 	if((pos.x < minX || pos.x > maxX) || (pos.y < minY || pos.y > maxY)) {
 		this.kill();
 	}
+};
+
+HomingProjectile.prototype.setHomingTarget = function(homingList) {
+	var homingLength = homingList.length,
+		enemyPosition = null,
+	    prevDistance = Number.MAX_VALUE,
+	    distance = 0,
+	    i = -1;
+
+    //if there are enemies in the homing list, need to determine which is closest;
+    //that becomes the homing target
+    if(homingLength > 0) {
+        i = -1;
+        while(++i < homingLength) {
+            enemyPosition = homingList[i].position;
+
+            //care only of magnitude, not actual value
+            distance = this.position.DistanceSqrt(enemyPosition);
+
+            //make target postion closer enemy position
+            if(distance < prevDistance) {
+                prevDistance = distance;
+                this.homingTargetPosition = enemyPosition;
+            }
+        }
+    } else {      
+        //if homing projectiles are alive but there's no targets,
+        //an artificial position is determined based on it's current movement angle
+        this.homingTargetPosition.x = app.trigTable.cos(this.deg) * Number.MAX_VALUE;
+        this.homingTargetPosition.y = app.trigTable.sin(this.deg) * Number.MAX_VALUE;
+    }
 };
 
 /**

@@ -18,11 +18,7 @@ EnemyCopterSeekingState.KEY = "seeking";
 *@public
 */
 EnemyCopterSeekingState.prototype.enter = function(options) {
-	// var firingDistance = 200;
 
-	// this.target.position
-
-	// this.enemy.firingPosition.x = 
 };
 
 /**
