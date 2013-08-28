@@ -12,6 +12,10 @@ Grid = function(unit, color)
 	*@type  {Number}
 	*/
 	this.unit = unit;
+
+	this.width = Constants.WIDTH * 4;
+
+	this.height = Constants.HEIGHT * 2;
 	
 	/**
 	*@type  {String}
@@ -42,12 +46,12 @@ Grid.prototype.init = function()
 		
 	for(i = 0; i < w; i++) {
 		x = i * this.unit;
-		this.shape.graphics.mt(x, 0).lt(x, (Constants.HEIGHT * 2));
+		this.shape.graphics.mt(x, 0).lt(x, this.height);
 	}
 	
 	for(i = 0; i < h; i++) {
 		y = i * this.unit;
-		this.shape.graphics.mt(0, y).lt((Constants.WIDTH * 4), y);
+		this.shape.graphics.mt(0, y).lt(this.width, y);
 	}
 	
 	this.shape.alpha = 0.5;

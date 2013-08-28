@@ -68,6 +68,8 @@ PlayerTank = function(arrProjectileSystems) {
 
 goog.inherits(PlayerTank, GameObject);
 
+PlayerTank.KEY = "player";
+
 /**
 *@override
 *@public

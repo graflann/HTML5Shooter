@@ -371,7 +371,12 @@ PlayPanel.prototype.setPlayer = function() {
 PlayPanel.prototype.setLevel = function() {
 	this.level = new Level();
 
-	this.hud.setRadar(this.level.arrEnemySystems);
+	this.hud.setRadar(
+		this.grid.width, 
+		this.grid.height,
+		this.player,
+		this.level.arrEnemySystems
+	);
 };
 
 PlayPanel.prototype.setCollisionManager = function() {

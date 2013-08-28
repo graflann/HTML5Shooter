@@ -53,8 +53,8 @@ Hud.prototype.clear = function() {
 	this.weaponSelectorContainer = null;
 };
 
-Hud.prototype.setRadar = function(arrEnemySystems) {
-	this.radar.setMarkers(arrEnemySystems);
+Hud.prototype.setRadar = function(w, h, player, arrEnemySystems) {
+	this.radar.setField(w, h, player, arrEnemySystems);
 };
 
 Hud.prototype.setSelection = function(index) {
