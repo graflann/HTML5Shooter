@@ -4,8 +4,7 @@ goog.provide('WeaponSelector');
 *@constructor
 *WeaponSelector component
 */
-WeaponSelector = function(name)
-{	
+WeaponSelector = function(name) {	
 	this.name = name.toString();
 
 	/**

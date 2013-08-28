@@ -1,8 +1,7 @@
 goog.provide('Hud');
 
-goog.require('WeaponSelector');
-goog.require('WeaponTypes');
-goog.require('WeaponMap');
+goog.require('Radar');
+goog.require('WeaponSelectorContainer');
 
 /**
 *@constructor
@@ -14,19 +13,14 @@ Hud = function() {
 	*/
 	this.container = null;
 
-	/**
-	*@type {Shape}
-	*/
-	this.background = null;
+	this.radar = null;
+
+	this.weaponSelectorContainer = null;
 
 	this.score = null;
 
-	this.arrWeaponSelectors = [];
-
-	this.currentWeaponIndex = 0;
-
-	this.width = 0;
-	this.height = 0;
+	this.width = Constants.WIDTH;
+	this.height = Constants.HEIGHT;
 	
 	this.init();
 };
@@ -35,66 +29,34 @@ Hud = function() {
 *@public
 */
 Hud.prototype.init = function() {
-	var i = 0,
-		key,
-		weaponSelector;
-
 	this.container = new createjs.Container();
 
-	this.width = Constants.WIDTH;
-	this.height = Constants.UNIT;
+	this.radar = new Radar();
 
-	this.background = new createjs.Shape();
-	this.background.graphics
-		.ss(1)
-		.s(Constants.LIGHT_BLUE)
-		.f(Constants.BLACK)
-		.dr(0, 0, this.width, this.height);
-	this.background.alpha = 0.5;
+	this.weaponSelectorContainer = new WeaponSelectorContainer();
 
-	this.container.addChild(this.background);
+	this.container.addChild(this.radar.container);
+	this.container.addChild(this.weaponSelectorContainer.container);
+};
 
-	for(key in WeaponTypes) {
-		weaponSelector = new WeaponSelector(WeaponTypes[key]);
-
-		weaponSelector.container.x = (Constants.WIDTH * 0.1) + i * weaponSelector.width;
-		weaponSelector.container.y = 6;
-
-		this.arrWeaponSelectors[i] = weaponSelector;
-
-		this.container.addChild(weaponSelector.container);
-
-		i++;
-	}
-
-	this.container.y = Constants.HEIGHT - this.height;
-
-	this.setSelection(this.currentWeaponIndex);
+Hud.prototype.update = function(options) {
+	this.radar.update(options);
 };
 
 /**
 *@public
 */
 Hud.prototype.clear = function() {
-	this.background.getStage().removeChild(this.background);
-	
-	this.background = null;
+	this.container.removeAllChildren();
+
+	this.weaponSelectorContainer.clear();
+	this.weaponSelectorContainer = null;
+};
+
+Hud.prototype.setRadar = function(arrEnemySystems) {
+	this.radar.setMarkers(arrEnemySystems);
 };
 
 Hud.prototype.setSelection = function(index) {
-	var weaponSelector;
-
-	//turn existing selection off
-	this.arrWeaponSelectors[this.currentWeaponIndex].setSelection(false);
-
-	//acquire and turn on new selection
-	this.currentWeaponIndex = index;
-	weaponSelector = this.arrWeaponSelectors[this.currentWeaponIndex];
-	weaponSelector.setSelection(true);
-
-	//ensure the current weapon selector is placed on top
-	this.container.removeChild(weaponSelector.container);
-	this.container.addChild(weaponSelector.container);
-	weaponSelector.container.alpha = 0;
-	createjs.Tween.get(weaponSelector.container).to({alpha: 1}, 350);
+	this.weaponSelectorContainer.setSelection(index);
 };

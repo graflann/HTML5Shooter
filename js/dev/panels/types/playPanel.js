@@ -108,10 +108,10 @@ PlayPanel.prototype.update = function() {
 	var options = {
 		player: this.player,
 		target: this.player,
+		arrEnemySystems: this.level.arrEnemySystems,
 		camera: this.camera,
 		hto: this.hto,
 		homingList: this.collisionManager.homingList
-		//homingTarget: this.collisionManager.homingTargetPosition
 	};
 
 	this.updatePlayer(options);
@@ -119,6 +119,7 @@ PlayPanel.prototype.update = function() {
 	this.updateParticles(options);
 	this.updatePhysics(options);
 	this.camera.update();
+	this.updateHud(options);
 	this.updateLayers();
 };
 
@@ -143,13 +144,6 @@ PlayPanel.prototype.clear = function() {
 	// }
 
 	this.arrEnemies = null;
-};
-
-/**
-*@private
-*/
-PlayPanel.prototype.updateLayers = function() {
-	app.layers.update();
 };
 
 /**
@@ -195,6 +189,20 @@ PlayPanel.prototype.updatePhysics = function(options) {
 	////////////////////////////////////////////
 
 	this.collisionManager.update(options);
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.updateHud = function(options) {
+	this.hud.update(options);
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.updateLayers = function() {
+	app.layers.update();
 };
 
 PlayPanel.prototype.setLayers = function() {
@@ -362,6 +370,8 @@ PlayPanel.prototype.setPlayer = function() {
 
 PlayPanel.prototype.setLevel = function() {
 	this.level = new Level();
+
+	this.hud.setRadar(this.level.arrEnemySystems);
 };
 
 PlayPanel.prototype.setCollisionManager = function() {

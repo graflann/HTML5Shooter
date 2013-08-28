@@ -188,7 +188,6 @@ EnemyCopter.prototype.updateFiring = function(options) {
 *@public
 */
 EnemyCopter.prototype.fire = function() {
-	//console.log("Firing :" + createjs.Ticker.getTicks());
 	var deg,
 		sin,
 		cos,
@@ -202,6 +201,7 @@ EnemyCopter.prototype.fire = function() {
 		i = -1,
 		length = this.arrFireOffsets.length;
 
+	//fires 2 parallel shots simultaneously
 	while(++i < length) {
 		projectile = this.projectileSystem.getProjectile();
 
