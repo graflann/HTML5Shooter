@@ -14,6 +14,7 @@ Constants = {
     RED:                '#DF740C',
     YELLOW:             '#FFE64D',
     WHITE:              '#E7EDED',
+    PLATINUM:           '#FFFFFF',
     BLACK:              '#000000',
     BLUE:               '#6FC3DF',
     DARK_BLUE:          '#0C141F',

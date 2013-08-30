@@ -37,10 +37,13 @@ BladeProjectile.prototype.init = function()
 	this.shape.graphics
 		.ss(3, "butt")
 		.s(this.arrColors[0])
-		.mt(-4, 8)
-		.lt(0, -16)
-		.lt(4, 8);
+		.mt(-8, 16)
+		.lt(0, -32)
+		.lt(8, 16);
 	this.shape.alpha = 0;
+	this.shape.regY = -16;
+	this.shape.snapToPixel = true;
+	this.shape.cache(-8, -32, 16, 48);
 
 	this.timer = 0;
 	

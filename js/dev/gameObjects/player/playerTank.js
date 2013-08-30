@@ -334,8 +334,11 @@ PlayerTank.prototype.setTurret = function(turretType, projectileType) {
 			this.container.removeChild(prevTurret.shape);
 		}
 
+		//remove additional Sniper Turret FX 
+		//TODO: need turret add/remove wrappers
 		if(prevTurret instanceof SniperTurret) {
 			this.container.parent.removeChild(prevTurret.ballEffects);
+			this.container.parent.removeChild(prevTurret.laserSight);
 		}
 
 		this.turret.shape.rotation = prevTurret.shape.rotation;
@@ -348,7 +351,10 @@ PlayerTank.prototype.setTurret = function(turretType, projectileType) {
 
 	this.container.addChild(this.turret.shape);
 
+	//add additional Sniper Turret FX
+	//TODO: need turret add/remove wrappers
 	if(this.turret instanceof SniperTurret) {
+		this.container.parent.addChild(this.turret.laserSight);
 		this.container.parent.addChild(this.turret.ballEffects);
 	}
 };

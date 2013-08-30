@@ -18,6 +18,8 @@ Wave = function(arrRawSpawns, arrEnemySystems) {
 
 	this.currentSpawn = null;
 
+	this.enemyTotal = 0;
+
 	this.index = 0;
 
 	this.waveCompleteEvent = new goog.events.Event(EventNames.WAVE_COMPLETE, this);
@@ -34,6 +36,7 @@ Wave.prototype.init = function() {
 
 	for(var i = 0; i < this.arrRawSpawns.length; i++) {
 		this.arrSpawns.push(new Spawn(this.arrEnemySystems, this.arrRawSpawns[i]));
+		this.enemyTotal += this.arrRawSpawns[i].targetQuantity;
 	}
 };
 

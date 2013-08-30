@@ -21,7 +21,7 @@ Level = function(options) {
 
 	this.options = {
 		nodes: [
-			{ positionX: 0, positionY: 0}
+			{ positionX: 0, positionY: 0 }
 		],
 		enemies: {
 			enemyDrone: {
@@ -40,35 +40,57 @@ Level = function(options) {
 			},
 
 			enemyCopter: {
-				max: 1,
+				max: 4,
 				projectileSystem: "vulcan"
 			}
 		},
 		waves : [
 			[
-				// { 
-				// 	type: "enemyDrone", intervalTime: 0, intervalQuantity: 1, targetQuantity: 1
-				// },
-				// { 
-				// 	type: "enemyDrone", intervalTime: 0, intervalQuantity: 1, targetQuantity: 1
-				// },
 				{ 
-					type: "enemyCopter", intervalTime: 0, intervalQuantity: 1, targetQuantity: 1,
-					positionX: 360, positionY: 100
+					type: "enemyDrone", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
+					positionX: -240, positionY: 64, posOffsetX: 64, posOffsetY: 64
+				},
+				{ 
+					type: "enemyDrone", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
+					positionX: -240, positionY: 416, posOffsetX: 64, posOffsetY: 64
 				}
-			]/*,
-			[
-				{ type: "enemyDrone", intervalTime: 2000, intervalQuantity: 1, 
-					targetQuantity: 1, posOffsetX: 64, posOffsetY: 64 },
-				{ type: "enemyDrone", intervalTime: 2000, intervalQuantity: 2, 
-					targetQuantity: 16, posOffsetX: 64, posOffsetY: 64 }
 			],
 			[
-				{ type: "enemyDrone", intervalTime: 2000, intervalQuantity: 3, 
-					targetQuantity: 16, posOffsetX: 64, posOffsetY: 64 },
-				{ type: "enemyDrone", intervalTime: 2000, intervalQuantity: 4, 
-					targetQuantity: 28, posOffsetX: 64, posOffsetY: 64 }
-			]*/
+				{ 
+					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: -240, positionY: 64
+				},
+				{ 
+					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: -240, positionY: 416
+				},
+				{ 
+					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: 64, positionY: -240
+				},
+				{ 
+					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: 360, positionY: -240
+				}
+			],
+			[
+				{ 
+					type: "enemyDrone", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
+					positionX: 64, positionY: -240, posOffsetX: 64, posOffsetY: 64
+				},
+				{ 
+					type: "enemyDrone", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
+					positionX: 360, positionY: -240, posOffsetX: 64, posOffsetY: 64
+				},
+				{ 
+					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: 720, positionY: 1600
+				},
+				{ 
+					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: 1080, positionY: 1600
+				},
+			]
 		],
 		sceneObjects: {
 			tower: [

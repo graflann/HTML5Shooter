@@ -126,6 +126,8 @@ EnemyTank.prototype.kill = function() {
 		this.container.getStage().removeChild(this.container);
 
 		this.turret.fireCounter = 0;
+
+		goog.events.dispatchEvent(this, this.enemyKilledEvent);
 	}
 };
 

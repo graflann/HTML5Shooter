@@ -14,6 +14,8 @@ Enemy = function() {
 	this.physicalPosition = new app.b2Vec2();
 
 	this.container = null;
+
+	this.enemyKilledEvent = new goog.events.Event(EventNames.ENEMY_KILLED, this);
 };
 
 goog.inherits(Enemy, GameObject);
@@ -53,6 +55,8 @@ Enemy.prototype.kill = function() {
 	if(this.isAlive) {
 		this.setIsAlive(false);
 		this.container.getStage().removeChild(this.container);
+
+		goog.events.dispatchEvent(this, this.enemyKilledEvent);
 	}
 };
 

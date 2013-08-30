@@ -102,6 +102,8 @@ EnemyTurret.prototype.kill = function() {
 			this.reticle.kill();
 			this.reticle = null;
 		}
+
+		goog.events.dispatchEvent(this, this.enemyKilledEvent);
 	}
 };
 

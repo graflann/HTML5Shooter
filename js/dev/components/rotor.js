@@ -17,6 +17,8 @@ Rotor = function(color, radius) {
 *@private
 */
 Rotor.prototype.init = function() {
+	var diameter = this.radius * 2;
+
 	this.shape = new createjs.Shape();
 	this.shape.graphics
 		.ss(2)
@@ -30,6 +32,8 @@ Rotor.prototype.init = function() {
 		.lt(0, this.radius)
 		.mt(0, 0)
 		.lt(0, -this.radius);
+	this.shape.snapToPixel = true;
+	this.shape.cache(-this.radius, -this.radius, diameter, diameter);
 };
 
 /**

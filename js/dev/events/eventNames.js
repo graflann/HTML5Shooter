@@ -9,6 +9,7 @@ EventNames = {
     SPAWN_COMPLETE:     	'spawnComplete',
     WAVE_COMPLETE:  		'waveComplete',
     LEVEL_COMPLETE:  		'levelComplete',
+    ENEMY_KILLED:           'enemyKilled', 
     WEAPON_SELECT: 			'weaponSelect',
     ADD_HOMING_OVERLAY: 	'addHomingOverlay',
     REMOVE_HOMING_OVERLAY: 	'removeHomingOverlay',

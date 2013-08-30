@@ -12,6 +12,8 @@ SniperTurret = function(color, projectileSystem, hasAI) {
 
 	this.turretAnimUtil = null;
 
+	this.laserSight = null;
+
 	this.ballEffects = null;
 
 	this.ballEffectsDistance = 56;
@@ -42,6 +44,17 @@ SniperTurret.prototype.init = function() {
 
 	this.ballEffects = new createjs.Shape();
 	this.ballEffects.alpha = 0.5;
+
+	this.laserSight = new createjs.Shape();
+	this.laserSight.snapToPixel = true;
+	this.laserSight.graphics 
+		.ss(4, "round")
+		.ls([Constants.BLUE, Constants.DARK_BLUE], [1, 0.03125], 0, 0, 0, -Constants.HEIGHT * 0.75)
+		.mt(0, 0)
+		.lt(0, -Constants.HEIGHT);
+	this.laserSight.alpha = 0.5;
+
+	this.laserSight.cache(-2, -Constants.HEIGHT, 2, Constants.HEIGHT);
 };
 
 /**
@@ -106,9 +119,13 @@ SniperTurret.prototype.fire = function() {
 
 		this.turretAnimUtil.play();
 
-		//fade the ball in and out
+		//fade the ball & laser sight in upon shooting then back in
 		createjs.Tween.get(this.ballEffects).to({alpha: 0, scaleX: 0, scaleY: 0}, 250).call(function(){
 			createjs.Tween.get(self.ballEffects).to({alpha: 0.5, scaleX: 1, scaleY: 1}, 300);
+		});
+
+		createjs.Tween.get(this.laserSight).to({alpha: 0, scaleX: 0, scaleY: 0}, 250).call(function(){
+			createjs.Tween.get(self.laserSight).to({alpha: 0.5, scaleX: 1, scaleY: 1}, 300);
 		});
 	}
 };
@@ -145,8 +162,10 @@ SniperTurret.prototype.updateEffects = function() {
 
 	this.ballEffects.rotation += Math.randomInRange(-90, 90);
 
-	this.ballEffects.x = (this.shape.parent.x + this.shape.x) + 
+	this.laserSight.x = this.ballEffects.x = (this.shape.parent.x + this.shape.x) + 
 							(cos * this.ballEffectsDistance);
-	this.ballEffects.y = (this.shape.parent.y + this.shape.y) + 
+	this.laserSight.y = this.ballEffects.y = (this.shape.parent.y + this.shape.y) + 
 							(sin * this.ballEffectsDistance);
+
+	this.laserSight.rotation = this.shape.rotation;
 };

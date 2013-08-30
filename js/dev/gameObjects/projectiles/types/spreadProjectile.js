@@ -38,6 +38,8 @@ SpreadProjectile.prototype.init = function(options)
 		.qt(0, -12, 6, 0);
 	//this.shape.regX = 8;
 	//this.shape.regY = 8;
+	this.shape.snapToPixel = true;
+	this.shape.cache(-6, -12, 12, 12);
 	
 	this.setPhysics();
 

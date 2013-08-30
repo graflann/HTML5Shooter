@@ -37,13 +37,20 @@ Marker.prototype.init = function() {
 		this.shape.graphics
 			.f(this.color)
 			.dr(0, 0, this.width, this.height);
+
+		this.shape.cache(0, 0, this.width, this.height);
 			
 	} else if(this.gameObject instanceof PlayerTank ) {
+		var radius = this.width * 0.75,
+			diameter = radius * 2;
+
 		this.color = Constants.LIGHT_BLUE;
 
 		this.shape.graphics
 			.f(this.color)
-			.dc(0, 0, this.width * 0.75);
+			.dc(0, 0, radius);
+
+		this.shape.cache(-radius, -radius, diameter , diameter);
 	}
 
 	this.shape.alpha = 0.75;

@@ -33,6 +33,8 @@ VulcanProjectile.prototype.init = function() {
 		.mt(0, 0)
 		.lt(0, 32);
 	this.shape.alpha = 0;
+	this.shape.snapToPixel = true;
+	this.shape.cache(-2, 0, 2, 32);
 	
 	this.setPhysics();
 

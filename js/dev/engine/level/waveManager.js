@@ -18,6 +18,8 @@ WaveManager = function(arrRawWaves, arrEnemySystems) {
 
 	this.currentWave = null;
 
+	this.numWaveEnemyKilled = 0;
+
 	this.index = 0;
 
 	this.levelCompleteEvent = new goog.events.Event(EventNames.LEVEL_COMPLETE, this);
@@ -33,6 +35,16 @@ goog.inherits(WaveManager, goog.events.EventTarget);
 WaveManager.prototype.init = function() {
 	for(var i = 0; i < this.arrRawWaves.length; i++) {
 		this.arrWaves.push(new Wave(this.arrRawWaves[i], this.arrEnemySystems));
+	}
+
+	for(var key in this.arrEnemySystems) {
+		goog.events.listen(
+			this.arrEnemySystems[key], 
+			EventNames.ENEMY_KILLED, 
+			this.onEnemyKilled, 
+			false, 
+			this
+		);
 	}
 
 	this.setCurrentWave();
@@ -62,6 +74,8 @@ WaveManager.prototype.setCurrentWave = function() {
 
 	this.currentWave = this.arrWaves[this.index];
 
+	this.numWaveEnemyKilled = 0;
+
 	goog.events.listen(
 		this.currentWave, 
 		EventNames.WAVE_COMPLETE, 
@@ -75,26 +89,38 @@ WaveManager.prototype.setCurrentWave = function() {
 
 //EVENT HANDLERS
 WaveManager.prototype.onWaveComplete = function(e) {
-	if(++this.index >= this.length()) {
-		//clean up listener and prompt end of wave
-		goog.events.unlisten(
-			this.currentWave,
-			EventNames.WAVE_COMPLETE, 
-			this.onWaveComplete, 
-			false, 
-			this
-		);
+	//TODO:This has become vestigial for now
+	//clean up listener and prompt end of wave
+	goog.events.unlisten(
+		this.currentWave,
+		EventNames.WAVE_COMPLETE, 
+		this.onWaveComplete, 
+		false, 
+		this
+	);
+};
 
-		goog.events.dispatchEvent(this, this.levelCompleteEvent);
-	} else {
-		goog.events.unlisten(
-			this.currentWave,
-			EventNames.WAVE_COMPLETE, 
-			this.onWaveComplete, 
-			false, 
-			this
-		);
+WaveManager.prototype.onEnemyKilled = function(e) {
+	if(e.target.type !== EnemyTypes.TURRET && 
+		++this.numWaveEnemyKilled >= this.currentWave.enemyTotal) {
 
-		this.setCurrentWave();
+		console.log("# of enemy killed: " + this.numWaveEnemyKilled);
+
+		if(++this.index >= this.length()) {
+			for(var key in this.arrEnemySystems) {
+				//remove enemy system listeners
+				goog.events.unlisten(
+					this.arrEnemySystems[key], 
+					EventNames.ENEMY_KILLED, 
+					this.onEnemyKilled, 
+					false, 
+					this
+				);
+			}
+
+			goog.events.dispatchEvent(this, this.levelCompleteEvent);
+		} else {
+			this.setCurrentWave();
+		}
 	}
 };

@@ -25,6 +25,7 @@ EnemySystem = function(type, max, projectileSystem) {
 	this.currentSpawnedQuantity = 0;
 
 	this.spawnCompleteEvent = new goog.events.Event(EventNames.SPAWN_COMPLETE, this);
+	this.enemyKilledEvent = new goog.events.Event(EventNames.ENEMY_KILLED, this);
 
 	this.init();
 };
@@ -37,6 +38,14 @@ EnemySystem.prototype.init = function() {
 
 	while(++i < this.max) {
 		this.arrEnemies[i] = new EnemyClass(this.projectileSystem);
+
+		goog.events.listen(
+			this.arrEnemies[i], 
+			EventNames.ENEMY_KILLED, 
+			this.onEnemyKilled, 
+			false, 
+			this
+		);
 	}
 };
 
@@ -180,4 +189,8 @@ EnemySystem.prototype.removeReticles = function() {
 			enemy.reticle = null;
 		}
 	}
+};
+
+EnemySystem.prototype.onEnemyKilled = function(e) {
+	goog.events.dispatchEvent(this, this.enemyKilledEvent);
 };

@@ -32,17 +32,28 @@ goog.inherits(EnemyDrone, Enemy);
 *@public
 */
 EnemyDrone.prototype.init = function() {
+	var radius = 0;
+
 	this.container = new createjs.Container();
 
 	this.width = 32;
 	this.height = 32;
 
+	radius = (this.width * 0.5);
+
 	this.velocityMod = 1;
 
 	this.shape = new createjs.Shape();
-	this.shape.graphics.ss(2).s(Constants.RED).f(Constants.YELLOW).dc(0, 0, this.width * 0.5);
-	//this.shape.x = this.width * 0.5;
-	//this.shape.y = this.height * 0.5;
+	this.shape.graphics
+		.ss(2)
+		.s(Constants.RED)
+		.f(Constants.YELLOW)
+		.dc(0, 0, radius);
+	this.shape.snapToPixel = true;
+
+	radius += 4;
+	this.shape.cache(-radius, -radius, radius * 2, radius * 2);
+	
 	this.container.addChild(this.shape);
 
 	this.setPhysics();
@@ -76,8 +87,10 @@ EnemyDrone.prototype.update = function(options) {
 			this.velocity.y = (table.sin(deg) * this.velocityMod);
 		}
 
-		this.position.x = this.container.x += this.velocity.x;
-		this.position.y = this.container.y += this.velocity.y;
+		this.container.x += this.velocity.x;
+		this.container.y += this.velocity.y;
+
+		this.setPosition(this.container.x, this.container.y);
 
 		this.physicalPosition.x = this.position.x / app.physicsScale;
 		this.physicalPosition.y = this.position.y / app.physicsScale;
@@ -98,8 +111,8 @@ EnemyDrone.prototype.clear = function() {
 *@private
 */
 EnemyDrone.prototype.setPosition = function(x, y) {
-	this.position.x = this.container.x;
-	this.position.y = this.container.y;
+	this.position.x = this.container.x = x;
+	this.position.y = this.container.y = y;
 
 	this.physicalPosition.x = this.position.x / app.physicsScale;
 	this.physicalPosition.y = this.position.y / app.physicsScale;

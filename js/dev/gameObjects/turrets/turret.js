@@ -77,6 +77,9 @@ Turret.prototype.manualControl = function() {
 	var input = app.input,
 		gamepad = input.gamepad;
 
+	//always update fire delay
+	this.fireCounter++;
+
 	//rotate counter clock-wise
 	if(input.isKeyDown(KeyCode.LEFT) || 
 		input.isButtonDown(GamepadCode.BUTTONS.LB)) /*||
@@ -95,7 +98,7 @@ Turret.prototype.manualControl = function() {
 	if(input.isKeyDown(KeyCode.SPACE) || 
 		((input.isButtonDown(GamepadCode.BUTTONS.RT) || 
 		input.isButtonDown(GamepadCode.BUTTONS.A)))) {
-		if(this.fireCounter++ > this.fireThreshold) {
+		if(this.fireCounter > this.fireThreshold) {
 			this.fire();
 			this.fireCounter = 0;
 		}
