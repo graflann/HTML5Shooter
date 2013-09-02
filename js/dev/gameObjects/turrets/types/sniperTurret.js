@@ -69,6 +69,7 @@ SniperTurret.prototype.update = function(options) {
 	}
 
 	this.turretAnimUtil.update();
+
 	this.updateEffects();
 };
 

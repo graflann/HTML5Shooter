@@ -101,7 +101,7 @@ EnemyTank.prototype.update = function(options) {
 		this.base.play();
 		this.base.rotation = this.deg + 90;
 		 
-		this.setPosition(this.body.GetPosition(), rad);
+		this.setPosition(this.body.GetPosition());
 
 		this.turret.update(options);
 	}

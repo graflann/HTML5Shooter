@@ -91,11 +91,6 @@ EnemyDrone.prototype.update = function(options) {
 		this.container.y += this.velocity.y;
 
 		this.setPosition(this.container.x, this.container.y);
-
-		this.physicalPosition.x = this.position.x / app.physicsScale;
-		this.physicalPosition.y = this.position.y / app.physicsScale;
-
-		this.body.SetPosition(this.physicalPosition);
 	}
 };
 

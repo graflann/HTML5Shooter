@@ -94,7 +94,7 @@ Tower.prototype.update = function(options) {
 		floor.y = this.position.y + y;
 	}
 
-	//update enemy on tower
+	//update enemy on tower if present and alive
 	if(this.enemy && this.enemy.isAlive) {
 		this.enemy.setPosition(floor.x, floor.y);
 	}

@@ -190,7 +190,6 @@ HomingProjectile.prototype.setHomingTarget = function(homingList) {
     //if there are enemies in the homing list, need to determine which is closest;
     //that becomes the homing target
     if(homingLength > 0) {
-        i = -1;
         while(++i < homingLength) {
             enemyPosition = homingList[i].position;
 

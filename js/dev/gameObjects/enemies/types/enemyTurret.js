@@ -112,7 +112,7 @@ EnemyTurret.prototype.kill = function() {
 */
 EnemyTurret.prototype.setPosition = function(x, y) {
 	var scale = app.physicsScale,
-		offset = (Constants.UNIT * 0.5 / scale);
+		offset = Constants.UNIT * 0.5;
 
 	this.container.x = x;
 	this.container.y = y;
@@ -120,8 +120,8 @@ EnemyTurret.prototype.setPosition = function(x, y) {
 	this.position.x = this.container.x + this.turret.shape.x;
 	this.position.y = this.container.y + this.turret.shape.y;
 
-	this.physicalPosition.x = (this.position.x / scale) + offset;
-	this.physicalPosition.y = (this.position.y / scale) + offset;
+	this.physicalPosition.x = (this.container.x + offset) / scale; 
+	this.physicalPosition.y = (this.container.y + offset) /scale;
 	
 	this.body.SetPosition(this.physicalPosition);
 };

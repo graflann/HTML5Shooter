@@ -5,9 +5,9 @@ goog.provide('Constants');
 *@enum {number|string}
 */
 Constants = {
-    WIDTH:              480,
+    WIDTH:              640,
     HEIGHT:             640,
-    CENTER_X:           240, 
+    CENTER_X:           320, 
     CENTER_Y:           320, 
 	UNIT:				32,
     GREEN:              '#738B4A',

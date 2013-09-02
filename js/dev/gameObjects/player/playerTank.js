@@ -312,7 +312,7 @@ PlayerTank.prototype.fireHoming = function() {
 };
 
 PlayerTank.prototype.setTurret = function(turretType, projectileType) {
-	var prevTurret = this.turret;
+	var self = prevTurret = this.turret;
 
 	if(this.currentProjectileSystem) {
 		this.currentProjectileSystem.kill();
@@ -322,6 +322,23 @@ PlayerTank.prototype.setTurret = function(turretType, projectileType) {
 	this.currentProjectileType = projectileType;
 	this.currentProjectileSystem = this.arrProjectileSystems[projectileType];
 
+	if(prevTurret) {
+		this.changeTurret(turretType, prevTurret);
+	} else { 
+		this.addTurret(turretType);
+	}
+};
+
+PlayerTank.prototype.changeTurret = function(turretType, prevTurret) {
+	var self = this;
+
+	createjs.Tween.get(prevTurret.shape).to({ scaleX:0, scaleY: 0 }, 100).call(function(){
+		self.removeTurret(prevTurret);
+		self.addTurret(turretType, prevTurret);
+	});
+};
+
+PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 	if(!this.arrTurrets[turretType]) {
 		var TurretClass = TurretClasses[turretType];
 		this.turret = this.arrTurrets[turretType] = new TurretClass(this.color, this.currentProjectileSystem, false);
@@ -330,24 +347,14 @@ PlayerTank.prototype.setTurret = function(turretType, projectileType) {
 	}
 
 	if(prevTurret) {
-		if(this.container.getChildIndex(prevTurret.shape) > -1) {
-			this.container.removeChild(prevTurret.shape);
-		}
-
-		//remove additional Sniper Turret FX 
-		//TODO: need turret add/remove wrappers
-		if(prevTurret instanceof SniperTurret) {
-			this.container.parent.removeChild(prevTurret.ballEffects);
-			this.container.parent.removeChild(prevTurret.laserSight);
-		}
-
 		this.turret.shape.rotation = prevTurret.shape.rotation;
 	}
 
 	this.turret.shape.x = this.width * 0.5;
 	this.turret.shape.y = this.height * 0.5;
+	this.turret.shape.scaleX = 0;
 
-	this.turret.fireCount = (this.turret.fireThreshold - 1);
+	this.turret.fireCount = this.turret.fireThreshold;
 
 	this.container.addChild(this.turret.shape);
 
@@ -356,6 +363,21 @@ PlayerTank.prototype.setTurret = function(turretType, projectileType) {
 	if(this.turret instanceof SniperTurret) {
 		this.container.parent.addChild(this.turret.laserSight);
 		this.container.parent.addChild(this.turret.ballEffects);
+	}
+
+	createjs.Tween.get(this.turret.shape).to({ scaleX:1, scaleY: 1 }, 100);
+};
+
+PlayerTank.prototype.removeTurret = function(prevTurret) {
+	if(this.container.getChildIndex(prevTurret.shape) > -1) {
+		this.container.removeChild(prevTurret.shape);
+	}
+
+	//remove additional Sniper Turret FX 
+	//TODO: need turret add/remove wrappers
+	if(prevTurret instanceof SniperTurret) {
+		this.container.parent.removeChild(prevTurret.ballEffects);
+		this.container.parent.removeChild(prevTurret.laserSight);
 	}
 };
 

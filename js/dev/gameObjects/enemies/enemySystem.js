@@ -89,7 +89,11 @@ EnemySystem.prototype.generate = function(options) {
 		if (enemy) {
 
 			//set enemy position; varies by type
-			if(enemy instanceof EnemyTank) {
+			if(enemy instanceof EnemyTank || enemy instanceof EnemyCentipede) {
+				if(enemy instanceof EnemyCentipede) {
+					enemy.add();
+				}
+
 				enemy.setPosition(
 					new app.b2Vec2(
 						(this.position.x + 

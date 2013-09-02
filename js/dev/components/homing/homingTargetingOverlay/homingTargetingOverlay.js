@@ -31,7 +31,7 @@ HomingTargetingOverlay = function() {
 
 	this.physicalPosition = new app.b2Vec2();
 
-	this.radius = Constants.WIDTH * 0.5;
+	this.radius = Constants.WIDTH * 0.375;
 
 	this.isActive = false;
 

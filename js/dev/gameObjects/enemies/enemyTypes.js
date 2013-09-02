@@ -8,7 +8,8 @@ EnemyTypes = {
 	DRONE: 	'enemyDrone',
 	TANK: 	'enemyTank',
 	TURRET: 'enemyTurret',
-	COPTER: 'enemyCopter'
+	COPTER: 'enemyCopter',
+	CENTIPEDE: 'enemyCentipede'
 };
 
 goog.exportSymbol('EnemyTypes', EnemyTypes);
