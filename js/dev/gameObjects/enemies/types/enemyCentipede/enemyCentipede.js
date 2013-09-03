@@ -20,15 +20,10 @@ EnemyCentipede = function(projectileSystem) {
 	this.arrSegments = new Array(8);
 
 	this.arrSegmentTimeIndices = [
-		15, 31, 47, 63, 79, 95, 111, 127
+		7, 15, 23, 31, 39, 47, 55, 63
 	];
 
 	this.stateMachine = null;
-
-	this.arrPrevPositions = [];
-	this.frameCacheTotal = 128;
-	this.frameCacheIndex = 0;
-	this.isFrameCacheMaxed = false;
 
 	this.init();
 };
@@ -40,8 +35,6 @@ goog.inherits(EnemyCentipede, Enemy);
 *@public
 */
 EnemyCentipede.prototype.init = function() {
-	this.head = new CentipedeHead();
-
 	this.setSegments();
 
 	this.setStateMachine();
@@ -81,31 +74,7 @@ EnemyCentipede.prototype.updateSeeking = function(options) {
 	this.position.x = this.head.position.x;
 	this.position.y = this.head.position.y;
 
-	this.cachePrevPosition();
-
 	this.updateSegments(options);
-};
-
-/**
-*@private
-*Cache the base shape's previous positions for a determined amount of frames / time
-*/
-EnemyCentipede.prototype.cachePrevPosition = function() {
-	var prevPosition = this.arrPrevPositions[this.frameCacheIndex];
-
-	prevPosition.x = this.position.x;
-	prevPosition.y = this.position.y;
-
-	//upon reaching the threshold, reset the index
-	if(++this.frameCacheIndex >= this.frameCacheTotal) {
-		this.frameCacheIndex = 0;
-
-		//if all values of the cache have been initialized
-		//all frame time indices can be implemented
-		if(!this.isFrameCacheMaxed) {
-			this.isFrameCacheMaxed = true;
-		}
-	}
 };
 
 /**
@@ -115,25 +84,18 @@ EnemyCentipede.prototype.updateSegments = function(options) {
 	var i = -1,
 		length = this.arrSegments.length,
 		segment,
-		prevPosition;
+		prevSegment,
+		stage = app.layers.getStage(LayerTypes.MAIN);
 
 	while(++i < length) {
 		segment = this.arrSegments[i];
 
-		//Grab per the time index or if prevPosition Array has yet to reach desired capacity,
-		//grab using the highest possible index
-		if(this.isFrameCacheMaxed) {
-			prevPosition = this.arrPrevPositions[this.arrSegmentTimeIndices[i]];
-		} else {
-			prevPosition = this.arrPrevPositions[this.frameCacheIndex];
-		}
+		if(i == 0 )	prevSegment = this.head;
+		else 		prevSegment = this.arrSegments[i - 1];
 
-
-
-		//segment.update(pos);
-
-		//the previous position has been resolved so the position is set
-		segment.setPosition(prevPosition.x, prevPosition.y);
+		segment.update({ 
+			prevSegment: prevSegment 
+		});
 	}
 };
 
@@ -142,14 +104,16 @@ EnemyCentipede.prototype.updateSegments = function(options) {
 */
 EnemyCentipede.prototype.add = function() {
 	var stage = app.layers.getStage(LayerTypes.MAIN),
-		i = -1;
+		i = -1,
+		index = 0;
 
 	//add head
 	stage.addChild(this.head.container);
+	index = stage.getChildIndex(this.head.container);
 
 	//add body segments
 	while(++i < this.arrSegments.length) {
-		stage.addChild(this.arrSegments[i].container);
+		stage.addChildAt(this.arrSegments[i].container, index);
 	}
 };
 
@@ -171,12 +135,12 @@ EnemyCentipede.prototype.setIsAlive = function(value) {
 EnemyCentipede.prototype.setSegments = function() {
 	var i = -1;
 
-	while(++i < this.arrSegments.length) {
-		this.arrSegments[i] = new CentipedeSegment(this.projectileSystem);
-	}
+	this.head = new CentipedeHead();
 
-	for(var i = 0; i < this.frameCacheTotal; i++) {
-		this.arrPrevPositions[i] = new app.b2Vec2();
+	while(++i < this.arrSegments.length) {
+		//Head velocity is based on the physics world so the segment needs to ingest it
+		//and perform an internal translation to pixel velocity
+		this.arrSegments[i] = new CentipedeSegment(this.head.velocity, this.projectileSystem);
 	}
 };
 
@@ -184,12 +148,13 @@ EnemyCentipede.prototype.setSegments = function() {
 *@private
 */
 EnemyCentipede.prototype.setPosition = function(pos) {
-	var i = -1;
+	var i = -1,
+		scale = app.physicsScale;
 
 	this.head.setPosition(pos);
 
 	while(++i < this.arrSegments.length) {
-		this.arrSegments[i].setPosition(pos);
+		this.arrSegments[i].setPosition(pos.x * scale, pos.y * scale);
 	}
 
 

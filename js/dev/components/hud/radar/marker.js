@@ -24,14 +24,14 @@ Marker.prototype.init = function() {
 	this.shape = new createjs.Shape();
 
 	if(this.gameObject instanceof Enemy) {
-		if(this.gameObject instanceof EnemyDrone ||
-			this.gameObject instanceof EnemyTank
-		) {
-			this.color = Constants.RED;
-		} else if(this.gameObject instanceof EnemyTurret ||
+	
+		//Air enemies are yellow
+		if(this.gameObject instanceof EnemyTurret ||
 			this.gameObject instanceof EnemyCopter
 		) {
 			this.color = Constants.YELLOW;
+		} else { //ground are red
+			this.color = Constants.RED;
 		}
 
 		this.shape.graphics

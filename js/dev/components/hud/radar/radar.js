@@ -139,7 +139,7 @@ Radar.prototype.setField = function(w, h, player, arrEnemySystems) {
 	this.fieldWidth = w / this.scale;
 	this.fieldHeight = h / this.scale;
 
-	this.fieldOffset.x = (Constants.WIDTH / this.scale) * 0.85;
+	this.fieldOffset.x = (Constants.WIDTH / this.scale) * 0.5;
 	this.fieldOffset.y = (Constants.HEIGHT / this.scale) * 0.5;
 
 	//create border
