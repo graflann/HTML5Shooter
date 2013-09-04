@@ -35,7 +35,10 @@ AssetsProxy = function() {
 		'assets/finished/spreadTurret.json',
 		'assets/finished/railTurret.json',
 		'assets/finished/bladeTurret.json',
-		'assets/finished/copter.json'
+		'assets/finished/copter.json',
+		'assets/finished/centipedeHead.json',
+		'assets/finished/centipedeSegment.json',
+		'assets/finished/centipedeTail.json'
 	];
 
 	/**
@@ -51,7 +54,10 @@ AssetsProxy = function() {
 		{id: "spreadTurret",		src: "assets/finished/spreadTurret.png"},
 		{id: "railTurret",			src: "assets/finished/railTurret.png"},
 		{id: "bladeTurret",			src: "assets/finished/bladeTurret.png"},
-		{id: "copter",				src: "assets/finished/copter.png"}
+		{id: "copter",				src: "assets/finished/copter.png"},
+		{id: "centipedeHead",		src: "assets/finished/centipedeHead.png"},
+		{id: "centipedeSegment",	src: "assets/finished/centipedeSegment.png"},
+		{id: "centipedeTail",		src: "assets/finished/centipedeTail.png"}
 	];
 
 	/**

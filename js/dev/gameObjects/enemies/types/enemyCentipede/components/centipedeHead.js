@@ -24,6 +24,8 @@ CentipedeHead = function() {
 
 	this.segmentAnchorDistance = 0;
 
+	this.headAnimUtil = null;
+
 	this.init();
 };
 
@@ -34,34 +36,24 @@ goog.inherits(CentipedeHead, Enemy);
 *@public
 */
 CentipedeHead.prototype.init = function() {
-	var radius = 0;
-
 	this.container = new createjs.Container();
 
-	this.width = 32;
-	this.height = 32;
+	this.width = 64;
+	this.height = 64;
 
 	this.velocity.x = 1500;
 	this.velocity.y = 1500;
 
-	radius = (this.width * 0.5);
+	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["centipedeHead"]);
+	this.shape.regX = this.shape.regY = this.width * 0.5;
+	this.shape.rotation = 90;
+	this.shape.gotoAndPlay(0);
 
-	this.shape = new createjs.Shape();
-	this.shape.graphics
-		.ss(2)
-		.s(Constants.RED)
-		.f(Constants.BLACK)
-		.mt(0, 0)
-		.lt(0, -radius)
-		.mt(0, 0)
-		.lt(0, radius)
-		.mt(0, 0)
-		.dc(0, 0, radius);
-	this.shape.snapToPixel = true;
-	radius += 4;
-	this.shape.cache(-radius, -radius, radius * 2, radius * 2);
+	this.headAnimUtil = new AnimationUtility("centipedeHead", this.shape, 4);
+	this.headAnimUtil.play();
+	this.headAnimUtil.loop(true);
 
-	this.segmentAnchorDistance = radius;
+	this.segmentAnchorDistance = this.width * 0.25;
 	
 	this.container.addChild(this.shape);
 
@@ -96,11 +88,11 @@ CentipedeHead.prototype.update = function(options) {
 	}
 
 	this.body.ApplyForce(this.force, worldCenter);
-
-	//this.head.play();
 	this.container.rotation = this.deg;
 	 
 	this.setPosition(this.body.GetPosition());
+
+	this.headAnimUtil.update();
 };
 
 /**

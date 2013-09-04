@@ -54,6 +54,7 @@ Enemy.prototype.create = function() {
 Enemy.prototype.kill = function() {
 	if(this.isAlive) {
 		this.setIsAlive(false);
+
 		this.container.getStage().removeChild(this.container);
 
 		goog.events.dispatchEvent(this, this.enemyKilledEvent);

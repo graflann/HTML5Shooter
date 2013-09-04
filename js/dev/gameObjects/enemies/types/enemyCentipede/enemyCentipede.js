@@ -19,11 +19,11 @@ EnemyCentipede = function(projectileSystem) {
 
 	this.arrSegments = new Array(8);
 
-	this.arrSegmentTimeIndices = [
-		7, 15, 23, 31, 39, 47, 55, 63
-	];
-
 	this.stateMachine = null;
+
+	this.numPiecesKilled = 0;
+
+	this.piecesTotal = 0;
 
 	this.init();
 };
@@ -66,6 +66,20 @@ EnemyCentipede.prototype.clear = function() {
 };
 
 /**
+*@override
+*@public
+*/
+EnemyCentipede.prototype.kill = function() {
+	if(this.isAlive) {
+		this.setIsAlive(false);
+
+		this.numPiecesKilled = 0;
+
+		goog.events.dispatchEvent(this, this.enemyKilledEvent);
+	}
+};
+
+/**
 *@public
 */
 EnemyCentipede.prototype.updateSeeking = function(options) {
@@ -90,7 +104,7 @@ EnemyCentipede.prototype.updateSegments = function(options) {
 	while(++i < length) {
 		segment = this.arrSegments[i];
 
-		if(i == 0 )	prevSegment = this.head;
+		if(i == 0)	prevSegment = this.head;
 		else 		prevSegment = this.arrSegments[i - 1];
 
 		segment.update({ 
@@ -133,14 +147,41 @@ EnemyCentipede.prototype.setIsAlive = function(value) {
 *@private
 */
 EnemyCentipede.prototype.setSegments = function() {
-	var i = -1;
+	var i = -1,
+		length = this.arrSegments.length,
+		lastIndex = length - 1;
 
 	this.head = new CentipedeHead();
+
+	//listen to the head for its death
+	goog.events.listen(
+		this.head, 
+		EventNames.ENEMY_KILLED, 
+		this.onPieceKilled, 
+		false, 
+		this
+	);
+
+	//inc total to include head
+	this.piecesTotal++;
 
 	while(++i < this.arrSegments.length) {
 		//Head velocity is based on the physics world so the segment needs to ingest it
 		//and perform an internal translation to pixel velocity
-		this.arrSegments[i] = new CentipedeSegment(this.head.velocity, this.projectileSystem);
+		if(i == lastIndex)	this.arrSegments[i] = new CentipedeSegment(this.head.velocity, this.projectileSystem, true);
+		else				this.arrSegments[i] = new CentipedeSegment(this.head.velocity, this.projectileSystem);
+		
+		//listen to each segment for its death
+		goog.events.listen(
+			this.arrSegments[i], 
+			EventNames.ENEMY_KILLED, 
+			this.onPieceKilled, 
+			false, 
+			this
+		);
+
+		//inc total to include segment
+		this.piecesTotal++;
 	}
 };
 
@@ -156,8 +197,6 @@ EnemyCentipede.prototype.setPosition = function(pos) {
 	while(++i < this.arrSegments.length) {
 		this.arrSegments[i].setPosition(pos.x * scale, pos.y * scale);
 	}
-
-
 };
 
 EnemyCentipede.prototype.setPhysics = function() {
@@ -180,6 +219,26 @@ EnemyCentipede.prototype.setStateMachine = function() {
 	// );
 	
 	// this.stateMachine.setState(State.KEY);
+};
+
+//EVENT HANDLERS
+EnemyCentipede.prototype.onPieceKilled = function(e) {
+	var piece = e.target; //either head or segment
+
+	//unlisten the dead target piece
+	// goog.events.unlisten(
+	// 	piece, 
+	// 	EventNames.ENEMY_KILLED, 
+	// 	this.onPieceKilled, 
+	// 	false, 
+	// 	this
+	// );
+
+	if(++this.numPiecesKilled >= this.piecesTotal) {
+		this.kill();
+	}
+
+	console.log("# of pieces killed: " + this.numPiecesKilled);
 };
 
 goog.exportSymbol('EnemyCentipede', EnemyCentipede);

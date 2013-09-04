@@ -6,7 +6,7 @@ goog.require('Enemy');
 /**
 *@constructor
 */
-CentipedeSegment = function(physicalVelocity, projectileSystem) {
+CentipedeSegment = function(physicalVelocity, projectileSystem, isTail) {
 	Enemy.call(this);
 
 	this.physicalVelocity = physicalVelocity;
@@ -15,6 +15,8 @@ CentipedeSegment = function(physicalVelocity, projectileSystem) {
 	 * @type {Array}
 	 */
 	this.projectileSystem = projectileSystem;
+
+	this.isTail = isTail || false;
 
 	this.categoryBits = CollisionCategories.GROUND_ENEMY;
 
@@ -30,6 +32,7 @@ CentipedeSegment = function(physicalVelocity, projectileSystem) {
 
 	this.deg = 0;
 
+	//Ratio translating head physics velocity to pixels per tick
 	this.physicalVelocityMod = Math.round(1000 / 1.77);
 
 	this.init();
@@ -44,7 +47,7 @@ goog.inherits(CentipedeSegment, Enemy);
 CentipedeSegment.prototype.init = function() {
 	this.container = new createjs.Container();
 
-	this.width = 64;
+	this.width = 128;
 	this.height = 48;
 
 	this.offset.x = -(this.width * 0.5);
@@ -53,20 +56,20 @@ CentipedeSegment.prototype.init = function() {
 	this.velocity.x = this.physicalVelocity.x / this.physicalVelocityMod;
 	this.velocity.y = this.physicalVelocity.y / this.physicalVelocityMod;
 
-	this.shape = new createjs.Shape();
-	this.shape.graphics
-		.ss(2)
-		.s(Constants.RED)
-		.f(Constants.BLACK)
-		.dr(0, 0, this.width, this.height);
-	this.shape.snapToPixel = true;
+	if(!this.isTail) {
+		this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["centipedeSegment"]);
+		this.shape.gotoAndPlay(0);
+	} else {
+		this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["centipedeTail"]);
+		this.shape.gotoAndStop(0);
+	}
 	this.shape.regX = this.width * 0.5;
 	this.shape.regY = this.height * 0.5;
-	this.shape.cache(0, 0, this.width, this.height);
+	this.shape.rotation = 90;
 	
 	this.container.addChild(this.shape);
 
-	this.segmentAnchorDistance = this.width * 0.5;
+	this.segmentAnchorDistance = this.height * 0.375;
 
 	this.setPhysics();
 

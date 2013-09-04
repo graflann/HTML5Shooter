@@ -104,7 +104,7 @@ WaveManager.prototype.onEnemyKilled = function(e) {
 	if(e.target.type !== EnemyTypes.TURRET && 
 		++this.numWaveEnemyKilled >= this.currentWave.enemyTotal) {
 
-		console.log("# of enemy killed: " + this.numWaveEnemyKilled);
+		console.log("# of wave enemy killed: " + this.numWaveEnemyKilled);
 
 		if(++this.index >= this.length()) {
 			for(var key in this.arrEnemySystems) {
