@@ -122,13 +122,12 @@ CollisionManager.prototype.beginContact = function(contact) {
 	var dataA = contact.GetFixtureA().GetBody().GetUserData(),
     	dataB = contact.GetFixtureB().GetBody().GetUserData();
 
-    //PLAYER VS
-    //PLAYER PROJECTILE VS ENEMY/////////////////////////////////////////////
+    //PROJECTILE VS OBJECT////////////////////////////////////////////
     if(dataA instanceof Projectile) {
-    	this.playerProjectileVsEnemy(dataA, dataB);
+    	this.projectileVsObject(dataA, dataB);
     	return;
     } else if(dataB instanceof Projectile) {
-    	this.playerProjectileVsEnemy(dataB, dataA);
+    	this.projectileVsObject(dataB, dataA);
     	return;
     }
     //////////////////////////////////////////////////////////////////
@@ -143,16 +142,15 @@ CollisionManager.prototype.beginContact = function(contact) {
     }
     //////////////////////////////////////////////////////////////////
     
-    //PLAYER TANK VS ENEMY BODY or SCENEOBJECT/////////////////////////
+    //PLAYER VS ENEMY BODY or SCENEOBJECT/////////////////////////////
     if(dataA instanceof PlayerTank) {
-        this.playerTankVsObjects(dataA, dataB);
+        this.playerVsObject(dataA, dataB);
         return;
     } else if(dataB instanceof PlayerTank) {
-        this.playerTankVsObjects(dataB, dataA);
+        this.playerVsObject(dataB, dataA);
         return;
     }
     //////////////////////////////////////////////////////////////////
-    //
 };
 
 CollisionManager.prototype.endContact = function(contact) {
@@ -167,67 +165,75 @@ CollisionManager.prototype.preSolve = function(contact, oldManifold) {
 
 };
 
-CollisionManager.prototype.playerProjectileVsEnemy = function(dataA, dataB) {
-    //console.log(dataA);
-    //console.log(dataB);
+//VERSUS/////////////////////////////////////////////////////////////////////
+
+
+
+CollisionManager.prototype.projectileVsObject = function(projectile, object) {
+    //console.log(projectile);
+    //console.log(object);
 
 	//PROCESS ENEMY
-	if(dataB instanceof Enemy) {
-		dataB.onCollide(dataA, this.collisionOptions.enemy);
+	if(object instanceof Enemy) {
+		object.onCollide(projectile, this.collisionOptions.enemy);
 
         //TODO: Some processing on a enemy health variable to determine "death"
         //then push onto the kill list
-		this.killList.push(dataB);
+		this.killList.push(object);
 	}
+    //TODO: process collision w player
 
 	//PROCESS PROJECTILE
-	dataA.onCollide(dataB, this.collisionOptions.projectile);
+	projectile.onCollide(object, this.collisionOptions.projectile);
 
 	//certain projectile types go "through" objects during collision,
 	//so opt out of the remaining function code or execute
-	if(dataA instanceof SniperProjectile || dataA instanceof BladeProjectile) {
+	if(projectile instanceof SniperProjectile || projectile instanceof BladeProjectile) {
 		//console.log("Sniper");
 		return;
 	}
 
-	this.killList.push(dataA);
+	this.killList.push(projectile);
 };
 
-CollisionManager.prototype.htoVsEnemy = function(dataA, dataB) {
-	//console.log(dataA);
-    //console.log(dataB);
+CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
+    //console.log(hto);
+    //console.log(enemy);
 
     var homingLength = this.homingList.length,
         i = -1;
 
     if(homingLength < this.arrPlayerProjectileSystems[ProjectileTypes.HOMING].length()) {
         //add homing reticle
-        dataB.onHoming(dataA, this.collisionOptions.enemy);
+        enemy.onHoming(hto, this.collisionOptions.enemy);
 
         //PROCESS ENEMY
         //exits if enemy is already in homing list
         while(++i < homingLength) {
-            if(this.homingList[i] == dataB) {
+            if(this.homingList[i] == enemy) {
                 return;
             }
         }
 
         //push onto the homing list if not already present
-        this.homingList.push(dataB);
+        this.homingList.push(enemy);
     }
 };
 
-CollisionManager.prototype.playerTankVsObjects = function(dataA, dataB) {
+CollisionManager.prototype.playerVsObject = function(player, object) {
     //console.log(dataA);
     //console.log(dataB);
+    
+    if(object instanceof Enemy) {
+        object.onCollide(player, this.collisionOptions.enemy);
+        return;
+    }
 
-    if(dataB instanceof SceneObject) {
-        console.log("Hitting so");
+    //SceneObject (Projectile would be resolved prior to this)
+    if(object instanceof SceneObject) {
 
-        //dataA.setPosition(dataA.prevPosition.x, dataA.prevPosition.y);
-    } else {
-        console.log("Hitting enemy");
     }
 };
+/////////////////////////////////////////////////////////////////////////////
 
 goog.exportSymbol('CollisionManager', CollisionManager);

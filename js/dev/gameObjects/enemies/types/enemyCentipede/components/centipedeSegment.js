@@ -35,6 +35,8 @@ CentipedeSegment = function(physicalVelocity, projectileSystem, isTail) {
 	//Ratio translating head physics velocity to pixels per tick
 	this.physicalVelocityMod = Math.round(1000 / 1.77);
 
+	this.turret = null;
+
 	this.init();
 };
 
@@ -62,12 +64,23 @@ CentipedeSegment.prototype.init = function() {
 	} else {
 		this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["centipedeTail"]);
 		this.shape.gotoAndStop(0);
+
+		this.turret = new EnemyVulcanTurret(Constants.RED, this.projectileSystem, true);
+		this.turret.shape.x = -this.height * 0.5;
+
+		this.turret.fireCounter = 0;
+		this.turret.fireThreshold = 30;
 	}
 	this.shape.regX = this.width * 0.5;
 	this.shape.regY = this.height * 0.5;
 	this.shape.rotation = 90;
 	
 	this.container.addChild(this.shape);
+
+	//add turret to tail
+	if(this.turret) {
+		this.container.addChild(this.turret.shape);
+	}
 
 	this.segmentAnchorDistance = this.height * 0.375;
 
@@ -104,6 +117,13 @@ CentipedeSegment.prototype.update = function(options) {
 		(this.segmentAnchorDistance * trigTable.cos(this.container.rotation));
 	this.segmentAnchor.y = this.position.y - 
 		(this.segmentAnchorDistance * trigTable.sin(this.container.rotation));
+
+	if(this.turret) {
+		this.turret.update(options);
+
+		//offset turret rotation relative to parent
+		this.turret.shape.rotation -= this.deg; 
+	}
 };
 
 /**

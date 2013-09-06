@@ -142,4 +142,20 @@ CentipedeHead.prototype.setPhysics = function() {
 	this.body.SetAwake(true);
 };
 
+/**
+*@public
+*/
+CentipedeHead.prototype.onCollide = function(collisionObject, options) {
+
+	if(collisionObject instanceof Projectile) {
+		Enemy.prototype.onCollide.call(this, collisionObject, options);
+		return;
+	}
+
+	if(collisionObject instanceof Player) {
+		
+		return;
+	}
+};
+
 goog.exportSymbol('CentipedeHead', CentipedeHead);

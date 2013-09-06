@@ -3,6 +3,8 @@ goog.provide('EnemyCentipede');
 goog.require('Enemy');
 goog.require('CentipedeHead');
 goog.require('CentipedeSegment');
+goog.require('EnemyCentipedeSeekingState');
+goog.require('EnemyCentipedeRetreatingState');
 
 /**
 *@constructor
@@ -52,8 +54,7 @@ EnemyCentipede.prototype.update = function(options) {
 			i = -1;
 
 		//update current state
-		//this.stateMachine.update(options);
-		this.updateSeeking(options);
+		this.stateMachine.update(options);
 	}
 };
 
@@ -62,7 +63,14 @@ EnemyCentipede.prototype.update = function(options) {
 *@public
 */
 EnemyCentipede.prototype.clear = function() {
-	
+	//unlisten the dead target piece
+	// goog.events.unlisten(
+	// 	piece, 
+	// 	EventNames.ENEMY_KILLED, 
+	// 	this.onPieceKilled, 
+	// 	false, 
+	// 	this
+	// );
 };
 
 /**
@@ -95,7 +103,8 @@ EnemyCentipede.prototype.updateSeeking = function(options) {
 *@private
 */
 EnemyCentipede.prototype.updateSegments = function(options) {
-	var i = -1,
+	var target = options.target,
+		i = -1,
 		length = this.arrSegments.length,
 		segment,
 		prevSegment,
@@ -108,6 +117,7 @@ EnemyCentipede.prototype.updateSegments = function(options) {
 		else 		prevSegment = this.arrSegments[i - 1];
 
 		segment.update({ 
+			target: target,
 			prevSegment: prevSegment 
 		});
 	}
@@ -210,30 +220,25 @@ EnemyCentipede.prototype.setPhysics = function() {
 };
 
 EnemyCentipede.prototype.setStateMachine = function() {
-	// this.stateMachine = new StateMachine();
+	this.stateMachine = new StateMachine();
 
-	// this.stateMachine.addState(
-	// 	EnemyCopterSeekingState.KEY,
-	// 	new EnemyCopterSeekingState(this),
-	// 	[ EnemyCopterFiringState.KEY ]
-	// );
+	this.stateMachine.addState(
+		EnemyCentipedeSeekingState.KEY,
+		new EnemyCentipedeSeekingState(this),
+		[ EnemyCentipedeRetreatingState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		EnemyCentipedeRetreatingState.KEY,
+		new EnemyCentipedeRetreatingState(this),
+		[ EnemyCentipedeSeekingState.KEY ]
+	);
 	
-	// this.stateMachine.setState(State.KEY);
+	this.stateMachine.setState(EnemyCentipedeSeekingState.KEY);
 };
 
 //EVENT HANDLERS
 EnemyCentipede.prototype.onPieceKilled = function(e) {
-	var piece = e.target; //either head or segment
-
-	//unlisten the dead target piece
-	// goog.events.unlisten(
-	// 	piece, 
-	// 	EventNames.ENEMY_KILLED, 
-	// 	this.onPieceKilled, 
-	// 	false, 
-	// 	this
-	// );
-
 	if(++this.numPiecesKilled >= this.piecesTotal) {
 		this.kill();
 	}
