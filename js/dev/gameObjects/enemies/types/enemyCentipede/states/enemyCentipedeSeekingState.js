@@ -18,11 +18,7 @@ EnemyCentipedeSeekingState.KEY = "seeking";
 *@public
 */
 EnemyCentipedeSeekingState.prototype.enter = function(options) {
-	// var self = this;
-
-	// setTimeout(function() {
-	// 	self.enemy.stateMachine.setState(EnemyCopterSeekingState.KEY);
-	// }, 2000);
+	
 };
 
 /**

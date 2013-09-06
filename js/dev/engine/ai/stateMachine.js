@@ -17,12 +17,12 @@ StateMachine = function() {
 /**
 *@public
 */
-StateMachine.prototype.setState = function(key) {
+StateMachine.prototype.setState = function(key, options) {
 	//init
 	if (!this.currentKey) {
 		this.currentKey = key;
 		this.currentState = this.arrStates[this.currentKey].state;
-		this.currentState.enter();
+		this.currentState.enter(options);
 		return;
 	}
 	
@@ -34,7 +34,7 @@ StateMachine.prototype.setState = function(key) {
 	
 	//to allowed
 	if (this.arrStates[this.currentKey].to.indexOf(key) != -1) {
-		this.currentState.exit();
+		this.currentState.exit(options);
 		
 		this.previousKey = this.currentKey;
 		this.currentKey = key;
@@ -45,8 +45,8 @@ StateMachine.prototype.setState = function(key) {
 		return;
 	}
 	
-	//if a state change is valid, transition into the new IState...
-	this.currentState.enter();
+	//if a state change is valid, transition into the new State...
+	this.currentState.enter(options);
 };
 
 /**

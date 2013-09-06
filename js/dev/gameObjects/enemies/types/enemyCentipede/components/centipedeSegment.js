@@ -151,7 +151,7 @@ CentipedeSegment.prototype.setPhysics = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef(),
 		scale = app.physicsScale,
-		w = (this.width * 0.5) / scale,
+		w = (this.width * 0.25) / scale,
 		h = (this.height * 0.5) / scale;
 	
 	fixDef.density = 1.0;
@@ -168,6 +168,21 @@ CentipedeSegment.prototype.setPhysics = function() {
 	this.body.CreateFixture(fixDef);
 	this.body.SetUserData(this);
 	this.body.SetAwake(true);
+};
+
+/**
+*@public
+*/
+CentipedeSegment.prototype.onCollide = function(collisionObject, options) {
+
+	if(collisionObject instanceof Projectile) {
+		Enemy.prototype.onCollide.call(this, collisionObject, options);
+		return;
+	}
+
+	// if(collisionObject instanceof PlayerTank) {
+	// 	goog.events.dispatchEvent(this, this.collisionEvent);
+	// }
 };
 
 goog.exportSymbol('CentipedeSegment', CentipedeSegment);

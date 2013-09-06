@@ -18,11 +18,12 @@ EnemyCentipedeRetreatingState.KEY = "retreating";
 *@public
 */
 EnemyCentipedeRetreatingState.prototype.enter = function(options) {
-	// var self = this;
+	var deg = Math.randomInRange(0, 360),
+		trigTable = app.trigTable;
 
-	// setTimeout(function() {
-	// 	self.enemy.stateMachine.setState(EnemyCopterSeekingState.KEY);
-	// }, 2000);
+	//Set retreat target to a random spot with a radius of screen dimensions
+	this.enemy.retreatTarget.x = this.enemy.position.x + (trigTable.cos(deg) * Constants.WIDTH);
+	this.enemy.retreatTarget.y = this.enemy.position.y + (trigTable.sin(deg) * Constants.HEIGHT);
 };
 
 /**

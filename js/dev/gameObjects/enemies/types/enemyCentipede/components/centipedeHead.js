@@ -26,6 +26,8 @@ CentipedeHead = function() {
 
 	this.headAnimUtil = null;
 
+	this.collisionEvent = new goog.events.Event(EventNames.COLLISION, this);
+
 	this.init();
 };
 
@@ -77,8 +79,8 @@ CentipedeHead.prototype.update = function(options) {
 
 	if(createjs.Ticker.getTicks() % 5 == 0) {
 		rad = Math.atan2(
-			target.position.y - this.position.y, 
-			target.position.x - this.position.x
+			target.y - this.position.y, 
+			target.x - this.position.x
 		);
 
 		this.deg = Math.radToDeg(rad);
@@ -152,9 +154,8 @@ CentipedeHead.prototype.onCollide = function(collisionObject, options) {
 		return;
 	}
 
-	if(collisionObject instanceof Player) {
-		
-		return;
+	if(collisionObject instanceof PlayerTank) {
+		goog.events.dispatchEvent(this, this.collisionEvent);
 	}
 };
 
