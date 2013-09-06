@@ -25,12 +25,12 @@ AssetsProxy = function() {
 	/**
 	*Cache an array of JSON instances mapped to arrSpriteSheet
 	*--Must map to same indices as respective img files--
+	*master compiled spritesheet is used in prod, individual files in dev
     *@type {Array.<SpriteSheet>}
     */
 	this.arrSpriteSheetData = [
 		'assets/finished/tankBase.json',
 		'assets/finished/enemyTankBase.json',
-		'assets/finished/bladeProjectile.json',
 		'assets/finished/vulcanTurret.json',
 		'assets/finished/spreadTurret.json',
 		'assets/finished/railTurret.json',
@@ -39,7 +39,8 @@ AssetsProxy = function() {
 		'assets/finished/copter.json',
 		'assets/finished/centipedeHead.json',
 		'assets/finished/centipedeSegment.json',
-		'assets/finished/centipedeTail.json'
+		'assets/finished/centipedeTail.json'//,
+		//'assets/finished/master.json'
 	];
 
 	/**
@@ -50,7 +51,6 @@ AssetsProxy = function() {
 	this.arrManifest = [
 		{id: "tankBase",			src: "assets/finished/tankBase.png"},
 		{id: "enemyTankBase",		src: "assets/finished/enemyTankBase.png"},
-		{id: "bladeProjectile",		src: "assets/finished/bladeProjectile.png"},
 		{id: "vulcanTurret",		src: "assets/finished/vulcanTurret.png"},
 		{id: "spreadTurret",		src: "assets/finished/spreadTurret.png"},
 		{id: "railTurret",			src: "assets/finished/railTurret.png"},
@@ -59,7 +59,8 @@ AssetsProxy = function() {
 		{id: "copter",				src: "assets/finished/copter.png"},
 		{id: "centipedeHead",		src: "assets/finished/centipedeHead.png"},
 		{id: "centipedeSegment",	src: "assets/finished/centipedeSegment.png"},
-		{id: "centipedeTail",		src: "assets/finished/centipedeTail.png"}
+		{id: "centipedeTail",		src: "assets/finished/centipedeTail.png"}//,
+		//{id: "master",				src: "assets/finished/master.png"}
 	];
 
 	/**
@@ -78,10 +79,10 @@ AssetsProxy.prototype.load = function() {
 	var proxy = this;
 
 	//event handling
-	this.queue.addEventListener("complete", function(e){ proxy.onComplete(e); });
-	this.queue.addEventListener("progress", function(e){ proxy.onProgress(e); });
-	this.queue.addEventListener("fileload", function(e){ proxy.onFileLoad(e); });
-	this.queue.addEventListener("error", function(e){ proxy.onError(e); });
+	this.queue.addEventListener("complete", function(e) { proxy.onComplete(e); });
+	this.queue.addEventListener("progress", function(e) { proxy.onProgress(e); });
+	this.queue.addEventListener("fileload", function(e) { proxy.onFileLoad(e); });
+	this.queue.addEventListener("error", function(e) { proxy.onError(e); });
 	
 	//install plug-ins prior to any file loading dependent on that plug-in
 	this.queue.installPlugin(createjs.Sound); //sound

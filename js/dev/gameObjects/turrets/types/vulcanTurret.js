@@ -32,7 +32,7 @@ VulcanTurret.prototype.init = function() {
 	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["vulcanTurret"]);
 	this.shape.regX = 16;
 	this.shape.regY = 44;
-	this.shape.gotoAndStop(0);
+	this.shape.gotoAndStop("vulcanTurret");
 
 	this.turretAnimUtil = new AnimationUtility("vulcanTurret", this.shape, 2);
 	this.turretAnimUtil.loop(true);

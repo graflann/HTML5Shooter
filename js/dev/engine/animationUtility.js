@@ -15,9 +15,11 @@ AnimationUtility = function(name, bmpAnimation, frequency) {
 
 	this.animation = this.spriteSheet.getAnimation(this.name);
 
-	this.currentFrame = 0;
+	this.minFrame = this.animation.frames[0];
 
-	this.maxFrames = this.spriteSheet.getNumFrames(this.name);
+	this.maxFrame = this.animation.frames[this.animation.frames.length - 1];
+
+	this.currentFrame = this.minFrame;
 
 	this.isPlaying = false;
 
@@ -37,8 +39,8 @@ AnimationUtility.prototype.update = function() {
 	if(this.isPlaying && createjs.Ticker.getTicks() % this.frequency == 0) {
 		this.currentFrame++;
 
-		if(this.currentFrame >= this.maxFrames) {
-			this.currentFrame = 0;
+		if(this.currentFrame > this.maxFrame) {
+			this.currentFrame = this.minFrame;
 
 			if(!this.isLooping) {
 				this.stop();
@@ -60,7 +62,7 @@ AnimationUtility.prototype.play = function() {
 *@public
 */
 AnimationUtility.prototype.stop = function(currentFrame) {
-	this.currentFrame = currentFrame || 0;
+	this.currentFrame = currentFrame || this.minFrame;
 
 	this.isPlaying = false;
 

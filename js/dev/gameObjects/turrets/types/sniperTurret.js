@@ -38,7 +38,7 @@ SniperTurret.prototype.init = function() {
 	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["railTurret"]);
 	this.shape.regX = 16;
 	this.shape.regY = 73;
-	this.shape.gotoAndStop(0);
+	this.shape.gotoAndStop("railTurret");
 
 	this.turretAnimUtil = new AnimationUtility("railTurret", this.shape, 3);
 
