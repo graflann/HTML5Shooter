@@ -9,7 +9,8 @@ ProjectileTypes = {
     GRENADE: 	'grenade',
     BLADE: 		'blade',
     SNIPER: 	'sniper',
-    HOMING: 	'homing'
+    HOMING: 	'homing',
+    ENEMY: 		'enemy',
 };
 
 goog.exportSymbol('ProjectileTypes', ProjectileTypes);

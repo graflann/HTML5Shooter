@@ -155,7 +155,7 @@ EnemyTank.prototype.setIsAlive = function(value) {
 };
 
 EnemyTank.prototype.setTurret = function() {
-	var TurretClass = TurretClasses[this.turretType];
+	var TurretClass = TurretClasses[this.turretType + "Vulcan"];
 
 	this.turret = new TurretClass(this.color, this.projectileSystem, true);
 	this.turret.shape.x = this.width * 0.5;

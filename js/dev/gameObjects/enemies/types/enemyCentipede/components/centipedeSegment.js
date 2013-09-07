@@ -94,35 +94,37 @@ CentipedeSegment.prototype.init = function() {
 *@public
 */
 CentipedeSegment.prototype.update = function(options) {
-	var prevSegment = options.prevSegment,
-		rad = 0,
-		trigTable = app.trigTable;
+	if(this.isAlive) {
+		var prevSegment = options.prevSegment,
+			rad = 0,
+			trigTable = app.trigTable;
 
-	if(createjs.Ticker.getTicks() % 5 == 0) {
-		rad = Math.atan2(
-			prevSegment.segmentAnchor.y - this.position.y, 
-			prevSegment.segmentAnchor.x - this.position.x 
-		);
+		if(createjs.Ticker.getTicks() % 5 == 0) {
+			rad = Math.atan2(
+				prevSegment.segmentAnchor.y - this.position.y, 
+				prevSegment.segmentAnchor.x - this.position.x 
+			);
 
-		this.deg = Math.radToDeg(rad);
-	}
+			this.deg = Math.radToDeg(rad);
+		}
 
-	this.container.x += (this.velocity.x * trigTable.cos(this.deg));
-	this.container.y += (this.velocity.y * trigTable.sin(this.deg));
+		this.container.x += (this.velocity.x * trigTable.cos(this.deg));
+		this.container.y += (this.velocity.y * trigTable.sin(this.deg));
 
-	this.setPosition(this.container.x, this.container.y);
-	this.container.rotation = this.deg;
+		this.setPosition(this.container.x, this.container.y);
+		this.container.rotation = this.deg;
 
-	this.segmentAnchor.x = this.position.x - 
-		(this.segmentAnchorDistance * trigTable.cos(this.container.rotation));
-	this.segmentAnchor.y = this.position.y - 
-		(this.segmentAnchorDistance * trigTable.sin(this.container.rotation));
+		this.segmentAnchor.x = this.position.x - 
+			(this.segmentAnchorDistance * trigTable.cos(this.container.rotation));
+		this.segmentAnchor.y = this.position.y - 
+			(this.segmentAnchorDistance * trigTable.sin(this.container.rotation));
 
-	if(this.turret) {
-		this.turret.update(options);
+		if(this.turret) {
+			this.turret.update(options);
 
-		//offset turret rotation relative to parent
-		this.turret.shape.rotation -= this.deg; 
+			//offset turret rotation relative to parent
+			this.turret.shape.rotation -= this.deg; 
+		}
 	}
 };
 

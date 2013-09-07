@@ -1,41 +1,35 @@
-goog.provide('VulcanProjectile');
+goog.provide('EnemyProjectile');
 
 goog.require('Projectile');
 
 /**
 *@constructor
-*Ammo for Turret instaces
+*Ammo for Turret instances
 */
-VulcanProjectile = function(colors, categoryBits, maskBits) {
+EnemyProjectile = function(colors, categoryBits, maskBits) {
 	Projectile.call(this, colors, categoryBits, maskBits);
 
 	/**
 	*physical body added to Box2D physicsWorld
 	*@type {}
 	*/
-	this.velocityMod = 192;
+	this.velocityMod = 32;
 	
 	this.init();
 };
 
-goog.inherits(VulcanProjectile, Projectile)
+goog.inherits(EnemyProjectile, Projectile)
 
 /**
 *@override
 *@public
 */
-VulcanProjectile.prototype.init = function() {
+EnemyProjectile.prototype.init = function() {
 	this.shape = new createjs.Shape();
-	//this.shape.graphics.ss(2).s(this.color).f("#000").dc(0, 0, 2);
-	this.shape.graphics
-		.ss(4, "round")
-		.ls([this.arrColors[0], this.arrColors[1]], [0.5, 1], 0, 0, 0, 32)
-		.mt(0, 0)
-		.lt(0, 32);
-		
+	this.shape.graphics.ss(2).s(this.arrColors[0]).f("#000").dc(0, 0, 3);
 	this.shape.alpha = 0;
 	this.shape.snapToPixel = true;
-	this.shape.cache(-2, 0, 2, 32);
+	this.shape.cache(-4, -4, 8, 8);
 	
 	this.setPhysics();
 
@@ -46,11 +40,10 @@ VulcanProjectile.prototype.init = function() {
 *@override
 *@public
 */
-VulcanProjectile.prototype.update = function(options) {
+EnemyProjectile.prototype.update = function(options) {
 	if(this.isAlive) {
 		var scale = app.physicsScale;
 
-		//this.shape.rotation = this.body.GetAngle() * (180 / Math.PI);
 		this.shape.x = this.body.GetWorldCenter().x * scale;
 		this.shape.y = this.body.GetWorldCenter().y * scale;
 
@@ -62,7 +55,7 @@ VulcanProjectile.prototype.update = function(options) {
 	}
 };
 
-VulcanProjectile.prototype.kill = function() {
+EnemyProjectile.prototype.kill = function() {
 	if(this.isAlive) {
 		this.setIsAlive(false);
 		this.shape.getStage().removeChild(this.shape);
@@ -74,7 +67,7 @@ VulcanProjectile.prototype.kill = function() {
 /**
 *@private
 */
-VulcanProjectile.prototype.setPhysics = function() {
+EnemyProjectile.prototype.setPhysics = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef();
 	

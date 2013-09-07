@@ -6,6 +6,7 @@ goog.require('GrenadeProjectile');
 goog.require('BladeProjectile');
 goog.require('SniperProjectile');
 goog.require('HomingProjectile');
+goog.require('EnemyProjectile');
 
 /**
  * Exposes available Projectile classes by String
@@ -17,7 +18,8 @@ ProjectileClasses = {
 	grenade: GrenadeProjectile,
 	blade: BladeProjectile,
 	sniper: SniperProjectile,
-	homing: HomingProjectile
+	homing: HomingProjectile,
+	enemy: EnemyProjectile,
 
    /*kazan: 	KazanProjectile, 	volcano
    jihsin: 		JishinProjectile, 	earthquake

@@ -69,32 +69,34 @@ CentipedeHead.prototype.init = function() {
 *@public
 */
 CentipedeHead.prototype.update = function(options) {
-	var target = options.target,
-		trigTable = app.trigTable,
-		worldCenter = this.body.GetWorldCenter(),
-		rad = 0;
+	if(this.isAlive) {
+		var target = options.target,
+			trigTable = app.trigTable,
+			worldCenter = this.body.GetWorldCenter(),
+			rad = 0;
 
-	//zero out any linear velocity
-	this.body.SetLinearVelocity(app.vecZero);
+		//zero out any linear velocity
+		this.body.SetLinearVelocity(app.vecZero);
 
-	if(createjs.Ticker.getTicks() % 5 == 0) {
-		rad = Math.atan2(
-			target.y - this.position.y, 
-			target.x - this.position.x
-		);
+		if(createjs.Ticker.getTicks() % 5 == 0) {
+			rad = Math.atan2(
+				target.y - this.position.y, 
+				target.x - this.position.x
+			);
 
-		this.deg = Math.radToDeg(rad);
+			this.deg = Math.radToDeg(rad);
 
-		this.force.x = this.velocity.x * trigTable.cos(this.deg);
-		this.force.y = this.velocity.y * trigTable.sin(this.deg);
+			this.force.x = this.velocity.x * trigTable.cos(this.deg);
+			this.force.y = this.velocity.y * trigTable.sin(this.deg);
+		}
+
+		this.body.ApplyForce(this.force, worldCenter);
+		this.container.rotation = this.deg;
+		 
+		this.setPosition(this.body.GetPosition());
+
+		this.headAnimUtil.update();
 	}
-
-	this.body.ApplyForce(this.force, worldCenter);
-	this.container.rotation = this.deg;
-	 
-	this.setPosition(this.body.GetPosition());
-
-	this.headAnimUtil.update();
 };
 
 /**

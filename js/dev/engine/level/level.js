@@ -26,27 +26,27 @@ Level = function(options) {
 		enemies: {
 			enemyDrone: {
 				max: 64,
-				projectileSystem: "vulcan"
+				projectileSystem: "ground"
 			},
 
 			enemyTank: {
 				max: 1,
-				projectileSystem: "vulcan"
-			},
-
-			enemyTurret: {
-				max: 21,
-				projectileSystem: "vulcan"
-			},
-
-			enemyCopter: {
-				max: 4,
-				projectileSystem: "vulcan"
+				projectileSystem: "ground"
 			},
 
 			enemyCentipede: {
 				max: 1,
-				projectileSystem: "vulcan"
+				projectileSystem: "ground"
+			},
+
+			enemyTurret: {
+				max: 21,
+				projectileSystem: "air"
+			},
+
+			enemyCopter: {
+				max: 4,
+				projectileSystem: "air"
 			}
 		},
 		waves : [
@@ -362,15 +362,23 @@ Level.prototype.updateSceneObjects = function(options) {
 *@private
 */
 Level.prototype.setProjectiles = function() {
-	this.arrEnemyProjectileSystems[ProjectileTypes.VULCAN] = new ProjectileSystem(
-		ProjectileTypes.VULCAN, 
-		[Constants.YELLOW, Constants.RED],
+	//Ground enemy pool
+	this.arrEnemyProjectileSystems["ground"] = new ProjectileSystem(
+		ProjectileTypes.ENEMY, 
+		[Constants.RED],
 		32,
-		CollisionCategories.GROUND_ENEMY_PROJECTILE | CollisionCategories.AIR_ENEMY_PROJECTILE,
-		CollisionCategories.PLAYER
+		CollisionCategories.GROUND_ENEMY_PROJECTILE,
+		CollisionCategories.PLAYER | CollisionCategories.SCENE_OBJECT
 	);
 
-	this.arrEnemyProjectileSystems[ProjectileTypes.VULCAN].setVelocityMod(32);
+	//Air enemy pool
+	this.arrEnemyProjectileSystems["air"] = new ProjectileSystem(
+		ProjectileTypes.ENEMY, 
+		[Constants.YELLOW],
+		32,
+		CollisionCategories.AIR_ENEMY_PROJECTILE,
+		CollisionCategories.PLAYER
+	);
 };
 
 /**
