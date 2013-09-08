@@ -55,18 +55,29 @@ LayerSystem.prototype.update = function() {
 	var layers = this.arrLayers,
 		key;
 
+	//update all createjs.Stage instances
 	for(key in layers) {
 		this.getStage(key).update();
 	}
 
-	this.getDebugStage().update();
+	//this.getDebugStage().update();
 };
 
 /**
 *@public
 */
 LayerSystem.prototype.clear = function() {
-	
+	var key;
+
+	for(key in this.arrLayers) {
+		this.remove(key);
+	}
+	this.arrLayers.length = 0;
+
+	if(this.debugLayer) {
+		this.debugLayer.clear();
+		this.debugLayer = null;
+	}
 };
 
 /**
@@ -93,7 +104,8 @@ LayerSystem.prototype.addDebug = function() {
 LayerSystem.prototype.remove = function(id) {
 	this.arrLayers[id].clear();
 	this.arrLayers[id] = null;
-	this.arrLayers.splice(id, 1);
+	//this.arrLayers.splice(id, 1);
+	delete this.arrLayers[id];
 };
 
 /**

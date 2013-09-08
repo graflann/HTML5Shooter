@@ -6,16 +6,16 @@ goog.provide('Grid');
 *@param {Number} 	unit
 *@param {String} 	color
 */
-Grid = function(unit, color)
+Grid = function(w, h, unit, color)
 {
 	/**
 	*@type  {Number}
 	*/
 	this.unit = unit;
 
-	this.width = Constants.WIDTH * 4;
+	this.width = w; //Constants.WIDTH * 4;
 
-	this.height = Constants.HEIGHT * 2;
+	this.height = h; //Constants.HEIGHT * 2;
 	
 	/**
 	*@type  {String}
@@ -36,8 +36,8 @@ Grid = function(unit, color)
 Grid.prototype.init = function()
 {
 	var i = 0,
-		w = (Constants.WIDTH * 4) / this.unit,
-		h = (Constants.HEIGHT * 2) / this.unit,
+		w = this.width / this.unit,
+		h = this.height / this.unit,
 		x = 0,
 		y = 0;
 		
@@ -64,5 +64,6 @@ Grid.prototype.clear = function()
 {
 	this.shape.getStage().removeChild(this.shape);
 	
+	this.shape.graphics.clear();
 	this.shape = null;
 };

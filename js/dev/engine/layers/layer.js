@@ -65,16 +65,18 @@ Layer.prototype.update = function(options) {
 *@public
 */
 Layer.prototype.clear = function() {
-	this.context = null;
-
 	this.stage.removeAllChildren();
 	this.stage.removeAllEventListeners();
 	this.stage = null;
 
+	this.context = null;
+
 	this.selector.remove();
 	this.selector = null;
 
-	delete this.el;
+	this.el = null;
+
+	this.parent = null;
 };
 
 /**

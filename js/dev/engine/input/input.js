@@ -6,12 +6,15 @@ goog.require('goog.events');
 
 goog.require('KeyCode');
 goog.require('GamepadCode');
+goog.require('InputConfiguration');
 
 /**
 *@constructor
 *Handles key input
 */
 Input = function() {	
+	this.configuration = InputConfiguration.DEFAULT;
+
 	/**
 	*type {Array.<Boolean>}
 	*/

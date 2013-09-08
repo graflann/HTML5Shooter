@@ -8,12 +8,12 @@ WeaponSelector = function(name) {
 	this.name = name.toString();
 
 	/**
-	*@type {Shape}
+	*@type {createjs.Container}
 	*/
 	this.container = null;
 
 	/**
-	*@type {Shape}
+	*@type {createjs.Shape}
 	*/
 	this.background = null;
 

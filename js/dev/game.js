@@ -13,7 +13,7 @@ goog.require('GamepadCode');
 
 /**
 *@constructor
-*Game is the root-level of the entire piece
+*Game is the root-level of the entire application
 */
 Game = function() {
 	/**
@@ -51,6 +51,7 @@ Game.prototype.init = function() {
 	this.factory = new PanelFactory();
 
 	this.setPanel(PanelTypes.PLAY_PANEL);
+	//this.setPanel(PanelTypes.OPTIONS_PANEL);
 		
 	//true uses updated requestAnimationFrame instead of less optimized setTimeout
 	//updates @ 60fps (this may change pending performance)
@@ -63,59 +64,24 @@ Game.prototype.init = function() {
 		//main game update loop
 		self.update();
 	});
-
-	// var bmpa = new createjs.BitmapAnimation(app.proxy.arrSpriteSheet["tankBase"]);
-	// bmpa.play();
-	// app.stage.addChild(bmpa);
-	
-	//setInterval(function(){
-		//var key = "";
-		//
-		//self.panelToggle = !self.panelToggle;
-		//
-		//(self.panelToggle) ? key = PanelTypes.TITLE_PANEL : key = PanelTypes.PLAY_PANEL;
-		//
-		//self.setPanel(key);
-	//},
-	//3000);
 };
 
 /**
 *@private
 */
 Game.prototype.update = function() {
-	var input = app.input;
-
 	this.currentPanel.update();
-
-	if(input.isKeyPressedOnce(KeyCode.F2)) {
-		app.physicsDebug = !app.physicsDebug;
-
-		this.setDebug();
-	}
-
-	input.checkPrevKeyDown([
-		KeyCode.F2,
-	]);
 };
 
 /**
 *@private
 */
 Game.prototype.setPanel = function(key) {
-	if(this.currentPanel != null)
-	{
+	if(this.currentPanel) {
 		this.currentPanel.clear();
 	}
 	
 	this.currentPanel = this.factory.getPanel(key);
-};
-
-/**
-*@private
-*/
-Game.prototype.setDebug = function() {
-	app.layers.setDebug(app.physicsDebug);
 };
 
 //EVENT HANDLING////////////////////////////////////////////////////////
@@ -132,6 +98,8 @@ Game.prototype.onLoadComplete = function(e) {
 /**
 *@private
 */
-Game.prototype.onSetPanel = function(game, key){
+Game.prototype.onSetPanel = function(e) {
+	var key = e.target.key;
+
 	game.setPanel(key);
 }

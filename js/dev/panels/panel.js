@@ -6,10 +6,9 @@ goog.require('goog.events');
 
 /**
 *@constructor
-*Where the primary play activity takes place
+*Primary / root rendering Object
 */
-Panel = function()
-{
+Panel = function() {
 	
 };
 
@@ -18,8 +17,7 @@ goog.inherits(Panel, goog.events.EventTarget);
 /**
 *@protected
 */
-Panel.prototype.init = function()
-{
+Panel.prototype.init = function() {
 	
 };
 
@@ -27,16 +25,14 @@ Panel.prototype.init = function()
 *Updates the panel according to game frame rate
 *@protected
 */
-Panel.prototype.update = function()
-{
-	
+Panel.prototype.update = function() {
+	app.layers.update();
 };
 
 /**
 *Roasts the panel
 *@protected
 */
-Panel.prototype.clear = function()
-{
-	
+Panel.prototype.clear = function() {
+	app.layers.clear();
 };

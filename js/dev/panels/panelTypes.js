@@ -5,7 +5,8 @@ goog.provide('PanelTypes');
 */
 PanelTypes = {
     PLAY_PANEL:		"PlayPanel",
-    TITLE_PANEL:	"TitlePanel"
+    TITLE_PANEL:	"TitlePanel",
+    OPTIONS_PANEL:	"OptionsPanel"
 };
 
 goog.exportSymbol('PanelTypes', PanelTypes);

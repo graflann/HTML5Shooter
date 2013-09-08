@@ -106,12 +106,12 @@ PlayPanel.prototype.init = function() {
 */
 PlayPanel.prototype.update = function() {
 	var options = {
-		player: this.player,
-		target: this.player,
-		arrEnemySystems: this.level.arrEnemySystems,
-		camera: this.camera,
-		hto: this.hto,
-		homingList: this.collisionManager.homingList
+		player: 			this.player,
+		target: 			this.player,
+		arrEnemySystems: 	this.level.arrEnemySystems,
+		camera: 			this.camera,
+		hto: 				this.hto,
+		homingList: 		this.collisionManager.homingList
 	};
 
 	this.updatePlayer(options);
@@ -121,6 +121,17 @@ PlayPanel.prototype.update = function() {
 	this.camera.update();
 	this.updateHud(options);
 	this.updateLayers();
+
+	//toggles debug draw mode
+	if(input.isKeyPressedOnce(KeyCode.F2)) {
+		app.physicsDebug = !app.physicsDebug;
+
+		this.setDebug();
+	}
+
+	input.checkPrevKeyDown([
+		KeyCode.F2
+	]);
 };
 
 /**
@@ -144,6 +155,13 @@ PlayPanel.prototype.clear = function() {
 	// }
 
 	this.arrEnemies = null;
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.setDebug = function() {
+	app.layers.setDebug(app.physicsDebug);
 };
 
 /**
@@ -202,7 +220,7 @@ PlayPanel.prototype.updateHud = function(options) {
 *@private
 */
 PlayPanel.prototype.updateLayers = function() {
-	app.layers.update();
+	Panel.prototype.update.call(this);
 };
 
 PlayPanel.prototype.setLayers = function() {
@@ -223,7 +241,12 @@ PlayPanel.prototype.setLayers = function() {
 
 	app.layers.getStage(LayerTypes.BACKGROUND).addChild(this.background);
 	
-	this.grid = new Grid(Constants.UNIT, Constants.WHITE);
+	this.grid = new Grid(
+		Constants.WIDTH * 4, 
+		Constants.HEIGHT * 2, 
+		Constants.UNIT, 
+		Constants.WHITE
+	);
 	app.layers.getStage(LayerTypes.MAIN).addChild(this.grid.shape);
 
 	this.hud = new Hud();

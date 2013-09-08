@@ -4,10 +4,9 @@ goog.require('Panel');
 
 /**
 *@constructor
-*Where the primary play activity takes place
+*Title screen
 */
-TitlePanel = function()
-{
+TitlePanel = function() {
 	Panel.call(this);
 	
 	/**
@@ -25,8 +24,7 @@ goog.inherits(TitlePanel, Panel);
 *@override
 *@protected
 */
-TitlePanel.prototype.init = function()
-{	
+TitlePanel.prototype.init = function() {	
     this.shape = new Shape();
 	this.shape.graphics.setStrokeStyle(1);
 	this.shape.graphics.beginStroke(Graphics.getRGB(0,0,0))
@@ -43,8 +41,7 @@ TitlePanel.prototype.init = function()
 *@override
 *@protected
 */
-TitlePanel.prototype.update = function()
-{
+TitlePanel.prototype.update = function() {
 	
 };
 
@@ -52,8 +49,7 @@ TitlePanel.prototype.update = function()
 *@override
 *@protected
 */
-TitlePanel.prototype.clear = function()
-{
+TitlePanel.prototype.clear = function() {
 	app.stage.removeChild(this.shape);
 	this.shape = null;
 };
