@@ -141,7 +141,7 @@ PlayPanel.prototype.update = function() {
 PlayPanel.prototype.clear = function() {
 	var i = this.arrEnemies.length;
 	
-	//TODO: Clear out the muthafuckin layers dawg
+	//TODO: Clear out layers
 	// app.layers.getStage(LayerTypes.MAIN).removeChild(this.background);
 	// this.background = null;
 	
