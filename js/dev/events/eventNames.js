@@ -12,6 +12,7 @@ EventNames = {
     ENEMY_KILLED:           'enemyKilled',
     COLLISION:              'collision', 
     WEAPON_SELECT: 			'weaponSelect',
+    OPTION_SELECT:          'optionSelect', 
     ADD_HOMING_OVERLAY: 	'addHomingOverlay',
     REMOVE_HOMING_OVERLAY: 	'removeHomingOverlay',
     NEXT:               	'next',

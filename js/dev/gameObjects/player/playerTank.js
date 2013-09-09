@@ -6,6 +6,7 @@ goog.require('TurretClasses');
 goog.require('TurretTypes');
 goog.require('KeyCode');
 goog.require('GamepadCode');
+goog.require('InputConfig');
 goog.require('WeaponMap');
 goog.require('EventNames');
 
@@ -172,7 +173,7 @@ PlayerTank.prototype.update = function(options) {
 		
 		//HOMING
 		//hold to init homing target overlay
-		if(input.isButtonDown(GamepadCode.BUTTONS.Y) && !this.isHoming) {
+		if(input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && !this.isHoming) {
 			this.isHoming = true;
 
 			//initializes the homing target overlay
@@ -180,7 +181,7 @@ PlayerTank.prototype.update = function(options) {
 		}
 
 		//release to fire if hto is operational
-		if(!input.isButtonDown(GamepadCode.BUTTONS.Y) && this.isHoming) {
+		if(!input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && this.isHoming) {
 			this.isHoming = false;
 
 			//hto is operational so firing may commence
@@ -195,7 +196,7 @@ PlayerTank.prototype.update = function(options) {
 
 		//WEAPON SELECT
 		if(input.isKeyPressedOnce(KeyCode.X) || 
-			input.isButtonPressedOnce(GamepadCode.BUTTONS.X)) {
+			input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.SWITCH])) {
 				
 			this.currentWeaponIndex++;
 

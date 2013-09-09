@@ -1,5 +1,9 @@
 goog.provide('OptionConfigurationRow');
 
+goog.require('goog.events.EventTarget');
+goog.require('goog.events.Event');
+goog.require('goog.events');
+
 /**
 *@constructor
 *OptionText component; highlight if user has focus
@@ -35,10 +39,16 @@ OptionConfigurationRow = function(selectionName, arrOptionNames) {
 
 	this.optionIndex = 0;
 
+	this.prevOptionIndex = this.optionIndex;
+
 	isSelected = false;
+
+	this.optionSelectedEvent = new goog.events.Event(EventNames.OPTION_SELECT, this);
 	
 	this.init();
 };
+
+goog.inherits(OptionConfigurationRow, goog.events.EventTarget);
 
 /**
 *@public
@@ -90,6 +100,7 @@ OptionConfigurationRow.prototype.init = function() {
 	this.container.addChild(this.rightArrow);
 	
 	this.setSelection(false);
+	this.selectOption(0);
 };
 
 /**
@@ -100,10 +111,10 @@ OptionConfigurationRow.prototype.update = function() {
 
 	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_LEFT)) {
 		this.optionIndex--;
-		this.selectOption(this.optionIndex);
+		this.selectOption(this.optionIndex, true);
 	} else if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_RIGHT)) {
 		this.optionIndex++;
-		this.selectOption(this.optionIndex);
+		this.selectOption(this.optionIndex, true);
 	}
 };
 
@@ -112,6 +123,13 @@ OptionConfigurationRow.prototype.update = function() {
 */
 OptionConfigurationRow.prototype.clear = function() {
 	this.text = null;
+};
+
+/**
+*@public
+*/
+OptionConfigurationRow.prototype.getSelection = function() {
+	return this.selectionText.text;
 };
 
 /**
@@ -151,8 +169,9 @@ OptionConfigurationRow.prototype.setSelection = function(value) {
 /**
 *@public
 */
-OptionConfigurationRow.prototype.selectOption = function(index) {
-	var maxIndex = this.arrOptionNames.length - 1;
+OptionConfigurationRow.prototype.selectOption = function(index, isDispatching) {
+	var maxIndex = this.arrOptionNames.length - 1,
+		isDispatching = isDispatching || false;
 
 	//cap selectable index
 	if(index > maxIndex) {
@@ -161,8 +180,15 @@ OptionConfigurationRow.prototype.selectOption = function(index) {
 		index = maxIndex;
 	}
 
-	//acquire and turn on new selection
 	this.optionIndex = index;
 
+	//update option text
 	this.optionText.text = this.arrOptionNames[this.optionIndex];
+
+	//noficiation of option change
+	if(isDispatching) {
+		goog.events.dispatchEvent(this, this.optionSelectedEvent);
+	}
+
+	this.prevOptionIndex = this.optionIndex;
 };

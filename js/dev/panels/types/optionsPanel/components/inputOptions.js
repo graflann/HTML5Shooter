@@ -1,5 +1,9 @@
 goog.provide('InputOptions');
 
+goog.require('goog.events.EventTarget');
+goog.require('goog.events.Event');
+goog.require('goog.events');
+goog.require('InputConfig');
 goog.require('OptionConfigurationRow');
 goog.require('OptionText');
 goog.require('GamepadCode');
@@ -24,6 +28,8 @@ InputOptions = function() {
 	
 	this.init();
 };
+
+goog.inherits(InputOptions, goog.events.EventTarget);
 
 /**
 *@public
@@ -67,11 +73,11 @@ InputOptions.prototype.setOptions = function() {
 		i = 0,
 		arrOptions = [ 
 			"",
-			InputConfiguration.DEFAULT.SHOOT.name,
-			InputConfiguration.DEFAULT.SWITCH.name,
-			InputConfiguration.DEFAULT.ROTATE_LEFT.name,
-			InputConfiguration.DEFAULT.ROTATE_RIGHT.name,
-			InputConfiguration.DEFAULT.HOMING.name
+			InputConfig.BUTTONS.SHOOT,
+			InputConfig.BUTTONS.SWITCH,
+			InputConfig.BUTTONS.ROTATE_LEFT,
+			InputConfig.BUTTONS.ROTATE_RIGHT,
+			InputConfig.BUTTONS.HOMING
 		];
 
 	this.arrOptionRows.push(new OptionConfigurationRow("A", arrOptions));
@@ -94,6 +100,14 @@ InputOptions.prototype.setOptions = function() {
 			prevOptionRow = this.arrOptionRows[i - 1];
 			optionRow.container.y = prevOptionRow.container.y + prevOptionRow.height + 2;
 		}
+
+		goog.events.listen(
+			optionRow, 
+			EventNames.OPTION_SELECT, 
+			this.onOptionSelect, 
+			false, 
+			this
+		);
 	}
 
 	//default to first selection
@@ -126,4 +140,49 @@ InputOptions.prototype.setSelection = function(index) {
 
 	optionRow = this.arrOptionRows[this.currentRowIndex];
 	optionRow.setSelection(true);
+};
+
+InputOptions.prototype.onOptionSelect = function(e) {
+	var targetRow = e.target,
+		optionRow = null,
+		targetText = targetRow.getOption(),
+		optionText = "",
+		length = this.arrOptionRows.length,
+		i = 0;
+
+	// console.log(
+	// 	"Selection: " + targetRow.getSelection() +
+	// 	", Option: " + targetRow.getOption() + 
+	// 	", Option Index: " + targetRow.optionIndex + 
+	// 	", Prev Option Index: " + targetRow.prevOptionIndex
+	// );
+
+	for(i; i < length; i++) {
+		optionRow = this.arrOptionRows[i];
+
+		if(optionRow !== targetRow) {
+			optionText = optionRow.getOption();
+
+			//swap options with a different row upon option change
+			if(optionText === targetText) {
+				optionRow.selectOption(targetRow.prevOptionIndex);
+
+				//reset option text to new option selection
+				optionText = optionRow.getOption();
+
+				//change input config map to point to new button assignments
+				if(targetText !== "") {
+					app.input.config[targetText] = GamepadCode.BUTTONS[targetRow.getSelection()];
+				}
+
+				if(optionText !== "") {
+					app.input.config[optionText] = GamepadCode.BUTTONS[optionRow.getSelection()];
+				}
+
+				console.log(app.input.config);
+				
+				return;
+			}
+		}
+	}
 };

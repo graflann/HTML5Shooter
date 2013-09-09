@@ -105,14 +105,15 @@ PlayPanel.prototype.init = function() {
 *@protected
 */
 PlayPanel.prototype.update = function() {
-	var options = {
-		player: 			this.player,
-		target: 			this.player,
-		arrEnemySystems: 	this.level.arrEnemySystems,
-		camera: 			this.camera,
-		hto: 				this.hto,
-		homingList: 		this.collisionManager.homingList
-	};
+	var input = app.input,
+		options = {
+			player: 			this.player,
+			target: 			this.player,
+			arrEnemySystems: 	this.level.arrEnemySystems,
+			camera: 			this.camera,
+			hto: 				this.hto,
+			homingList: 		this.collisionManager.homingList
+		};
 
 	this.updatePlayer(options);
 	this.updateLevel(options);

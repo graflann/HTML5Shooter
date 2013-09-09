@@ -3,6 +3,7 @@ goog.provide('Turret');
 goog.require('GameObject');
 goog.require('KeyCode');
 goog.require('GamepadCode');
+goog.require('InputConfig');
 
 /**
 *@constructor
@@ -82,22 +83,21 @@ Turret.prototype.manualControl = function() {
 
 	//rotate counter clock-wise
 	if(input.isKeyDown(KeyCode.LEFT) || 
-		input.isButtonDown(GamepadCode.BUTTONS.LB)) /*||
+		input.isButtonDown(input.config[InputConfig.BUTTONS.ROTATE_LEFT])) /*||
 		input.isButtonDown(GamepadCode.BUTTONS.X))*/ {
 		this.shape.rotation -= 5;
 	}
 	
 	//rotate clock-wise
 	if(input.isKeyDown(KeyCode.RIGHT) || 
-		input.isButtonDown(GamepadCode.BUTTONS.RB)) /*||
+		input.isButtonDown(input.config[InputConfig.BUTTONS.ROTATE_RIGHT])) /*||
 		input.isButtonDown(GamepadCode.BUTTONS.B))*/ {
 		this.shape.rotation += 5;
 	}
 	
 	//fire	
 	if(input.isKeyDown(KeyCode.SPACE) || 
-		((input.isButtonDown(GamepadCode.BUTTONS.RT) || 
-		input.isButtonDown(GamepadCode.BUTTONS.A)))) {
+		input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT])) {
 		if(this.fireCounter > this.fireThreshold) {
 			this.fire();
 			this.fireCounter = 0;

@@ -6,14 +6,14 @@ goog.require('goog.events');
 
 goog.require('KeyCode');
 goog.require('GamepadCode');
-goog.require('InputConfiguration');
+goog.require('InputConfig');
 
 /**
 *@constructor
 *Handles key input
 */
 Input = function() {	
-	this.configuration = InputConfiguration.DEFAULT;
+	this.config = [];
 
 	/**
 	*type {Array.<Boolean>}
@@ -69,8 +69,24 @@ goog.inherits(Input, goog.events.EventTarget);
 *@private
 */
 Input.prototype.init = function() {
+	this.setConfig();
 	this.setKeyboard();
 	this.setGamepad();
+};
+
+/**
+ * Sets the default input configuration; this can be reset in options
+ * @return {[type]} [description]
+ */
+Input.prototype.setConfig = function() {
+
+	this.config[InputConfig.BUTTONS.SHOOT] 			= GamepadCode.BUTTONS.A;
+	this.config[InputConfig.BUTTONS.SWITCH] 		= GamepadCode.BUTTONS.X;
+	this.config[InputConfig.BUTTONS.ROTATE_LEFT] 	= GamepadCode.BUTTONS.LB;
+	this.config[InputConfig.BUTTONS.ROTATE_RIGHT] 	= GamepadCode.BUTTONS.RB;
+	this.config[InputConfig.BUTTONS.HOMING] 		= GamepadCode.BUTTONS.Y;
+
+	console.log(this.config);
 };
 
 /**
