@@ -30,8 +30,6 @@ OptionConfigurationRow = function(selectionName, arrOptionNames) {
 	this.leftArrow = null;
 	this.rightArrow = null;
 
-	this.charWidth = 6;
-
 	this.width = 0;
 	this.height = 0;
 
@@ -122,7 +120,18 @@ OptionConfigurationRow.prototype.update = function() {
 *@public
 */
 OptionConfigurationRow.prototype.clear = function() {
-	this.text = null;
+	this.container.removeAllChildren();
+
+	this.arrOptionNames.length = 0;
+	this.arrOptionNames = null;
+
+	this.optionSelectedEvent = null;
+
+	this.optionText = null;
+	this.selectionText = null;
+	this.leftArrow = null;
+	this.rightArrow = null;
+	this.container = null;
 };
 
 /**

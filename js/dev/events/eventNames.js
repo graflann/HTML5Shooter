@@ -5,6 +5,7 @@ goog.provide('EventNames');
 *@enum {number|string}
 */
 EventNames = {
+    PANEL_CHANGE:           'panelChange', 
     LOAD_COMPLETE:      	'loadComplete',
     SPAWN_COMPLETE:     	'spawnComplete',
     WAVE_COMPLETE:  		'waveComplete',

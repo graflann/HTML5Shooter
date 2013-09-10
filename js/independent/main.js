@@ -44,6 +44,7 @@ app.input			= null;
 app.assetsProxy     = null;
 //app.levelProxy 	= null;
 app.vecZero         = null;
+app.charWidth       = 6;
 
 //////////////////////////////////////////////////////////////////
 

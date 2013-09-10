@@ -6,8 +6,7 @@ goog.provide('Grid');
 *@param {Number} 	unit
 *@param {String} 	color
 */
-Grid = function(w, h, unit, color)
-{
+Grid = function(w, h, unit, color) {
 	/**
 	*@type  {Number}
 	*/
@@ -33,8 +32,7 @@ Grid = function(w, h, unit, color)
 /**
 *@public
 */
-Grid.prototype.init = function()
-{
+Grid.prototype.init = function() {
 	var i = 0,
 		w = this.width / this.unit,
 		h = this.height / this.unit,
@@ -60,10 +58,7 @@ Grid.prototype.init = function()
 /**
 *@public
 */
-Grid.prototype.clear = function()
-{
-	this.shape.getStage().removeChild(this.shape);
-	
+Grid.prototype.clear = function() {
 	this.shape.graphics.clear();
 	this.shape = null;
 };

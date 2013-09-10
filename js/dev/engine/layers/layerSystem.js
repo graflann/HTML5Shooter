@@ -70,9 +70,15 @@ LayerSystem.prototype.clear = function() {
 	var key;
 
 	for(key in this.arrLayers) {
-		this.remove(key);
+		//At least one main layer is retained in all panels
+		if(key === LayerTypes.MAIN) {
+			//only remove children / listeners from main Stage
+			this.getStage(LayerTypes.MAIN).removeAllChildren();
+			this.getStage(LayerTypes.MAIN).removeAllEventListeners();
+		} else {
+			this.remove(key);
+		}
 	}
-	this.arrLayers.length = 0;
 
 	if(this.debugLayer) {
 		this.debugLayer.clear();

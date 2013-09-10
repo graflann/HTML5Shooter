@@ -19,8 +19,6 @@ WeaponSelector = function(name) {
 
 	this.text = null;
 
-	this.charWidth = 6;
-
 	this.width = 0;
 	this.height = 0;
 
@@ -41,7 +39,7 @@ WeaponSelector.prototype.init = function() {
 	this.background = new createjs.Shape();
 
 	this.text = new createjs.Text(this.name, "16px AXI_Fixed_Caps_5x5", Constants.DARK_BLUE);
-	this.text.x = (this.width * 0.5) - (this.name.length * this.charWidth);
+	this.text.x = (this.width * 0.5) - (this.name.length * app.charWidth);
 	this.text.y = 3;
 
 	this.container.addChild(this.background);

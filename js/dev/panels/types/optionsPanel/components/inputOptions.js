@@ -20,11 +20,14 @@ InputOptions = function() {
 
 	this.charWidth = 6;
 
-	this.arrOptionRows = [];
+	this.arrOptionRows = null;
 
 	this.currentRowIndex = 0;
 
 	this.targetRowIndex = 0;
+
+	this.width = 0;
+	this.height = 0;
 	
 	this.init();
 };
@@ -61,7 +64,31 @@ InputOptions.prototype.update = function(options) {
 *@public
 */
 InputOptions.prototype.clear = function() {
-	
+	var optionRow = null,
+		i = 0;
+
+	this.container.removeAllChildren();
+
+	for(i; i < this.arrOptionRows.length; i++) {
+		optionRow = this.arrOptionRows[i];
+
+		goog.events.unlisten(
+			optionRow, 
+			EventNames.OPTION_SELECT, 
+			this.onOptionSelect, 
+			false, 
+			this
+		);
+
+		optionRow.clear();
+
+		this.arrOptionRows[i] = null;
+	}
+
+	this.arrOptionRows.length = 0;
+	this.arrOptionRows = null;
+
+	this.container = null;
 };
 
 /**
@@ -70,6 +97,7 @@ InputOptions.prototype.clear = function() {
 InputOptions.prototype.setOptions = function() {
 	var optionRow = null,
 		prevOptionRow = null,
+		rowHeight = 0,
 		i = 0,
 		arrOptions = [ 
 			"",
@@ -80,16 +108,20 @@ InputOptions.prototype.setOptions = function() {
 			InputConfig.BUTTONS.HOMING
 		];
 
-	this.arrOptionRows.push(new OptionConfigurationRow("A", arrOptions));
-	this.arrOptionRows.push(new OptionConfigurationRow("B", arrOptions));
-	this.arrOptionRows.push(new OptionConfigurationRow("X", arrOptions));
-	this.arrOptionRows.push(new OptionConfigurationRow("Y", arrOptions));
-	this.arrOptionRows.push(new OptionConfigurationRow("LB", arrOptions));
-	this.arrOptionRows.push(new OptionConfigurationRow("RB", arrOptions));
-	this.arrOptionRows.push(new OptionConfigurationRow("LT", arrOptions));
-	this.arrOptionRows.push(new OptionConfigurationRow("RT", arrOptions));
-	this.arrOptionRows.push(new OptionConfigurationRow("L3", arrOptions));
-	this.arrOptionRows.push(new OptionConfigurationRow("R3", arrOptions));
+	this.arrOptionRows = [
+		new OptionConfigurationRow("A", arrOptions),
+		new OptionConfigurationRow("B", arrOptions),
+		new OptionConfigurationRow("X", arrOptions),
+		new OptionConfigurationRow("Y", arrOptions),
+		new OptionConfigurationRow("LB", arrOptions),
+		new OptionConfigurationRow("RB", arrOptions),
+		new OptionConfigurationRow("LT", arrOptions),
+		new OptionConfigurationRow("RT", arrOptions),
+		new OptionConfigurationRow("L3", arrOptions),
+		new OptionConfigurationRow("R3", arrOptions)
+	];
+
+	this.width = this.arrOptionRows[0].width;
 
 	for(i; i < this.arrOptionRows.length; i++) {
 		optionRow = this.arrOptionRows[i];
@@ -98,8 +130,12 @@ InputOptions.prototype.setOptions = function() {
 
 		if(i > 0) {
 			prevOptionRow = this.arrOptionRows[i - 1];
-			optionRow.container.y = prevOptionRow.container.y + prevOptionRow.height + 2;
+
+			optionRow.container.y = prevOptionRow.container.y + rowHeight;
 		}
+
+		rowHeight = optionRow.height + 2;
+		this.height += rowHeight;
 
 		goog.events.listen(
 			optionRow, 

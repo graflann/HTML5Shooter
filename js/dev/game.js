@@ -36,7 +36,14 @@ Game = function() {
 	*/
 	this.panelToggle = false;
 	
-	goog.events.listen(app.assetsProxy, EventNames.LOAD_COMPLETE, this.onLoadComplete, false, this);
+	goog.events.listen(
+		app.assetsProxy, 
+		EventNames.LOAD_COMPLETE, 
+		this.onLoadComplete, 
+		false, 
+		this
+	);
+
 	app.assetsProxy.load();
 };
 
@@ -47,29 +54,26 @@ goog.inherits(Game, goog.events.EventTarget);
 */
 Game.prototype.init = function() {
 	var self = this;
-	
+
 	this.factory = new PanelFactory();
 
-	this.setPanel(PanelTypes.PLAY_PANEL);
-	//this.setPanel(PanelTypes.OPTIONS_PANEL);
-		
 	//true uses updated requestAnimationFrame instead of less optimized setTimeout
 	//updates @ 60fps (this may change pending performance)
 	createjs.Ticker.useRAF = true; 
 	createjs.Ticker.setFPS(60);
-	createjs.Ticker.addEventListener("tick", function(){
-		//update polling of connected game pad hardware; currently only first pad is polled
-		app.input.updateGamepads();
 
-		//main game update loop
-		self.update();
-	});
+	//this.setPanel(PanelTypes.PLAY_PANEL);
+	this.setPanel(PanelTypes.OPTIONS_PANEL);
+		
+	createjs.Ticker.addEventListener("tick", function() { self.update(); } );
 };
 
 /**
 *@private
 */
 Game.prototype.update = function() {
+	app.input.updateGamepads();
+
 	this.currentPanel.update();
 };
 
@@ -77,11 +81,30 @@ Game.prototype.update = function() {
 *@private
 */
 Game.prototype.setPanel = function(key) {
+	var self = this;
+
 	if(this.currentPanel) {
+		goog.events.unlisten(
+			this.currentPanel, 
+			EventNames.PANEL_CHANGE, 
+			this.onPanelChange, 
+			false, 
+			this
+		);
+
 		this.currentPanel.clear();
+		this.currentPanel = null;
 	}
 	
 	this.currentPanel = this.factory.getPanel(key);
+
+	goog.events.listen(
+		this.currentPanel, 
+		EventNames.PANEL_CHANGE, 
+		this.onPanelChange, 
+		false, 
+		this
+	);
 };
 
 //EVENT HANDLING////////////////////////////////////////////////////////
@@ -90,7 +113,13 @@ Game.prototype.setPanel = function(key) {
 *@param {goog.events.Event} e
 **/
 Game.prototype.onLoadComplete = function(e) {
-    goog.events.unlisten(app.assetsProxy, EventNames.LOAD_COMPLETE, this.onLoadComplete, false, this);
+    goog.events.unlisten(
+    	app.assetsProxy, 
+    	EventNames.LOAD_COMPLETE, 
+    	this.onLoadComplete, 
+    	false, 
+    	this
+    );
 
     this.init();
 };
@@ -98,8 +127,6 @@ Game.prototype.onLoadComplete = function(e) {
 /**
 *@private
 */
-Game.prototype.onSetPanel = function(e) {
-	var key = e.target.key;
-
-	game.setPanel(key);
+Game.prototype.onPanelChange = function(e) {
+	this.setPanel(e.target.nextPanelKey);
 }

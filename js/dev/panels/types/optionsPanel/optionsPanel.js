@@ -14,6 +14,8 @@ OptionsPanel = function() {
 
 	this.grid = null;
 
+	this.exitText = null;
+
 	this.inputOptions = null;
 
 	this.init();
@@ -26,9 +28,9 @@ goog.inherits(OptionsPanel, Panel);
 *@protected
 */
 OptionsPanel.prototype.init = function() {
-	var stage = null;
+	var stage = null,
+		exitLabel = "press b to exit";
 
-	app.layers.add(LayerTypes.MAIN);
 	stage = app.layers.getStage(LayerTypes.MAIN);
 
 	this.background = new createjs.Shape();
@@ -47,9 +49,19 @@ OptionsPanel.prototype.init = function() {
 	this.inputOptions.container.x = Constants.WIDTH * 0.125;
 	this.inputOptions.container.y = 64;
 
+	this.exitText = new createjs.Text(
+		exitLabel, 
+		"16px AXI_Fixed_Caps_5x5", 
+		Constants.LIGHT_BLUE
+	);
+	this.exitText.x = this.inputOptions.container.x + (this.inputOptions.width * 0.5) - 
+		(exitLabel.length * app.charWidth);
+	this.exitText.y = this.inputOptions.container.y + this.inputOptions.height;
+
 	stage.addChild(this.background);
 	stage.addChild(this.grid.shape);
     stage.addChild(this.inputOptions.container);
+    stage.addChild(this.exitText);
 };
 
 /**
@@ -57,9 +69,16 @@ OptionsPanel.prototype.init = function() {
 *@protected
 */
 OptionsPanel.prototype.update = function() {
+	var input = app.input;
+
 	this.inputOptions.update();
 
 	Panel.prototype.update.call(this);
+
+	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.B)) {
+		this.nextPanelKey = PanelTypes.PLAY_PANEL;
+		goog.events.dispatchEvent(this, this.panelChangeEvent);
+	}
 
 	// app.input.checkPrevKeyDown([
 	// 	KeyCode.UP,
@@ -84,7 +103,11 @@ OptionsPanel.prototype.clear = function() {
 	Panel.prototype.clear.call(this);
 
 	this.background.graphics.clear();
+	this.grid.clear();
+	this.inputOptions.clear();
+
+	this.exitText = null;
 	this.background = null;
-
-
+	this.grid = null;
+	this.inputOptions = null;
 };
