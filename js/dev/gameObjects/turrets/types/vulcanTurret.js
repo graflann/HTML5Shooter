@@ -46,7 +46,7 @@ VulcanTurret.prototype.update = function(options) {
 	if(this.hasAI) {
 		this.aiControl(options);
 	} else {
-		this.manualControl();
+		this.manualControl(options);
 
 		(this.isFiring) ? this.turretAnimUtil.play() : this.turretAnimUtil.stop();
 		this.turretAnimUtil.update();

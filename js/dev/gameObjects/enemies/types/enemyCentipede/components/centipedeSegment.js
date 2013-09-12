@@ -12,7 +12,7 @@ CentipedeSegment = function(physicalVelocity, projectileSystem, isTail) {
 	this.physicalVelocity = physicalVelocity;
 
 	/**
-	 * @type {Array}
+	 * @type {ProjectileSystem}
 	 */
 	this.projectileSystem = projectileSystem;
 
@@ -35,7 +35,12 @@ CentipedeSegment = function(physicalVelocity, projectileSystem, isTail) {
 	//Ratio translating head physics velocity to pixels per tick
 	this.physicalVelocityMod = Math.round(1000 / 1.77);
 
-	this.turret = null;
+	this.arrFireOffsets = [-16, 16];
+
+	this.ammoDistance = -(80 / app.physicsScale);
+
+	this.fireCounter = 0;
+	this.fireThreshold = 30;
 
 	this.init();
 };
@@ -64,23 +69,12 @@ CentipedeSegment.prototype.init = function() {
 	} else {
 		this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["centipedeTail"]);
 		this.shape.gotoAndStop(0);
-
-		this.turret = new EnemyVulcanTurret(Constants.RED, this.projectileSystem, true);
-		this.turret.shape.x = -this.height * 0.5;
-
-		this.turret.fireCounter = 0;
-		this.turret.fireThreshold = 30;
 	}
 	this.shape.regX = this.width * 0.5;
 	this.shape.regY = this.height * 0.5;
 	this.shape.rotation = 90;
 	
 	this.container.addChild(this.shape);
-
-	//add turret to tail
-	if(this.turret) {
-		this.container.addChild(this.turret.shape);
-	}
 
 	this.segmentAnchorDistance = this.height * 0.375;
 
@@ -118,14 +112,21 @@ CentipedeSegment.prototype.update = function(options) {
 			(this.segmentAnchorDistance * trigTable.cos(this.container.rotation));
 		this.segmentAnchor.y = this.position.y - 
 			(this.segmentAnchorDistance * trigTable.sin(this.container.rotation));
-
-		if(this.turret) {
-			this.turret.update(options);
-
-			//offset turret rotation relative to parent
-			this.turret.shape.rotation -= this.deg; 
-		}
 	}
+};
+
+/**
+*@override
+*@public
+*/
+CentipedeSegment.prototype.updateFire = function(options) {
+	//if(this.isTail) {
+		//check fire
+		if(this.fireCounter++ > this.fireThreshold) {
+			this.fire(options);
+			this.fireCounter = 0;
+		}
+	//}
 };
 
 /**
@@ -134,6 +135,65 @@ CentipedeSegment.prototype.update = function(options) {
 */
 CentipedeSegment.prototype.clear = function() {
 	
+};
+
+/**
+*@private
+*/
+CentipedeSegment.prototype.fire = function(options) {
+	var target = options.target,
+		deg,
+		targetDeg,
+		sin,
+		cos,
+		firingPosDeg,
+		firingPosSin,
+		firingPOsCos,
+		vector2D = new app.b2Vec2(),
+		trigTable = app.trigTable,
+		stage = this.container.getStage(),
+		projectile = null,
+		i = -1,
+		length = this.arrFireOffsets.length;
+
+	//acquire rotation of Turret instance in degrees and add ammo at table-referenced distance	
+	deg = this.container.rotation;
+	targetDeg = Math.radToDeg(
+		Math.atan2(
+			target.y - this.position.y, 
+			target.x - this.position.x
+		)
+	);
+	sin = trigTable.sin(targetDeg);
+	cos = trigTable.cos(targetDeg);
+
+	//fires 2 parallel shots simultaneously
+	while(++i < length) {
+		projectile = this.projectileSystem.getProjectile();
+
+		if(projectile) {			
+			//zero out existing linear velocity
+			projectile.body.SetLinearVelocity(app.vecZero);
+
+			//acquire values to determine firing position
+			firingPosDeg = (deg + this.arrFireOffsets[i]);
+			firingPosSin = trigTable.sin(firingPosDeg);
+			firingPosCos = trigTable.cos(firingPosDeg); 
+			
+			vector2D.x = (this.position.x / app.physicsScale) + (firingPosCos * this.ammoDistance);
+			vector2D.y = (this.position.y / app.physicsScale) + (firingPosSin * this.ammoDistance);				
+			projectile.body.SetPosition(vector2D);
+			
+			vector2D.x = cos * projectile.velocityMod;
+			vector2D.y = sin * projectile.velocityMod;		
+			projectile.body.ApplyForce(vector2D, projectile.body.GetWorldCenter());
+
+			projectile.setIsAlive(true);
+			
+			//projectile.shape.rotation = this.container.rotation;
+			stage.addChild(projectile.shape);
+		}
+	}
 };
 
 /**

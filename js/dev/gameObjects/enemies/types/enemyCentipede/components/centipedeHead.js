@@ -1,13 +1,19 @@
 goog.provide('CentipedeHead');
 
 goog.require('Enemy');
+goog.require('CollisionEvent');
 
 
 /**
 *@constructor
 */
-CentipedeHead = function() {
+CentipedeHead = function(projectileSystem) {
 	Enemy.call(this);
+
+	/**
+	 * @type {ProjectileSystem}
+	 */
+	this.projectileSystem = projectileSystem;
 
 	this.categoryBits = CollisionCategories.GROUND_ENEMY;
 
@@ -26,7 +32,7 @@ CentipedeHead = function() {
 
 	this.headAnimUtil = null;
 
-	this.collisionEvent = new goog.events.Event(EventNames.COLLISION, this);
+	this.collisionEvent = new CollisionEvent(this);
 
 	this.init();
 };
@@ -150,15 +156,14 @@ CentipedeHead.prototype.setPhysics = function() {
 *@public
 */
 CentipedeHead.prototype.onCollide = function(collisionObject, options) {
-
 	if(collisionObject instanceof Projectile) {
 		Enemy.prototype.onCollide.call(this, collisionObject, options);
 		return;
 	}
 
-	if(collisionObject instanceof PlayerTank) {
-		goog.events.dispatchEvent(this, this.collisionEvent);
-	}
+	//colliding with PlayerTank or SceneObject
+	this.collisionEvent.collisionObject = collisionObject;
+	goog.events.dispatchEvent(this, this.collisionEvent);
 };
 
 goog.exportSymbol('CentipedeHead', CentipedeHead);

@@ -151,6 +151,16 @@ CollisionManager.prototype.beginContact = function(contact) {
         return;
     }
     //////////////////////////////////////////////////////////////////
+    
+    //ENEMY VS SCENEOBJECT////////////////////////////////////////////
+    if(dataA instanceof Enemy) {
+        this.enemyVsObject(dataA, dataB);
+        return;
+    } else if(dataB instanceof Enemy) {
+        this.enemyVsObject(dataB, dataA);
+        return;
+    }
+    //////////////////////////////////////////////////////////////////
 };
 
 CollisionManager.prototype.endContact = function(contact) {
@@ -221,9 +231,6 @@ CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
 };
 
 CollisionManager.prototype.playerVsObject = function(player, object) {
-    //console.log(dataA);
-    //console.log(dataB);
-    
     if(object instanceof Enemy) {
         object.onCollide(player, this.collisionOptions.enemy);
         return;
@@ -233,6 +240,10 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
     if(object instanceof SceneObject) {
 
     }
+};
+
+CollisionManager.prototype.enemyVsObject = function(enemy, object) {
+    enemy.onCollide(object, this.collisionOptions.enemy);
 };
 /////////////////////////////////////////////////////////////////////////////
 

@@ -53,7 +53,7 @@ Level = function(options) {
 			[
 				{ 
 					type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
-					positionX: 64, positionY: 64
+					positionX: 240, positionY: 320
 				}
 			],
 			[

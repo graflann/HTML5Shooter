@@ -103,7 +103,7 @@ EnemyTank.prototype.update = function(options) {
 		 
 		this.setPosition(this.body.GetPosition());
 
-		this.turret.update(options);
+		this.turret.update({ target: options.target.position });
 	}
 };
 

@@ -84,6 +84,13 @@ EnemyCentipede.prototype.updateRetreating = function(options) {
 		target: this.retreatTarget 
 	});
 
+	//shots fire from the tail leg hooks
+	if(this.tail) {
+		this.tail.updateFire({ 
+			target: options.target.position 
+		});
+	}
+
 	//check out of retreat upon reaching the destination
 	if(this.retreatTarget.DistanceSqrt(this.head.position) < 2) {
 		this.stateMachine.setState(EnemyCentipedeSeekingState.KEY);
@@ -108,7 +115,7 @@ EnemyCentipede.prototype.updateSegments = function(options) {
 		else 		prevSegment = this.arrSegments[i - 1];
 
 		segment.update({ 
-			target: target,
+			target: target.position,
 			prevSegment: prevSegment 
 		});
 	}
@@ -149,6 +156,8 @@ EnemyCentipede.prototype.kill = function() {
 		this.setIsAlive(false);
 
 		this.numPiecesKilled = 0;
+
+		this.tail = this.arrSegments[this.arrSegments.length - 1];
 
 		goog.events.dispatchEvent(this, this.enemyKilledEvent);
 	}
@@ -192,7 +201,7 @@ EnemyCentipede.prototype.setSegments = function() {
 		length = this.arrSegments.length,
 		lastIndex = length - 1;
 
-	this.head = new CentipedeHead();
+	this.head = new CentipedeHead(this.projectileSystem);
 
 	//listen to head for collision with player
 	goog.events.listen(
@@ -283,11 +292,18 @@ EnemyCentipede.prototype.setStateMachine = function() {
 
 //EVENT HANDLERS
 EnemyCentipede.prototype.onHeadCollision = function(e) {
-	//Upon collision with player base, switch to a retreating, rapid fire mode
-	this.stateMachine.setState(EnemyCentipedeRetreatingState.KEY);
+	if(this.stateMachine.currentKey === EnemyCentipedeSeekingState.KEY) {
+		this.stateMachine.setState(EnemyCentipedeRetreatingState.KEY);
+	} else {
+		this.stateMachine.setState(EnemyCentipedeSeekingState.KEY);
+	}
 };
 
 EnemyCentipede.prototype.onPieceKilled = function(e) {
+	if(e.target == this.tail) {
+		this.tail = null;
+	}
+
 	if(++this.numPiecesKilled >= this.piecesTotal) {
 		this.kill();
 	}

@@ -15,12 +15,7 @@ goog.require('GamepadCode');
 *@constructor
 *Game is the root-level of the entire application
 */
-Game = function() {
-	/**
-    *@type {Array.<Panel>}
-    */
-	this.arrPanels = [];
-	
+Game = function() {	
 	/**
 	*@type {Panel}
 	*/
@@ -30,11 +25,6 @@ Game = function() {
 	*@type {PanelFactory}
 	*/
 	this.factory = null;
-	
-	/**
-	*@type {Boolean}
-	*/
-	this.panelToggle = false;
 	
 	goog.events.listen(
 		app.assetsProxy, 
@@ -62,8 +52,8 @@ Game.prototype.init = function() {
 	createjs.Ticker.useRAF = true; 
 	createjs.Ticker.setFPS(60);
 
-	//this.setPanel(PanelTypes.PLAY_PANEL);
-	this.setPanel(PanelTypes.OPTIONS_PANEL);
+	this.setPanel(PanelTypes.PLAY_PANEL);
+	//this.setPanel(PanelTypes.OPTIONS_PANEL);
 		
 	createjs.Ticker.addEventListener("tick", function() { self.update(); } );
 };

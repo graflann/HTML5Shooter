@@ -201,6 +201,11 @@ EnemyCopter.prototype.fire = function() {
 		i = -1,
 		length = this.arrFireOffsets.length;
 
+	//acquire rotation of Copter instance in degrees and add ammo at table-referenced distance			
+	deg = this.container.rotation - 90;
+	sin = trigTable.sin(deg);
+	cos = trigTable.cos(deg);
+
 	//fires 2 parallel shots simultaneously
 	while(++i < length) {
 		projectile = this.projectileSystem.getProjectile();
@@ -208,11 +213,6 @@ EnemyCopter.prototype.fire = function() {
 		if(projectile) {			
 			//zero out existing linear velocity
 			projectile.body.SetLinearVelocity(app.vecZero);
-			
-			//acquire rotation of Turret instance in degrees and add ammo at table-referenced distance			
-			deg = this.container.rotation - 90;
-			sin = trigTable.sin(deg);
-			cos = trigTable.cos(deg);
 
 			//acquire values to determine firing position
 			firingPosDeg = (deg + this.arrFireOffsets[i]);

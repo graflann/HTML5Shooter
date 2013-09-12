@@ -65,7 +65,7 @@ SniperTurret.prototype.update = function(options) {
 	if(this.hasAI) {
 		this.aiControl(options);
 	} else {
-		this.manualControl();
+		this.manualControl(options);
 	}
 
 	this.turretAnimUtil.update();

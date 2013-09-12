@@ -54,11 +54,24 @@ PlayerTank = function(arrProjectileSystems) {
 
 	this.turret = null;
 
+	this.turretTransition = null;
+
+	this.turretTransitionAddAnimUtil = null;
+	this.turretTransitionRemoveAnimUtil = null;
+
+	this.turretTransitionRate = 500;
+
+	this.isTransitioning = false;
+
 	this.arrTurrets = [];
 
 	this.isHoming = false;
 
 	this.arrHomingFireOffsets = [-150, 150, -120, 120];
+
+	this.intendedRotation = 0;
+
+	this.rotationRate = 5;
 
 	this.weaponSelectEvent 			= new goog.events.Event(EventNames.WEAPON_SELECT, this);
 	this.addHomingOverlayEvent 		= new goog.events.Event(EventNames.ADD_HOMING_OVERLAY, this);
@@ -86,8 +99,16 @@ PlayerTank.prototype.init = function() {
 
 	this.base = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["tankBase"]);
 	this.base.x = this.base.regX = this.width * 0.5;
-	this.base.y = this.base.regY = this.height * 0.5;
+	this.base.y = this.base.regY = this.height * 0.75;
 	this.container.addChild(this.base);
+
+	this.turretTransition = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["turretTransition"]);
+	this.turretTransition.regX = this.turretTransition.regY = 18;
+	this.turretTransition.x = this.base.x;
+	this.turretTransition.y = this.base.y;
+
+	this.turretTransitionAddAnimUtil = new AnimationUtility("add", this.turretTransition, 8);
+	this.turretTransitionRemoveAnimUtil = new AnimationUtility("remove", this.turretTransition, 8);
 
 	this.setTurret(TurretTypes.VULCAN, ProjectileTypes.VULCAN);
 
@@ -130,7 +151,7 @@ PlayerTank.prototype.update = function(options) {
 			this.force.y = -this.velocity.y;
 			this.body.ApplyForce(this.force, worldCenter);
 
-			this.base.rotation = 0;
+			this.intendedRotation = 0;
 
 			isMoving = isUp = true;
 		} else if (input.isKeyDown(KeyCode.S) || 
@@ -140,7 +161,7 @@ PlayerTank.prototype.update = function(options) {
 			this.force.y = this.velocity.y;
 			this.body.ApplyForce(this.force, worldCenter);
 
-			this.base.rotation = 180;
+			this.intendedRotation = 180;
 
 			isMoving = isDown = true;
 		}
@@ -152,9 +173,9 @@ PlayerTank.prototype.update = function(options) {
 			this.force.y = 0;
 			this.body.ApplyForce(this.force, worldCenter);
 
-			if (isUp)		{ this.base.rotation = 315; }
-			else if(isDown)	{ this.base.rotation = 225; } 
-			else 			this.base.rotation = 270;
+			if (isUp)		{ this.intendedRotation = 315; }
+			else if(isDown)	{ this.intendedRotation = 225; } 
+			else 			this.intendedRotation = 270;
 
 			isMoving = true;
 		} else if (input.isKeyDown(KeyCode.D) || 
@@ -164,12 +185,15 @@ PlayerTank.prototype.update = function(options) {
 			this.force.y = 0;
 			this.body.ApplyForce(this.force, worldCenter);
 
-			if (isUp)		{ this.base.rotation = 45; }
-			else if(isDown)	{ this.base.rotation = 135; } 
-			else 			this.base.rotation = 90;
+			if (isUp)		{ this.intendedRotation = 45; }
+			else if(isDown)	{ this.intendedRotation = 135; } 
+			else 			this.intendedRotation = 90;
 
 			isMoving = true;
 		}
+
+		//Updates the base rotation with a smooth transition
+		this.updateRotation();
 		
 		//HOMING
 		//hold to init homing target overlay
@@ -195,30 +219,36 @@ PlayerTank.prototype.update = function(options) {
 		
 
 		//WEAPON SELECT
-		if(input.isKeyPressedOnce(KeyCode.X) || 
-			input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.SWITCH])) {
-				
-			this.currentWeaponIndex++;
+		if(!this.isTransitioning) {
+			if(input.isKeyPressedOnce(KeyCode.X) || 
+				input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.SWITCH])) {
+					
+				this.currentWeaponIndex++;
 
-			if(this.currentWeaponIndex > (WeaponMap.length - 1)) {
-				this.currentWeaponIndex = 0;
+				if(this.currentWeaponIndex > (WeaponMap.length - 1)) {
+					this.currentWeaponIndex = 0;
+				}
+
+				this.setTurret(
+					WeaponMap[this.currentWeaponIndex].turretType,
+					WeaponMap[this.currentWeaponIndex].projectileType
+				);
+
+				//notify the HUD to represent current weapon selection
+				//handled by the PlayPanel instance
+				goog.events.dispatchEvent(this, this.weaponSelectEvent);
 			}
-
-			this.setTurret(
-				WeaponMap[this.currentWeaponIndex].turretType,
-				WeaponMap[this.currentWeaponIndex].projectileType
-			);
-
-			//notify the HUD to represent current weapon selection
-			//handled by the PlayPanel instance
-			goog.events.dispatchEvent(this, this.weaponSelectEvent);
 		}
 
 		(isMoving) ? this.base.play() : this.base.gotoAndStop(0);
 
 		this.setPosition(this.body.GetPosition());
 
-		this.turret.update();
+		this.turret.update({isTransitioning: this.isTransitioning});
+
+		this.turretTransition.rotation = this.turret.shape.rotation;
+		this.turretTransitionAddAnimUtil.update();
+		this.turretTransitionRemoveAnimUtil.update();
 	}
 
 	app.input.checkPrevKeyDown([
@@ -239,6 +269,49 @@ PlayerTank.prototype.update = function(options) {
 */
 PlayerTank.prototype.clear = function() {
 	
+};
+
+/**
+*@private
+*/
+PlayerTank.prototype.updateRotation = function() {
+	var angleDif = this.intendedRotation - this.base.rotation,
+		absAngleDif = 0;
+
+	if(angleDif != 0) {
+		absAngleDif = Math.abs(angleDif);
+
+		if(absAngleDif >= 180) {
+			if(this.intendedRotation > this.base.rotation)
+				this.rotateToAngle(-this.rotationRate);
+			else if(this.intendedRotation < this.base.rotation)
+				this.rotateToAngle(this.rotationRate);
+		} else {
+			if(this.intendedRotation > this.base.rotation)
+				this.rotateToAngle(this.rotationRate);
+			else if(this.intendedRotation < this.base.rotation)
+				this.rotateToAngle(-this.rotationRate);
+		}
+	}
+};
+
+/**
+*@private
+*/
+PlayerTank.prototype.rotateToAngle = function(rotationRate) {
+	if(rotationRate == 0){
+		return;
+	}
+
+	this.base.rotation += rotationRate;
+
+	if(this.base.rotation <= 0) {
+		this.base.rotation += 360;
+	}
+
+	if(this.base.rotation >= 360) {
+		this.base.rotation -= 360;
+	}
 };
 
 PlayerTank.prototype.setPosition = function(pos) {
@@ -315,6 +388,8 @@ PlayerTank.prototype.fireHoming = function() {
 PlayerTank.prototype.setTurret = function(turretType, projectileType) {
 	var self = prevTurret = this.turret;
 
+	this.isTransitioning = true;
+
 	if(this.currentProjectileSystem) {
 		this.currentProjectileSystem.kill();
 	}
@@ -333,13 +408,19 @@ PlayerTank.prototype.setTurret = function(turretType, projectileType) {
 PlayerTank.prototype.changeTurret = function(turretType, prevTurret) {
 	var self = this;
 
-	createjs.Tween.get(prevTurret.shape).to({ scaleX:0, scaleY: 0 }, 100).call(function(){
+	this.container.addChild(this.turretTransition);
+	this.turretTransitionAddAnimUtil.play();
+
+	createjs.Tween.get(prevTurret.shape).to({ scaleY: 0 }, this.turretTransitionRate).call(function(){
 		self.removeTurret(prevTurret);
 		self.addTurret(turretType, prevTurret);
 	});
 };
 
 PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
+	var self = this,
+		transitionIndex = this.container.getChildIndex(this.turretTransition);
+
 	if(!this.arrTurrets[turretType]) {
 		var TurretClass = TurretClasses[turretType];
 		this.turret = this.arrTurrets[turretType] = new TurretClass(this.color, this.currentProjectileSystem, false);
@@ -352,12 +433,19 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 	}
 
 	this.turret.shape.x = this.width * 0.5;
-	this.turret.shape.y = this.height * 0.5;
-	this.turret.shape.scaleX = 0;
+	this.turret.shape.y = this.height * 0.75;
+	//this.turret.shape.scaleX = 0;
 
 	this.turret.fireCount = this.turret.fireThreshold;
 
-	this.container.addChild(this.turret.shape);
+	if(transitionIndex > -1) {
+		this.container.addChildAt(
+			this.turret.shape, 
+			transitionIndex
+		);
+	} else {
+		this.container.addChild(this.turret.shape);
+	}
 
 	//add additional Sniper Turret FX
 	//TODO: need turret add/remove wrappers
@@ -366,7 +454,15 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 		this.container.parent.addChild(this.turret.ballEffects);
 	}
 
-	createjs.Tween.get(this.turret.shape).to({ scaleX:1, scaleY: 1 }, 100);
+	this.turretTransitionAddAnimUtil.stop();
+	this.turretTransitionRemoveAnimUtil.play();
+
+	createjs.Tween.get(this.turret.shape).to({ scaleY: 1 }, this.turretTransitionRate).call(function(){
+		self.turretTransitionRemoveAnimUtil.stop();
+		self.container.removeChild(self.turretTransition);
+
+		self.isTransitioning = false;
+	});
 };
 
 PlayerTank.prototype.removeTurret = function(prevTurret) {

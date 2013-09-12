@@ -15,9 +15,9 @@ AnimationUtility = function(name, bmpAnimation, frequency) {
 
 	this.animation = this.spriteSheet.getAnimation(this.name);
 
-	this.minFrame = this.animation.frames[0];
+	this.minFrame = 0;
 
-	this.maxFrame = this.animation.frames[this.animation.frames.length - 1];
+	this.maxFrame = this.animation.frames.length - 1;
 
 	this.currentFrame = this.minFrame;
 
@@ -47,7 +47,7 @@ AnimationUtility.prototype.update = function() {
 			}
 		}
 
-		this.bmpAnimation.gotoAndStop(this.currentFrame);
+		this.bmpAnimation.gotoAndStop(this.animation.frames[this.currentFrame]);
 	}
 };
 

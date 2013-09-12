@@ -70,7 +70,7 @@ EnemyTurret.prototype.init = function() {
 */
 EnemyTurret.prototype.update = function(options) {
 	if(this.isAlive) {
-		this.turret.update(options);
+		this.turret.update({ target: options.target.position });
 
 		//update the homing reticle particle if applicable
 		if(this.reticle) {

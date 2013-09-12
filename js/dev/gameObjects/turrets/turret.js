@@ -60,7 +60,7 @@ Turret.prototype.update = function(options) {
 	if(this.hasAI) {
 		this.aiControl(options);
 	} else {
-		this.manualControl();
+		this.manualControl(options);
 	}
 };
 
@@ -74,7 +74,7 @@ Turret.prototype.clear = function() {
 	this.shape = null;
 };
 
-Turret.prototype.manualControl = function() {
+Turret.prototype.manualControl = function(options) {
 	var input = app.input,
 		gamepad = input.gamepad;
 
@@ -95,17 +95,19 @@ Turret.prototype.manualControl = function() {
 		this.shape.rotation += 5;
 	}
 	
-	//fire	
-	if(input.isKeyDown(KeyCode.SPACE) || 
-		input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT])) {
-		if(this.fireCounter > this.fireThreshold) {
-			this.fire();
-			this.fireCounter = 0;
-		}
+	//fire if PlayerTank is not transitioning Turret instances
+	if(!options.isTransitioning) {
+		if(input.isKeyDown(KeyCode.SPACE) || 
+			input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT])) {
+			if(this.fireCounter > this.fireThreshold) {
+				this.fire();
+				this.fireCounter = 0;
+			}
 
-		this.isFiring = true;
-	} else {
-		this.isFiring = false;
+			this.isFiring = true;
+		} else {
+			this.isFiring = false;
+		}
 	}
 
 	//needed for press once
@@ -122,12 +124,38 @@ Turret.prototype.manualControl = function() {
 Turret.prototype.aiControl = function(options) {
 	var target = options.target,
 		rad = Math.atan2(
-			target.position.y - (this.shape.parent.y + this.shape.x), 
-			target.position.x - (this.shape.parent.x  + this.shape.y)
+			target.y - (this.shape.parent.y + this.shape.x), 
+			target.x - (this.shape.parent.x  + this.shape.y)
 		),
 		deg = Math.radToDeg(rad) + 90;
 
 	this.shape.rotation = deg;
+
+	if(this.fireCounter++ > this.fireThreshold){
+		this.fire();
+		this.fireCounter = 0;
+	}
+};
+
+Turret.prototype.nestedControl = function(options) {
+	var target = options.target,
+		rad = 0,
+		deg = 0,
+		localToGlobal = null;
+
+	localToGlobal = this.shape.parent.localToGlobal(this.shape.x, this.shape.y);
+	//localToGlobal = new app.b2Vec2(this.shape.x, this.shape.y);
+
+	//console.log(localToGlobal);
+
+	rad = Math.atan2(
+		target.y - localToGlobal.x, 
+		target.x - localToGlobal.y
+	);
+
+	deg = Math.radToDeg(rad) + 90;
+
+	this.shape.rotation = this.shape.parent.rotation + 90;// - deg;
 
 	if(this.fireCounter++ > this.fireThreshold){
 		this.fire();
