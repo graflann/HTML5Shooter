@@ -1,11 +1,17 @@
 goog.provide('OptionText');
 
+goog.require('goog.events.EventTarget');
+goog.require('goog.events.Event');
+goog.require('goog.events');
+
 /**
 *@constructor
 *OptionText component; highlight if user has focus
 */
-OptionText = function(name) {	
+OptionText = function(name, panelKey) {	
 	this.name = name.toString();
+
+	this.panelKey = panelKey;
 
 	this.text = null;
 
@@ -14,10 +20,14 @@ OptionText = function(name) {
 	this.width = 0;
 	this.height = 0;
 
-	isSelected = false;
+	this.isSelected = false;
+
+	this.optionSelectedEvent = new goog.events.Event(EventNames.OPTION_SELECT, this);
 	
 	this.init();
 };
+
+goog.inherits(OptionText, goog.events.EventTarget);
 
 /**
 *@public
@@ -25,7 +35,7 @@ OptionText = function(name) {
 OptionText.prototype.init = function() {
 	this.text = new createjs.Text(this.name, "16px AXI_Fixed_Caps_5x5", Constants.DARK_BLUE);
 
-	this.width = (this.name.length * this.charWidth);
+	this.width = (this.name.length * app.charWidth);
 	this.height = 16;
 	
 	this.setSelection(false);
@@ -34,8 +44,22 @@ OptionText.prototype.init = function() {
 /**
 *@public
 */
+OptionText.prototype.update = function() {
+	var input = app.input;
+
+	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.START) || 
+		input.isButtonPressedOnce(GamepadCode.BUTTONS.A)) {
+		goog.events.dispatchEvent(this, this.optionSelectedEvent);
+	}
+};
+
+/**
+*@public
+*/
 OptionText.prototype.clear = function() {
 	this.text = null;
+
+	this.optionSelectedEvent = null;
 };
 
 /**

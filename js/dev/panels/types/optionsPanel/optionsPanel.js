@@ -28,10 +28,8 @@ goog.inherits(OptionsPanel, Panel);
 *@protected
 */
 OptionsPanel.prototype.init = function() {
-	var stage = null,
+	var stage = app.layers.getStage(LayerTypes.MAIN),
 		exitLabel = "press b to exit";
-
-	stage = app.layers.getStage(LayerTypes.MAIN);
 
 	this.background = new createjs.Shape();
 	this.background.graphics

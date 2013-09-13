@@ -52,8 +52,9 @@ Game.prototype.init = function() {
 	createjs.Ticker.useRAF = true; 
 	createjs.Ticker.setFPS(60);
 
-	this.setPanel(PanelTypes.PLAY_PANEL);
+	this.setPanel(PanelTypes.TITLE_PANEL);
 	//this.setPanel(PanelTypes.OPTIONS_PANEL);
+	//this.setPanel(PanelTypes.PLAY_PANEL);
 		
 	createjs.Ticker.addEventListener("tick", function() { self.update(); } );
 };

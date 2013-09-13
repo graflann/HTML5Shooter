@@ -5,7 +5,6 @@ goog.require('goog.events.Event');
 goog.require('goog.events');
 goog.require('InputConfig');
 goog.require('OptionConfigurationRow');
-goog.require('OptionText');
 goog.require('GamepadCode');
 
 /**
