@@ -14,6 +14,10 @@ TitlePanel = function() {
 
 	this.grid = null;
 
+	this.title = null;
+
+	this.titleComponent = null;
+
 	this.gameOptions = null;
 
 	this.init();
@@ -43,10 +47,14 @@ TitlePanel.prototype.init = function() {
 	this.gameOptions = new GameOptions();
 	this.gameOptions.container.x = (Constants.WIDTH * 0.5) - (this.gameOptions.width * 0.5);
 	this.gameOptions.container.y = Constants.HEIGHT * 0.75;
+	this.gameOptions.container.alpha = 0;
+	this.gameOptions.container.visible = false;
 
 	stage.addChild(this.background);
 	stage.addChild(this.grid.shape);
 	stage.addChild(this.gameOptions.container);
+
+	this.setTitle();
 
 	goog.events.listen(
 		this.gameOptions, 
@@ -64,7 +72,9 @@ TitlePanel.prototype.init = function() {
 TitlePanel.prototype.update = function() {
 	Panel.prototype.update.call(this);
 
-	this.gameOptions.update();
+	if(this.gameOptions.container.visible) {
+		this.gameOptions.update();
+	}
 
 	// app.input.checkPrevKeyDown([
 	// 	KeyCode.UP,
@@ -92,11 +102,91 @@ TitlePanel.prototype.clear = function() {
 
 	this.background.graphics.clear();
 	this.grid.clear();
+	this.titleComponent.graphics.clear();
 	this.gameOptions.clear();
 
 	this.background = null;
 	this.grid = null;
+	this.titleComponent = null;
+	this.title = null;
 	this.gameOptions = null;
+};
+
+TitlePanel.prototype.setTitle = function() {
+	var self = this,
+    	stage = app.layers.getStage(LayerTypes.MAIN),
+		titleDest = new app.b2Vec2(
+			Constants.WIDTH * 0.125, 
+			Constants.HEIGHT * 0.125
+		),
+		titleComponentDest = new app.b2Vec2(
+			titleDest.x + 3,
+			titleDest.y + 43
+		);
+
+	//the main title graphic "strike"
+	this.title = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["titleGraphic"]);
+	this.title.x = titleDest.x - 240;
+	this.title.y = titleDest.y + 80;
+	this.title.scaleX = 2;
+	this.title.scaleY = 0;
+	this.title.gotoAndStop(0);
+
+	//the auxilliary title component graphic "flash" the flies in from the right
+	this.titleComponent = new createjs.Shape();
+	this.titleComponent.graphics
+		.ss(1)
+		.s(Constants.DARK_BLUE)
+		.lf([Constants.LIGHT_BLUE, Constants.BLUE], [0, 1], 0, 0, 472, 0)
+		.mt(0, 21)
+		.lt(39, 0)
+		.lt(472, 21)
+		.lt(39, 41)
+		.lt(0, 21);
+	this.titleComponent.x = Constants.WIDTH * 2;
+	this.titleComponent.y = titleComponentDest.y + 10;
+	this.titleComponent.scaleY = 0.5;
+	this.titleComponent.alpha = 0.25;
+
+	stage.addChild(this.title);
+	stage.addChild(this.titleComponent);
+
+	//set title component animation sequences
+	var sequence3 = function(){
+			self.gameOptions.container.visible = true;
+
+			createjs.Tween.get(self.gameOptions.container)
+				.to({ alpha: 1 }, 250);
+		},
+		sequence2 = function(){
+			createjs.Tween.get(self.titleComponent)
+				.to({ 
+					alpha: 0.75, 
+					scaleY: 1, 
+					y: titleComponentDest.y 
+				}, 250)
+				.call(sequence3);		
+		},
+		sequence1 = function(){
+			createjs.Tween.get(self.titleComponent)
+				.wait(250)
+				.to({ 
+					x: titleComponentDest.x 
+				}, 500, createjs.Ease.linear)
+				.call(sequence2);
+		};
+
+	//tween title name graphic in
+	createjs.Tween.get(this.title)
+		.to({ 
+			x: titleDest.x,
+			y: titleDest.y,
+			scaleX: 1, 
+			scaleY: 1 
+		}, 750);
+
+	//tween in title component"flash"
+	sequence1();
 };
 
 TitlePanel.prototype.onOptionSelect = function(e) {

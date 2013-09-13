@@ -29,6 +29,7 @@ AssetsProxy = function() {
     *@type {Array.<SpriteSheet>}
     */
 	this.arrSpriteSheetData = [
+		'assets/finished/titleGraphic.json',
 		'assets/finished/tankBase.json',
 		'assets/finished/enemyTankBase.json',
 		'assets/finished/vulcanTurret.json',
@@ -50,6 +51,7 @@ AssetsProxy = function() {
 	 * @type {Array}
 	 */
 	this.arrManifest = [
+		{id: "titleGraphic",		src: "assets/finished/titleGraphic.png"},
 		{id: "tankBase",			src: "assets/finished/tankBase.png"},
 		{id: "enemyTankBase",		src: "assets/finished/enemyTankBase.png"},
 		{id: "vulcanTurret",		src: "assets/finished/vulcanTurret.png"},
