@@ -37,7 +37,7 @@ OptionsPanel.prototype.init = function() {
 		.dr(0, 0, Constants.WIDTH, Constants.HEIGHT);
 	
 	this.grid = new Grid(
-		Constants.WIDTH, 
+		Constants.WIDTH + Constants.UNIT, 
 		Constants.HEIGHT, 
 		Constants.UNIT, 
 		Constants.WHITE
@@ -69,9 +69,11 @@ OptionsPanel.prototype.init = function() {
 OptionsPanel.prototype.update = function() {
 	var input = app.input;
 
-	this.inputOptions.update();
-
 	Panel.prototype.update.call(this);
+
+	this.grid.update();
+
+	this.inputOptions.update();
 
 	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.B)) {
 		this.nextPanelKey = PanelTypes.PLAY_PANEL;

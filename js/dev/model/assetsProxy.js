@@ -30,7 +30,8 @@ AssetsProxy = function() {
     */
 	this.arrSpriteSheetData = [
 		'assets/finished/titleGraphic.json',
-		'assets/finished/tankBase.json',
+		'assets/finished/striker.json',
+		'assets/finished/strikerWheel.json',
 		'assets/finished/enemyTankBase.json',
 		'assets/finished/vulcanTurret.json',
 		'assets/finished/spreadTurret.json',
@@ -52,7 +53,8 @@ AssetsProxy = function() {
 	 */
 	this.arrManifest = [
 		{id: "titleGraphic",		src: "assets/finished/titleGraphic.png"},
-		{id: "tankBase",			src: "assets/finished/tankBase.png"},
+		{id: "striker",				src: "assets/finished/striker.png"},
+		{id: "strikerWheel",		src: "assets/finished/strikerWheel.png"},
 		{id: "enemyTankBase",		src: "assets/finished/enemyTankBase.png"},
 		{id: "vulcanTurret",		src: "assets/finished/vulcanTurret.png"},
 		{id: "spreadTurret",		src: "assets/finished/spreadTurret.png"},

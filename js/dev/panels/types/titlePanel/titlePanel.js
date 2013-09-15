@@ -38,7 +38,7 @@ TitlePanel.prototype.init = function() {
 		.dr(0, 0, Constants.WIDTH, Constants.HEIGHT);
 
 	this.grid = new Grid(
-		Constants.WIDTH, 
+		Constants.WIDTH + Constants.UNIT, 
 		Constants.HEIGHT, 
 		Constants.UNIT, 
 		Constants.WHITE
@@ -71,6 +71,8 @@ TitlePanel.prototype.init = function() {
 */
 TitlePanel.prototype.update = function() {
 	Panel.prototype.update.call(this);
+
+	this.grid.update();
 
 	if(this.gameOptions.container.visible) {
 		this.gameOptions.update();
@@ -120,14 +122,14 @@ TitlePanel.prototype.setTitle = function() {
 			Constants.HEIGHT * 0.125
 		),
 		titleComponentDest = new app.b2Vec2(
-			titleDest.x + 3,
+			titleDest.x + 10,
 			titleDest.y + 43
 		);
 
 	//the main title graphic "strike"
 	this.title = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["titleGraphic"]);
-	this.title.x = titleDest.x - 240;
-	this.title.y = titleDest.y + 80;
+	this.title.x = titleDest.x - 240; 	//initial horizontal offset
+	this.title.y = titleDest.y + 80;	//initial vertical offset	
 	this.title.scaleX = 2;
 	this.title.scaleY = 0;
 	this.title.gotoAndStop(0);
@@ -136,8 +138,8 @@ TitlePanel.prototype.setTitle = function() {
 	this.titleComponent = new createjs.Shape();
 	this.titleComponent.graphics
 		.ss(1)
-		.s(Constants.DARK_BLUE)
-		.lf([Constants.LIGHT_BLUE, Constants.BLUE], [0, 1], 0, 0, 472, 0)
+		.s(Constants.RED)
+		.lf([Constants.YELLOW, Constants.RED], [0, 0.75], 0, 0, 472, 0)
 		.mt(0, 21)
 		.lt(39, 0)
 		.lt(472, 21)

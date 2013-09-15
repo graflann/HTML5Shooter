@@ -12,9 +12,9 @@ Grid = function(w, h, unit, color) {
 	*/
 	this.unit = unit;
 
-	this.width = w; //Constants.WIDTH * 4;
+	this.width = w;
 
-	this.height = h; //Constants.HEIGHT * 2;
+	this.height = h;
 	
 	/**
 	*@type  {String}
@@ -53,6 +53,18 @@ Grid.prototype.init = function() {
 	}
 	
 	this.shape.alpha = 0.5;
+};
+
+/**
+*Scroll the grid automatically (use in background)
+*@public
+*/
+Grid.prototype.update = function() {
+	this.shape.x -= 4;
+
+	if(this.shape.x <= -Constants.UNIT) {
+		this.shape.x = 0;
+	}
 };
 
 /**

@@ -46,11 +46,16 @@ PlayerTank = function(arrProjectileSystems) {
 	this.physicalPosition = null;
 
 	this.body = null;
+
 	this.turretBody = null;
 
 	this.container = null;
 
 	this.base = null;
+
+	this.baseContainer = null;
+
+	this.arrWheels = [];
 
 	this.turret = null;
 
@@ -73,6 +78,8 @@ PlayerTank = function(arrProjectileSystems) {
 
 	this.rotationRate = 5;
 
+	this.isMoving = false;
+
 	this.weaponSelectEvent 			= new goog.events.Event(EventNames.WEAPON_SELECT, this);
 	this.addHomingOverlayEvent 		= new goog.events.Event(EventNames.ADD_HOMING_OVERLAY, this);
 	this.removeHomingOverlayEvent 	= new goog.events.Event(EventNames.REMOVE_HOMING_OVERLAY, this);
@@ -89,6 +96,9 @@ PlayerTank.KEY = "player";
 *@public
 */
 PlayerTank.prototype.init = function() {
+	var baseSpriteSheet = app.assetsProxy.arrSpriteSheet["striker"],
+		wheelSpriteSheet = app.assetsProxy.arrSpriteSheet["strikerWheel"];
+
 	this.container = new createjs.Container();
 
 	this.width = 48;
@@ -97,15 +107,33 @@ PlayerTank.prototype.init = function() {
 	this.velocity.x = 4800;
 	this.velocity.y = 4800;
 
-	this.base = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["tankBase"]);
-	this.base.x = this.base.regX = this.width * 0.5;
-	this.base.y = this.base.regY = this.height * 0.75;
-	this.container.addChild(this.base);
+	this.baseContainer = new createjs.Container();
+
+	this.base = new createjs.BitmapAnimation(baseSpriteSheet);
+	this.base.gotoAndStop(0);
+	this.baseContainer.x = this.baseContainer.regX = this.width * 0.5;
+	this.baseContainer.y = this.baseContainer.regY = this.height * 0.75;
+	this.baseContainer.addChild(this.base);
+
+	this.arrWheels = [
+		new createjs.BitmapAnimation(wheelSpriteSheet),
+		new createjs.BitmapAnimation(wheelSpriteSheet)
+	];
+	this.arrWheels[0].x = 5; 	//left
+	this.arrWheels[1].x = 42;	//right
+	this.arrWheels[0].y = this.arrWheels[1].y = 7;
+
+	for(var i = 0; i < this.arrWheels.length; i++) {
+		this.arrWheels[i].regX = this.arrWheels[i].regY = 10;
+		this.arrWheels[i].gotoAndStop(0);
+		this.baseContainer.addChild(this.arrWheels[i]);
+	}
+	this.container.addChild(this.baseContainer);
 
 	this.turretTransition = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["turretTransition"]);
 	this.turretTransition.regX = this.turretTransition.regY = 18;
-	this.turretTransition.x = this.base.x;
-	this.turretTransition.y = this.base.y;
+	this.turretTransition.x = this.baseContainer.x;
+	this.turretTransition.y = this.baseContainer.y;
 
 	this.turretTransitionAddAnimUtil = new AnimationUtility("add", this.turretTransition, 8);
 	this.turretTransitionRemoveAnimUtil = new AnimationUtility("remove", this.turretTransition, 8);
@@ -114,11 +142,8 @@ PlayerTank.prototype.init = function() {
 
 	this.homingProjectileSystem = this.arrProjectileSystems[ProjectileTypes.HOMING];
 
-	this.base.gotoAndStop(0);
-
 	this.position = new app.b2Vec2();
 	this.physicalPosition = new app.b2Vec2();
-
 	this.force = new app.b2Vec2();
 
 	this.setPhysics();
@@ -136,9 +161,10 @@ PlayerTank.prototype.update = function(options) {
 			gamepad = input.gamepad,
 			isUp = false,
 			isDown = false,
-			isMoving = false,
 			hto = options.hto,
 			worldCenter = this.body.GetWorldCenter();
+
+		this.isMoving = false;
 
 		//zero out any linear velocity
 		this.body.SetLinearVelocity( app.vecZero);
@@ -153,7 +179,7 @@ PlayerTank.prototype.update = function(options) {
 
 			this.intendedRotation = 0;
 
-			isMoving = isUp = true;
+			this.isMoving = isUp = true;
 		} else if (input.isKeyDown(KeyCode.S) || 
 			(gamepad && input.isButtonDown(GamepadCode.BUTTONS.DPAD_DOWN))) {
 
@@ -163,7 +189,7 @@ PlayerTank.prototype.update = function(options) {
 
 			this.intendedRotation = 180;
 
-			isMoving = isDown = true;
+			this.isMoving = isDown = true;
 		}
 
 		if(input.isKeyDown(KeyCode.A) || 
@@ -177,7 +203,7 @@ PlayerTank.prototype.update = function(options) {
 			else if(isDown)	{ this.intendedRotation = 225; } 
 			else 			this.intendedRotation = 270;
 
-			isMoving = true;
+			this.isMoving = true;
 		} else if (input.isKeyDown(KeyCode.D) || 
 			(gamepad && input.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT))) {
 
@@ -189,7 +215,7 @@ PlayerTank.prototype.update = function(options) {
 			else if(isDown)	{ this.intendedRotation = 135; } 
 			else 			this.intendedRotation = 90;
 
-			isMoving = true;
+			this.isMoving = true;
 		}
 
 		//Updates the base rotation with a smooth transition
@@ -240,7 +266,22 @@ PlayerTank.prototype.update = function(options) {
 			}
 		}
 
-		(isMoving) ? this.base.play() : this.base.gotoAndStop(0);
+		if(this.isMoving) {
+			 this.base.play();
+
+			//Animate wheels
+			for(var i = 0; i < this.arrWheels.length; i++) {
+				this.arrWheels[i].play();
+			}
+		} else {
+			this.base.gotoAndStop(0);
+
+			//Stop wheel animation
+			for(var i = 0; i < this.arrWheels.length; i++) {
+				this.arrWheels[i].gotoAndStop(0);
+			}
+		};
+
 
 		this.setPosition(this.body.GetPosition());
 
@@ -274,23 +315,49 @@ PlayerTank.prototype.clear = function() {
 /**
 *@private
 */
-PlayerTank.prototype.updateRotation = function() {
-	var angleDif = this.intendedRotation - this.base.rotation,
+PlayerTank.prototype.updateRotation = function(isMoving) {
+	var angleDif = this.intendedRotation - this.baseContainer.rotation,
 		absAngleDif = 0;
 
 	if(angleDif != 0) {
 		absAngleDif = Math.abs(angleDif);
 
+		this.isMoving = true;
+
 		if(absAngleDif >= 180) {
-			if(this.intendedRotation > this.base.rotation)
+			if(this.intendedRotation > this.baseContainer.rotation) {
 				this.rotateToAngle(-this.rotationRate);
-			else if(this.intendedRotation < this.base.rotation)
+
+				for(var i = 0; i < this.arrWheels.length; i++) {
+					this.arrWheels[i].rotation = -45;
+				}
+			}
+			else if(this.intendedRotation < this.baseContainer.rotation) {
 				this.rotateToAngle(this.rotationRate);
+
+				for(var i = 0; i < this.arrWheels.length; i++) {
+					this.arrWheels[i].rotation = 45;
+				}
+			}
 		} else {
-			if(this.intendedRotation > this.base.rotation)
+			if(this.intendedRotation > this.baseContainer.rotation) {
 				this.rotateToAngle(this.rotationRate);
-			else if(this.intendedRotation < this.base.rotation)
+
+				for(var i = 0; i < this.arrWheels.length; i++) {
+					this.arrWheels[i].rotation = 45;
+				}
+			}
+			else if(this.intendedRotation < this.baseContainer.rotation) {
 				this.rotateToAngle(-this.rotationRate);
+
+				for(var i = 0; i < this.arrWheels.length; i++) {
+					this.arrWheels[i].rotation = -45;
+				}
+			}
+		}
+	} else {
+		for(var i = 0; i < this.arrWheels.length; i++) {
+			this.arrWheels[i].rotation = 0;
 		}
 	}
 };
@@ -303,14 +370,14 @@ PlayerTank.prototype.rotateToAngle = function(rotationRate) {
 		return;
 	}
 
-	this.base.rotation += rotationRate;
+	this.baseContainer.rotation += rotationRate;
 
-	if(this.base.rotation <= 0) {
-		this.base.rotation += 360;
+	if(this.baseContainer.rotation <= 0) {
+		this.baseContainer.rotation += 360;
 	}
 
-	if(this.base.rotation >= 360) {
-		this.base.rotation -= 360;
+	if(this.baseContainer.rotation >= 360) {
+		this.baseContainer.rotation -= 360;
 	}
 };
 
@@ -326,7 +393,7 @@ PlayerTank.prototype.setPosition = function(pos) {
 	this.position.y = this.container.y + this.turret.shape.y;
 
 	//SET TANK AND TURRET BODY POSITIONS
-	this.body.SetPositionAndAngle(pos, Math.degToRad(this.base.rotation));
+	this.body.SetPositionAndAngle(pos, Math.degToRad(this.baseContainer.rotation));
 	this.turretBody.SetPosition(this.physicalPosition);
 };
 
@@ -364,7 +431,7 @@ PlayerTank.prototype.fireHoming = function() {
 
 		if(projectile) {		
 			//acquire rotation of Turret instance in degrees and add ammo at table-referenced distance			
-			deg = (this.base.rotation - 90 + this.arrHomingFireOffsets[i]);
+			deg = (this.baseContainer.rotation - 90 + this.arrHomingFireOffsets[i]);
 			sin = trigTable.sin(deg);
 			cos = trigTable.cos(deg);
 			
