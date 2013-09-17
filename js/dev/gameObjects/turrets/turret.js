@@ -76,7 +76,9 @@ Turret.prototype.clear = function() {
 
 Turret.prototype.manualControl = function(options) {
 	var input = app.input,
-		gamepad = input.gamepad;
+		gamepad = input.gamepad,
+		vert = input.getAxis(GamepadCode.AXES.RIGHT_STICK_VERT),
+		hori = input.getAxis(GamepadCode.AXES.RIGHT_STICK_HOR);
 
 	//always update fire delay
 	this.fireCounter++;
@@ -97,8 +99,26 @@ Turret.prototype.manualControl = function(options) {
 	
 	//fire if PlayerTank is not transitioning Turret instances
 	if(!options.isTransitioning) {
+		//Keyboard or Button fire
 		if(input.isKeyDown(KeyCode.SPACE) || 
 			input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT])) {
+			if(this.fireCounter > this.fireThreshold) {
+				this.fire();
+				this.fireCounter = 0;
+			}
+
+			this.isFiring = true;
+		} 
+		//maps right-stick to turret rotation for firing control in twin-stick preference
+		else if ( 
+			vert < -input.SHOOT_THRESHOLD || vert > input.SHOOT_THRESHOLD ||
+			hori < -input.SHOOT_THRESHOLD || hori > input.SHOOT_THRESHOLD
+		) {
+			var deg = Math.radToDeg(Math.atan2(vert, hori));
+
+			//offset rotation
+			this.shape.rotation = deg + 90;
+
 			if(this.fireCounter > this.fireThreshold) {
 				this.fire();
 				this.fireCounter = 0;

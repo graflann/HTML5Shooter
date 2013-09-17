@@ -1,6 +1,6 @@
 goog.provide('SceneObjectClasses');
 
-goog.require('Brick');
+goog.require('Wall');
 goog.require('Tower');
 
 /**
@@ -8,7 +8,7 @@ goog.require('Tower');
  * @type {Object}
  */
 SceneObjectClasses = {
-	brick: Brick,
+	wall: Wall,
 	tower: Tower
 };
 

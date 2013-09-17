@@ -110,93 +110,115 @@ Level = function(options) {
 		// 	]
 		],
 		sceneObjects: {
-			tower: [
-				{ width: Constants.UNIT,
+			wall: [
+				{ 	
+					width: Constants.UNIT * 4,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
-					enemy: "enemyTurret", 
-					x: Constants.WIDTH * 0.5 - (Constants.UNIT * 0.5), 
-					y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5)
-				},
-				{ width: Constants.UNIT,
+					numFloors: 7,
+					x: 300, 
+					y: 200
+				}
+			],
+			tower: [
+				// { 	
+				// 	width: Constants.UNIT,
+				// 	height: Constants.UNIT,
+				// 	color: Constants.BLUE,
+				// 	enemy: "enemyTurret", 
+				// 	x: Constants.WIDTH * 0.5 - (Constants.UNIT * 0.5), 
+				// 	y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5)
+				// },
+				{ 	
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5)
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 1.5 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5)
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 2 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5) 
 				},
-				{ width: Constants.UNIT,
+				{ 	
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 2.5 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5)
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 3 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5) 
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 3.5 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5) 
 				},
-
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 0.5 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT - (Constants.UNIT * 0.5) 
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT - (Constants.UNIT * 0.5)  
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 1.5 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT - (Constants.UNIT * 0.5)
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 2 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT - (Constants.UNIT * 0.5) 
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 2.5 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT - (Constants.UNIT * 0.5)
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
@@ -212,49 +234,56 @@ Level = function(options) {
 				},
 
 
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 0.5 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5) 
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5)  
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 1.5 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5)
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 2 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5) 
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 2.5- (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5)  
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
 					x: Constants.WIDTH * 3 - (Constants.UNIT * 0.5), 
 					y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5)
 				},
-				{ width: Constants.UNIT,
+				{ 
+					width: Constants.UNIT,
 					height: Constants.UNIT,
 					color: Constants.BLUE,
 					enemy: "enemyTurret", 
@@ -408,6 +437,7 @@ Level.prototype.setSceneObjects = function() {
 		enemy,
 		SceneObjectClass;
 
+	//Dynamically resolve the derived SceneObject class and create an instance of it
 	for(var key in this.options.sceneObjects) {
 		arrSO = this.options.sceneObjects[key];
 
@@ -416,10 +446,12 @@ Level.prototype.setSceneObjects = function() {
 		for(var i = 0; i < arrSO.length; i++) {
 			obj = arrSO[i];
 
+			//TODO: This could be more elegant...
 			if(obj.enemy) {
 				enemy = this.arrEnemySystems[obj.enemy].getEnemy();
-
 				so = new SceneObjectClass(obj.width, obj.height, obj.color, enemy);
+			} else if(obj.numFloors) {
+				so = new SceneObjectClass(obj.width, obj.height, obj.color, obj.numFloors);
 			} else {
 				so = new SceneObjectClass(obj.width, obj.height, obj.color);
 			}

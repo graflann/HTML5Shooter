@@ -1,12 +1,12 @@
-goog.provide('Tower');
+goog.provide('Wall');
 
 goog.require('SceneObject');
 
 /**
 *@constructor
-*Multi segmented tower for depth perspective
+*Bricks construct the walls
 */
-Tower = function(width, height, color, enemy) {
+Wall = function(width, height, color, numFloors) {
 	SceneObject.call(this);
 
 	/**
@@ -24,12 +24,15 @@ Tower = function(width, height, color, enemy) {
 	*/
 	this.color = color || Constants.BLUE;
 
-	this.enemy = enemy || null;
+	/**
+	*@type  {Number}
+	*/
+	this.numFloors = numFloors || 7;
 	
 	/**
 	*@type {Array.<Shape>}
 	*/
-	this.arrFloors = new Array(7);
+	this.arrFloors = new Array(this.numFloors);
 
 	/**
 	*@type {Array.<Number>}
@@ -44,13 +47,13 @@ Tower = function(width, height, color, enemy) {
 	this.init();
 };
 
-goog.inherits(Tower, SceneObject)
+goog.inherits(Wall, SceneObject)
 
 /**
 *@override
 *@public
 */
-Tower.prototype.init = function() {
+Wall.prototype.init = function() {
 	var floor,
 		foreground = app.layers.getStage(LayerTypes.FOREGROUND);
 
@@ -62,16 +65,16 @@ Tower.prototype.init = function() {
 
 	for(var i = 0; i < this.arrFloors.length; i++) {
 		floor = new createjs.Shape();
-		floor.graphics.ss(1).s(this.color).f("#000").dr(0, 0, this.width, this.height);
-		foreground.addChild(floor);
+		floor.graphics
+			.ss(1)
+			.s(this.color)
+			.f("#000")
+			.dr(0, 0, this.width, this.height);
+			
+		app.layers.getStage(LayerTypes.FOREGROUND).addChild(floor);
 
 		this.arrFloors[i] = floor;
 		this.arrOffsets[i] = 0.025 + (i * 0.025);
-	}
-
-	if(this.enemy) {
-		this.enemy.setPosition(this.position.x, this.position.y);
-		this.enemy.setIsAlive(true);
 	}
 };
 
@@ -79,7 +82,7 @@ Tower.prototype.init = function() {
 *@override
 *@public
 */
-Tower.prototype.update = function(options) {
+Wall.prototype.update = function(options) {
 	var camera = options.camera,
 		floor,
 		offset,
@@ -98,18 +101,13 @@ Tower.prototype.update = function(options) {
 		floor.x = this.position.x + x;
 		floor.y = this.position.y + y;
 	}
-
-	//update enemy on tower if present and alive
-	if(this.enemy && this.enemy.isAlive) {
-		this.enemy.setPosition(floor.x, floor.y);
-	}
 };
 
 /**
 *@override
 *@public
 */
-Tower.prototype.clear = function() {
+Wall.prototype.clear = function() {
 	this.shape.getStage().removeChild(this.shape);
 	
 	this.shape = null;
@@ -118,7 +116,7 @@ Tower.prototype.clear = function() {
 /**
 *@private
 */
-Tower.prototype.setPosition = function(x, y) {	
+Wall.prototype.setPosition = function(x, y) {	
 	this.position.x = this.shape.x = x;
 	this.position.y = this.shape.y = y;
 
@@ -138,7 +136,7 @@ Tower.prototype.setPosition = function(x, y) {
 /**
 *@private
 */
-Tower.prototype.setPhysics = function() {
+Wall.prototype.setPhysics = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef(),
 		w = this.width / (app.physicsScale * 2),
@@ -146,7 +144,7 @@ Tower.prototype.setPhysics = function() {
 	
 	fixDef.density = 1.0;
 	fixDef.friction = 0;
-	fixDef.restitution = 0;
+	fixDef.restitution = 1.0;
 	fixDef.filter.categoryBits = CollisionCategories.SCENE_OBJECT;
 	fixDef.shape = new app.b2PolygonShape();
 	fixDef.shape.SetAsBox(w, h);

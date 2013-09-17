@@ -29,7 +29,7 @@ Input = function() {
 	 * [arrPrevButtonDown description]
 	 * @type {[type]}
 	 */
-	this.arrPrevButtonDown = null
+	this.arrPrevButtonDown = null;
 
 	/**
 	 * [gamepad description]
@@ -39,26 +39,29 @@ Input = function() {
 
 	// The canonical list of attached gamepads, without “holes” (always
 	// starting at [0]) and unified between Firefox and Chrome.
-	this.gamepads = [],
+	this.gamepads = [];
 
 	// A number of typical buttons recognized by Gamepad API and mapped to
 	// standard controls. Any extraneous buttons will have larger indexes.
-	TYPICAL_BUTTON_COUNT = 16,
+	this.TYPICAL_BUTTON_COUNT = 16;
 
 	// A number of typical axes recognized by Gamepad API and mapped to
 	// standard controls. Any extraneous buttons will have larger indexes.
-	TYPICAL_AXIS_COUNT = 4,
+	this.TYPICAL_AXIS_COUNT = 4;
+
+	this.MOVE_THRESHOLD = 0.5;
+	this.SHOOT_THRESHOLD = 0.25;
 
 	// Whether we’re requestAnimationFrameing like it’s 1999.
-	this.isTicking = false,
+	this.isTicking = false;
 
 	// Remembers the connected gamepads at the last check; used in Chrome
 	// to figure out when gamepads get connected or disconnected, since no events are fired.
-	this.prevRawGamepadTypes = [],
+	this.prevRawGamepadTypes = [];
 
 	// Previous timestamps for gamepad state; used in Chrome to not bother with
 	// analyzing the polled data if nothing changed (timestamp is the same as last time).
-	this.prevTimestamps = [],
+	this.prevTimestamps = [];
 	
 	this.init();
 };
@@ -120,7 +123,7 @@ Input.prototype.setGamepad = function() {
 	// As of writing, it seems impossible to detect Gamepad API support
 	// in Firefox, hence we need to hardcode it in the third clause. 
 	// (The preceding two clauses are for Chrome.)
-	var i = TYPICAL_BUTTON_COUNT,
+	var i = this.TYPICAL_BUTTON_COUNT,
 		gamepadSupportAvailable = !!navigator.webkitGetGamepads || 
 			!!navigator.webkitGamepads ||
 			(navigator.userAgent.indexOf('Firefox/') != -1);
@@ -134,7 +137,6 @@ Input.prototype.setGamepad = function() {
 	if (!gamepadSupportAvailable) {
 		// It doesn't seem Gamepad API is available – show a message telling
 		// the visitor about it.
-		//tester.showNotSupported();
 		//TODO: Modal message alerting user to gamepad support in Chrome or something...
 	} else {
 		// Firefox supports the connect/disconnect event, so we attach event handlers to those.

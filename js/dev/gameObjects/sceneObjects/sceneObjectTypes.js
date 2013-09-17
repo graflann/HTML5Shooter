@@ -4,7 +4,7 @@ goog.provide('SceneObjectTypes');
 *@enum {String}
 */
 SceneObjectTypes = {
-    BRICK: 	'brick',
+    WALL: 	'wall',
     TOWER: 	'tower'
 };
 

@@ -162,7 +162,12 @@ PlayerTank.prototype.update = function(options) {
 			isUp = false,
 			isDown = false,
 			hto = options.hto,
-			worldCenter = this.body.GetWorldCenter();
+			worldCenter = this.body.GetWorldCenter(),
+			vert = input.getAxis(GamepadCode.AXES.LEFT_STICK_VERT),
+			hori = input.getAxis(GamepadCode.AXES.LEFT_STICK_HOR);
+
+		//console.log(vert);
+		//console.log(hori);
 
 		this.isMoving = false;
 
@@ -171,7 +176,7 @@ PlayerTank.prototype.update = function(options) {
 
 		//MOVEMENT
 		if(input.isKeyDown(KeyCode.W) || 
-			(gamepad && input.isButtonDown(GamepadCode.BUTTONS.DPAD_UP))) {
+			input.isButtonDown(GamepadCode.BUTTONS.DPAD_UP) || vert < -input.MOVE_THRESHOLD) {
 
 			this.force.x = 0;
 			this.force.y = -this.velocity.y;
@@ -181,7 +186,7 @@ PlayerTank.prototype.update = function(options) {
 
 			this.isMoving = isUp = true;
 		} else if (input.isKeyDown(KeyCode.S) || 
-			(gamepad && input.isButtonDown(GamepadCode.BUTTONS.DPAD_DOWN))) {
+			input.isButtonDown(GamepadCode.BUTTONS.DPAD_DOWN) || vert > input.MOVE_THRESHOLD) {
 
 			this.force.x = 0;
 			this.force.y = this.velocity.y;
@@ -193,7 +198,7 @@ PlayerTank.prototype.update = function(options) {
 		}
 
 		if(input.isKeyDown(KeyCode.A) || 
-			(gamepad && input.isButtonDown(GamepadCode.BUTTONS.DPAD_LEFT))) {
+			input.isButtonDown(GamepadCode.BUTTONS.DPAD_LEFT) || hori < -input.MOVE_THRESHOLD) {
 
 			this.force.x = -this.velocity.x;
 			this.force.y = 0;
@@ -205,7 +210,7 @@ PlayerTank.prototype.update = function(options) {
 
 			this.isMoving = true;
 		} else if (input.isKeyDown(KeyCode.D) || 
-			(gamepad && input.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT))) {
+			input.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT) || hori > input.MOVE_THRESHOLD) {
 
 			this.force.x = this.velocity.x;
 			this.force.y = 0;
@@ -266,6 +271,7 @@ PlayerTank.prototype.update = function(options) {
 			}
 		}
 
+		//Animate wheels upon movement
 		if(this.isMoving) {
 			 this.base.play();
 
@@ -435,8 +441,8 @@ PlayerTank.prototype.fireHoming = function() {
 			sin = trigTable.sin(deg);
 			cos = trigTable.cos(deg);
 			
-			projectile.position.x = this.container.x + this.base.x;
-			projectile.position.y = this.container.y + this.base.y;
+			projectile.position.x = this.container.x + this.baseContainer.x;
+			projectile.position.y = this.container.y + this.baseContainer.y;
 
 			projectile.physicalPosition.x = projectile.position.x / scale;
 			projectile.physicalPosition.y = projectile.position.y / scale;
