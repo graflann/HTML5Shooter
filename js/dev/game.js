@@ -4,6 +4,7 @@ goog.require('goog.events.EventTarget');
 goog.require('goog.events.Event');
 goog.require('goog.events');
 goog.require('EventNames');
+goog.require('PayloadEvent');
 goog.require('PanelFactory');
 goog.require('PanelTypes');
 goog.require('AssetsProxy');
@@ -119,5 +120,5 @@ Game.prototype.onLoadComplete = function(e) {
 *@private
 */
 Game.prototype.onPanelChange = function(e) {
-	this.setPanel(e.target.nextPanelKey);
+	this.setPanel(e.payload.panelKey);
 }

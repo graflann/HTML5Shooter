@@ -76,8 +76,14 @@ OptionsPanel.prototype.update = function() {
 	this.inputOptions.update();
 
 	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.B)) {
-		this.nextPanelKey = PanelTypes.PLAY_PANEL;
-		goog.events.dispatchEvent(this, this.panelChangeEvent);
+		goog.events.dispatchEvent(
+			this, 
+			new PayloadEvent(
+				EventNames.PANEL_CHANGE, 
+				this,
+				{ panelKey: PanelTypes.PLAY_PANEL }
+			)
+		);
 	}
 
 	// app.input.checkPrevKeyDown([

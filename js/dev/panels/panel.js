@@ -9,9 +9,7 @@ goog.require('goog.events');
 *Primary / root rendering Object
 */
 Panel = function() {
-	this.nextPanelKey = "";
-
-	this.panelChangeEvent = new goog.events.Event(EventNames.PANEL_CHANGE, this);
+	
 };
 
 goog.inherits(Panel, goog.events.EventTarget);

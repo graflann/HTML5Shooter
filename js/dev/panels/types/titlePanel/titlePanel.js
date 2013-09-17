@@ -192,8 +192,6 @@ TitlePanel.prototype.setTitle = function() {
 };
 
 TitlePanel.prototype.onOptionSelect = function(e) {
-	this.nextPanelKey = e.target.panelKey;
-
 	goog.events.unlisten(
 		this.gameOptions, 
 		EventNames.OPTION_SELECT, 
@@ -202,6 +200,13 @@ TitlePanel.prototype.onOptionSelect = function(e) {
 		this
 	);
 
-	goog.events.dispatchEvent(this, this.panelChangeEvent);
+	goog.events.dispatchEvent(
+		this, 
+		new PayloadEvent(
+			EventNames.PANEL_CHANGE, 
+			this,
+			{ panelKey: e.target.panelKey }
+		)
+	);
 };
 
