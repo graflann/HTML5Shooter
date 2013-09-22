@@ -35,7 +35,7 @@ Particle.prototype.init = function() {
 *@public
 */
 Particle.prototype.update = function(options) {
-	if (this.isAlive){
+	if (this.isAlive) {
 		this.position.x = this.shape.x += this.velocity.x;
 		this.position.y = this.shape.y += this.velocity.y;
 		

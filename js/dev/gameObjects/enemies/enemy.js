@@ -15,6 +15,8 @@ Enemy = function() {
 
 	this.container = null;
 
+	this.health = 0;
+
 	this.enemyKilledEvent = new goog.events.Event(EventNames.ENEMY_KILLED, this);
 };
 
@@ -77,18 +79,33 @@ Enemy.prototype.setPosition = function(x, y) {
 /**
 *@public
 */
-Enemy.prototype.onCollide = function(collisionObject, options) {
-	options.explosions.emit(4, {
-		posX: this.position.x,
-		posY: this.position.y,
-		posOffsetX: 16,
-		posOffsetY: 16,
-		velX: 2,
-		velY: 2
-	});
+Enemy.prototype.modifyHealth = function(value) {
+	this.health -= value;
 
-	//CANNOT DO DURING TIMESTEP!!!
-	//this.kill();
+	if(this.health <= 0) {
+		this.health = 0;
+
+		return true;
+	}
+
+	return false;
+};
+
+/**
+*@public
+*/
+Enemy.prototype.onCollide = function(collisionObject, options) {
+
+	if(this.modifyHealth(collisionObject.damage)) {
+		options.explosions.emit(4, {
+			posX: this.position.x,
+			posY: this.position.y,
+			posOffsetX: 16,
+			posOffsetY: 16,
+			velX: 2,
+			velY: 2
+		});
+	}
 };
 
 /**

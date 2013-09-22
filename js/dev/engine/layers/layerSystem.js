@@ -127,7 +127,7 @@ LayerSystem.prototype.getLayer = function(id) {
 *@public
 */
 LayerSystem.prototype.getStage = function(id) {
-	return this.getLayer(id).stage;
+	return this.getLayer(id).getStage();
 };
 
 /**
@@ -135,7 +135,7 @@ LayerSystem.prototype.getStage = function(id) {
 *@public
 */
 LayerSystem.prototype.getDebugStage = function() {
-	return this.debugLayer.stage;
+	return this.debugLayer.getStage();
 };
 
 /**
@@ -143,7 +143,7 @@ LayerSystem.prototype.getDebugStage = function() {
 *@public
 */
 LayerSystem.prototype.getContext = function(id) {
-	return this.getLayer(id).context;
+	return this.getLayer(id).getContext();
 };
 
 /**
@@ -151,7 +151,7 @@ LayerSystem.prototype.getContext = function(id) {
 *@public
 */
 LayerSystem.prototype.getDebugContext = function() {
-	return this.debugLayer.context;
+	return this.debugLayer.getContext();
 };
 
 /**
@@ -159,7 +159,7 @@ LayerSystem.prototype.getDebugContext = function() {
 *@public
 */
 LayerSystem.prototype.getSelector = function(id) {
-	return this.arrLayers[id].selector;
+	return this.arrLayers[id].getSelector();
 };
 
 /**
@@ -176,9 +176,9 @@ LayerSystem.prototype.getContainer = function() {
 LayerSystem.prototype.swapLayers = function(firstId, secondId) {
 	var firstLayer = this.arrLayers[firstId],
 		secondLayer = this.arrLayers[secondId],
-		temp = firstLayer.zIndex;
+		temp = firstLayer.getZindex();
 
-	firstLayer.setZindex(secondLayer.zIndex);
+	firstLayer.setZindex(secondLayer.getZindex());
 	secondLayer.setZindex(temp);
 };
 

@@ -10,19 +10,75 @@ goog.require('Constants');
 *Parent in-game action object
 */
 Layer = function(parent, id, zIndex) {
-	this.parent = parent;
+	//PRIVATE///////////////////////////////////////////
+	var _parent = parent;
 
-	this.id = id;
+	var _id = id;
 
-	this.zIndex = zIndex || 0;
+	var _zIndex = zIndex || 0;
 
-	this.el = null;
+	var _el = null;
 
-	this.stage 	= null;
+	var _stage 	= null;
 
-	this.context = null;
+	var _context = null;
 
-	this.selector = null;
+	var _selector = null;
+	////////////////////////////////////////////////////
+
+	//PUBLIC////////////////////////////////////////////
+	//GET
+	this.getParent 		= function() { return _parent; };
+	this.getId 			= function() { return _id; };
+	this.getZindex 		= function() { return _zIndex; };
+	this.getEl 			= function() { return _el; };
+	this.getStage 		= function() { return _stage; };
+	this.getContext 	= function() { return _context; };
+	this.getSelector 	= function() { return _selector; };
+
+	//SET
+	this.setInit = function() {
+		_el = document.createElement("canvas");
+
+		_selector = $(_el);
+		_selector
+			.attr({ 
+				id: _id, 
+				width: Constants.WIDTH,
+				height: Constants.HEIGHT 
+			})
+			.css({ 
+				"position": "absolute",
+				"z-index": _zIndex 
+			});
+
+		_parent.append(_el);
+
+		_stage = new createjs.Stage(_id);
+
+		_context = document.getElementById(_id).getContext("2d");
+	};
+
+	this.setClear = function() {
+		_stage.removeAllChildren();
+		_stage.removeAllEventListeners();
+		_stage = null;
+
+		_context = null;
+
+		_selector.remove();
+		_selector = null;
+
+		_el = null;
+
+		_parent = null;
+	};
+
+	this.setZindex = function(value) {
+		_zIndex = value;
+		_selector.css("z-index", _zIndex);
+	};
+	////////////////////////////////////////////////////
 
 	this.init();
 };
@@ -33,25 +89,7 @@ goog.inherits(Layer, goog.events.EventTarget);
 *@public
 */
 Layer.prototype.init = function() {
-	this.el = document.createElement("canvas");
-
-	this.selector = $(this.el);
-	this.selector
-		.attr({ 
-			id: this.id, 
-			width: Constants.WIDTH,
-			height: Constants.HEIGHT 
-		})
-		.css({ 
-			"position": "absolute",
-			"z-index": this.zIndex 
-		});
-
-	this.parent.append(this.el);
-
-	this.stage = new createjs.Stage(this.id);
-
-	this.context = document.getElementById(this.id).getContext("2d");
+	this.setInit();
 };
 
 /**
@@ -65,33 +103,14 @@ Layer.prototype.update = function(options) {
 *@public
 */
 Layer.prototype.clear = function() {
-	this.stage.removeAllChildren();
-	this.stage.removeAllEventListeners();
-	this.stage = null;
-
-	this.context = null;
-
-	this.selector.remove();
-	this.selector = null;
-
-	this.el = null;
-
-	this.parent = null;
-};
-
-/**
-*@public
-*/
-Layer.prototype.setZindex = function(value) {
-	this.zIndex = value;
-	this.selector.css("z-index", this.zIndex);
+	this.setClear();
 };
 
 /**
 *@public
 */
 Layer.prototype.setTabIndex = function(value) {
-	this.selector.attr("tabindex", value);
+	this.getSelector().attr("tabindex", value);
 };
 
 goog.exportSymbol('Layer', Layer);

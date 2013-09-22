@@ -31,6 +31,8 @@ Projectile = function(colors, categoryBits, maskBits) {
 	this.body;
 
 	this.physicalPosition = new app.b2Vec2();
+
+	this.damage = 1;
 	
 	/**
 	*physical body added to Box2D physicsWorld
@@ -107,7 +109,7 @@ Projectile.prototype.checkBounds = function() {
 */
 Projectile.prototype.onCollide = function(collisionObject, options) {
 
-	if(collisionObject instanceof Enemy) {
+	if(collisionObject instanceof Enemy || collisionObject instanceof PlayerTank) {
 		options.positiveHit.emit(1, {
 			posX: this.shape.x,
 			posY: this.shape.y,

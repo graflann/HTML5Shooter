@@ -39,6 +39,8 @@ SniperProjectile.prototype.init = function()
 	this.shape.alpha = 0;
 	this.shape.snapToPixel = true;
 	this.shape.cache(-4, 0, 8, 96);
+
+	this.damage = 4;
 	
 	this.setPhysics();
 

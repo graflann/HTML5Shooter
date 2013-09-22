@@ -189,7 +189,9 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
 
         //TODO: Some processing on a enemy health variable to determine "death"
         //then push onto the kill list
-		this.killList.push(object);
+        if(object.health <= 0) {
+	      this.killList.push(object);
+        }
 	}
     //TODO: process collision w player
 
