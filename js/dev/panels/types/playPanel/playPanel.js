@@ -351,7 +351,7 @@ PlayPanel.prototype.setProjectiles = function() {
 PlayPanel.prototype.setParticles = function() {
 	this.arrParticleSystems[ParticleSystemNames.POSITIVE_HIT] = new ParticleSystem(
 		ParticleTypes.HIT,
-		Constants.RED,
+		Constants.YELLOW,
 		32
 	);
 

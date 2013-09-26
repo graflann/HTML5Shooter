@@ -18,17 +18,21 @@ goog.inherits(HitParticle, Particle)
 *@public
 */
 HitParticle.prototype.init = function() {
-	var value = 4;
+	var value = 4,
+		cacheValue = value + 1;
 
 	this.shape = new createjs.Shape();
 	this.shape.graphics
-		.ss(1)
+		.ss(2)
 		.s(this.color)
+		.f(Constants.BLACK)
 		.mt(-value, -value)
 		.qt(-value * 0.1, 0, -value, value)
 		.qt(0, value * 0.1, value, value)
 		.qt(value * 0.1, 0, value, -value)
-		.qt(0, -value * 0.1, -value, -value)
+		.qt(0, -value * 0.1, -value, -value);
+	this.shape.snapToPixel = true;
+	this.shape.cache(-cacheValue, -cacheValue, cacheValue * 2, cacheValue * 2);
 };
 
 /**

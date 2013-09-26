@@ -29,6 +29,8 @@ ReticleParticle.prototype.init = function() {
 		.lt(24, 0)
 		.mt(0, 0)
 		.lt(0, 24);
+	this.shape.snapToPixel = true;
+	this.shape.cache(-25, -25, 50, 50);
 };
 
 /**

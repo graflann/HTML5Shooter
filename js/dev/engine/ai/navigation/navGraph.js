@@ -31,11 +31,13 @@ NavGraph.prototype.getNode = function(index) {
 };
 
 NavGraph.prototype.getEdge = function(nodeFrom, nodeTo) {
-	if(nodeFrom < this.arrNodes.length && nodeFrom > -1 &&
-		nodeFrom != NavConstants.INVALID_NODE_INDEX) {
+	if(nodeFrom < this.arrNodes.length && nodeFrom > 
+		NavConstants.INVALID_NODE_INDEX &&
+		this.arrNodes[nodeFrom] != NavConstants.INVALID_NODE_INDEX) {
 
-		if(nodeTo < this.arrNodes.length && nodeTo > -1 &&
-			nodeTo != NavConstants.INVALID_NODE_INDEX) {
+		if(nodeTo < this.arrNodes.length && nodeTo > 
+			NavConstants.INVALID_NODE_INDEX &&
+			this.arrNodes[nodeTo] != NavConstants.INVALID_NODE_INDEX) {
 
 			var i = 0,
 				currentEdge = null;
