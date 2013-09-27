@@ -55,7 +55,8 @@ Game.prototype.init = function() {
 
 	//this.setPanel(PanelTypes.TITLE_PANEL);
 	//this.setPanel(PanelTypes.OPTIONS_PANEL);
-	this.setPanel(PanelTypes.PLAY_PANEL);
+	//this.setPanel(PanelTypes.PLAY_PANEL);
+	this.setPanel(PanelTypes.PATH_FINDING_PANEL);
 		
 	createjs.Ticker.addEventListener("tick", function() { self.update(); } );
 };

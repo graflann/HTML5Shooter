@@ -3,6 +3,7 @@ goog.provide('PanelFactory');
 goog.require('PlayPanel');
 goog.require('TitlePanel');
 goog.require('OptionsPanel');
+goog.require('PathFindingPanel');
 
 /**
 *@constructor
@@ -23,9 +24,10 @@ PanelFactory = function() {
 *Sets the initial core object
 */
 PanelFactory.prototype.setCore = function() {
-	this.core.PlayPanel 	= function getPlayPanel()		{ return new PlayPanel(); };
-	this.core.TitlePanel 	= function getTitlePanel()		{ return new TitlePanel(); };
-	this.core.OptionsPanel 	= function getOptionsPanel()	{ return new OptionsPanel(); };
+	this.core.PlayPanel 		= function getPlayPanel()		{ return new PlayPanel(); };
+	this.core.TitlePanel 		= function getTitlePanel()		{ return new TitlePanel(); };
+	this.core.OptionsPanel 		= function getOptionsPanel()	{ return new OptionsPanel(); };
+	this.core.PathFindingPanel 	= function getPathFindingPanel(){ return new PathFindingPanel(); };
 };
 
 /**

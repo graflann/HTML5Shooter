@@ -3,7 +3,7 @@ goog.provide('DepthFirstSearch');
 goog.require('NavGraph');
 goog.require('GraphNode');
 goog.require('GraphEdge');
-goog.require('SearchContants');
+goog.require('SearchConstants');
 
 /**
 *@constructor

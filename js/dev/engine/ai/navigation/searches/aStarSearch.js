@@ -3,7 +3,8 @@ goog.provide('AStarSearch');
 goog.require('NavGraph');
 goog.require('GraphNode');
 goog.require('GraphEdge');
-goog.require('SearchContants');
+goog.require('NavConstants');
+goog.require('SearchConstants');
 
 /**
 *@constructor
@@ -11,12 +12,20 @@ goog.require('SearchContants');
 AStarSearch = function(graph, sourceIndex, targetIndex) {
 	this.graph = graph;
 
-	this.sourceIndex = sourceIndex;
+	this.sourceIndex = sourceIndex || 0;
 
-	this.targetIndex = targetIndex;
+	this.targetIndex = targetIndex || 0;
 
+	/**
+	 * 'Reals' costs 
+	 * @type {Array}
+	 */
 	this.arrGCosts = new Array(this.graph.nodeLength());
 
+	/**
+	 * Heuristic costs
+	 * @type {Array}
+	 */
 	this.arrFCosts = new Array(this.graph.nodeLength());
 
 	this.arrShortestPath = [];
@@ -34,13 +43,14 @@ AStarSearch.prototype.search = function() {
 		GCost = 0,
 		HCost = 0,
 		targetNode = this.graph.getNode(this.targetIndex);
+		toNode = null,
 		arrEdges = null,
 		edge = null;
 
-	arrCosts.sort(this.sortCostsDescending);
+	arrCosts.sort(this.sortCostsAscending);
 
 	//put the source node on the front of the Array
-	arrCosts.unshift(this.sourceIndex);
+	arrCosts.push(this.sourceIndex);
 
 	//while the queue is not empty
 	while(arrCosts.length > 0) {
@@ -62,19 +72,26 @@ AStarSearch.prototype.search = function() {
 
 			//squared distance used as heuristic to cut down overhead
 			//TODO: optimize to not derive linear heuristic distance with sqrt
-			HCost = targetNode.Distance(edge.nodeTo);
+			
+			nodeTo = this.graph.getNode(edge.nodeTo);
+			HCost = targetNode.position.Distance(nodeTo.position);
 			GCost = this.arrGCosts[nextClosestIndex] + edge.cost;
 
 			if(!this.arrSearchFrontier[edge.nodeTo]) {
 				this.arrFCosts[edge.nodeTo] = GCost + HCost;
 				this.arrGCosts[edge.nodeTo] = GCost;
 
-				arrCosts.unshift(edge.nodeTo);
+				arrCosts.push(edge.nodeTo);
+				arrCosts.sort(this.sortCostsAscending);
 
 				this.arrSearchFrontier[edge.nodeTo] = edge;
-			} else if((GCost < this.arrGCosts[edge.nodeTo]) && (!this.arrShortestPath[edge.nodeTo])) {
 
-				//pq.ChangePriority(pE->To());
+			} else if((GCost < this.arrGCosts[edge.nodeTo]) && 
+				(!this.arrShortestPath[edge.nodeTo])) {
+				this.arrFCosts[edge.nodeTo] = GCost + HCost;
+				this.arrGCosts[edge.nodeTo] = GCost;
+				
+				arrCosts.sort(this.sortCostsAscending);
 
 				this.arrSearchFrontier[edge.nodeTo] = edge;
 			}
@@ -109,11 +126,11 @@ AStarSearch.prototype.getPathToTarget = function() {
 };
 
 AStarSearch.prototype.getCostToTarget = function() {
-	return this.arrRealCosts[this.target]
+	return this.arrGCosts[this.targetIndex]
 };
 
-AStarSearch.prototype.sortCostsDescending = function(a, b) {
-	return b - a;
+AStarSearch.prototype.sortCostsAscending = function(a, b) {
+	return a - b;
 };
 
 goog.exportSymbol('AStarSearch', AStarSearch);

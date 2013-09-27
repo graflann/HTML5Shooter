@@ -19,8 +19,6 @@ CollisionManager = function(arrParticleSystems, arrPlayerProjectileSystems) {
 
     this.isHoming = false;
 
-    this.homingTargetPosition = new app.b2Vec2();
-
 	this.collisionOptions = {
 		player: {
     		

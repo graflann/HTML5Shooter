@@ -468,7 +468,7 @@ Level.prototype.setSceneObjects = function() {
 };
 
 Level.prototype.setGraph = function() {
-	this.pathFinder = new PathFinder();
+	//this.pathFinder = new PathFinder();
 };
 
 //EVENT HANDLERS

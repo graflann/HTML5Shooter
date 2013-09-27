@@ -27,6 +27,10 @@ NavGraph.prototype.setNodes = function(arrNodes) {
 };
 
 NavGraph.prototype.getNode = function(index) {
+	if(index >= this.arrNodes.length || index < 0) {
+		throw new Error("index to get node invalid");
+	}
+
 	return this.arrNodes[index];
 };
 
@@ -121,8 +125,8 @@ NavGraph.prototype.removeNode = function(nodeIndex) {
 NavGraph.prototype.addEdge = function(edge) {
 	if(edge.nodeFrom < this.nextNodeIndex && edge.nodeTo < this.nextNodeIndex) {
 
-		if(this.arrNodes[edge.nodeTo] != NavConstants.INVALID_NODE_INDEX && 
-			this.arrNodes[edge.nodeFrom] != NavConstants.INVALID_NODE_INDEX) {
+		if(this.arrNodes[edge.nodeTo].index != NavConstants.INVALID_NODE_INDEX && 
+			this.arrNodes[edge.nodeFrom].index != NavConstants.INVALID_NODE_INDEX) {
 
 			//determine existence of Array at index and create if null / undefined
 			if(!this.arrEdges[edge.nodeFrom]) {
@@ -135,10 +139,14 @@ NavGraph.prototype.addEdge = function(edge) {
 			
 			//if the graph is undirected we must add another connection in the opposite direction
 			if(!this.isDirectedGraph) {
+				if(!this.arrEdges[edge.nodeTo]) {
+					this.arrEdges[edge.nodeTo] = [];
+				}
+
 				//check to make sure the edge is unique before adding
 				if (this.isEdgeUnique(edge.nodeTo, edge.nodeFrom))
 				{
-					var newEdge = new Edge(edge.nodeFrom, edge.nodeTo);
+					var newEdge = new GraphEdge(edge.nodeFrom, edge.nodeTo);
 					this.arrEdges[edge.nodeTo].push(newEdge);
 				}
 			}
