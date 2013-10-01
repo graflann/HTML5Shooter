@@ -3,6 +3,7 @@ goog.provide('GraphHelper');
 goog.require('NavConstants');
 goog.require('GraphNode');
 goog.require('GraphEdge');
+goog.require('AStarSearch');
 
 GraphHelper = new Object();
 
@@ -24,12 +25,12 @@ GraphHelper.addAllNeighborsToGridNode = function(graph, row, col, numCellsX, num
             //check to see if this is a valid neighbour
             if (GraphHelper.isValidNeighbor(nodeX, nodeY, numCellsX, numCellsY)) {
 
-                //calculate the distance to this node
+                //calculate the distance from this node to its neighbors
                 var value               = (row * numCellsX) + col,
                     neighborValue       = (nodeY * numCellsX) + nodeX,
                     nodePos             = graph.getNode(value).position,
                     nodeNeighborPos     = graph.getNode(neighborValue).position,
-                    distance            = nodePos.Distance(nodeNeighborPos);
+                    distance            = nodePos.DistanceSqrd(nodeNeighborPos);
 
                 graph.addEdge(new GraphEdge(value, neighborValue, distance));
             }
@@ -63,25 +64,72 @@ GraphHelper.createGrid = function(graph, levelW, levelH, numCellsX, numCellsY) {
     //neighbors.
     for (var row = 0; row < numCellsY; row++) {
         for (var col = 0; col < numCellsX; col++) {
-          GraphHelper.addAllNeighborsToGridNode(graph, row, col, numCellsX, numCellsY);
+            GraphHelper.addAllNeighborsToGridNode(graph, row, col, numCellsX, numCellsY);
         }
     }
 };
 
-GraphHelper.drawGrid = function(graph, sourceIndex, targetIndex, path) {
+GraphHelper.drawGrid = function(graph, sourceIndex, targetIndex, path, shortestPath) {
     var i = 0, 
         j = 0,
-        length = graph.nodeLength(),
         node = null,
+        edge = null,
+        prevNode = null,
+        edge = null,
         pos = null,
+        prevPos = null,
         shape = null,
         text = null,
         label = "",
         stage = app.layers.getStage(LayerTypes.MAIN),
         color = "";
 
+    //render path tree
+    for(var index in shortestPath) {
+        if(shortestPath[index]) {
+            edge = shortestPath[index];
+
+            if(edge) {
+                node = graph.getNode(edge.nodeTo);
+                prevNode = graph.getNode(edge.nodeFrom);
+                pos = node.position;
+                prevPos = prevNode.position;
+
+                shape = new createjs.Shape();
+                shape.graphics
+                    .s(Constants.LIGHT_BLUE)
+                    .ss(1)
+                    .mt(pos.x, pos.y)
+                    .lt(prevPos.x, prevPos.y);
+
+                shape.x = 0;
+                shape.y = 0;
+                shape.alpha = 0.5;
+
+                stage.addChild(shape);
+            }
+        }
+    }
+
+    //render overlying nodes identifying the path from source to target
+    for(i = 0; i < path.length; i++) {
+        node = graph.getNode(path[i]);
+        pos = node.position;
+
+        shape = new createjs.Shape();
+        shape.graphics
+            .f(Constants.YELLOW)
+            .dc(0, 0, 8);
+
+        shape.x = pos.x;
+        shape.y = pos.y;
+        shape.alpha = 0.25;
+
+        stage.addChild(shape);
+    }
+
     //render all graph nodes
-    for(i; i < length; i++) {
+    for(i = 0; i < graph.nodeLength(); i++) {
         node = graph.getNode(i);
         pos = node.position;
 
@@ -110,72 +158,34 @@ GraphHelper.drawGrid = function(graph, sourceIndex, targetIndex, path) {
         stage.addChild(shape);
         stage.addChild(text);
     }
-
-    length = path.length;
-
-    //render overlying nodes identifying the path from source to target
-    for(i = 0; i < length; i++) {
-        node = graph.getNode(path[i]);
-        pos = node.position;
-
-        shape = new createjs.Shape();
-        shape.graphics
-            .f(Constants.YELLOW)
-            .dc(0, 0, 8);
-
-        shape.x = pos.x;
-        shape.y = pos.y;
-        shape.alpha = 0.25;
-
-        stage.addChild(shape);
-    }
 };
 
-GraphHelper.createShortestPathTable = function(graph) {
-    var length = graph.nodeLength(),
-        arrRow = new Array(length),
-        arrShortestPaths = new Array(length),
-        arrShortestPath = null,
-        i = 0,
-        sourceIndex = 0,
+GraphHelper.createPathTable = function(graph) {
+    var sourceIndex = 0,
         targetIndex = 0,
-        nodeIndex = 0,
-        search = new AStartSearch(graph, 0);
+        length = graph.nodeLength(),
+        arrPaths = new Array(graph.nodeLength()),
+        searchAlgorithm = new AStarSearch(graph, sourceIndex, targetIndex);
 
-    for(i = 0; i < length; i++) {
-        arrRow[i] = NavConstants.INVALID_NODE_INDEX;
+    for(sourceIndex; sourceIndex < length; sourceIndex++) {
+        searchAlgorithm.sourceIndex = sourceIndex;
+        targetIndex = 0;
+
+        arrPaths[sourceIndex] = [];
+
+        for(targetIndex; targetIndex < length; targetIndex++) {
+            searchAlgorithm.targetIndex = targetIndex;
+
+            searchAlgorithm.search();
+
+            arrPaths[sourceIndex][targetIndex] = searchAlgorithm.getPathToTarget();
+
+            searchAlgorithm.arrShortestPath.length = 0;
+            searchAlgorithm.arrSearchFrontier.length = 0;
+        }
     }
 
-    for(i = 0; i < length; i++) {
-        arrShortestPaths[i] = arrRow.slice(0);
-    }
-
-    for (sourceIndex = 0; sourceIndex < length; ++sourceIndex) {
-        //calculate the SPT for this node
-        //Graph_SearchDijkstra<graph_type> search(G, source);
-        
-        search.sourceIndex = sourceIndex;
-        arrShortestPath = search.getShortestPath();
-
-        //now we have the shortest path it's easy to work backwards through it to find
-        //the shortest paths from each node to this source node
-        for (targetIndex = 0; targetIndex < length; ++targetIndex) {
-            //if the source node is the same as the target just set to target
-            if (sourceIndex == targetIndex) {
-                arrShortestPaths[sourceIndex][targetIndex] = targetIndex;
-            } else {
-                nodeIndex = targetIndex;
-
-                while (nodeIndex != sourceIndex && arrShortestPath[nodeIndex] != 0) {
-                  arrShortestPaths[arrShortestPath[nodeIndex].nodeTo][targetIndex] = nodeIndex;
-
-                  nodeIndex = arrShortestPath[nodeIndex].nodeFrom;
-                }
-            }
-        }//next target node
-    }//next source node
-
-    return arrShortestPaths;
+    return arrPaths;
 };
 
 goog.exportSymbol('GraphHelper', GraphHelper);

@@ -141,7 +141,7 @@ EnemyCopter.prototype.updateSeeking = function(options) {
 
 		this.container.rotation = deg + 90;
 
-		distance = this.position.DistanceSqrt(target.position);
+		distance = this.position.DistanceSqrd(target.position);
 
 		if(distance < this.minDistance) {
 			this.stateMachine.setState(EnemyCopterFiringState.KEY);

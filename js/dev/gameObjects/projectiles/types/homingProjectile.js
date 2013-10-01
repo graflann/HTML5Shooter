@@ -194,7 +194,7 @@ HomingProjectile.prototype.setHomingTarget = function(homingList) {
             enemyPosition = homingList[i].position;
 
             //care only of magnitude, not actual value
-            distance = this.position.DistanceSqrt(enemyPosition);
+            distance = this.position.DistanceSqrd(enemyPosition);
 
             //make target postion closer enemy position
             if(distance < prevDistance) {

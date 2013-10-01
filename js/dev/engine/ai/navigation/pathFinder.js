@@ -30,12 +30,7 @@ PathFinder = function() {
 	this.width = this.cellWidth * this.numCells.x;
 	this.height = this.cellHeight * this.numCells.y;
 
-	this.start = false;
-	this.finish = false;
-
-	this.arrNodeShapes = [];
-	this.arrEdgeShapes = [];
-	this.arrPathShapes = [];
+	this.pathTable = null;
 
 	this.init();
 };
@@ -49,14 +44,25 @@ PathFinder.prototype.init = function() {
 		this.numCells.x, this.numCells.y
 	);
 
-	this.sourceIndex = this.pointToIndex(this.width * 0.5, this.cellHeight * 2);
-	this.targetIndex = this.pointToIndex(this.width * 0.5, this.height - (this.cellHeight * 2));
+	// this.sourceIndex = this.pointToIndex(64, 320);
+	// this.targetIndex = this.pointToIndex(340, 420);
 
-	this.searchAlgorithm = new AStarSearch(this.graph, this.sourceIndex, this.targetIndex);
+	// this.searchAlgorithm = new AStarSearch(this.graph, this.sourceIndex, this.targetIndex);
 
-	this.findPath();
+	// this.findPath();
 
-	GraphHelper.drawGrid(this.graph, this.sourceIndex, this.targetIndex, this.path);
+	// GraphHelper.drawGrid(
+	// 	this.graph, 
+	// 	this.sourceIndex, 
+	// 	this.targetIndex, 
+	// 	this.path, 
+	// 	this.shortestPath
+	// );
+
+	this.pathTable = GraphHelper.createPathTable(this.graph);
+
+	console.log("Path table");
+	console.log(this.pathTable);
 };
 
 PathFinder.prototype.clear = function() {
@@ -84,14 +90,22 @@ PathFinder.prototype.findPath = function() {
 PathFinder.prototype.pointToIndex = function(x, y) {
 	//convert coordinates to an index of a graph node
 	var tempX = Math.round(x / this.cellWidth),
-		tempY = Math.round(y / this.cellHeight); 
+		tempY = Math.round(y / this.cellHeight),
+		index = 0,
+		min = 0,
+		max = (this.numCells.x * this.numCells.y) - 1; 
 
-	//make sure the values are legal
-	if (tempX > this.numCells.x || tempY > this.numCells.y) {
-		return NavConstants.INVALID_NODE_INDEX;
+	//calculate the index
+	index = (tempY * this.numCells.x) + tempX;
+
+	//ensure the index remains within node bounds
+	if(index < min) {
+		index = min;
+	} else if(index > max) {
+		index = max;
 	}
 
-	return (tempY * this.numCells.x) + tempX;
+	return index;
 };
 
 PathFinder.prototype.setSource = function(value) {

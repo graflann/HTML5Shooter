@@ -97,7 +97,7 @@ Math.radToDeg = function(rad) {
 };
 
 //Box2D extensions
-Box2D.Common.Math.b2Vec2.prototype.DistanceSqrt = function(vec2D) {
+Box2D.Common.Math.b2Vec2.prototype.DistanceSqrd = function(vec2D) {
     var xDist = Math.abs(this.x - vec2D.x),  
         yDist = Math.abs(this.y - vec2D.y);  
 
@@ -105,7 +105,7 @@ Box2D.Common.Math.b2Vec2.prototype.DistanceSqrt = function(vec2D) {
 };
 
 Box2D.Common.Math.b2Vec2.prototype.Distance = function(vec2D) {
-    return Math.sqrt(this.DistanceSqrt(vec2D)); 
+    return Math.sqrt(this.DistanceSqrd(vec2D)); 
 };
 //////////////////////////////////////////////////////////////////
 

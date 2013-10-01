@@ -92,7 +92,7 @@ EnemyCentipede.prototype.updateRetreating = function(options) {
 	}
 
 	//check out of retreat upon reaching the destination
-	if(this.retreatTarget.DistanceSqrt(this.head.position) < 2) {
+	if(this.retreatTarget.DistanceSqrd(this.head.position) < 2) {
 		this.stateMachine.setState(EnemyCentipedeSeekingState.KEY);
 	}
 };

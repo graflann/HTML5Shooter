@@ -31,14 +31,27 @@ AStarSearch = function(graph, sourceIndex, targetIndex) {
 	this.arrShortestPath = [];
 
 	this.arrSearchFrontier = [];
+
+	this.init();
+};
+
+AStarSearch.prototype.init = function() {
+	var i = 0;
+
+	for(i = 0; i < this.arrGCosts.length; i++) {
+		this.arrGCosts[i] = 0;
+	}
+
+	for(i = 0; i < this.arrFCosts.length; i++) {
+		this.arrFCosts[i] = 0;
+	}
 };
 
 AStarSearch.prototype.search = function() {
 	//create an indexed priority queue of nodes. The nodes with the
 	//lowest overall F cost (G+H) are positioned at the front.
-
-	//clone the estimated costs Array
-	var arrCosts = this.arrFCosts.slice(0),
+	var i = 0,
+		pq = new PriorityQueue({ low: true }),
 		nextClosestIndex = 0,
 		GCost = 0,
 		HCost = 0,
@@ -47,15 +60,12 @@ AStarSearch.prototype.search = function() {
 		arrEdges = null,
 		edge = null;
 
-	arrCosts.sort(this.sortCostsAscending);
-
-	//put the source node on the front of the Array
-	arrCosts.push(this.sourceIndex);
+	pq.insert(this.sourceIndex, 0);
 
 	//while the queue is not empty
-	while(arrCosts.length > 0) {
+	while(!pq.empty()) {
 		//get lowest cost node from the queue
-		nextClosestIndex = arrCosts.pop();
+		nextClosestIndex = pq.pop();
 
 		//move this node from the frontier to the spanning tree
 		this.arrShortestPath[nextClosestIndex] = this.arrSearchFrontier[nextClosestIndex];
@@ -70,28 +80,23 @@ AStarSearch.prototype.search = function() {
 		for(var key in arrEdges) {
 			edge = arrEdges[key];
 
-			//squared distance used as heuristic to cut down overhead
-			//TODO: optimize to not derive linear heuristic distance with sqrt
-			
 			nodeTo = this.graph.getNode(edge.nodeTo);
-			HCost = targetNode.position.Distance(nodeTo.position);
+			HCost = targetNode.position.DistanceSqrd(nodeTo.position);
 			GCost = this.arrGCosts[nextClosestIndex] + edge.cost;
 
 			if(!this.arrSearchFrontier[edge.nodeTo]) {
 				this.arrFCosts[edge.nodeTo] = GCost + HCost;
 				this.arrGCosts[edge.nodeTo] = GCost;
 
-				arrCosts.push(edge.nodeTo);
-				arrCosts.sort(this.sortCostsAscending);
+				pq.insert(edge.nodeTo, this.arrFCosts[edge.nodeTo]);
 
 				this.arrSearchFrontier[edge.nodeTo] = edge;
 
-			} else if((GCost < this.arrGCosts[edge.nodeTo]) && 
-				(!this.arrShortestPath[edge.nodeTo])) {
+			} else if(GCost < this.arrGCosts[edge.nodeTo] && !this.arrShortestPath[edge.nodeTo]) {
 				this.arrFCosts[edge.nodeTo] = GCost + HCost;
 				this.arrGCosts[edge.nodeTo] = GCost;
 				
-				arrCosts.sort(this.sortCostsAscending);
+				pq.changePriority(edge.nodeTo, this.arrFCosts[edge.nodeTo]);
 
 				this.arrSearchFrontier[edge.nodeTo] = edge;
 			}
@@ -127,10 +132,6 @@ AStarSearch.prototype.getPathToTarget = function() {
 
 AStarSearch.prototype.getCostToTarget = function() {
 	return this.arrGCosts[this.targetIndex]
-};
-
-AStarSearch.prototype.sortCostsAscending = function(a, b) {
-	return a - b;
 };
 
 goog.exportSymbol('AStarSearch', AStarSearch);
