@@ -38,22 +38,29 @@ GraphHelper.addAllNeighborsToGridNode = function(graph, row, col, numCellsX, num
     }
 };
 
-GraphHelper.createGrid = function(graph, levelW, levelH, numCellsX, numCellsY) {
+GraphHelper.createGrid = function(graph, levelW, levelH, numCellsX, numCellsY, arrSceneObjects) {
     var cellWidth   = levelW / numCellsX,
         cellHeight  = levelH / numCellsY,
         midX        = cellWidth * 0.5,
-        midY        = cellHeight * 0.5;
+        midY        = cellHeight * 0.5,
+        node = null,
+        sceneObject,
+        x = 0,      y = 0,
+        minX = 0,   maxX = 0,
+        minY = 0,   maxY = 0,
+        isInvalid  = false,
+        length = 0;
 
     //first create all the nodes
     for (var row = 0; row < numCellsY; row++) {
         for (var col = 0; col < numCellsX; col++) {
+            x = midX + (col * cellWidth);
+            y = midY + (row * cellHeight);
+
             graph.addNode(
                 new GraphNode(
                     graph.getNextFreeNodeIndex(),
-                    new app.b2Vec2(
-                        midX + (col * cellWidth),
-                        midY + (row * cellHeight)
-                    )
+                    new app.b2Vec2(x, y)
                 )
             );
         }
@@ -67,9 +74,34 @@ GraphHelper.createGrid = function(graph, levelW, levelH, numCellsX, numCellsY) {
             GraphHelper.addAllNeighborsToGridNode(graph, row, col, numCellsX, numCellsY);
         }
     }
+
+
+    //remove any node obfuscated by a SceneObject instance
+    if(arrSceneObjects) {
+        length = graph.nodeLength();
+
+        for(var i = 0; i < length; i++) {
+            for(var j = 0; j < arrSceneObjects.length; j++) {
+                sceneObject = arrSceneObjects[j];
+
+                node = graph.getNode(i);
+
+                minX = sceneObject.x;
+                maxX = sceneObject.x + sceneObject.width;
+                minY = sceneObject.y;
+                maxY = sceneObject.y + sceneObject.height;
+
+                if((node.position.x >= minX && node.position.x <= maxX) && 
+                    (node.position.y >= minY && node.position.y <= maxY)) {
+                    graph.removeNode(i);
+                    break;
+                }
+            }
+        }
+    }
 };
 
-GraphHelper.drawGrid = function(graph, sourceIndex, targetIndex, path, shortestPath) {
+GraphHelper.drawGrid = function(layerType, graph, sourceIndex, targetIndex, path, shortestPath) {
     var i = 0, 
         j = 0,
         node = null,
@@ -81,10 +113,10 @@ GraphHelper.drawGrid = function(graph, sourceIndex, targetIndex, path, shortestP
         shape = null,
         text = null,
         label = "",
-        stage = app.layers.getStage(LayerTypes.MAIN),
+        stage = app.layers.getStage(layerType),
         color = "";
 
-    //render path tree
+    //render path tree=
     for(var index in shortestPath) {
         if(shortestPath[index]) {
             edge = shortestPath[index];
@@ -128,12 +160,13 @@ GraphHelper.drawGrid = function(graph, sourceIndex, targetIndex, path, shortestP
         stage.addChild(shape);
     }
 
+    shape = new createjs.Shape();
     //render all graph nodes
     for(i = 0; i < graph.nodeLength(); i++) {
         node = graph.getNode(i);
         pos = node.position;
 
-        shape = new createjs.Shape();
+        // shape = new createjs.Shape();
 
         if(node === graph.getNode(sourceIndex)) {
             color = Constants.GREEN;
@@ -145,19 +178,27 @@ GraphHelper.drawGrid = function(graph, sourceIndex, targetIndex, path, shortestP
 
         shape.graphics
             .f(color)
-            .dc(0, 0, 2);
+            .dc(pos.x, pos.y, 2);
+        shape.snapToPixel = true;
 
-        shape.x = pos.x;
-        shape.y = pos.y;
+        //shape.x = pos.x;
+        //shape.y = pos.y;
+        
+        if(node.index < 0) {
+            label = i.toString() + "\n" + node.index.toString();
+        } else {
+            label = node.index.toString();
+        }
 
-        label = i.toString();
         text = new createjs.Text(label, "8px AXI_Fixed_Caps_5x5", Constants.LIGHT_BLUE);
-        text.x = shape.x - (label.length * 3);
-        text.y = shape.y + 4;
+        text.x = pos.x - (label.length * 3);
+        text.y = pos.y + 4;
 
-        stage.addChild(shape);
+        //stage.addChild(shape);
         stage.addChild(text);
     }
+
+    stage.addChild(shape);
 };
 
 GraphHelper.createPathTable = function(graph) {

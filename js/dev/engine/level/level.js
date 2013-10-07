@@ -20,9 +20,10 @@ goog.require('PathFinder');
 Level = function(options) {
 
 	this.options = {
-		nodes: [
-			{ positionX: 0, positionY: 0 }
-		],
+		dimensions: { 
+			width: Constants.WIDTH * 4, 
+			height: Constants.HEIGHT  * 2
+		},
 		enemies: {
 			enemyDrone: {
 				max: 64,
@@ -305,8 +306,6 @@ Level = function(options) {
 	*/
 	this.arrSceneObjects = [];
 
-	this.pathFinder = null;
-
 	this.init();
 };
 
@@ -468,7 +467,11 @@ Level.prototype.setSceneObjects = function() {
 };
 
 Level.prototype.setGraph = function() {
-	//this.pathFinder = new PathFinder();
+	app.pathFinder = new PathFinder(
+		this.options.dimensions.width,
+		this.options.dimensions.height,
+		this.options.sceneObjects
+	);
 };
 
 //EVENT HANDLERS

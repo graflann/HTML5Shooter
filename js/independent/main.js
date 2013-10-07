@@ -41,6 +41,7 @@ app.physicsScale 	= 20;
 app.physicsDebug 	= false;
 app.browserUtils 	= null;
 app.input			= null;
+app.pathFinder      = null;
 app.assetsProxy     = null;
 //app.levelProxy 	= null;
 app.vecZero         = null;

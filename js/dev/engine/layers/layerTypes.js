@@ -10,6 +10,7 @@ LayerTypes = {
     PROJECTILE:		"projectile",
     FOREGROUND:		"foreground",
     HOMING:			"homing",
+    PATHING: 		"pathing", 
     HUD:			"hud",
     DEBUG: 			"debug"
 };

@@ -4,11 +4,17 @@ goog.require('NavGraph');
 goog.require('GraphHelper');
 goog.require('AStarSearch');
 goog.require('NavConstants');
+goog.require('LayerTypes');
 
 /**
 *@constructor
 */
-PathFinder = function() {
+PathFinder = function(width, height, sceneObjects) {
+	this.width = width;
+	this.height = height;
+
+	this.sceneObjects = sceneObjects;
+
 	this.path = null;
 
 	this.graph = null;
@@ -25,41 +31,65 @@ PathFinder = function() {
 	this.cellWidth = Constants.UNIT;
 	this.cellHeight = Constants.UNIT;
 
-	this.numCells = new app.b2Vec2(20, 20);
-
-	this.width = this.cellWidth * this.numCells.x;
-	this.height = this.cellHeight * this.numCells.y;
+	this.numCells = new app.b2Vec2(
+		this.width / this.cellWidth, 
+		this.height /  this.cellHeight
+	);
 
 	this.pathTable = null;
+
+	this.arrSceneObjects = [];
 
 	this.init();
 };
 
 PathFinder.prototype.init = function() {
+	var sceneObjectType = null;
+
 	this.graph = new NavGraph();
+
+	//create 1d array of sceneObjects for node invalidationn comparison
+	// for(var key in this.sceneObjects) {
+	// 	sceneObjectType = this.sceneObjects[key];
+
+	// 	for(var i = 0; i < sceneObjectType.length; i++) {
+	// 		this.arrSceneObjects.push(sceneObjectType[i]);
+	// 	}
+	// }
 
 	GraphHelper.createGrid(
 		this.graph, 
 		this.width, this.height, 
-		this.numCells.x, this.numCells.y
+		this.numCells.x, this.numCells.y,
+		null
 	);
 
-	// this.sourceIndex = this.pointToIndex(64, 320);
-	// this.targetIndex = this.pointToIndex(340, 420);
+	this.arrSceneObjects.length = 0;
+	this.arrSceneObjects = null;
 
-	// this.searchAlgorithm = new AStarSearch(this.graph, this.sourceIndex, this.targetIndex);
+	this.sourceIndex = this.pointToIndex(64, 320);
+	this.targetIndex = this.pointToIndex(340, 420);
 
-	// this.findPath();
+	this.graph.removeNode(223);
+	this.graph.removeNode(265);
+	this.graph.removeNode(267);
+	this.graph.removeNode(270);
+	this.graph.removeNode(289);
 
-	// GraphHelper.drawGrid(
-	// 	this.graph, 
-	// 	this.sourceIndex, 
-	// 	this.targetIndex, 
-	// 	this.path, 
-	// 	this.shortestPath
-	// );
+	this.searchAlgorithm = new AStarSearch(this.graph, this.sourceIndex, this.targetIndex);
 
-	this.pathTable = GraphHelper.createPathTable(this.graph);
+	this.findPath();
+
+	GraphHelper.drawGrid(
+		LayerTypes.MAIN,
+		this.graph, 
+		this.sourceIndex, 
+		this.targetIndex, 
+		this.path, 
+		this.shortestPath
+	);
+
+	//this.pathTable = GraphHelper.createPathTable(this.graph);
 
 	console.log("Path table");
 	console.log(this.pathTable);

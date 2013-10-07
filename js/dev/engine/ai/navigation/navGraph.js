@@ -92,7 +92,7 @@ NavGraph.prototype.addNode = function(node) {
 };
 
 NavGraph.prototype.removeNode = function(nodeIndex) {
-	this.arrNodes[nodeIndex].index = Constants.INVALID_NODE_INDEX;
+	this.arrNodes[nodeIndex].index = NavConstants.INVALID_NODE_INDEX;
 
 	if(!this.isDirectedGraph) {	    
 	    var i = 0,
@@ -103,10 +103,10 @@ NavGraph.prototype.removeNode = function(nodeIndex) {
 	    for(i = 0; i < this.arrEdges[nodeIndex].length; i++) {
 	    	currentEdge = this.arrEdges[nodeIndex][i];
 
-	    	for(j = 0; j < this.arrEdges[currentEdge.nodeTo].length; i++) {
-	    		currentEdgeTo = this.arrEdges[currentEdge.nodeTo][j];
+	    	for(j = 0; j < this.arrEdges[currentEdge.nodeTo].length; j++) {
+	    		currentEdgeTo = this.arrEdges[currentEdge.nodeTo][j].nodeTo;
 
-	    		if(currentEdgeTo == node) {
+	    		if(currentEdgeTo == nodeIndex) {
 	    			this.arrEdges[currentEdge.nodeTo].splice(j, 1);
 	    			j--;
 

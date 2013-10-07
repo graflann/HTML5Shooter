@@ -33,7 +33,7 @@ PathFindingPanel.prototype.init = function() {
 
 	stage.addChild(this.background);
 
-	this.pathFinder = new PathFinder();
+	this.pathFinder = new PathFinder(Constants.WIDTH, Constants.HEIGHT);
 };
 
 /**
