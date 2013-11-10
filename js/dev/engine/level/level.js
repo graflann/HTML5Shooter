@@ -22,7 +22,7 @@ Level = function(options) {
 	this.options = {
 		dimensions: { 
 			width: Constants.WIDTH * 4, 
-			height: Constants.HEIGHT  * 2
+			height: Constants.HEIGHT * 2
 		},
 		enemies: {
 			enemyDrone: {
@@ -51,28 +51,24 @@ Level = function(options) {
 			}
 		},
 		waves : [
+			// [
+			// 	{ 
+			// 		type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 240, positionY: 320
+			// 	}
+			// ],
+			// [
+			// 	{ 
+			// 		type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 640, positionY: 640
+			// 	}
+			// ]
 			[
 				{ 
-					type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
-					positionX: 240, positionY: 320
+					type: "enemyDrone", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: 0, positionY: 64, posOffsetX: 64, posOffsetY: 64
 				}
-			],
-			[
-				{ 
-					type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
-					positionX: 640, positionY: 640
-				}
-			]
-		// 	[
-		// 		{ 
-		// 			type: "enemyDrone", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
-		// 			positionX: -240, positionY: 64, posOffsetX: 64, posOffsetY: 64
-		// 		},
-		// 		{ 
-		// 			type: "enemyDrone", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
-		// 			positionX: -240, positionY: 416, posOffsetX: 64, posOffsetY: 64
-		// 		}
-		// 	],
+			]//,
 		// 	[
 		// 		{ 
 		// 			type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,

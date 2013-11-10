@@ -1,7 +1,7 @@
 goog.provide('EnemyDrone');
 
 goog.require('Enemy');
-
+goog.require('Navigation');
 
 /**
 *@constructor
@@ -21,6 +21,11 @@ EnemyDrone = function(projectileSystem) {
 	this.shape = null;
 
 	this.homingRate = 15;
+
+	this.navigation = null;
+
+	this.arenaWidth = Constants.WIDTH * 4;
+	this.arenaHeight = Constants.HEIGHT * 2;
 
 	this.init();
 };
@@ -58,6 +63,8 @@ EnemyDrone.prototype.init = function() {
 
 	this.setPhysics();
 
+	this.navigation = new Navigation();
+
 	this.setIsAlive(false);
 };
 
@@ -76,12 +83,29 @@ EnemyDrone.prototype.update = function(options) {
 
 		//only calculates homing to target on selected frames
 		if(target && createjs.Ticker.getTicks() % this.homingRate == 0) {
-			deg = Math.radToDeg(
-				Math.atan2(
-					target.position.y - this.position.y, 
-					target.position.x - this.position.x
-				)
-			);
+
+			//out of the arena
+			if(this.position.x < 0 || this.position.y < 0 ||
+				this.position.x > this.arenaWidth || this.position.y > this.arenaHeight)
+			{
+				deg = Math.radToDeg(
+					Math.atan2(
+						target.position.y - this.position.y, 
+						target.position.x - this.position.x
+					)
+				);
+			}
+			else //within the arena
+			{
+				this.navigation.update(this.position, target.position);
+
+				deg = Math.radToDeg(
+					Math.atan2(
+						this.navigation.targetPosition.y - this.position.y, 
+						this.navigation.targetPosition.x - this.position.x
+					)
+				);
+			}
 
 			this.velocity.x = (table.cos(deg) * this.velocityMod);
 			this.velocity.y = (table.sin(deg) * this.velocityMod);

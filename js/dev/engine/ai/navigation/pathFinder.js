@@ -67,32 +67,32 @@ PathFinder.prototype.init = function() {
 	this.arrSceneObjects.length = 0;
 	this.arrSceneObjects = null;
 
-	this.sourceIndex = this.pointToIndex(64, 320);
-	this.targetIndex = this.pointToIndex(340, 420);
+	// this.sourceIndex = this.pointToIndex(64, 320);
+	// this.targetIndex = this.pointToIndex(340, 420);
 
-	this.graph.removeNode(223);
-	this.graph.removeNode(265);
-	this.graph.removeNode(267);
-	this.graph.removeNode(270);
-	this.graph.removeNode(289);
+	// this.graph.removeNode(223);
+	// this.graph.removeNode(265);
+	// this.graph.removeNode(267);
+	// this.graph.removeNode(270);
+	// this.graph.removeNode(289);
 
 	this.searchAlgorithm = new AStarSearch(this.graph, this.sourceIndex, this.targetIndex);
 
 	this.findPath();
 
-	GraphHelper.drawGrid(
-		LayerTypes.MAIN,
-		this.graph, 
-		this.sourceIndex, 
-		this.targetIndex, 
-		this.path, 
-		this.shortestPath
-	);
+	// GraphHelper.drawGrid(
+	// 	LayerTypes.MAIN,
+	// 	this.graph, 
+	// 	this.sourceIndex, 
+	// 	this.targetIndex, 
+	// 	this.path, 
+	// 	this.shortestPath
+	// );
 
 	//this.pathTable = GraphHelper.createPathTable(this.graph);
 
-	console.log("Path table");
-	console.log(this.pathTable);
+	// console.log("Path table");
+	// console.log(this.pathTable);
 };
 
 PathFinder.prototype.clear = function() {
@@ -115,6 +115,15 @@ PathFinder.prototype.findPath = function() {
 	console.log(this.shortestPath);
 	console.log("Cost");
 	console.log(this.costToTarget);
+
+	return this.path;
+};
+
+PathFinder.prototype.findPathByPosition = function(sourcePos, targetPos) {
+	this.searchAlgorithm.sourceIndex = this.pointToIndex(sourcePos.x, sourcePos.y);
+	this.searchAlgorithm.targetIndex = this.pointToIndex(targetPos.x, targetPos.y);
+
+	return this.findPath();
 };
 
 PathFinder.prototype.pointToIndex = function(x, y) {
@@ -145,5 +154,9 @@ PathFinder.prototype.setSource = function(value) {
 PathFinder.prototype.setTarget = function(value) {
 	this.targetIndex = value;	
 };
+
+PathFinder.prototype.getNodePosition = function(index) {
+	return this.graph.getNode(index).position;
+}
 
 goog.exportSymbol('PathFinder', PathFinder);
