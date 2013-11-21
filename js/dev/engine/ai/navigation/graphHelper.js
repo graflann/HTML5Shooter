@@ -4,6 +4,7 @@ goog.require('NavConstants');
 goog.require('GraphNode');
 goog.require('GraphEdge');
 goog.require('AStarSearch');
+goog.require('LayerTypes');
 
 GraphHelper = new Object();
 
@@ -45,9 +46,11 @@ GraphHelper.createGrid = function(graph, levelW, levelH, numCellsX, numCellsY, a
         midY        = cellHeight * 0.5,
         node = null,
         sceneObject,
-        x = 0,      y = 0,
-        minX = 0,   maxX = 0,
-        minY = 0,   maxY = 0,
+        x = 0, 
+        y = 0,
+        soRect = new createjs.Rectangle(),
+        nodeRect = new createjs.Rectangle(),
+        offset = Constants.UNIT * 0.5;
         isInvalid  = false,
         length = 0;
 
@@ -67,16 +70,14 @@ GraphHelper.createGrid = function(graph, levelW, levelH, numCellsX, numCellsY, a
     }
 
     //now to calculate the edges. (A position in a 2d array [x][y] is the
-    //same as [y * numCellsX + x] in a 1d array). Each cell has up to eight
-    //neighbors.
+    //same as [y * numCellsX + x] in a 1d array). Each cell has up to eight neighbors.
     for (var row = 0; row < numCellsY; row++) {
         for (var col = 0; col < numCellsX; col++) {
             GraphHelper.addAllNeighborsToGridNode(graph, row, col, numCellsX, numCellsY);
         }
     }
 
-
-    //remove any node obfuscated by a SceneObject instance
+    //removes any node obfuscated by a SceneObject instance
     if(arrSceneObjects) {
         length = graph.nodeLength();
 
@@ -84,16 +85,36 @@ GraphHelper.createGrid = function(graph, levelW, levelH, numCellsX, numCellsY, a
             for(var j = 0; j < arrSceneObjects.length; j++) {
                 sceneObject = arrSceneObjects[j];
 
-                node = graph.getNode(i);
+                node = graph.getNode(i); 
 
-                minX = sceneObject.x;
-                maxX = sceneObject.x + sceneObject.width;
-                minY = sceneObject.y;
-                maxY = sceneObject.y + sceneObject.height;
+                //set sceneObject dims to Rectangle instance
+                soRect.x        = sceneObject.x;
+                soRect.width    = sceneObject.width;
+                soRect.y        = sceneObject.y;
+                soRect.height   = sceneObject.height;
 
-                if((node.position.x >= minX && node.position.x <= maxX) && 
-                    (node.position.y >= minY && node.position.y <= maxY)) {
+                //set node area dims to Rectangle instance
+                nodeRect.x      = node.position.x - offset;
+                nodeRect.width  = Constants.UNIT;
+                nodeRect.y      = node.position.y - offset;
+                nodeRect.height = Constants.UNIT;
+
+                //if node area is intersected by sceneObject footprint the node is invalidated
+                if(soRect.intersectPoint(node.position.x, node.position.y) || nodeRect.intersect(soRect)) {
                     graph.removeNode(i);
+
+                    //debugging visual displaying affected area due to node removal
+                    var shape = new createjs.Shape();
+                    shape.graphics
+                        .f(Constants.RED)
+                        .dr(nodeRect.x, nodeRect.y, nodeRect.width, nodeRect.height);
+
+                    shape.x = 0;
+                    shape.y = 0;
+                    shape.alpha = 0.5;
+
+                    app.layers.getStage(LayerTypes.FOREGROUND).addChild(shape);
+
                     break;
                 }
             }

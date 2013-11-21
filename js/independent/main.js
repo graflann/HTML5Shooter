@@ -97,6 +97,28 @@ Math.radToDeg = function(rad) {
 	return rad * 180 / Math.PI;
 };
 
+//CreateJS extensions
+createjs.Rectangle.prototype.intersect = function(rect) {
+    var isInRange = function(value, min, max) {
+        return (value > min) && (value < max);
+    };
+
+    var xOverlap = isInRange(this.x, rect.x, rect.x + rect.width) ||
+        isInRange(rect.x, this.x, this.x + this.width);
+
+    var yOverlap = isInRange(this.y, rect.y, rect.y + rect.height) ||
+        isInRange(rect.y, this.y, this.y + this.height);
+
+    return (xOverlap && yOverlap);
+};
+
+createjs.Rectangle.prototype.intersectPoint = function(x, y) {
+    return (
+        (x > this.x && x < (this.x + this.width)) &&
+        (y > this.y && y < (this.y + this.height))
+    );
+};
+
 //Box2D extensions
 Box2D.Common.Math.b2Vec2.prototype.DistanceSqrd = function(vec2D) {
     var xDist = Math.abs(this.x - vec2D.x),  

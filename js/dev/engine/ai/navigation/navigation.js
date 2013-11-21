@@ -29,7 +29,8 @@ Navigation.prototype.update = function(sourcePos, targetPos) {
 
 		this.arrNodePositions.length = 0;
 
-		for(i = 0; i < path.length; i++) {
+		//disregard the positon at index 0 since entity should already be near that referenced node
+		for(i = 1; i < path.length; i++) {
 	        this.arrNodePositions.push(app.pathFinder.getNodePosition(path[i]));
 	    }
 
@@ -37,7 +38,9 @@ Navigation.prototype.update = function(sourcePos, targetPos) {
 	    //to make the target position the next index
 	    this.positionIndex = 0;
 		
-		this.targetPosition = this.arrNodePositions[this.positionIndex];
+		if(this.arrNodePositions[this.positionIndex] !== undefined) {
+			this.targetPosition = this.arrNodePositions[this.positionIndex];
+		}
 
 		console.log("Creating path: " + this.arrNodePositions.length.toString());
 	}

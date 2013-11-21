@@ -109,12 +109,20 @@ Level = function(options) {
 		sceneObjects: {
 			wall: [
 				{ 	
-					width: Constants.UNIT * 4,
-					height: Constants.UNIT,
+					width: Constants.UNIT * 4 + 16,
+					height: Constants.UNIT * 4 + 16,
 					color: Constants.BLUE,
 					numFloors: 7,
-					x: 300, 
-					y: 200
+					x: 248, 
+					y: 208
+				},
+				{ 	
+					width: Constants.UNIT,
+					height: Constants.UNIT * 4,
+					color: Constants.BLUE,
+					numFloors: 4,
+					x: 512, 
+					y: 128
 				}
 			],
 			tower: [

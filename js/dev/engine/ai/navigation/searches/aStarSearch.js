@@ -60,6 +60,10 @@ AStarSearch.prototype.search = function() {
 		arrEdges = null,
 		edge = null;
 
+	//remove all previous elements
+	this.arrShortestPath.length = 0;
+	this.arrSearchFrontier.length = 0;
+
 	pq.insert(this.sourceIndex, 0);
 
 	//while the queue is not empty
@@ -121,7 +125,7 @@ AStarSearch.prototype.getPathToTarget = function() {
 
 	path.unshift(nodeIndex);
 
-	while (nodeIndex != this.sourceIndex && this.arrShortestPath[nodeIndex] != 0) {
+	while (nodeIndex != this.sourceIndex && this.arrShortestPath[nodeIndex] != undefined) {
 		nodeIndex = this.arrShortestPath[nodeIndex].nodeFrom;
 
 		path.unshift(nodeIndex);

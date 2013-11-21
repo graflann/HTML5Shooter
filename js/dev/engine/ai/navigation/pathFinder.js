@@ -48,27 +48,27 @@ PathFinder.prototype.init = function() {
 
 	this.graph = new NavGraph();
 
-	//create 1d array of sceneObjects for node invalidationn comparison
-	// for(var key in this.sceneObjects) {
-	// 	sceneObjectType = this.sceneObjects[key];
+	//create 1d array of sceneObjects for node invalidation comparison
+	for(var key in this.sceneObjects) {
+		sceneObjectType = this.sceneObjects[key];
 
-	// 	for(var i = 0; i < sceneObjectType.length; i++) {
-	// 		this.arrSceneObjects.push(sceneObjectType[i]);
-	// 	}
-	// }
+		for(var i = 0; i < sceneObjectType.length; i++) {
+			this.arrSceneObjects.push(sceneObjectType[i]);
+		}
+	}
 
 	GraphHelper.createGrid(
 		this.graph, 
 		this.width, this.height, 
 		this.numCells.x, this.numCells.y,
-		null
+		this.arrSceneObjects
 	);
 
 	this.arrSceneObjects.length = 0;
 	this.arrSceneObjects = null;
 
-	// this.sourceIndex = this.pointToIndex(64, 320);
-	// this.targetIndex = this.pointToIndex(340, 420);
+	//this.sourceIndex = this.pointToIndex(0, 0);
+	//this.targetIndex = this.pointToIndex(Constants.WIDTH, Constants.HEIGHT);
 
 	// this.graph.removeNode(223);
 	// this.graph.removeNode(265);
@@ -76,15 +76,26 @@ PathFinder.prototype.init = function() {
 	// this.graph.removeNode(270);
 	// this.graph.removeNode(289);
 
-	this.searchAlgorithm = new AStarSearch(this.graph, this.sourceIndex, this.targetIndex);
+	this.searchAlgorithm = new AStarSearch(this.graph);
 
-	this.findPath();
+	// this.findPathByPosition(new app.b2Vec2(Constants.WIDTH - 1, Constants.HEIGHT * 0.5), new app.b2Vec2(Constants.WIDTH - 64, Constants.HEIGHT - 64));
 
 	// GraphHelper.drawGrid(
 	// 	LayerTypes.MAIN,
 	// 	this.graph, 
-	// 	this.sourceIndex, 
-	// 	this.targetIndex, 
+	// 	this.searchAlgorithm.sourceIndex, 
+	// 	this.searchAlgorithm.targetIndex, 
+	// 	this.path, 
+	// 	this.shortestPath
+	// );
+
+	// this.findPathByPosition(new app.b2Vec2(Constants.WIDTH - 1, Constants.HEIGHT - 256), new app.b2Vec2(Constants.WIDTH, Constants.HEIGHT));
+
+	// GraphHelper.drawGrid(
+	// 	LayerTypes.MAIN,
+	// 	this.graph, 
+	// 	this.searchAlgorithm.sourceIndex, 
+	// 	this.searchAlgorithm.targetIndex, 
 	// 	this.path, 
 	// 	this.shortestPath
 	// );
@@ -103,6 +114,12 @@ PathFinder.prototype.clear = function() {
 };
 
 PathFinder.prototype.findPath = function() {
+	if(this.path !== null)
+		this.path.length = 0;
+
+	if(this.shortestPath !== null)
+		this.shortestPath.length = 0;
+
 	this.searchAlgorithm.search();
 
 	this.path = this.searchAlgorithm.getPathToTarget();
@@ -113,8 +130,8 @@ PathFinder.prototype.findPath = function() {
 	console.log(this.path);
 	console.log("ShortestPath");
 	console.log(this.shortestPath);
-	console.log("Cost");
-	console.log(this.costToTarget);
+	// console.log("Cost");
+	// console.log(this.costToTarget);
 
 	return this.path;
 };
@@ -128,8 +145,8 @@ PathFinder.prototype.findPathByPosition = function(sourcePos, targetPos) {
 
 PathFinder.prototype.pointToIndex = function(x, y) {
 	//convert coordinates to an index of a graph node
-	var tempX = Math.round(x / this.cellWidth),
-		tempY = Math.round(y / this.cellHeight),
+	var tempX = Math.floor(x / this.cellWidth),
+		tempY = Math.floor(y / this.cellHeight),
 		index = 0,
 		min = 0,
 		max = (this.numCells.x * this.numCells.y) - 1; 
