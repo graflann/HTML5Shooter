@@ -33,6 +33,8 @@ SniperTurret.prototype.init = function() {
 	this.fireThreshold = 30;
 	this.fireCounter = this.fireThreshold - 1;
 
+	this.energyConsumption = -40;
+
 	this.ammoDistance = 96 / app.physicsScale;
 
 	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["railTurret"]);

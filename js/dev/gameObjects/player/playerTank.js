@@ -153,14 +153,6 @@ PlayerTank.prototype.init = function() {
 	this.setPhysics();
 
 	this.setIsAlive(true);
-
-	goog.events.listen(
-		this.turret, 
-		EventNames.ENERGY_CHANGE, 
-		this.onEnergyChange, 
-		false, 
-		this
-	);
 };
 
 /**
@@ -243,8 +235,12 @@ PlayerTank.prototype.update = function(options) {
 		
 		//HOMING
 		//hold to init homing target overlay
-		if(input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && !this.isHoming) {
+		if(this.energy === 100 && input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && !this.isHoming) {
 			this.isHoming = true;
+
+			//zero out the energy level upon homing
+			this.energyChangeEvent.payload = this.energy = 0;
+			goog.events.dispatchEvent(this, this.energyChangeEvent);
 
 			//initializes the homing target overlay
 			goog.events.dispatchEvent(this, this.addHomingOverlayEvent);
@@ -337,7 +333,7 @@ PlayerTank.prototype.clear = function() {
 };
 
 PlayerTank.prototype.updateEnergy = function() {
-	 if(this.energy < 100) {
+	 if(!this.isHoming && this.energy < 100) {
 	 	this.energy++;
 
 	 	if(this.energy > 100) {
@@ -533,8 +529,26 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 	}
 
 	if(prevTurret) {
+		//only listen to one turret at a time so remove previous listener
+		goog.events.unlisten(
+			this.turret, 
+			EventNames.ENERGY_CHANGE, 
+			this.onEnergyChange, 
+			false, 
+			this
+		);
+
 		this.turret.shape.rotation = prevTurret.shape.rotation;
 	}
+
+	//listen to the current turret's energy change event each time it fires
+	goog.events.listen(
+		this.turret, 
+		EventNames.ENERGY_CHANGE, 
+		this.onEnergyChange, 
+		false, 
+		this
+	);
 
 	this.turret.shape.x = this.width * 0.5;
 	this.turret.shape.y = this.height * 0.75;

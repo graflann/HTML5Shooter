@@ -47,7 +47,7 @@ HomingTargetingOverlayInitializationState.prototype.update = function(options) {
 		background.alpha = 0.125;
 	}
 
-	container.scaleX = container.scaleY += 0.025;
+	container.scaleX = container.scaleY += 0.0375;
 
 	if(container.scaleX > 1) {
 		container.scaleX = container.scaleY = 1;

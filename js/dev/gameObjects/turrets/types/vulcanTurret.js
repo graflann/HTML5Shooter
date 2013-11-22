@@ -27,6 +27,8 @@ VulcanTurret.prototype.init = function() {
 	this.fireThreshold = 4;
 	this.fireCounter = this.fireThreshold - 1;
 
+	this.energyConsumption = -10;
+
 	this.ammoDistance = 48 / app.physicsScale;
 
 	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["vulcanTurret"]);

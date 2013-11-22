@@ -37,7 +37,7 @@ Turret = function(color, projectileSystem, hasAI) {
 
 	this.isFiring = false;
 
-	this.energyConsumption = -10;
+	this.energyConsumption = 0;
 
 	this.energyChangeEvent = new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energyConsumption);
 	
@@ -111,6 +111,7 @@ Turret.prototype.manualControl = function(options) {
 				this.fire();
 				this.fireCounter = 0;
 
+				this.energyChangeEvent.payload = this.energyConsumption;
 				goog.events.dispatchEvent(this, this.energyChangeEvent);
 			}
 
@@ -130,6 +131,7 @@ Turret.prototype.manualControl = function(options) {
 				this.fire();
 				this.fireCounter = 0;
 
+				this.energyChangeEvent.payload = this.energyConsumption;
 				goog.events.dispatchEvent(this, this.energyChangeEvent);
 			}
 
