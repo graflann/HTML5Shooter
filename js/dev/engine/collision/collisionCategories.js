@@ -14,7 +14,8 @@ CollisionCategories = {
     GROUND_ENEMY_PROJECTILE: 	0x0080,
     AIR_ENEMY_PROJECTILE: 		0x0100, 
     HOMING_OVERLAY: 			0x0200,
-    HOMING_PROJECTILE: 			0x0400
+    HOMING_PROJECTILE: 			0x0400,
+    ITEM:                       0x0800            
 };
 
 goog.exportSymbol('CollisionCategories', CollisionCategories);

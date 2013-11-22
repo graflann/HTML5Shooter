@@ -5,7 +5,7 @@ goog.require('ProjectileClasses');
 
 /**
 *@constructor
-*Ammo for Turret instaces
+*System managing projectiles
 */
 ProjectileSystem = function(type, color, max, categoryBits, maskBits) {
 	this.type = type;

@@ -22,6 +22,8 @@ goog.require('ProjectileTypes');
 goog.require('ParticleSystem');
 goog.require('ParticleTypes');
 goog.require('ParticleSystemNames');
+goog.require('ItemSystem');
+goog.require('ItemTypes');
 goog.require('EventNames');
 
 /**
@@ -55,6 +57,11 @@ PlayPanel = function() {
 	*@type {Array}
 	*/
 	this.arrParticleSystems = [];
+
+	/**
+	*@type {Array}
+	*/
+	this.arrItemSystems = [];
 	
 	/**
 	*@type {Box2D.Dynamics.b2World}
@@ -93,6 +100,7 @@ PlayPanel.prototype.init = function() {
 	this.setPhysics();
 	this.setProjectiles();
 	this.setParticles();
+	this.setItems();
 	this.setPlayer();
 	this.setLevel();
 	this.setCollisionManager();
@@ -378,6 +386,16 @@ PlayPanel.prototype.setParticles = function() {
 /**
 *@private
 */
+PlayPanel.prototype.setItems = function() {
+	this.arrItemSystems[ItemTypes.ENERGY] = new ItemSystem(
+		ItemTypes.ENERGY,
+		16
+	);
+};
+
+/**
+*@private
+*/
 PlayPanel.prototype.setPlayer = function() {
 	this.player = new PlayerTank(this.arrPlayerProjectileSystems);
 	
@@ -408,7 +426,8 @@ PlayPanel.prototype.setCollisionManager = function() {
 	//contact listener processes collision
 	this.collisionManager = new CollisionManager(
 		this.arrParticleSystems,
-		this.arrPlayerProjectileSystems
+		this.arrPlayerProjectileSystems,
+		this.arrItemSystems
 	);
 };
 

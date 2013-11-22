@@ -1,12 +1,20 @@
 goog.provide('CollisionManager');
 
+goog.require('ItemTypes');
+
 /**
 *@enum {string}
 */
-CollisionManager = function(arrParticleSystems, arrPlayerProjectileSystems) {
+CollisionManager = function(
+    arrParticleSystems, 
+    arrPlayerProjectileSystems,
+    arrItemSystems
+) {
 	this.arrParticleSystems = arrParticleSystems;
 
     this.arrPlayerProjectileSystems = arrPlayerProjectileSystems;
+
+    this.arrItemSystems = arrItemSystems;
 
 	/**
 	*@type {Box2D.Dynamics.b2ContactListener}
@@ -140,7 +148,7 @@ CollisionManager.prototype.beginContact = function(contact) {
     }
     //////////////////////////////////////////////////////////////////
     
-    //PLAYER VS ENEMY BODY or SCENEOBJECT/////////////////////////////
+    //PLAYER VS ENEMY BODY, SCENEOBJECT, or ITEM//////////////////////
     if(dataA instanceof PlayerTank) {
         this.playerVsObject(dataA, dataB);
         return;
@@ -188,7 +196,15 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
         //TODO: Some processing on a enemy health variable to determine "death"
         //then push onto the kill list
         if(object.health <= 0) {
-	      this.killList.push(object);
+            this.killList.push(object);
+
+            this.arrItemSystems[ItemTypes.ENERGY].emit(
+                1, 
+                { 
+                    posX: object.container.x, 
+                    posY: object.container.y 
+                }
+            );
         }
 	}
     //TODO: process collision w player
@@ -233,6 +249,11 @@ CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
 CollisionManager.prototype.playerVsObject = function(player, object) {
     if(object instanceof Enemy) {
         object.onCollide(player, this.collisionOptions.enemy);
+        return;
+    }
+
+    if(object instanceof Item) {
+        this.killList.push(object);
         return;
     }
 

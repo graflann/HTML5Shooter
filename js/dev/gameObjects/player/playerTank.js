@@ -299,7 +299,6 @@ PlayerTank.prototype.update = function(options) {
 			}
 		};
 
-
 		this.setPosition(this.body.GetPosition());
 
 		this.turret.update({ 
