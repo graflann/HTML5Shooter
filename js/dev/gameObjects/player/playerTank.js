@@ -80,9 +80,13 @@ PlayerTank = function(arrProjectileSystems) {
 
 	this.isMoving = false;
 
+	this.energy = 100;
+
+	//cache events
 	this.weaponSelectEvent 			= new goog.events.Event(EventNames.WEAPON_SELECT, this);
 	this.addHomingOverlayEvent 		= new goog.events.Event(EventNames.ADD_HOMING_OVERLAY, this);
 	this.removeHomingOverlayEvent 	= new goog.events.Event(EventNames.REMOVE_HOMING_OVERLAY, this);
+	this.energyChangeEvent 			= new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energy);
 
 	this.init();
 };
@@ -149,6 +153,14 @@ PlayerTank.prototype.init = function() {
 	this.setPhysics();
 
 	this.setIsAlive(true);
+
+	goog.events.listen(
+		this.turret, 
+		EventNames.ENERGY_CHANGE, 
+		this.onEnergyChange, 
+		false, 
+		this
+	);
 };
 
 /**
@@ -173,6 +185,9 @@ PlayerTank.prototype.update = function(options) {
 
 		//zero out any linear velocity
 		this.body.SetLinearVelocity( app.vecZero);
+
+		//increases at a determined rate continuously by default
+		this.updateEnergy();
 
 		//MOVEMENT
 		if(input.isKeyDown(KeyCode.W) || 
@@ -291,7 +306,10 @@ PlayerTank.prototype.update = function(options) {
 
 		this.setPosition(this.body.GetPosition());
 
-		this.turret.update({isTransitioning: this.isTransitioning});
+		this.turret.update({ 
+			energy: 			this.energy,
+			isTransitioning: 	this.isTransitioning 
+		});
 
 		this.turretTransition.rotation = this.turret.shape.rotation;
 		this.turretTransitionAddAnimUtil.update();
@@ -316,6 +334,19 @@ PlayerTank.prototype.update = function(options) {
 */
 PlayerTank.prototype.clear = function() {
 	
+};
+
+PlayerTank.prototype.updateEnergy = function() {
+	 if(this.energy < 100) {
+	 	this.energy++;
+
+	 	if(this.energy > 100) {
+	 		this.energy = 100;
+	 	}
+
+	 	this.energyChangeEvent.payload = this.energy;
+		goog.events.dispatchEvent(this, this.energyChangeEvent);
+	 }
 };
 
 /**
@@ -596,6 +627,21 @@ PlayerTank.prototype.setTurretBody = function() {
 	this.turretBody.SetUserData(this);
 	this.turretBody.SetAwake(true);
 	this.turretBody.SetActive(true);
+};
+
+PlayerTank.prototype.onEnergyChange = function(e) {
+	this.energy += e.payload;
+
+	if(this.energy < 0) {
+		this.energy = 0;
+	} else if(this.energy > 100) {
+		this.energy = 100;
+	}
+
+	console.log("Energy qty: " + this.energy);
+
+	this.energyChangeEvent.payload = this.energy;
+	goog.events.dispatchEvent(this, this.energyChangeEvent);
 };
 
 goog.exportSymbol('PlayerTank', PlayerTank);

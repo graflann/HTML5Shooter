@@ -40,7 +40,7 @@ WeaponSelectorContainer.prototype.init = function() {
 	this.container = new createjs.Container();
 
 	this.width = Constants.WIDTH;
-	this.height = Constants.UNIT;
+	this.height = Constants.UNIT + (Constants.UNIT * 0.5);
 
 	this.background = new createjs.Shape();
 	this.background.graphics
@@ -48,6 +48,7 @@ WeaponSelectorContainer.prototype.init = function() {
 		.s(Constants.LIGHT_BLUE)
 		.f(Constants.BLACK)
 		.dr(0, 0, this.width, this.height);
+
 	this.background.alpha = 0.5;
 
 	this.container.addChild(this.background);
@@ -56,7 +57,7 @@ WeaponSelectorContainer.prototype.init = function() {
 		weaponSelector = new WeaponSelector(WeaponTypes[key]);
 
 		weaponSelector.container.x = (Constants.WIDTH * 0.1) + i * weaponSelector.width;
-		weaponSelector.container.y = 6;
+		weaponSelector.container.y = (Constants.UNIT * 0.5) + 6;
 
 		this.arrWeaponSelectors[i] = weaponSelector;
 
@@ -93,6 +94,8 @@ WeaponSelectorContainer.prototype.setSelection = function(index) {
 	//ensure the current weapon selector is placed on top
 	this.container.removeChild(weaponSelector.container);
 	this.container.addChild(weaponSelector.container);
+
+	//fades the selector in
 	weaponSelector.container.alpha = 0;
 	createjs.Tween.get(weaponSelector.container).to({alpha: 1}, 350);
 };

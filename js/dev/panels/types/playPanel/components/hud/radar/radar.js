@@ -15,8 +15,8 @@ Radar = function() {
 
 	this.mask = null;
 
-	this.width = 128;
-	this.height = 128;
+	this.width = Constants.UNIT * 4;
+	this.height = this.width;
 
 	this.fieldWidth = 0;
 	this.fieldHeight = 0;
@@ -126,7 +126,7 @@ Radar.prototype.update = function(options) {
 *@public
 */
 Radar.prototype.clear = function() {
-	
+	//TODO: Clean this up...
 };
 
 /**
@@ -148,6 +148,7 @@ Radar.prototype.setField = function(w, h, player, arrEnemySystems) {
 		.ss(2)
 		.s(Constants.LIGHT_BLUE)
 		.dr(0, 0, this.fieldWidth, this.fieldHeight);
+
 	this.fieldBoarder.alpha = 0.5;
 	this.fieldBoarder.cache(0, 0, this.fieldWidth, this.fieldHeight);
 	this.fieldContainer.addChild(this.fieldBoarder);

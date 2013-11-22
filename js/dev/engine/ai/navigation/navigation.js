@@ -42,7 +42,7 @@ Navigation.prototype.update = function(sourcePos, targetPos) {
 			this.targetPosition = this.arrNodePositions[this.positionIndex];
 		}
 
-		console.log("Creating path: " + this.arrNodePositions.length.toString());
+		//console.log("Creating path: " + this.arrNodePositions.length.toString());
 	}
 	else
 	{
@@ -53,7 +53,7 @@ Navigation.prototype.update = function(sourcePos, targetPos) {
 		{
 			this.positionIndex++;
 
-			console.log("Updating target: " + this.positionIndex.toString());
+			//console.log("Updating target: " + this.positionIndex.toString());
 
 			if(this.positionIndex < this.arrNodePositions.length)
 			{

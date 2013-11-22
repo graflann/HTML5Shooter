@@ -358,8 +358,7 @@ Input.prototype.checkPrevKeyDown = function(arrKeyCodes) {
 	var i = arrKeyCodes.length,
 		keyCode;
 	
-	while(i--)
-	{
+	while(i--) {
 		keyCode = arrKeyCodes[i];
 		this.arrPrevKeyDown[keyCode] = this.arrKeyDown[keyCode];
 	}

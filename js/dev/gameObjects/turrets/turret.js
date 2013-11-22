@@ -4,6 +4,7 @@ goog.require('GameObject');
 goog.require('KeyCode');
 goog.require('GamepadCode');
 goog.require('InputConfig');
+goog.require('PayloadEvent');
 
 /**
 *@constructor
@@ -35,6 +36,10 @@ Turret = function(color, projectileSystem, hasAI) {
 	this.fireCounter = 0;
 
 	this.isFiring = false;
+
+	this.energyConsumption = -10;
+
+	this.energyChangeEvent = new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energyConsumption);
 	
 	/**
 	*@type {Shape}
@@ -98,13 +103,15 @@ Turret.prototype.manualControl = function(options) {
 	}
 	
 	//fire if PlayerTank is not transitioning Turret instances
-	if(!options.isTransitioning) {
+	if(!options.isTransitioning && -options.energy < this.energyConsumption) {
 		//Keyboard or Button fire
 		if(input.isKeyDown(KeyCode.SPACE) || 
 			input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT])) {
 			if(this.fireCounter > this.fireThreshold) {
 				this.fire();
 				this.fireCounter = 0;
+
+				goog.events.dispatchEvent(this, this.energyChangeEvent);
 			}
 
 			this.isFiring = true;
@@ -122,6 +129,8 @@ Turret.prototype.manualControl = function(options) {
 			if(this.fireCounter > this.fireThreshold) {
 				this.fire();
 				this.fireCounter = 0;
+
+				goog.events.dispatchEvent(this, this.energyChangeEvent);
 			}
 
 			this.isFiring = true;

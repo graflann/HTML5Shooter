@@ -460,6 +460,14 @@ PlayPanel.prototype.setEventListeners = function() {
 		false, 
 		this
 	);
+
+	goog.events.listen(
+		this.player, 
+		EventNames.ENERGY_CHANGE, 
+		this.onEnergyChange, 
+		false, 
+		this
+	);
 	/////////////////////////////////////
 };
 
@@ -486,4 +494,11 @@ PlayPanel.prototype.onAddHomingOverlay = function(e) {
 PlayPanel.prototype.onRemoveHomingOverlay = function(e) {
 	this.hto.remove();
 	this.level.removeReticles();
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.onEnergyChange = function(e) {
+	this.hud.changeEnergy(e.payload);
 };

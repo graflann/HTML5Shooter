@@ -126,10 +126,10 @@ PathFinder.prototype.findPath = function() {
 	this.shortestPath = this.searchAlgorithm.getShortestPath();
 	this.costToTarget = this.searchAlgorithm.getCostToTarget();
 
-	console.log("Path");
-	console.log(this.path);
-	console.log("ShortestPath");
-	console.log(this.shortestPath);
+	// console.log("Path");
+	// console.log(this.path);
+	// console.log("ShortestPath");
+	// console.log(this.shortestPath);
 	// console.log("Cost");
 	// console.log(this.costToTarget);
 
