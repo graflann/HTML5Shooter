@@ -182,9 +182,6 @@ CollisionManager.prototype.preSolve = function(contact, oldManifold) {
 };
 
 //VERSUS/////////////////////////////////////////////////////////////////////
-
-
-
 CollisionManager.prototype.projectileVsObject = function(projectile, object) {
     //console.log(projectile);
     //console.log(object);
@@ -253,6 +250,10 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
     }
 
     if(object instanceof Item) {
+        player.energy += object.value;
+
+        player.changeEnergy(player.energy);
+
         this.killList.push(object);
         return;
     }

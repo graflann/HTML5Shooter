@@ -239,8 +239,8 @@ PlayerTank.prototype.update = function(options) {
 			this.isHoming = true;
 
 			//zero out the energy level upon homing
-			this.energyChangeEvent.payload = this.energy = 0;
-			goog.events.dispatchEvent(this, this.energyChangeEvent);
+			this.energy = 0;
+			this.changeEnergy(this.energy);
 
 			//initializes the homing target overlay
 			goog.events.dispatchEvent(this, this.addHomingOverlayEvent);
@@ -335,12 +335,7 @@ PlayerTank.prototype.updateEnergy = function() {
 	 if(!this.isHoming && this.energy < 100) {
 	 	this.energy++;
 
-	 	if(this.energy > 100) {
-	 		this.energy = 100;
-	 	}
-
-	 	this.energyChangeEvent.payload = this.energy;
-		goog.events.dispatchEvent(this, this.energyChangeEvent);
+	 	this.changeEnergy(this.energy);
 	 }
 };
 
@@ -609,7 +604,8 @@ PlayerTank.prototype.setBaseBody = function() {
 	fixDef.friction = 0;
 	fixDef.restitution = 0;
 	fixDef.filter.categoryBits = CollisionCategories.PLAYER_BASE;
-	fixDef.filter.maskBits = CollisionCategories.SCENE_OBJECT | CollisionCategories.GROUND_ENEMY;
+	fixDef.filter.maskBits = 
+		CollisionCategories.SCENE_OBJECT | CollisionCategories.GROUND_ENEMY | CollisionCategories.ITEM;
 	fixDef.shape = new app.b2PolygonShape();
 	fixDef.shape.SetAsBox(this.width / scale, this.height / scale);
 	
@@ -642,19 +638,23 @@ PlayerTank.prototype.setTurretBody = function() {
 	this.turretBody.SetActive(true);
 };
 
+PlayerTank.prototype.changeEnergy = function (value) {
+	if(value < 0) {
+		value = 0;
+	} else if(value > 100) {
+		value = 100;
+	}
+
+	this.energyChangeEvent.payload = this.energy = value;
+	goog.events.dispatchEvent(this, this.energyChangeEvent);
+};
+
 PlayerTank.prototype.onEnergyChange = function(e) {
 	this.energy += e.payload;
 
-	if(this.energy < 0) {
-		this.energy = 0;
-	} else if(this.energy > 100) {
-		this.energy = 100;
-	}
-
 	console.log("Energy qty: " + this.energy);
 
-	this.energyChangeEvent.payload = this.energy;
-	goog.events.dispatchEvent(this, this.energyChangeEvent);
+	this.changeEnergy(this.energy);
 };
 
 goog.exportSymbol('PlayerTank', PlayerTank);

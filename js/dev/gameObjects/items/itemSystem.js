@@ -7,14 +7,12 @@ goog.require('ItemClasses');
 *@constructor
 *System managing items of a specific type
 */
-ItemSystem = function(type, max, categoryBits, maskBits) {
+ItemSystem = function(type, max, categoryBits) {
 	this.type = type;
 
 	this.max = max || 4;
 
 	this.categoryBits = categoryBits || CollisionCategories.ITEM;
-
-	this.maskBits = maskBits || CollisionCategories.PLAYER;
 
 	this.isActive = true;
 
@@ -30,7 +28,7 @@ ItemSystem.prototype.init = function() {
 		i = -1;
 
 	while(++i < this.max) {
-		this.arrItems[i] = new ItemClass(this.color, this.categoryBits, this.maskBits);
+		this.arrItems[i] = new ItemClass(this.categoryBits);
 	}
 
 };

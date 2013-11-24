@@ -104,16 +104,16 @@ GraphHelper.createGrid = function(graph, levelW, levelH, numCellsX, numCellsY, a
                     graph.removeNode(i);
 
                     //debugging visual displaying affected area due to node removal
-                    var shape = new createjs.Shape();
-                    shape.graphics
-                        .f(Constants.RED)
-                        .dr(nodeRect.x, nodeRect.y, nodeRect.width, nodeRect.height);
+                    // var shape = new createjs.Shape();
+                    // shape.graphics
+                    //     .f(Constants.RED)
+                    //     .dr(nodeRect.x, nodeRect.y, nodeRect.width, nodeRect.height);
 
-                    shape.x = 0;
-                    shape.y = 0;
-                    shape.alpha = 0.5;
+                    // shape.x = 0;
+                    // shape.y = 0;
+                    // shape.alpha = 0.5;
 
-                    app.layers.getStage(LayerTypes.FOREGROUND).addChild(shape);
+                    //app.layers.getStage(LayerTypes.FOREGROUND).addChild(shape);
 
                     break;
                 }

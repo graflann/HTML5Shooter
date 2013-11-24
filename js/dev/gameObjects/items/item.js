@@ -7,12 +7,10 @@ goog.require('CollisionCategories');
 *@constructor
 *An item with collision that is typically for the user to acquire (e.g. energy, pow, etc.)
 */
-Item = function(categoryBits, maskBits) {
+Item = function(categoryBits) {
 	GameObject.call(this);
 
 	this.categoryBits = categoryBits;
-	
-	this.maskBits = maskBits;
 
 	/**
 	*@type {Container}
@@ -22,13 +20,13 @@ Item = function(categoryBits, maskBits) {
 	/**
 	*@type {DisplayObject}
 	*/
-	this.shape;
+	this.shape = null;
 	
 	/**
 	*physical body added to Box2D physicsWorld
 	*@type {Box2D.Dynamics.b2Body}
 	*/
-	this.body;
+	this.body = null;
 
 	this.physicalPosition = new app.b2Vec2();
 };
@@ -48,10 +46,12 @@ Item.prototype.init = function() {
 *@public
 */
 Item.prototype.update = function(options) {
-	this.physicalPosition.x = this.position.x / app.physicalScale;
-	this.physicalPosition.y = this.position.y / app.physicalScale;
 
-	this.checkBounds();
+	if(this.isAlive) {
+		this.setPosition(this.container.x, this.container.y);
+
+		//this.checkBounds();
+	}
 };
 
 /**
@@ -67,7 +67,7 @@ Item.prototype.clear = function() {
 Item.prototype.kill = function() {
 	if(this.isAlive) {
 		this.setIsAlive(false);
-		this.shape.getStage().removeChild(this.shape);
+		this.container.getStage().removeChild(this.container);
 	}
 };
 
@@ -76,13 +76,15 @@ Item.prototype.kill = function() {
 *@public
 */
 Item.prototype.create = function(options) {
-	this.container.x = Math.randomInRange(
-		options.posX - options.posOffsetX, 
-		options.posX + options.posOffsetX
-	);
-	this.container.y = Math.randomInRange(
-		options.posY - options.posOffsetY, 
-		options.posY + options.posOffsetY
+	this.setPosition(
+		Math.randomInRange(
+			options.posX - options.posOffsetX, 
+			options.posX + options.posOffsetX
+		),
+		Math.randomInRange(
+			options.posY - options.posOffsetY, 
+			options.posY + options.posOffsetY
+		)
 	);
 	
 	this.velocity.x = Math.randomInRange(-options.velX, options.velX);
@@ -92,7 +94,7 @@ Item.prototype.create = function(options) {
 		this.container.rotation = Math.randomInRange(0, 360);
 	}
 	
-	this.isAlive = true;
+	this.setIsAlive(true);
 	
 	app.layers.getStage(LayerTypes.MAIN).addChild(this.container);
 };
@@ -101,6 +103,16 @@ Item.prototype.setIsAlive = function(value) {
 	this.body.SetAwake(value);
 	this.body.SetActive(value);
 	this.isAlive = value;
+};
+
+Item.prototype.setPosition = function(x, y) {
+	this.position.x = this.container.x = x;
+	this.position.y = this.container.y = y;
+
+	this.physicalPosition.x = this.position.x / app.physicsScale;
+	this.physicalPosition.y = this.position.y / app.physicsScale;
+	
+	this.body.SetPosition(this.physicalPosition);
 };
 
 /**
