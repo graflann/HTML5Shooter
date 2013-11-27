@@ -48,9 +48,14 @@ Item.prototype.init = function() {
 Item.prototype.update = function(options) {
 
 	if(this.isAlive) {
-		this.setPosition(this.container.x, this.container.y);
+		this.physicalPosition = this.body.GetPosition();
 
-		//this.checkBounds();
+		this.container.x = this.physicalPosition.x * app.physicsScale;
+		this.container.y = this.physicalPosition.y * app.physicsScale;
+
+		this.container.rotation = Math.radToDeg(this.body.GetAngle());
+
+		this.checkBounds();
 	}
 };
 
@@ -76,6 +81,8 @@ Item.prototype.kill = function() {
 *@public
 */
 Item.prototype.create = function(options) {
+	var forceTarget;
+
 	this.setPosition(
 		Math.randomInRange(
 			options.posX - options.posOffsetX, 
@@ -91,10 +98,18 @@ Item.prototype.create = function(options) {
 	this.velocity.y = Math.randomInRange(-options.velY, options.velY);
 
 	if(options.isRotated) {
-		this.container.rotation = Math.randomInRange(0, 360);
+		var rotation = Math.randomInRange(0, 360);
+		this.body.SetAngle(Math.degToRad(rotation));
+		this.container.rotation = rotation;
 	}
-	
+
 	this.setIsAlive(true);
+
+	//create an off-center target to produce some spin
+	forceTarget = this.body.GetWorldCenter();
+	forceTarget.x += 0.5;
+
+	this.body.ApplyForce(this.velocity, forceTarget);
 	
 	app.layers.getStage(LayerTypes.MAIN).addChild(this.container);
 };
@@ -123,10 +138,10 @@ Item.prototype.checkBounds = function() {
 	var pos = this.body.GetPosition(),
 		scale = app.physicsScale,
 		stage = app.layers.getStage(LayerTypes.MAIN),
-		minX = -stage.x / scale,
-		minY = -stage.y / scale, 
-		maxX = minX + Constants.WIDTH / scale,
-		maxY = minY + Constants.HEIGHT / scale; 
+		minX = 0,
+		minY = 0, 
+		maxX = app.arenaWidth / scale,
+		maxY = app.arenaHeight / scale; 
 
 	if((pos.x < minX || pos.x > maxX) || (pos.y < minY || pos.y > maxY)) {
 		this.kill();

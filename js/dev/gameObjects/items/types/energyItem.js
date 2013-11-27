@@ -58,7 +58,6 @@ EnergyItem.prototype.setPhysics = function() {
 	fixDef.restitution = 1.0;
 	fixDef.filter.categoryBits = this.categoryBits;
 	fixDef.filter.maskBits = CollisionCategories.SCENE_OBJECT | CollisionCategories.PLAYER_BASE;
-	fixDef.isSensor = false;
 	fixDef.shape = new app.b2CircleShape(0.5);
 	
 	bodyDef.type = app.b2Body.b2_dynamicBody;

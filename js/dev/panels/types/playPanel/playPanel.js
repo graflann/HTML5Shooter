@@ -260,10 +260,13 @@ PlayPanel.prototype.setLayers = function() {
 		.dr(0, 0, Constants.WIDTH, Constants.HEIGHT);
 
 	app.layers.getStage(LayerTypes.BACKGROUND).addChild(this.background);
+
+	app.arenaWidth = Constants.WIDTH * 4;
+	app.arenaHeight = Constants.HEIGHT * 2;
 	
 	this.grid = new Grid(
-		Constants.WIDTH * 4, 
-		Constants.HEIGHT * 2, 
+		app.arenaWidth, 
+		app.arenaHeight, 
 		Constants.UNIT, 
 		Constants.WHITE
 	);

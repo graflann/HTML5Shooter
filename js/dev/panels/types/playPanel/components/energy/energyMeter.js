@@ -83,8 +83,8 @@ EnergyMeter.prototype.clear = function() {
 EnergyMeter.prototype.changeEnergy = function(value) {
 	this.energy = this.regenerationRate * value;
 
-	console.log("Energy MAX: " + EnergyMeter.MAX);
-	console.log("Energy changing: " + this.energy);
+	//console.log("Energy MAX: " + EnergyMeter.MAX);
+	//console.log("Energy changing: " + this.energy);
 
 	if(this.energy < EnergyMeter.MIN) {
 		this.energy = EnergyMeter.MIN;

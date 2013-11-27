@@ -45,6 +45,8 @@ app.pathFinder      = null;
 app.assetsProxy     = null;
 //app.levelProxy 	= null;
 app.vecZero         = null;
+app.arenaWidth      = 0;
+app.arenaHeight     = 0;
 app.charWidth       = 6;
 
 //////////////////////////////////////////////////////////////////

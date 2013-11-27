@@ -105,11 +105,11 @@ PlayerTank.prototype.init = function() {
 
 	this.container = new createjs.Container();
 
-	this.width = 48;
-	this.height = 64;
+	this.width = 52;
+	this.height = 67;
 
-	this.velocity.x = 4800;
-	this.velocity.y = 4800;
+	this.velocity.x = 6400;
+	this.velocity.y = 6400;
 
 	this.baseContainer = new createjs.Container();
 
@@ -123,8 +123,8 @@ PlayerTank.prototype.init = function() {
 		new createjs.BitmapAnimation(wheelSpriteSheet),
 		new createjs.BitmapAnimation(wheelSpriteSheet)
 	];
-	this.arrWheels[0].x = 5; 	//left
-	this.arrWheels[1].x = 42;	//right
+	this.arrWheels[0].x = 7; 	//left
+	this.arrWheels[1].x = 44;	//right
 	this.arrWheels[0].y = this.arrWheels[1].y = 7;
 
 	for(var i = 0; i < this.arrWheels.length; i++) {
@@ -176,7 +176,7 @@ PlayerTank.prototype.update = function(options) {
 		this.isMoving = false;
 
 		//zero out any linear velocity
-		this.body.SetLinearVelocity( app.vecZero);
+		this.body.SetLinearVelocity(app.vecZero);
 
 		//increases at a determined rate continuously by default
 		this.updateEnergy();
@@ -598,16 +598,20 @@ PlayerTank.prototype.setPhysics = function() {
 PlayerTank.prototype.setBaseBody = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef(),
-		scale = app.physicsScale * 2;
+		scale = app.physicsScale * 2,
+		center = new app.b2Vec2(
+			0,
+			0
+		);
 	
 	fixDef.density = 1.0;
-	fixDef.friction = 0;
+	fixDef.friction = 100.0;
 	fixDef.restitution = 0;
 	fixDef.filter.categoryBits = CollisionCategories.PLAYER_BASE;
 	fixDef.filter.maskBits = 
 		CollisionCategories.SCENE_OBJECT | CollisionCategories.GROUND_ENEMY | CollisionCategories.ITEM;
 	fixDef.shape = new app.b2PolygonShape();
-	fixDef.shape.SetAsBox(this.width / scale, this.height / scale);
+	fixDef.shape.SetAsOrientedBox(this.width / scale, this.height / scale, center);
 	
 	bodyDef.type = app.b2Body.b2_dynamicBody;
 	this.body = app.physicsWorld.CreateBody(bodyDef);

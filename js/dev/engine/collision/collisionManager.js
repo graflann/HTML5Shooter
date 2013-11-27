@@ -21,6 +21,8 @@ CollisionManager = function(
 	*/
 	this.contactListener = null;
 
+    this.activationList = [];
+
 	this.killList = [];
 
 	this.homingList = [];
@@ -77,6 +79,7 @@ CollisionManager.prototype.init = function() {
 CollisionManager.prototype.update = function(options) {
     this.updateHomingList(options);
     this.updateKills();
+    this.updateActivation();
 };
 
 CollisionManager.prototype.clear = function() {
@@ -124,6 +127,24 @@ CollisionManager.prototype.updateKills = function() {
     this.killList.length = 0;
 };
 
+CollisionManager.prototype.updateActivation = function() {
+    var i = 0;
+
+    //activate items caused by collision
+    for(i = 0; i < this.activationList.length; i++) {
+        
+        if(this.activationList[i] !== undefined || this.activationList[i] !== null) {
+            this.arrItemSystems[ItemTypes.ENERGY].emit(
+                1, 
+                this.activationList[i]
+            );
+        }
+    }
+
+    //reset the list
+    this.activationList.length = 0;
+};
+
 CollisionManager.prototype.beginContact = function(contact) {
 	var dataA = contact.GetFixtureA().GetBody().GetUserData(),
     	dataB = contact.GetFixtureB().GetBody().GetUserData();
@@ -167,6 +188,16 @@ CollisionManager.prototype.beginContact = function(contact) {
         return;
     }
     //////////////////////////////////////////////////////////////////
+
+    //ITEM VS SCENEOBJECT////////////////////////////////////////////
+    if(dataA instanceof Item) {
+        this.itemVsObject(dataA, dataB);
+        return;
+    } else if(dataB instanceof Item) {
+        this.itemVsObject(dataB, dataA);
+        return;
+    }
+    //////////////////////////////////////////////////////////////////
 };
 
 CollisionManager.prototype.endContact = function(contact) {
@@ -194,12 +225,13 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
         //then push onto the kill list
         if(object.health <= 0) {
             this.killList.push(object);
-
-            this.arrItemSystems[ItemTypes.ENERGY].emit(
-                1, 
-                { 
+            this.activationList.push(
+                {
                     posX: object.container.x, 
-                    posY: object.container.y 
+                    posY: object.container.y,
+                    velX: 64,
+                    velY: 64,
+                    isRotated: true
                 }
             );
         }
@@ -266,6 +298,10 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
 
 CollisionManager.prototype.enemyVsObject = function(enemy, object) {
     enemy.onCollide(object, this.collisionOptions.enemy);
+};
+
+CollisionManager.prototype.itemVsObject = function(item, object) {
+    console.log("Item colliding");
 };
 /////////////////////////////////////////////////////////////////////////////
 
