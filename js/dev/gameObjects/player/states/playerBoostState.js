@@ -8,6 +8,11 @@ goog.require('State');
 */
 PlayerBoostState = function(player) {
 	this.player = player;
+
+	/**
+	* Duration of boost in ms
+	*/
+	this.boostTime = 750;
 };
 
 goog.inherits(PlayerBoostState, State);
@@ -20,9 +25,11 @@ PlayerBoostState.KEY = "boost";
 PlayerBoostState.prototype.enter = function(options) {
 	var self = this;
 
+	this.player.enterBoost();
+
 	setTimeout(function() {
 		self.player.stateMachine.setState(PlayerDefaultState.KEY);
-	}, 1000);
+	}, self.boostTime);
 };
 
 /**
@@ -36,7 +43,7 @@ PlayerBoostState.prototype.update = function(options) {
 *@public
 */
 PlayerBoostState.prototype.exit = function(options) {
-
+	this.player.isBoosting = false;
 };
 
 goog.exportSymbol('PlayerBoostState', PlayerBoostState);

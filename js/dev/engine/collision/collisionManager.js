@@ -292,7 +292,9 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
 
     //SceneObject (Projectile would be resolved prior to this)
     if(object instanceof SceneObject) {
-
+        if(player.isBoosting) {
+            player.forceBoostExit();
+        }
     }
 };
 

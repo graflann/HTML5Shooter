@@ -82,6 +82,8 @@ PlayerTank = function(arrProjectileSystems) {
 
 	this.isMoving = false;
 
+	this.isBoosting = false;
+
 	this.energy = 100;
 
 	this.stateMachine = null;
@@ -167,11 +169,6 @@ PlayerTank.prototype.init = function() {
 */
 PlayerTank.prototype.update = function(options) {
 	if(this.isAlive) {
-		//zero out body's linear velocity
-		this.body.SetLinearVelocity(app.vecZero);
-
-		//increases at a determined rate continuously by default
-		this.updateEnergy();
 
 		//update current state
 		this.stateMachine.update(options);
@@ -183,6 +180,7 @@ PlayerTank.prototype.update = function(options) {
 
 		app.input.checkPrevButtonDown([
 			GamepadCode.BUTTONS.LT,
+			GamepadCode.BUTTONS.RT,
 			GamepadCode.BUTTONS.X//,
 			//GamepadCode.BUTTONS.Y
 		]);
@@ -193,6 +191,12 @@ PlayerTank.prototype.update = function(options) {
 *@public
 */
 PlayerTank.prototype.updateDefault = function(options) {
+	//zero out body's linear velocity
+	this.body.SetLinearVelocity(app.vecZero);
+
+	//increases at a determined rate continuously by default
+	this.updateEnergy();
+
 	this.checkMovement();
 
 	//Updates the base rotation with a smooth transition
@@ -207,13 +211,48 @@ PlayerTank.prototype.updateDefault = function(options) {
 	this.checkTurretTransition();
 
 	this.updateTurret();
+
+	this.checkBoost();
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.enterBoost = function(options) {
+	var rotation = this.baseContainer.rotation - 90,
+		boostVelX = this.velocity.x * 2,
+		boostVelY = this.velocity.y * 2;
+
+	this.force.x = boostVelX * app.trigTable.cos(rotation);
+	this.force.y = boostVelY * app.trigTable.sin(rotation);
+
+	this.body.ApplyForce(this.force, this.body.GetWorldCenter());
+
+	this.isBoosting = true;
+
+	this.isMoving = true;
 };
 
 /**
 *@public
 */
 PlayerTank.prototype.updateBoost = function(options) {
+	this.setPosition(this.body.GetPosition());
 
+	this.animateWheels();
+
+	this.updateTurret();
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.forceBoostExit = function() {
+	this.isBoosting = false;
+
+	this.isMoving = false;
+
+	this.setStateMachine(PlayerDefaultState.KEY);
 };
 
 /**
@@ -367,6 +406,7 @@ PlayerTank.prototype.updateHoming = function(options) {
 *@public
 */
 PlayerTank.prototype.updateTurret = function(options) {
+
 	this.turret.update({ 
 		energy: 			this.energy,
 		isTransitioning: 	this.isTransitioning 
@@ -375,6 +415,16 @@ PlayerTank.prototype.updateTurret = function(options) {
 	this.turretTransition.rotation = this.turret.shape.rotation;
 	this.turretTransitionAddAnimUtil.update();
 	this.turretTransitionRemoveAnimUtil.update();
+};
+
+PlayerTank.prototype.checkBoost = function() {
+	var input = app.input;
+
+	if(this.energy === 100 && input.isButtonPressedOnce(GamepadCode.BUTTONS.RT)) {
+		this.changeEnergy(0)
+
+		this.stateMachine.setState(PlayerBoostState.KEY);
+	}
 };
 
 /**
@@ -728,7 +778,7 @@ PlayerTank.prototype.changeEnergy = function (value) {
 PlayerTank.prototype.onEnergyChange = function(e) {
 	this.energy += e.payload;
 
-	console.log("Energy qty: " + this.energy);
+	//console.log("Energy qty: " + this.energy);
 
 	this.changeEnergy(this.energy);
 };
