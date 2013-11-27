@@ -9,7 +9,9 @@ goog.require('GamepadCode');
 goog.require('InputConfig');
 goog.require('WeaponMap');
 goog.require('EventNames');
-
+goog.require('StateMachine');
+goog.require('PlayerDefaultState');
+goog.require('PlayerBoostState');
 
 /**
 *@constructor
@@ -82,6 +84,8 @@ PlayerTank = function(arrProjectileSystems) {
 
 	this.energy = 100;
 
+	this.stateMachine = null;
+
 	//cache events
 	this.weaponSelectEvent 			= new goog.events.Event(EventNames.WEAPON_SELECT, this);
 	this.addHomingOverlayEvent 		= new goog.events.Event(EventNames.ADD_HOMING_OVERLAY, this);
@@ -152,6 +156,8 @@ PlayerTank.prototype.init = function() {
 
 	this.setPhysics();
 
+	this.setStateMachine();
+
 	this.setIsAlive(true);
 };
 
@@ -161,166 +167,214 @@ PlayerTank.prototype.init = function() {
 */
 PlayerTank.prototype.update = function(options) {
 	if(this.isAlive) {
-		var input = app.input,
-			gamepad = input.gamepad,
-			isUp = false,
-			isDown = false,
-			hto = options.hto,
-			worldCenter = this.body.GetWorldCenter(),
-			vert = input.getAxis(GamepadCode.AXES.LEFT_STICK_VERT),
-			hori = input.getAxis(GamepadCode.AXES.LEFT_STICK_HOR);
-
-		//console.log(vert);
-		//console.log(hori);
-
-		this.isMoving = false;
-
-		//zero out any linear velocity
+		//zero out body's linear velocity
 		this.body.SetLinearVelocity(app.vecZero);
 
 		//increases at a determined rate continuously by default
 		this.updateEnergy();
 
-		//MOVEMENT
-		if(input.isKeyDown(KeyCode.W) || 
-			input.isButtonDown(GamepadCode.BUTTONS.DPAD_UP) || vert < -input.MOVE_THRESHOLD) {
+		//update current state
+		this.stateMachine.update(options);
 
-			this.force.x = 0;
-			this.force.y = -this.velocity.y;
-			this.body.ApplyForce(this.force, worldCenter);
+		app.input.checkPrevKeyDown([
+			KeyCode.Z//,
+			//KeyCode.X
+		]);
 
-			this.intendedRotation = 0;
+		app.input.checkPrevButtonDown([
+			GamepadCode.BUTTONS.LT,
+			GamepadCode.BUTTONS.X//,
+			//GamepadCode.BUTTONS.Y
+		]);
+	}
+};
 
-			this.isMoving = isUp = true;
-		} else if (input.isKeyDown(KeyCode.S) || 
-			input.isButtonDown(GamepadCode.BUTTONS.DPAD_DOWN) || vert > input.MOVE_THRESHOLD) {
+/**
+*@public
+*/
+PlayerTank.prototype.updateDefault = function(options) {
+	this.checkMovement();
 
-			this.force.x = 0;
-			this.force.y = this.velocity.y;
-			this.body.ApplyForce(this.force, worldCenter);
+	//Updates the base rotation with a smooth transition
+	this.updateRotation();
 
-			this.intendedRotation = 180;
+	this.animateWheels();
 
-			this.isMoving = isDown = true;
-		}
+	this.setPosition(this.body.GetPosition());
 
-		if(input.isKeyDown(KeyCode.A) || 
-			input.isButtonDown(GamepadCode.BUTTONS.DPAD_LEFT) || hori < -input.MOVE_THRESHOLD) {
+	this.updateHoming(options);
 
-			this.force.x = -this.velocity.x;
-			this.force.y = 0;
-			this.body.ApplyForce(this.force, worldCenter);
+	this.checkTurretTransition();
 
-			if (isUp)		{ this.intendedRotation = 315; }
-			else if(isDown)	{ this.intendedRotation = 225; } 
-			else 			this.intendedRotation = 270;
+	this.updateTurret();
+};
 
-			this.isMoving = true;
-		} else if (input.isKeyDown(KeyCode.D) || 
-			input.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT) || hori > input.MOVE_THRESHOLD) {
+/**
+*@public
+*/
+PlayerTank.prototype.updateBoost = function(options) {
 
-			this.force.x = this.velocity.x;
-			this.force.y = 0;
-			this.body.ApplyForce(this.force, worldCenter);
+};
 
-			if (isUp)		{ this.intendedRotation = 45; }
-			else if(isDown)	{ this.intendedRotation = 135; } 
-			else 			this.intendedRotation = 90;
+/**
+*@public
+*/
+PlayerTank.prototype.checkMovement = function(options) {
+	var input = app.input,
+		gamepad = input.gamepad,
+		worldCenter = this.body.GetWorldCenter(),
+		isUp = false,
+		isDown = false,
+		vert = input.getAxis(GamepadCode.AXES.LEFT_STICK_VERT),
+		hori = input.getAxis(GamepadCode.AXES.LEFT_STICK_HOR);
 
-			this.isMoving = true;
-		}
+	this.isMoving = false;
 
-		//Updates the base rotation with a smooth transition
-		this.updateRotation();
-		
-		//HOMING
-		//hold to init homing target overlay
-		if(this.energy === 100 && input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && !this.isHoming) {
-			this.isHoming = true;
+	//check vertical movement
+	if(input.isKeyDown(KeyCode.W) || 
+		input.isButtonDown(GamepadCode.BUTTONS.DPAD_UP) || vert < -input.MOVE_THRESHOLD) {
 
-			//zero out the energy level upon homing
-			this.energy = 0;
-			this.changeEnergy(this.energy);
+		this.force.x = 0;
+		this.force.y = -this.velocity.y;
+		this.body.ApplyForce(this.force, worldCenter);
 
-			//initializes the homing target overlay
-			goog.events.dispatchEvent(this, this.addHomingOverlayEvent);
-		}
+		this.intendedRotation = 0;
 
-		//release to fire if hto is operational
-		if(!input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && this.isHoming) {
-			this.isHoming = false;
+		this.isMoving = isUp = true;
+	} else if (input.isKeyDown(KeyCode.S) || 
+		input.isButtonDown(GamepadCode.BUTTONS.DPAD_DOWN) || vert > input.MOVE_THRESHOLD) {
 
-			//hto is operational so firing may commence
-			if(hto.getCurrentState() === HomingTargetingOverlayOperationState.KEY) {
-				this.fireHoming();
-			}
+		this.force.x = 0;
+		this.force.y = this.velocity.y;
+		this.body.ApplyForce(this.force, worldCenter);
 
-			//starts removal of homing overlay
-			goog.events.dispatchEvent(this, this.removeHomingOverlayEvent);
-		}
-		
+		this.intendedRotation = 180;
 
-		//WEAPON SELECT
-		if(!this.isTransitioning) {
-			if(input.isKeyPressedOnce(KeyCode.X) || 
-				input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.SWITCH])) {
-					
-				this.currentWeaponIndex++;
-
-				if(this.currentWeaponIndex > (WeaponMap.length - 1)) {
-					this.currentWeaponIndex = 0;
-				}
-
-				this.setTurret(
-					WeaponMap[this.currentWeaponIndex].turretType,
-					WeaponMap[this.currentWeaponIndex].projectileType
-				);
-
-				//notify the HUD to represent current weapon selection
-				//handled by the PlayPanel instance
-				goog.events.dispatchEvent(this, this.weaponSelectEvent);
-			}
-		}
-
-		//Animate wheels upon movement
-		if(this.isMoving) {
-			 this.base.play();
-
-			//Animate wheels
-			for(var i = 0; i < this.arrWheels.length; i++) {
-				this.arrWheels[i].play();
-			}
-		} else {
-			this.base.gotoAndStop(0);
-
-			//Stop wheel animation
-			for(var i = 0; i < this.arrWheels.length; i++) {
-				this.arrWheels[i].gotoAndStop(0);
-			}
-		};
-
-		this.setPosition(this.body.GetPosition());
-
-		this.turret.update({ 
-			energy: 			this.energy,
-			isTransitioning: 	this.isTransitioning 
-		});
-
-		this.turretTransition.rotation = this.turret.shape.rotation;
-		this.turretTransitionAddAnimUtil.update();
-		this.turretTransitionRemoveAnimUtil.update();
+		this.isMoving = isDown = true;
 	}
 
-	app.input.checkPrevKeyDown([
-		KeyCode.Z//,
-		//KeyCode.X
-	]);
+	//check horizontal movement
+	if(input.isKeyDown(KeyCode.A) || 
+		input.isButtonDown(GamepadCode.BUTTONS.DPAD_LEFT) || hori < -input.MOVE_THRESHOLD) {
 
-	app.input.checkPrevButtonDown([
-		GamepadCode.BUTTONS.LT,
-		GamepadCode.BUTTONS.X//,
-		//GamepadCode.BUTTONS.Y
-	]);
+		this.force.x = -this.velocity.x;
+		this.force.y = 0;
+		this.body.ApplyForce(this.force, worldCenter);
+
+		if (isUp)		{ this.intendedRotation = 315; }
+		else if(isDown)	{ this.intendedRotation = 225; } 
+		else 			this.intendedRotation = 270;
+
+		this.isMoving = true;
+	} else if (input.isKeyDown(KeyCode.D) || 
+		input.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT) || hori > input.MOVE_THRESHOLD) {
+
+		this.force.x = this.velocity.x;
+		this.force.y = 0;
+		this.body.ApplyForce(this.force, worldCenter);
+
+		if (isUp)		{ this.intendedRotation = 45; }
+		else if(isDown)	{ this.intendedRotation = 135; } 
+		else 			this.intendedRotation = 90;
+
+		this.isMoving = true;
+	}
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.checkTurretTransition = function(options) {
+	var input = app.input;
+
+	//WEAPON SELECT
+	if(!this.isTransitioning) {
+		if(input.isKeyPressedOnce(KeyCode.X) || 
+			input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.SWITCH])) {
+				
+			this.currentWeaponIndex++;
+
+			if(this.currentWeaponIndex > (WeaponMap.length - 1)) {
+				this.currentWeaponIndex = 0;
+			}
+
+			this.setTurret(
+				WeaponMap[this.currentWeaponIndex].turretType,
+				WeaponMap[this.currentWeaponIndex].projectileType
+			);
+
+			//notify the HUD to represent current weapon selection
+			//handled by the PlayPanel instance
+			goog.events.dispatchEvent(this, this.weaponSelectEvent);
+		}
+	}
+};
+
+/**e
+*@public
+*/
+PlayerTank.prototype.animateWheels = function(options) {
+	//Animate wheels upon movement
+	if(this.isMoving) {
+		 this.base.play();
+
+		//Animate wheels
+		for(var i = 0; i < this.arrWheels.length; i++) {
+			this.arrWheels[i].play();
+		}
+	} else {
+		this.base.gotoAndStop(0);
+
+		//Stop wheel animation
+		for(var i = 0; i < this.arrWheels.length; i++) {
+			this.arrWheels[i].gotoAndStop(0);
+		}
+	};
+};
+
+PlayerTank.prototype.updateHoming = function(options) {
+	var input = app.input,
+		hto = options.hto;
+
+	//HOMING
+	//hold to init homing target overlay
+	if(this.energy === 100 && input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && !this.isHoming) {
+		this.isHoming = true;
+
+		//zero out the energy level upon homing
+		this.energy = 0;
+		this.changeEnergy(this.energy);
+
+		//initializes the homing target overlay
+		goog.events.dispatchEvent(this, this.addHomingOverlayEvent);
+	}
+
+	//release to fire if hto is operational
+	if(!input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && this.isHoming) {
+		this.isHoming = false;
+
+		//hto is operational so firing may commence
+		if(hto.getCurrentState() === HomingTargetingOverlayOperationState.KEY) {
+			this.fireHoming();
+		}
+
+		//starts removal of homing overlay
+		goog.events.dispatchEvent(this, this.removeHomingOverlayEvent);
+	}
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.updateTurret = function(options) {
+	this.turret.update({ 
+		energy: 			this.energy,
+		isTransitioning: 	this.isTransitioning 
+	});
+
+	this.turretTransition.rotation = this.turret.shape.rotation;
+	this.turretTransitionAddAnimUtil.update();
+	this.turretTransitionRemoveAnimUtil.update();
 };
 
 /**
@@ -342,7 +396,7 @@ PlayerTank.prototype.updateEnergy = function() {
 /**
 *@private
 */
-PlayerTank.prototype.updateRotation = function(isMoving) {
+PlayerTank.prototype.updateRotation = function() {
 	var angleDif = this.intendedRotation - this.baseContainer.rotation,
 		absAngleDif = 0;
 
@@ -640,6 +694,24 @@ PlayerTank.prototype.setTurretBody = function() {
 	this.turretBody.SetUserData(this);
 	this.turretBody.SetAwake(true);
 	this.turretBody.SetActive(true);
+};
+
+PlayerTank.prototype.setStateMachine = function() {
+	this.stateMachine = new StateMachine();
+
+	this.stateMachine.addState(
+		PlayerDefaultState.KEY,
+		new PlayerDefaultState(this),
+		[ PlayerBoostState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		PlayerBoostState.KEY,
+		new PlayerBoostState(this),
+		[ PlayerDefaultState.KEY ]
+	);
+	
+	this.stateMachine.setState(PlayerDefaultState.KEY);
 };
 
 PlayerTank.prototype.changeEnergy = function (value) {
