@@ -11,14 +11,17 @@ SpreadTurret = function(hasAI, arrProjectileSystems) {
 
 	this.stateMachine = null;
 
-	this.arrFireOffsets = [0, 10, -10, 20, -20, 30, -30];
-
 	this.maxSpread = 3;
 	
 	this.init();
 };
 
 goog.inherits(SpreadTurret, Turret);
+
+SpreadTurret.FIRE_OFFSETS = {
+	DEFAULT: [0, 7.5, -7.5, 15, -15],
+	ALT: [0, 5, -5, 10, -10, 15, -15]
+};
 
 /**
 *@override
@@ -35,11 +38,49 @@ SpreadTurret.prototype.init = function() {
 	this.shape.regY = 44;
 	this.shape.gotoAndStop(0);
 
-	Turret.prototype.init.call(this);
 	this.setStateMachine();
+	this.setFiringState(Turret.FIRE_TYPES.DEFAULT);
+
+	Turret.prototype.init.call(this);
 };
 
-SpreadTurret.prototype.fire = function() {
+/**
+*@override
+*@public
+*/
+SpreadTurret.prototype.update = function(options) {
+	Turret.prototype.update.call(this, options);
+
+	this.stateMachine.update(options);
+};
+
+/**
+*@override
+*@public				
+*/
+SpreadTurret.prototype.enterDefaultFire = function(options) {
+	Turret.prototype.enterDefaultFire.call(this, options);
+
+	this.fireThreshold = 18;
+	this.fireCounter = this.fireThreshold - 1;
+
+	this.maxSpread = SpreadTurret.FIRE_OFFSETS.DEFAULT.length;
+};
+
+/**
+*@override
+*@public				
+*/
+SpreadTurret.prototype.enterAltFire = function(options) {
+	Turret.prototype.enterAltFire.call(this, options);
+
+	this.fireThreshold = 12;
+	this.fireCounter = this.fireThreshold - 1;
+
+	this.maxSpread = SpreadTurret.FIRE_OFFSETS.ALT.length;
+};
+
+SpreadTurret.prototype.defaultFire = function() {
 	var deg,
 		sin,
 		cos,
@@ -67,7 +108,7 @@ SpreadTurret.prototype.fire = function() {
 			projectile.body.SetPosition(vector2D);
 
 			if(i > 0) {
-				deg += this.arrFireOffsets[i];
+				deg += SpreadTurret.FIRE_OFFSETS.DEFAULT[i];
 				sin = app.trigTable.sin(deg);
 				cos = app.trigTable.cos(deg);
 			}
@@ -112,7 +153,7 @@ SpreadTurret.prototype.altFire = function() {
 			projectile.body.SetPosition(vector2D);
 
 			if(i > 0) {
-				deg += this.arrFireOffsets[i];
+				deg += SpreadTurret.FIRE_OFFSETS.ALT[i];
 				sin = app.trigTable.sin(deg);
 				cos = app.trigTable.cos(deg);
 			}

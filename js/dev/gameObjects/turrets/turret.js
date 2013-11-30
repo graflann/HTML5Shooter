@@ -51,9 +51,19 @@ Turret = function(hasAI, arrProjectileSystems) {
 	this.controlType = null;
 
 	this.firingState = null;
+
+	/**
+	*@type {Function}
+	*/
+	this.fire = null;
 };
 
 goog.inherits(Turret, GameObject);
+
+Turret.FIRE_TYPES = {
+	DEFAULT: 0,
+	ALT: 1
+};
 
 Turret.FIRE_TYPES = {
 	DEFAULT: 0,
@@ -70,9 +80,6 @@ Turret.prototype.init = function() {
 	} else {
 		this.controlType = this.manualControl;
 	}
-
-	this.firingState = Turret.FIRE_TYPES.DEFAULT;
-	this.currentProjectileSystem = this.arrProjectileSystems[this.firingState];
 };
 
 /**
@@ -208,12 +215,38 @@ Turret.prototype.aiControl = function(options) {
 // 	}
 // };
 
-Turret.prototype.fire = function() {
+Turret.prototype.defaultFire = function() {
 	
 };
 
 Turret.prototype.altFire = function() {
 	
+};
+
+/**
+*@public				
+*/
+Turret.prototype.enterDefaultFire = function(options) {	
+	this.fire = this.defaultFire;
+};
+
+/**
+*@public				
+*/
+Turret.prototype.enterAltFire = function(options) {	
+	this.fire = this.altFire;
+};
+
+Turret.prototype.setFiringState = function(value) {
+	this.firingState = value;
+
+	this.currentProjectileSystem = this.arrProjectileSystems[this.firingState];
+
+	if(this.firingState === Turret.FIRE_TYPES.DEFAULT) {
+		this.stateMachine.setState(DefaultFireState.KEY);	
+	} else {
+		this.stateMachine.setState(AlternativeFireState.KEY);
+	}
 };
 
 Turret.prototype.setStateMachine = function() {

@@ -18,14 +18,14 @@ AlternativeFireState.KEY = "alternative";
 *@public
 */
 AlternativeFireState.prototype.enter = function(options) {
-
+	this.turret.enterAltFire();
 };
 
 /**
 *@public
 */
 AlternativeFireState.prototype.update = function(options) {
-	this.turret.altFire();
+	
 };
 
 /**

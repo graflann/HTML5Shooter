@@ -35,8 +35,10 @@ EnemyVulcanTurret.prototype.init = function() {
 	this.turretAnimUtil = new AnimationUtility("enemyVulcanTurret", this.shape, 3);
 
 	Turret.prototype.init.call(this);
+
 	this.firingState = Turret.FIRE_TYPES.DEFAULT;
 	this.currentProjectileSystem = this.arrProjectileSystems[this.firingState];
+	this.fire = this.defaultFire;
 };
 
 /**
@@ -55,7 +57,7 @@ EnemyVulcanTurret.prototype.update = function(options) {
 	}
 };
 
-EnemyVulcanTurret.prototype.fire = function() {
+EnemyVulcanTurret.prototype.defaultFire = function() {
 	var deg,
 		sin,
 		cos,

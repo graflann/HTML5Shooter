@@ -243,7 +243,11 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
 
 	//certain projectile types go "through" objects during collision,
 	//so opt out of the remaining function code or execute
-	if(projectile instanceof SniperProjectile || projectile instanceof BladeProjectile) {
+	if(projectile instanceof SniperProjectile || 
+        projectile instanceof BladeProjectile ||
+        projectile instanceof ReflectProjectile ||
+        projectile instanceof LaserProjectile
+    ) {
 		//console.log("Sniper");
 		return;
 	}

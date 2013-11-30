@@ -18,14 +18,14 @@ DefaultFireState.KEY = "default";
 *@public
 */
 DefaultFireState.prototype.enter = function(options) {
-
+	this.turret.enterDefaultFire();
 };
 
 /**
 *@public
 */
 DefaultFireState.prototype.update = function(options) {
-	this.turret.fire();
+
 };
 
 /**

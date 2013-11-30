@@ -76,7 +76,6 @@ ReflectProjectile.prototype.setPhysics = function()
 	fixDef.restitution = 1.0;
 	fixDef.filter.categoryBits = this.categoryBits;
 	fixDef.filter.maskBits = this.maskBits;
-	fixDef.isSensor = true;
 	fixDef.shape = new app.b2CircleShape(0.25);
 	
 	bodyDef.type = app.b2Body.b2_dynamicBody;

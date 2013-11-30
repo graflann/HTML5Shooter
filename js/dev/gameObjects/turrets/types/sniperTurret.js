@@ -60,8 +60,10 @@ SniperTurret.prototype.init = function() {
 
 	this.laserSight.cache(-2, -Constants.HEIGHT, 2, Constants.HEIGHT);
 
-	Turret.prototype.init.call(this);
 	this.setStateMachine();
+	this.setFiringState(Turret.FIRE_TYPES.ALT);
+
+	Turret.prototype.init.call(this);
 };
 
 /**
@@ -69,7 +71,9 @@ SniperTurret.prototype.init = function() {
 *@public				
 */
 SniperTurret.prototype.update = function(options) {	
-	this.controlType(options);
+	Turret.prototype.update.call(this, options);
+
+	this.stateMachine.update(options);
 
 	this.turretAnimUtil.update();
 
@@ -82,7 +86,33 @@ SniperTurret.prototype.clear = function() {
 	Turret.prototype.clear.call(this);
 };
 
-SniperTurret.prototype.fire = function() {
+/**
+*@override
+*@public				
+*/
+SniperTurret.prototype.enterDefaultFire = function(options) {
+	Turret.prototype.enterDefaultFire.call(this, options);
+
+	this.fireThreshold = 30;
+	this.fireCounter = this.fireThreshold - 1;
+
+	this.energyConsumption = -40;
+};
+
+/**
+*@override
+*@public				
+*/
+SniperTurret.prototype.enterAltFire = function(options) {
+	Turret.prototype.enterAltFire.call(this, options);
+
+	this.fireThreshold = 2;
+	this.fireCounter = this.fireThreshold - 1;
+
+	this.energyConsumption = -5;
+};
+
+SniperTurret.prototype.defaultFire = function() {
 	var deg,
 		sin,
 		cos,

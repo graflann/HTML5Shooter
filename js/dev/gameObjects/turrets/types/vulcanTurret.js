@@ -41,8 +41,10 @@ VulcanTurret.prototype.init = function() {
 	this.turretAnimUtil = new AnimationUtility("vulcanTurret", this.shape, 2);
 	this.turretAnimUtil.loop(true);
 
-	Turret.prototype.init.call(this);
 	this.setStateMachine();
+	this.setFiringState(Turret.FIRE_TYPES.DEFAULT);
+
+	Turret.prototype.init.call(this);
 };
 
 /**
@@ -50,15 +52,15 @@ VulcanTurret.prototype.init = function() {
 *@public				
 */
 VulcanTurret.prototype.update = function(options) {	
-	this.controlType(options);
+	Turret.prototype.update.call(this, options);
 
-	if(this.hasAI) {
-		(this.isFiring) ? this.turretAnimUtil.play() : this.turretAnimUtil.stop();
-		this.turretAnimUtil.update();
-	}
+	this.stateMachine.update(options);
+
+	(this.isFiring) ? this.turretAnimUtil.play() : this.turretAnimUtil.stop();
+	this.turretAnimUtil.update();
 };
 
-VulcanTurret.prototype.fire = function() {
+VulcanTurret.prototype.defaultFire = function() {
 	var deg,
 		sin,
 		cos,

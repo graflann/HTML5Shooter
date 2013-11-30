@@ -31,11 +31,23 @@ BladeTurret.prototype.init = function() {
 	this.shape.regY = 44;
 	this.shape.gotoAndStop(0);
 
-	Turret.prototype.init.call(this);
 	this.setStateMachine();
+	this.setFiringState(Turret.FIRE_TYPES.DEFAULT);
+
+	Turret.prototype.init.call(this);
 };
 
-BladeTurret.prototype.fire = function() {
+/**
+*@override
+*@public
+*/
+BladeTurret.prototype.update = function(options) {
+	Turret.prototype.update.call(this, options);
+
+	this.stateMachine.update(options);
+};
+
+BladeTurret.prototype.defaultFire = function() {
 	var deg,
 		sin,
 		cos,
