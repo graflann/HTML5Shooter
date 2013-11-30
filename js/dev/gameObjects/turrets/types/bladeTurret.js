@@ -6,8 +6,10 @@ goog.require('Turret');
 *@constructor
 *Main turret/cannon used in play
 */
-BladeTurret = function(color, projectileSystem, hasAI) {
-	Turret.call(this, color, projectileSystem, hasAI);
+BladeTurret = function(hasAI, arrProjectileSystems) {
+	Turret.call(this, hasAI, arrProjectileSystems);
+
+	this.stateMachine = null;
 	
 	this.init();
 };
@@ -28,6 +30,9 @@ BladeTurret.prototype.init = function() {
 	this.shape.regX = 28;
 	this.shape.regY = 44;
 	this.shape.gotoAndStop(0);
+
+	Turret.prototype.init.call(this);
+	this.setStateMachine();
 };
 
 BladeTurret.prototype.fire = function() {
@@ -36,7 +41,41 @@ BladeTurret.prototype.fire = function() {
 		cos,
 		vector2D,
 		stage = this.shape.getStage(),
-		projectile = this.projectileSystem.getProjectile();
+		projectile = this.currentProjectileSystem.getProjectile();
+
+	if(projectile) {
+		vector2D = new app.b2Vec2();
+		
+		//zero out existing linear velocity
+		projectile.body.SetLinearVelocity(vector2D);
+		
+		//acquire rotation of Turret instance in degrees and add ammo at table-referenced distance			
+		deg = this.shape.rotation - 90;
+		sin = app.trigTable.sin(deg);
+		cos = app.trigTable.cos(deg);
+		
+		vector2D.x = ((this.shape.parent.x + this.shape.x) / app.physicsScale) + (cos * this.ammoDistance);
+		vector2D.y = ((this.shape.parent.y + this.shape.y) / app.physicsScale) + (sin * this.ammoDistance);				
+		projectile.body.SetPosition(vector2D);
+
+		projectile.setIsAlive(true);
+		
+		vector2D.x = cos * projectile.velocityMod;
+		vector2D.y = sin * projectile.velocityMod;				
+		projectile.body.ApplyForce(vector2D, projectile.body.GetWorldCenter());
+		
+		projectile.shape.rotation = this.shape.rotation;
+		stage.addChild(projectile.shape);
+	}
+};
+
+BladeTurret.prototype.altFire = function() {
+	var deg,
+		sin,
+		cos,
+		vector2D,
+		stage = this.shape.getStage(),
+		projectile = this.currentProjectileSystem.getProjectile();
 
 	if(projectile) {
 		vector2D = new app.b2Vec2();

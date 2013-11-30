@@ -1,4 +1,4 @@
-goog.provide('BladeProjectile');
+goog.provide('LaserProjectile');
 
 goog.require('Projectile');
 
@@ -6,7 +6,7 @@ goog.require('Projectile');
 *@constructor
 *Ammo for Turret instaces
 */
-BladeProjectile = function(colors, categoryBits, maskBits) {
+LaserProjectile = function(colors, categoryBits, maskBits) {
 	Projectile.call(this, colors, categoryBits, maskBits);
 
 	/**
@@ -14,36 +14,31 @@ BladeProjectile = function(colors, categoryBits, maskBits) {
 	*@type {}
 	*/
 	this.velocityMod = 1024;
-
-	this.timer = 0;
-
-	this.secondsAlive = 0.2;
-
-	this.timerThreshold = createjs.Ticker.getFPS() * this.secondsAlive;
+	
 	
 	this.init();
 };
 
-goog.inherits(BladeProjectile, Projectile)
+goog.inherits(LaserProjectile, Projectile)
 
 /**
 *@override
 *@public
 */
-BladeProjectile.prototype.init = function() {
+LaserProjectile.prototype.init = function() {	
 	this.shape = new createjs.Shape();
-	this.shape.graphics
-		.ss(3, "butt")
-		.s(this.arrColors[0])
-		.mt(-8, 16)
-		.lt(0, -32)
-		.lt(8, 16);
-	this.shape.alpha = 0;
-	this.shape.regY = -16;
-	this.shape.snapToPixel = true;
-	this.shape.cache(-8, -32, 16, 48);
+	//this.shape.graphics.ss(2).s(this.color).f("#000").dc(0, 0, 5);
 
-	this.timer = 0;
+	this.shape.graphics
+		.ss(8, "round")
+		.ls([this.arrColors[0], this.arrColors[1]], [0.5, 1], 0, 0, 0, 96)
+		.mt(0, 0)
+		.lt(0, 96);
+	this.shape.alpha = 0;
+	this.shape.snapToPixel = true;
+	this.shape.cache(-4, 0, 8, 96);
+
+	this.damage = 4;
 	
 	this.setPhysics();
 
@@ -54,29 +49,35 @@ BladeProjectile.prototype.init = function() {
 *@override
 *@public
 */
-BladeProjectile.prototype.update = function(options) {
+LaserProjectile.prototype.update = function(options) {
 	if(this.isAlive) {
 		var scale = app.physicsScale;
 
+		//this.shape.rotation = this.body.GetAngle() * (180 / Math.PI);
 		this.shape.x = this.body.GetWorldCenter().x * scale;
 		this.shape.y = this.body.GetWorldCenter().y * scale;
 
-		this.shape.alpha += 0.25;
-
-		if(++this.timer > this.timerThreshold) {
-			this.timer = 0;
-			this.shape.alpha = 0;
-			this.kill();
+		if(this.shape.alpha < 1) {
+			this.shape.alpha += 0.1;
 		}
 
 		Projectile.prototype.update.call(this);
 	}
 };
 
+LaserProjectile.prototype.kill = function() {
+	if(this.isAlive) {
+		this.setIsAlive(false);
+		this.shape.getStage().removeChild(this.shape);
+
+		this.shape.alpha = 0;
+	}
+};
+
 /**
 *@private
 */
-BladeProjectile.prototype.setPhysics = function() {
+LaserProjectile.prototype.setPhysics = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef();
 	
@@ -86,7 +87,7 @@ BladeProjectile.prototype.setPhysics = function() {
 	fixDef.filter.categoryBits = this.categoryBits;
 	fixDef.filter.maskBits = this.maskBits;
 	fixDef.isSensor = true;
-	fixDef.shape = new app.b2CircleShape(0.375);
+	fixDef.shape = new app.b2CircleShape(0.25);
 	
 	bodyDef.type = app.b2Body.b2_dynamicBody;
 	this.body = app.physicsWorld.CreateBody(bodyDef);

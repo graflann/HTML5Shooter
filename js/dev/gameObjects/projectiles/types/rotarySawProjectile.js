@@ -1,4 +1,4 @@
-goog.provide('BladeProjectile');
+goog.provide('RotarySawProjectile');
 
 goog.require('Projectile');
 
@@ -6,7 +6,7 @@ goog.require('Projectile');
 *@constructor
 *Ammo for Turret instaces
 */
-BladeProjectile = function(colors, categoryBits, maskBits) {
+RotarySawProjectile = function(colors, categoryBits, maskBits) {
 	Projectile.call(this, colors, categoryBits, maskBits);
 
 	/**
@@ -24,13 +24,13 @@ BladeProjectile = function(colors, categoryBits, maskBits) {
 	this.init();
 };
 
-goog.inherits(BladeProjectile, Projectile)
+goog.inherits(RotarySawProjectile, Projectile)
 
 /**
 *@override
 *@public
 */
-BladeProjectile.prototype.init = function() {
+RotarySawProjectile.prototype.init = function() {
 	this.shape = new createjs.Shape();
 	this.shape.graphics
 		.ss(3, "butt")
@@ -54,7 +54,7 @@ BladeProjectile.prototype.init = function() {
 *@override
 *@public
 */
-BladeProjectile.prototype.update = function(options) {
+RotarySawProjectile.prototype.update = function(options) {
 	if(this.isAlive) {
 		var scale = app.physicsScale;
 
@@ -76,7 +76,7 @@ BladeProjectile.prototype.update = function(options) {
 /**
 *@private
 */
-BladeProjectile.prototype.setPhysics = function() {
+RotarySawProjectile.prototype.setPhysics = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef();
 	

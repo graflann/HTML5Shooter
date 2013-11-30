@@ -5,10 +5,12 @@ goog.require('AnimationUtility');
 
 /**
 *@constructor
-*Main turret/cannon used in play
+*Vulcan turret with alt hunter fire
 */
-VulcanTurret = function(color, projectileSystem, hasAI) {
-	Turret.call(this, color, projectileSystem, hasAI);
+VulcanTurret = function(hasAI, arrProjectileSystems) {	
+	Turret.call(this, hasAI, arrProjectileSystems);
+
+	this.stateMachine = null;
 
 	this.turretAnimUtil = null;
 
@@ -38,6 +40,9 @@ VulcanTurret.prototype.init = function() {
 
 	this.turretAnimUtil = new AnimationUtility("vulcanTurret", this.shape, 2);
 	this.turretAnimUtil.loop(true);
+
+	Turret.prototype.init.call(this);
+	this.setStateMachine();
 };
 
 /**
@@ -45,11 +50,9 @@ VulcanTurret.prototype.init = function() {
 *@public				
 */
 VulcanTurret.prototype.update = function(options) {	
-	if(this.hasAI) {
-		this.aiControl(options);
-	} else {
-		this.manualControl(options);
+	this.controlType(options);
 
+	if(this.hasAI) {
 		(this.isFiring) ? this.turretAnimUtil.play() : this.turretAnimUtil.stop();
 		this.turretAnimUtil.update();
 	}
@@ -61,7 +64,42 @@ VulcanTurret.prototype.fire = function() {
 		cos,
 		vector2D,
 		stage = this.shape.getStage(),
-		projectile = this.projectileSystem.getProjectile(),
+		projectile = this.currentProjectileSystem.getProjectile(),
+		offset = Math.randomInRange(-this.fireOffset, this.fireOffset);
+
+	if(projectile) {
+		vector2D = new app.b2Vec2();
+		
+		//zero out existing linear velocity
+		projectile.body.SetLinearVelocity(vector2D);
+		
+		//acquire rotation of Turret instance in degrees and add ammo at table-referenced distance			
+		deg = this.shape.rotation - 90;
+		sin = app.trigTable.sin(deg);
+		cos = app.trigTable.cos(deg);
+		
+		vector2D.x = ((this.shape.parent.x + this.shape.x) / app.physicsScale) + (cos * this.ammoDistance);
+		vector2D.y = ((this.shape.parent.y + this.shape.y) / app.physicsScale) + (sin * this.ammoDistance);				
+		projectile.body.SetPosition(vector2D);
+		projectile.shape.rotation = this.shape.rotation;
+
+		projectile.setIsAlive(true);
+
+		vector2D.x = (cos + offset) * projectile.velocityMod;
+		vector2D.y = (sin + offset) * projectile.velocityMod;				
+		projectile.body.ApplyForce(vector2D, projectile.body.GetWorldCenter());
+		
+		stage.addChild(projectile.shape);
+	}
+};
+
+VulcanTurret.prototype.altFire = function() {
+	var deg,
+		sin,
+		cos,
+		vector2D,
+		stage = this.shape.getStage(),
+		projectile = this.currentProjectileSystem.getProjectile(),
 		offset = Math.randomInRange(-this.fireOffset, this.fireOffset);
 
 	if(projectile) {

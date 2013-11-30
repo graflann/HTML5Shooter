@@ -6,7 +6,6 @@ goog.provide('TurretTypes');
 TurretTypes = {
     VULCAN: 		'vulcan',
     SPREAD: 		'spread',
-    GRENADE: 		'grenade',
     BLADE: 			'blade',
     SNIPER: 		'sniper',
     ENEMY_VULCAN: 	'enemyVulcan'

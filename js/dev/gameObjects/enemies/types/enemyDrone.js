@@ -27,6 +27,8 @@ EnemyDrone = function(projectileSystem) {
 	this.arenaWidth = Constants.WIDTH * 4;
 	this.arenaHeight = Constants.HEIGHT * 2;
 
+	this.health = 1;
+
 	this.init();
 };
 

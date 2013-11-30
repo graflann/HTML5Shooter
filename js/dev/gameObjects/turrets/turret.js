@@ -5,21 +5,23 @@ goog.require('KeyCode');
 goog.require('GamepadCode');
 goog.require('InputConfig');
 goog.require('PayloadEvent');
+goog.require('DefaultFireState');
+goog.require('AlternativeFireState');
 
 /**
 *@constructor
 *Main turret/cannon used in play
 */
-Turret = function(color, projectileSystem, hasAI) {
-	/**
-	*@type  {String}
-	*/
-	this.color = color;
-	
+Turret = function(hasAI, arrProjectileSystems) {	
 	/**
 	*@type {ProjectileSystem}
 	*/
-	this.projectileSystem = projectileSystem;
+	this.arrProjectileSystems = arrProjectileSystems;
+
+	/**
+	*@type {ProjectileSystem}
+	*/
+	this.currentProjectileSystem = null;
 	
 	/**
 	*@type  {Boolean}
@@ -45,16 +47,32 @@ Turret = function(color, projectileSystem, hasAI) {
 	*@type {Shape}
 	*/
 	this.ammoDistance = 32 / app.physicsScale;
+
+	this.controlType = null;
+
+	this.firingState = null;
 };
 
 goog.inherits(Turret, GameObject);
+
+Turret.FIRE_TYPES = {
+	DEFAULT: 0,
+	ALT: 1
+};
 
 /**
 *@override
 *@public
 */
 Turret.prototype.init = function() {
+	if(this.hasAI) {
+		this.controlType = this.aiControl;
+	} else {
+		this.controlType = this.manualControl;
+	}
 
+	this.firingState = Turret.FIRE_TYPES.DEFAULT;
+	this.currentProjectileSystem = this.arrProjectileSystems[this.firingState];
 };
 
 /**
@@ -62,11 +80,7 @@ Turret.prototype.init = function() {
 *@public				
 */
 Turret.prototype.update = function(options) {	
-	if(this.hasAI) {
-		this.aiControl(options);
-	} else {
-		this.manualControl(options);
-	}
+	this.controlType(options);
 };
 
 /**
@@ -168,32 +182,54 @@ Turret.prototype.aiControl = function(options) {
 	}
 };
 
-Turret.prototype.nestedControl = function(options) {
-	var target = options.target,
-		rad = 0,
-		deg = 0,
-		localToGlobal = null;
+// Turret.prototype.nestedControl = function(options) {
+// 	var target = options.target,
+// 		rad = 0,
+// 		deg = 0,
+// 		localToGlobal = null;
 
-	localToGlobal = this.shape.parent.localToGlobal(this.shape.x, this.shape.y);
-	//localToGlobal = new app.b2Vec2(this.shape.x, this.shape.y);
+// 	localToGlobal = this.shape.parent.localToGlobal(this.shape.x, this.shape.y);
+// 	//localToGlobal = new app.b2Vec2(this.shape.x, this.shape.y);
 
-	//console.log(localToGlobal);
+// 	//console.log(localToGlobal);
 
-	rad = Math.atan2(
-		target.y - localToGlobal.x, 
-		target.x - localToGlobal.y
-	);
+// 	rad = Math.atan2(
+// 		target.y - localToGlobal.x, 
+// 		target.x - localToGlobal.y
+// 	);
 
-	deg = Math.radToDeg(rad) + 90;
+// 	deg = Math.radToDeg(rad) + 90;
 
-	this.shape.rotation = this.shape.parent.rotation + 90;// - deg;
+// 	this.shape.rotation = this.shape.parent.rotation + 90;// - deg;
 
-	if(this.fireCounter++ > this.fireThreshold){
-		this.fire();
-		this.fireCounter = 0;
-	}
+// 	if(this.fireCounter++ > this.fireThreshold){
+// 		this.fire();
+// 		this.fireCounter = 0;
+// 	}
+// };
+
+Turret.prototype.fire = function() {
+	
 };
 
-Turret.prototype.fire = function(){
+Turret.prototype.altFire = function() {
 	
+};
+
+Turret.prototype.setStateMachine = function() {
+	this.stateMachine = new StateMachine();
+
+	this.stateMachine.addState(
+		DefaultFireState.KEY,
+		new DefaultFireState(this),
+		[ AlternativeFireState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		AlternativeFireState.KEY,
+		new AlternativeFireState(this),
+		[ DefaultFireState.KEY ]
+	);
+	
+	this.stateMachine.setState(DefaultFireState.KEY);
 };

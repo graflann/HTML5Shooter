@@ -44,6 +44,7 @@ PlayerBoostState.prototype.update = function(options) {
 */
 PlayerBoostState.prototype.exit = function(options) {
 	this.player.isBoosting = false;
+	this.player.damage = 0;
 };
 
 goog.exportSymbol('PlayerBoostState', PlayerBoostState);

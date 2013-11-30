@@ -84,7 +84,11 @@ PlayerTank = function(arrProjectileSystems) {
 
 	this.isBoosting = false;
 
+	this.isOverdrive = false;
+
 	this.energy = 100;
+
+	this.damage = 0;
 
 	this.stateMachine = null;
 
@@ -231,6 +235,8 @@ PlayerTank.prototype.enterBoost = function(options) {
 	this.isBoosting = true;
 
 	this.isMoving = true;
+
+	this.damage = 100;
 };
 
 /**
@@ -594,13 +600,12 @@ PlayerTank.prototype.setTurret = function(turretType, projectileType) {
 
 	this.currentTurretType = turretType;
 	this.currentProjectileType = projectileType;
-	this.currentProjectileSystem = this.arrProjectileSystems[projectileType];
 
 	if(prevTurret) {
 		this.changeTurret(turretType, prevTurret);
 	} else { 
 		this.addTurret(turretType);
-	}
+	}	
 };
 
 PlayerTank.prototype.changeTurret = function(turretType, prevTurret) {
@@ -621,7 +626,10 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 
 	if(!this.arrTurrets[turretType]) {
 		var TurretClass = TurretClasses[turretType];
-		this.turret = this.arrTurrets[turretType] = new TurretClass(this.color, this.currentProjectileSystem, false);
+		this.turret = this.arrTurrets[turretType] = new TurretClass(
+			false, 
+			this.arrProjectileSystems[WeaponMap[this.currentWeaponIndex].projectileType]
+		);
 	} else {
 		this.turret = this.arrTurrets[turretType];
 	}
@@ -653,6 +661,7 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 	//this.turret.shape.scaleX = 0;
 
 	this.turret.fireCount = this.turret.fireThreshold;
+	this.currentProjectileSystem = this.turret.currentProjectileSystem;
 
 	if(transitionIndex > -1) {
 		this.container.addChildAt(

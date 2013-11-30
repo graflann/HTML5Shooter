@@ -49,7 +49,7 @@ EnemyTurret.prototype.init = function() {
 		.f(Constants.BLACK)
 		.dr(0, 0, Constants.UNIT, Constants.UNIT);
 	
-	this.turret = new EnemyVulcanTurret(Constants.RED, this.projectileSystem, true);
+	this.turret = new EnemyVulcanTurret(true, [ this.projectileSystem ]);
 	this.turret.shape.x = Constants.UNIT * 0.5;
 	this.turret.shape.y = Constants.UNIT * 0.5;
 

@@ -278,6 +278,20 @@ CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
 CollisionManager.prototype.playerVsObject = function(player, object) {
     if(object instanceof Enemy) {
         object.onCollide(player, this.collisionOptions.enemy);
+
+        //then push onto the kill list
+        if(object.health <= 0) {
+            this.killList.push(object);
+            this.activationList.push(
+                {
+                    posX: object.container.x, 
+                    posY: object.container.y,
+                    velX: 64,
+                    velY: 64,
+                    isRotated: true
+                }
+            );
+        }
         return;
     }
 

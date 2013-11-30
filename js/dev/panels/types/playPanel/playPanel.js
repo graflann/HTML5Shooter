@@ -179,7 +179,7 @@ PlayPanel.prototype.setDebug = function() {
 */
 PlayPanel.prototype.updatePlayer = function(options) {
 	this.player.update(options);
-	this.player.currentProjectileSystem.update();
+	this.player.currentProjectileSystem.update(options);
 
 	this.player.homingProjectileSystem.update(options);
 
@@ -334,29 +334,29 @@ PlayPanel.prototype.setPhysics = function() {
 */
 PlayPanel.prototype.setProjectiles = function() {
 	//PLAYER PROJECTILES///////////////////////////////////////////////////////////
-	this.arrPlayerProjectileSystems[ProjectileTypes.VULCAN] = new ProjectileSystem(
-		ProjectileTypes.VULCAN, 
-		[Constants.LIGHT_BLUE, Constants.DARK_BLUE]
-	);
 
-	this.arrPlayerProjectileSystems[ProjectileTypes.SPREAD] = new ProjectileSystem(
-		ProjectileTypes.SPREAD, 
-		[Constants.LIGHT_BLUE, Constants.DARK_BLUE],
-		30
-	);
+	//TURRET
+	this.arrPlayerProjectileSystems[ProjectileTypes.VULCAN] = [
+		new ProjectileSystem(ProjectileTypes.VULCAN, [Constants.LIGHT_BLUE, Constants.DARK_BLUE]),
+		new ProjectileSystem(ProjectileTypes.HUNTER, [Constants.YELLOW, Constants.RED])
+	];
 
-	this.arrPlayerProjectileSystems[ProjectileTypes.BLADE] = new ProjectileSystem(
-		ProjectileTypes.BLADE, 
-		[Constants.LIGHT_BLUE, Constants.DARK_BLUE],
-		16
-	);
+	this.arrPlayerProjectileSystems[ProjectileTypes.SPREAD] = [
+		new ProjectileSystem(ProjectileTypes.SPREAD, [Constants.LIGHT_BLUE, Constants.DARK_BLUE], 30),
+		new ProjectileSystem(ProjectileTypes.REFLECT, [Constants.YELLOW, Constants.RED], 32)
+	];
 
-	this.arrPlayerProjectileSystems[ProjectileTypes.SNIPER] = new ProjectileSystem(
-		ProjectileTypes.SNIPER, 
-		[Constants.LIGHT_BLUE, Constants.DARK_BLUE],
-		2
-	);
+	this.arrPlayerProjectileSystems[ProjectileTypes.BLADE] = [
+		new ProjectileSystem(ProjectileTypes.BLADE, [Constants.LIGHT_BLUE, Constants.DARK_BLUE], 16),
+		new ProjectileSystem(ProjectileTypes.ROTARY_SAW, [Constants.YELLOW, Constants.RED], 1)
+	];
 
+	this.arrPlayerProjectileSystems[ProjectileTypes.SNIPER] = [
+		new ProjectileSystem(ProjectileTypes.SNIPER, [Constants.LIGHT_BLUE, Constants.DARK_BLUE], 2),
+		new ProjectileSystem(ProjectileTypes.LASER, [Constants.YELLOW, Constants.RED], 64)
+	];
+
+	//HOMING 
 	this.arrPlayerProjectileSystems[ProjectileTypes.HOMING] = new ProjectileSystem(
 		ProjectileTypes.HOMING, 
 		[Constants.LIGHT_BLUE, Constants.DARK_BLUE],

@@ -2,7 +2,6 @@ goog.provide('TurretClasses');
 
 goog.require('VulcanTurret');
 goog.require('SpreadTurret');
-goog.require('GrenadeTurret');
 goog.require('BladeTurret');
 goog.require('SniperTurret');
 goog.require('EnemyVulcanTurret');
@@ -14,7 +13,6 @@ goog.require('EnemyVulcanTurret');
 TurretClasses = {
 	vulcan: 		VulcanTurret,
 	spread: 		SpreadTurret,
-	grenade: 		GrenadeTurret,
 	blade: 			BladeTurret,
 	sniper: 		SniperTurret,
 	enemyVulcan: 	EnemyVulcanTurret

@@ -7,8 +7,8 @@ goog.require('AnimationUtility');
 *@constructor
 *Main turret/cannon used in play
 */
-EnemyVulcanTurret = function(color, projectileSystem, hasAI) {
-	Turret.call(this, color, projectileSystem, hasAI);
+EnemyVulcanTurret = function(hasAI, arrProjectileSystems) {	
+	Turret.call(this, hasAI, arrProjectileSystems);
 
 	this.turretAnimUtil = null;
 	
@@ -33,6 +33,10 @@ EnemyVulcanTurret.prototype.init = function() {
 	this.shape.gotoAndStop(0);
 
 	this.turretAnimUtil = new AnimationUtility("enemyVulcanTurret", this.shape, 3);
+
+	Turret.prototype.init.call(this);
+	this.firingState = Turret.FIRE_TYPES.DEFAULT;
+	this.currentProjectileSystem = this.arrProjectileSystems[this.firingState];
 };
 
 /**
@@ -57,7 +61,7 @@ EnemyVulcanTurret.prototype.fire = function() {
 		cos,
 		vector2D,
 		stage = this.shape.getStage(),
-		projectile = this.projectileSystem.getProjectile();
+		projectile = this.currentProjectileSystem.getProjectile();
 
 	if(projectile) {
 		vector2D = new app.b2Vec2();
