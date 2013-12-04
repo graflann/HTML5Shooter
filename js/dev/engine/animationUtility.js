@@ -33,6 +33,8 @@ AnimationUtility = function(name, bmpAnimation, frequency) {
 */
 AnimationUtility.prototype.init = function() {
 	this.animation.frequency = this.frequency;
+
+	this.stop();
 };
 
 AnimationUtility.prototype.update = function() {

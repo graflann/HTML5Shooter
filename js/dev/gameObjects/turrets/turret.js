@@ -237,6 +237,34 @@ Turret.prototype.enterAltFire = function(options) {
 	this.fire = this.altFire;
 };
 
+/**
+*@public				
+*/
+Turret.prototype.updateDefaultFire = function(options) {	
+	
+};
+
+/**
+*@public				
+*/
+Turret.prototype.updateAltFire = function(options) {	
+	
+};
+
+/**
+*@public				
+*/
+Turret.prototype.exitDefaultFire = function(options) {	
+	
+};
+
+/**
+*@public				
+*/
+Turret.prototype.exitAltFire = function(options) {	
+	
+};
+
 Turret.prototype.setFiringState = function(value) {
 	this.firingState = value;
 

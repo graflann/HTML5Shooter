@@ -74,8 +74,6 @@ PlayerTank = function(arrProjectileSystems) {
 
 	this.isHoming = false;
 
-	this.arrHomingFireOffsets = [-150, 150, -120, 120];
-
 	this.intendedRotation = 0;
 
 	this.rotationRate = 5;
@@ -104,6 +102,8 @@ PlayerTank = function(arrProjectileSystems) {
 goog.inherits(PlayerTank, GameObject);
 
 PlayerTank.KEY = "player";
+
+PlayerTank.HOMING_OFFSETS = [-150, 150, -120, 120];
 
 /**
 *@override
@@ -568,7 +568,7 @@ PlayerTank.prototype.fireHoming = function() {
 
 		if(projectile) {		
 			//acquire rotation of Turret instance in degrees and add ammo at table-referenced distance			
-			deg = (this.baseContainer.rotation - 90 + this.arrHomingFireOffsets[i]);
+			deg = (this.baseContainer.rotation - 90 + PlayerTank.HOMING_OFFSETS[i]);
 			sin = trigTable.sin(deg);
 			cos = trigTable.cos(deg);
 			

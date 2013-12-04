@@ -25,14 +25,14 @@ DefaultFireState.prototype.enter = function(options) {
 *@public
 */
 DefaultFireState.prototype.update = function(options) {
-
+	this.turret.updateDefaultFire();
 };
 
 /**
 *@public
 */
 DefaultFireState.prototype.exit = function(options) {
-
+	this.turret.exitDefaultFire();
 };
 
 goog.exportSymbol('DefaultFireState', DefaultFireState);

@@ -25,14 +25,14 @@ AlternativeFireState.prototype.enter = function(options) {
 *@public
 */
 AlternativeFireState.prototype.update = function(options) {
-	
+	this.turret.updateAltFire();
 };
 
 /**
 *@public
 */
 AlternativeFireState.prototype.exit = function(options) {
-
+	this.turret.exitAltFire();
 };
 
 goog.exportSymbol('AlternativeFireState', AlternativeFireState);

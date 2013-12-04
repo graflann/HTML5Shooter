@@ -12,7 +12,7 @@ SniperTurret = function(hasAI, arrProjectileSystems) {
 
 	this.stateMachine = null;
 
-	this.turretAnimUtil = null;
+	this.turretEnterFireAnimUtil = null;
 
 	this.laserSight = null;
 
@@ -44,7 +44,7 @@ SniperTurret.prototype.init = function() {
 	this.shape.regY = 73;
 	this.shape.gotoAndStop("railTurret");
 
-	this.turretAnimUtil = new AnimationUtility("railTurret", this.shape, 3);
+	this.turretEnterFireAnimUtil = new AnimationUtility("railTurretEnterFire", this.shape, 3);
 
 	this.ballEffects = new createjs.Shape();
 	this.ballEffects.alpha = 0.5;
@@ -74,10 +74,6 @@ SniperTurret.prototype.update = function(options) {
 	Turret.prototype.update.call(this, options);
 
 	this.stateMachine.update(options);
-
-	this.turretAnimUtil.update();
-
-	this.updateEffects();
 };
 
 SniperTurret.prototype.clear = function() {
@@ -112,6 +108,40 @@ SniperTurret.prototype.enterAltFire = function(options) {
 	this.energyConsumption = -5;
 };
 
+/**
+*@public				
+*/
+SniperTurret.prototype.updateDefaultFire = function(options) {	
+	this.turretEnterFireAnimUtil.update();
+
+	
+};
+
+/**
+*@public				
+*/
+SniperTurret.prototype.updateAltFire = function(options) {
+	if(this.isFiring) {
+		//this.turretExitFireAnimUtil.stop();
+
+		if(this.turretEnterFireAnimUtil.currentFrame !== this.turretEnterFireAnimUtil.maxFrame) {
+		 	this.turretEnterFireAnimUtil.play();
+		} else {
+			this.turretEnterFireAnimUtil.stop(this.turretEnterFireAnimUtil.maxFrame);
+		}
+
+		this.laserSight.alpha = 0;
+
+		this.turretEnterFireAnimUtil.update();
+		this.updateAltEffects();
+	} else if(!this.isFiring){
+		this.turretEnterFireAnimUtil.stop();
+		this.updateEffects();
+
+		this.laserSight.alpha = 0.5;
+	}
+};
+
 SniperTurret.prototype.defaultFire = function() {
 	var deg,
 		sin,
@@ -121,8 +151,6 @@ SniperTurret.prototype.defaultFire = function() {
 		projectile = this.currentProjectileSystem.getProjectile(),
 		x = this.shape.x,
 		y = this.shape.y,
-		destX = 0,
-		destY = 0,
 		self = this;
 
 	if(projectile) {
@@ -151,7 +179,7 @@ SniperTurret.prototype.defaultFire = function() {
 		
 		stage.addChild(projectile.shape);
 
-		this.turretAnimUtil.play();
+		this.turretEnterFireAnimUtil.play();
 
 		//fade the ball & laser sight in upon shooting then back in
 		createjs.Tween.get(this.ballEffects).to({alpha: 0, scaleX: 0, scaleY: 0}, 250).call(function(){
@@ -173,8 +201,6 @@ SniperTurret.prototype.altFire = function() {
 		projectile = this.currentProjectileSystem.getProjectile(),
 		x = this.shape.x,
 		y = this.shape.y,
-		destX = 0,
-		destY = 0,
 		self = this;
 
 	if(projectile) {
@@ -202,17 +228,6 @@ SniperTurret.prototype.altFire = function() {
 		projectile.body.ApplyForce(vector2D, projectile.body.GetWorldCenter());
 		
 		stage.addChild(projectile.shape);
-
-		this.turretAnimUtil.play();
-
-		//fade the ball & laser sight in upon shooting then back in
-		createjs.Tween.get(this.ballEffects).to({alpha: 0, scaleX: 0, scaleY: 0}, 250).call(function(){
-			createjs.Tween.get(self.ballEffects).to({alpha: 0.5, scaleX: 1, scaleY: 1}, 300);
-		});
-
-		createjs.Tween.get(this.laserSight).to({alpha: 0, scaleX: 0, scaleY: 0}, 250).call(function(){
-			createjs.Tween.get(self.laserSight).to({alpha: 0.5, scaleX: 1, scaleY: 1}, 300);
-		});
 	}
 };
 
@@ -222,8 +237,7 @@ SniperTurret.prototype.updateEffects = function() {
 		sin = trigTable.sin(deg),
 		cos = trigTable.cos(deg),
 		randRadius = Math.randomInRange(8, 12),
-		randOrigin = Math.randomInRange(0, 4),
-		randDest = Math.randomInRange(8, randDest);
+		randOrigin = Math.randomInRange(0, 4);
 
 	//redraw ball for dynamic fx
 	if(createjs.Ticker.getTicks() % 5 == 0) {
@@ -254,4 +268,39 @@ SniperTurret.prototype.updateEffects = function() {
 							(sin * this.ballEffectsDistance);
 
 	this.laserSight.rotation = this.shape.rotation;
+};
+
+SniperTurret.prototype.updateAltEffects = function() {
+	var deg = this.shape.rotation - 90,
+		trigTable = app.trigTable,
+		sin = trigTable.sin(deg),
+		cos = trigTable.cos(deg),
+		randRadius = Math.randomInRange(12, 16),
+		randOrigin = Math.randomInRange(0, 4);
+
+	//redraw ball for dynamic fx
+	if(createjs.Ticker.getTicks() % 5 == 0) {
+		this.ballEffects.graphics.clear();
+
+		this.ballEffects.alpha = Math.randomInRange(0.25, 0.75);
+
+		this.ballEffects.graphics
+			.f(Constants.BLUE)
+			.dc(0, 0, randRadius)
+			.ss(Math.randomInRange(1, 2))
+			.s(Constants.LIGHT_BLUE)
+			.mt(randOrigin, randOrigin)
+			.lt(0, randRadius)
+			.mt(-randOrigin, -randOrigin)
+			.lt(randRadius, 0)
+			.mt(randOrigin, randOrigin)
+			.lt(0, -randRadius)
+			.mt(-randOrigin, -randOrigin)
+			.lt(-randRadius, 0);
+	}
+
+	this.ballEffects.rotation += Math.randomInRange(-90, 90);
+
+	this.ballEffects.x = (this.shape.parent.x + this.shape.x) + (cos * this.ballEffectsDistance);
+	this.ballEffects.y = (this.shape.parent.y + this.shape.y) + (sin * this.ballEffectsDistance);
 };
