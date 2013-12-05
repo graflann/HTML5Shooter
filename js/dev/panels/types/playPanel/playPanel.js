@@ -98,8 +98,8 @@ goog.inherits(PlayPanel, Panel);
 PlayPanel.prototype.init = function() {
 	this.setLayers();
 	this.setPhysics();
-	this.setProjectiles();
 	this.setParticles();
+	this.setProjectiles();
 	this.setItems();
 	this.setPlayer();
 	this.setLevel();
@@ -338,7 +338,13 @@ PlayPanel.prototype.setProjectiles = function() {
 	//TURRET
 	this.arrPlayerProjectileSystems[ProjectileTypes.VULCAN] = [
 		new ProjectileSystem(ProjectileTypes.VULCAN, [Constants.LIGHT_BLUE, Constants.DARK_BLUE]),
-		new ProjectileSystem(ProjectileTypes.HUNTER, [Constants.YELLOW, Constants.RED])
+		new ProjectileSystem(
+			ProjectileTypes.GRENADE, 
+			[Constants.YELLOW, Constants.RED],
+			32,
+			CollisionCategories.PLAYER_PROJECTILE,
+			CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT
+		)
 	];
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.SPREAD] = [
@@ -348,12 +354,12 @@ PlayPanel.prototype.setProjectiles = function() {
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.BLADE] = [
 		new ProjectileSystem(ProjectileTypes.BLADE, [Constants.LIGHT_BLUE, Constants.DARK_BLUE], 16),
-		new ProjectileSystem(ProjectileTypes.ROTARY_SAW, [Constants.YELLOW, Constants.RED], 1)
+		new ProjectileSystem(ProjectileTypes.ROTARY_SAW, [Constants.YELLOW, Constants.RED], 64)
 	];
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.SNIPER] = [
 		new ProjectileSystem(ProjectileTypes.SNIPER, [Constants.LIGHT_BLUE, Constants.DARK_BLUE], 2),
-		new ProjectileSystem(ProjectileTypes.LASER, [Constants.YELLOW, Constants.RED], 64)
+		new ProjectileSystem(ProjectileTypes.LASER, [Constants.YELLOW, Constants.RED], 32)
 	];
 
 	//HOMING 
@@ -393,6 +399,12 @@ PlayPanel.prototype.setParticles = function() {
 		ParticleTypes.RETICLE,
 		Constants.LIGHT_BLUE,
 		4
+	);
+
+	this.arrParticleSystems[ParticleSystemNames.GRENADE] = new ParticleSystem(
+		ParticleTypes.GRENADE,
+		Constants.RED,
+		32
 	);
 };
 

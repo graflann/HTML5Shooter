@@ -114,7 +114,7 @@ SniperTurret.prototype.enterAltFire = function(options) {
 SniperTurret.prototype.updateDefaultFire = function(options) {	
 	this.turretEnterFireAnimUtil.update();
 
-	
+	this.updateEffects();
 };
 
 /**
@@ -122,7 +122,6 @@ SniperTurret.prototype.updateDefaultFire = function(options) {
 */
 SniperTurret.prototype.updateAltFire = function(options) {
 	if(this.isFiring) {
-		//this.turretExitFireAnimUtil.stop();
 
 		if(this.turretEnterFireAnimUtil.currentFrame !== this.turretEnterFireAnimUtil.maxFrame) {
 		 	this.turretEnterFireAnimUtil.play();

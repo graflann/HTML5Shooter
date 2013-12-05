@@ -5,10 +5,9 @@ goog.provide('ProjectileTypes');
 */
 ProjectileTypes = {
     VULCAN: 		'vulcan',
-    HUNTER: 		'hunter',
+    GRENADE: 		'grenade',
     SPREAD: 		'spread',
     REFLECT: 		'reflect',
-    GRENADE: 		'grenade',
     BLADE: 			'blade',
     ROTARY_SAW: 	'rotarySaw', 
     SNIPER: 		'sniper',

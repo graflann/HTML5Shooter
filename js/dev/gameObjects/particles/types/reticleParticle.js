@@ -18,6 +18,8 @@ goog.inherits(ReticleParticle, Particle)
 *@public
 */
 ReticleParticle.prototype.init = function() {
+	Particle.prototype.init.call(this);
+
 	this.shape = new createjs.Shape();
 	this.shape.graphics
 		.ss(2)
@@ -38,7 +40,7 @@ ReticleParticle.prototype.init = function() {
 *@public
 */
 ReticleParticle.prototype.update = function(options) {
-	if (this.isAlive){
+	if (this.isAlive) {
 		this.shape.rotation += 4;
 	}
 };
@@ -52,6 +54,7 @@ ReticleParticle.prototype.create = function(options) {
 		options.posX - options.posOffsetX, 
 		options.posX + options.posOffsetX
 	);
+	
 	this.shape.y = Math.randomInRange(
 		options.posY - options.posOffsetY, 
 		options.posY + options.posOffsetY

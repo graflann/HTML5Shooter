@@ -21,6 +21,11 @@ CollisionManager = function(
 	*/
 	this.contactListener = null;
 
+    /**
+    *@type {Array}
+    *Caches system emissions invoking collision bodies, emitting them during update
+    *and not in the midst of collision checking
+    */
     this.activationList = [];
 
 	this.killList = [];
@@ -41,7 +46,9 @@ CollisionManager = function(
 
     	projectile: {
     		positiveHit: this.arrParticleSystems[ParticleSystemNames.POSITIVE_HIT],
-    		neutralHit: this.arrParticleSystems[ParticleSystemNames.NEUTRAL_HIT]
+            neutralHit: this.arrParticleSystems[ParticleSystemNames.NEUTRAL_HIT],
+    		grenade: this.arrParticleSystems[ParticleSystemNames.GRENADE],
+            activationList: this.activationList
     	},
 
     	sceneObject: {
@@ -128,17 +135,14 @@ CollisionManager.prototype.updateKills = function() {
 };
 
 CollisionManager.prototype.updateActivation = function() {
-    var i = 0;
+    var i = 0,
+        obj;
 
     //activate items caused by collision
-    for(i = 0; i < this.activationList.length; i++) {
-        
-        if(this.activationList[i] !== undefined || this.activationList[i] !== null) {
-            this.arrItemSystems[ItemTypes.ENERGY].emit(
-                1, 
-                this.activationList[i]
-            );
-        }
+    for (i = 0; i < this.activationList.length; i++) {
+        obj = this.activationList[i];
+
+        obj.system.emit(obj.qty, obj);
     }
 
     //reset the list
@@ -227,6 +231,8 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
             this.killList.push(object);
             this.activationList.push(
                 {
+                    system: this.arrItemSystems[ItemTypes.ENERGY],
+                    qty: 1,
                     posX: object.container.x, 
                     posY: object.container.y,
                     velX: 64,
@@ -288,6 +294,8 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
             this.killList.push(object);
             this.activationList.push(
                 {
+                    system: this.arrItemSystems[ItemTypes.ENERGY],
+                    qty: 1,
                     posX: object.container.x, 
                     posY: object.container.y,
                     velX: 64,

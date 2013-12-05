@@ -18,6 +18,8 @@ goog.inherits(ExplosionParticle, Particle)
 *@public
 */
 ExplosionParticle.prototype.init = function() {
+	Particle.prototype.init.call(this);
+
 	this.shape = new createjs.Shape();
 	this.shape.graphics.ss(0.5).s(this.color).f("#000").dc(0, 0, 3);
 

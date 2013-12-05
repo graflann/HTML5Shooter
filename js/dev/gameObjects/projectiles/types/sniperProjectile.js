@@ -6,8 +6,7 @@ goog.require('Projectile');
 *@constructor
 *Ammo for Turret instaces
 */
-SniperProjectile = function(colors, categoryBits, maskBits)
-{
+SniperProjectile = function(colors, categoryBits, maskBits) {
 	Projectile.call(this, colors, categoryBits, maskBits);
 
 	/**
@@ -15,7 +14,6 @@ SniperProjectile = function(colors, categoryBits, maskBits)
 	*@type {}
 	*/
 	this.velocityMod = 1024;
-	
 	
 	this.init();
 };
@@ -26,8 +24,7 @@ goog.inherits(SniperProjectile, Projectile)
 *@override
 *@public
 */
-SniperProjectile.prototype.init = function()
-{	
+SniperProjectile.prototype.init = function() {	
 	this.shape = new createjs.Shape();
 	//this.shape.graphics.ss(2).s(this.color).f("#000").dc(0, 0, 5);
 
@@ -51,8 +48,7 @@ SniperProjectile.prototype.init = function()
 *@override
 *@public
 */
-SniperProjectile.prototype.update = function(options)
-{
+SniperProjectile.prototype.update = function(options) {
 	if(this.isAlive) {
 		var scale = app.physicsScale;
 
@@ -80,8 +76,7 @@ SniperProjectile.prototype.kill = function() {
 /**
 *@private
 */
-SniperProjectile.prototype.setPhysics = function()
-{
+SniperProjectile.prototype.setPhysics = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef();
 	

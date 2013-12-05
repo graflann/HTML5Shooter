@@ -21,6 +21,8 @@ HitParticle.prototype.init = function() {
 	var value = 4,
 		cacheValue = value + 1;
 
+	Particle.prototype.init.call(this);
+
 	this.shape = new createjs.Shape();
 	this.shape.graphics
 		.ss(2)

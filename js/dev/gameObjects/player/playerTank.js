@@ -152,6 +152,7 @@ PlayerTank.prototype.init = function() {
 	this.turretTransitionAddAnimUtil = new AnimationUtility("add", this.turretTransition, 8);
 	this.turretTransitionRemoveAnimUtil = new AnimationUtility("remove", this.turretTransition, 8);
 
+	this.setTurretMap();
 	this.setTurret(TurretTypes.VULCAN, ProjectileTypes.VULCAN);
 
 	this.homingProjectileSystem = this.arrProjectileSystems[ProjectileTypes.HOMING];
@@ -589,6 +590,33 @@ PlayerTank.prototype.fireHoming = function() {
 	}
 };
 
+PlayerTank.prototype.setTurretMap = function() {
+	this.arrTurrets[TurretTypes.VULCAN] = new VulcanTurret(
+		false, 
+		this.arrProjectileSystems[WeaponMap[0].projectileType]
+	);
+
+	this.arrTurrets[TurretTypes.SPREAD] = new SpreadTurret(
+		false, 
+		this.arrProjectileSystems[WeaponMap[1].projectileType]
+	);
+
+	this.arrTurrets[TurretTypes.BLADE] = new BladeTurret(
+		false, 
+		this.arrProjectileSystems[WeaponMap[2].projectileType]
+	);
+
+	this.arrTurrets[TurretTypes.SNIPER] = new SniperTurret(
+		false, 
+		this.arrProjectileSystems[WeaponMap[3].projectileType]
+	);
+
+	//set a default scaleY of each Turret.shape instance to 0
+	for(var key in this.arrTurrets) {
+		this.arrTurrets[key].shape.scaleY = 0;
+	}
+};
+
 PlayerTank.prototype.setTurret = function(turretType, projectileType) {
 	var self = prevTurret = this.turret;
 
@@ -624,15 +652,7 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 	var self = this,
 		transitionIndex = this.container.getChildIndex(this.turretTransition);
 
-	if(!this.arrTurrets[turretType]) {
-		var TurretClass = TurretClasses[turretType];
-		this.turret = this.arrTurrets[turretType] = new TurretClass(
-			false, 
-			this.arrProjectileSystems[WeaponMap[this.currentWeaponIndex].projectileType]
-		);
-	} else {
-		this.turret = this.arrTurrets[turretType];
-	}
+	this.turret = this.arrTurrets[turretType];
 
 	if(prevTurret) {
 		//only listen to one turret at a time so remove previous listener
@@ -682,7 +702,7 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 	this.turretTransitionAddAnimUtil.stop();
 	this.turretTransitionRemoveAnimUtil.play();
 
-	createjs.Tween.get(this.turret.shape).to({ scaleY: 1 }, this.turretTransitionRate).call(function(){
+	createjs.Tween.get(this.turret.shape).to({ scaleY: 1 }, this.turretTransitionRate).call(function() {
 		self.turretTransitionRemoveAnimUtil.stop();
 		self.container.removeChild(self.turretTransition);
 

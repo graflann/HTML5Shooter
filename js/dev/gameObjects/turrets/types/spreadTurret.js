@@ -39,7 +39,7 @@ SpreadTurret.prototype.init = function() {
 	this.shape.gotoAndStop(0);
 
 	this.setStateMachine();
-	this.setFiringState(Turret.FIRE_TYPES.DEFAULT);
+	this.setFiringState(Turret.FIRE_TYPES.ALT);
 
 	Turret.prototype.init.call(this);
 };

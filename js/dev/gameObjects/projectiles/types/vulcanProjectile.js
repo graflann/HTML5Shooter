@@ -50,7 +50,6 @@ VulcanProjectile.prototype.update = function(options) {
 	if(this.isAlive) {
 		var scale = app.physicsScale;
 
-		//this.shape.rotation = this.body.GetAngle() * (180 / Math.PI);
 		this.shape.x = this.body.GetWorldCenter().x * scale;
 		this.shape.y = this.body.GetWorldCenter().y * scale;
 

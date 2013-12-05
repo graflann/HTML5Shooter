@@ -34,8 +34,6 @@ ProjectileSystem.prototype.init = function() {
 	while(++i < this.max) {
 		this.arrProjectiles[i] = new ProjectileClass(this.color, this.categoryBits, this.maskBits);
 	}
-
-	//TODO: Resolve width and height?
 };
 
 ProjectileSystem.prototype.update = function(options) {

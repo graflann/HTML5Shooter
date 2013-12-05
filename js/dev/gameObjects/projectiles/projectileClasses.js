@@ -1,7 +1,6 @@
 goog.provide('ProjectileClasses');
 
 goog.require('VulcanProjectile');
-goog.require('HunterProjectile');
 goog.require('SpreadProjectile');
 goog.require('ReflectProjectile');
 goog.require('GrenadeProjectile');
@@ -18,7 +17,6 @@ goog.require('EnemyProjectile');
  */
 ProjectileClasses = {
 	vulcan: VulcanProjectile,
-	hunter: HunterProjectile,
 	spread: SpreadProjectile,
 	reflect: ReflectProjectile,
 	grenade: GrenadeProjectile,
