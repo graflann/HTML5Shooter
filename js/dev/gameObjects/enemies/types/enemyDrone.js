@@ -18,7 +18,9 @@ EnemyDrone = function(projectileSystem) {
 
 	this.maskBits = CollisionCategories.PLAYER_PROJECTILE | CollisionCategories.PLAYER_BASE;
 
-	this.shape = null;
+	this.base = null;
+
+	this.turret = null;
 
 	this.homingRate = 15;
 
@@ -28,6 +30,8 @@ EnemyDrone = function(projectileSystem) {
 	this.arenaHeight = Constants.HEIGHT * 2;
 
 	this.health = 1;
+
+	this.baseRotationDeg = 0;
 
 	this.init();
 };
@@ -39,29 +43,19 @@ goog.inherits(EnemyDrone, Enemy);
 *@public
 */
 EnemyDrone.prototype.init = function() {
-	var radius = 0;
-
 	this.container = new createjs.Container();
 
-	this.width = 32;
-	this.height = 32;
-
-	radius = (this.width * 0.5);
+	this.width = 33;
+	this.height = 39;
 
 	this.velocityMod = 1;
 
-	this.shape = new createjs.Shape();
-	this.shape.graphics
-		.ss(2)
-		.s(Constants.RED)
-		.f(Constants.YELLOW)
-		.dc(0, 0, radius);
-	this.shape.snapToPixel = true;
-
-	radius += 4;
-	this.shape.cache(-radius, -radius, radius * 2, radius * 2);
+	this.base = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["enemyDroneBase"]);
+	this.base.regX = this.width * 0.5;
+	this.base.regY = this.height * 0.5;
+	this.base.gotoAndStop(0);
 	
-	this.container.addChild(this.shape);
+	this.container.addChild(this.base);
 
 	this.setPhysics();
 
@@ -78,7 +72,6 @@ EnemyDrone.prototype.update = function(options) {
 
 	if(this.isAlive) {
 		var target = options.target,
-			deg,
 			sin,
 			cos,
 			table = app.trigTable;
@@ -90,7 +83,7 @@ EnemyDrone.prototype.update = function(options) {
 			if(this.position.x < 0 || this.position.y < 0 ||
 				this.position.x > this.arenaWidth || this.position.y > this.arenaHeight)
 			{
-				deg = Math.radToDeg(
+				this.baseRotationDeg = Math.radToDeg(
 					Math.atan2(
 						target.position.y - this.position.y, 
 						target.position.x - this.position.x
@@ -101,7 +94,7 @@ EnemyDrone.prototype.update = function(options) {
 			{
 				this.navigation.update(this.position, target.position);
 
-				deg = Math.radToDeg(
+				this.baseRotationDeg = Math.radToDeg(
 					Math.atan2(
 						this.navigation.targetPosition.y - this.position.y, 
 						this.navigation.targetPosition.x - this.position.x
@@ -109,9 +102,11 @@ EnemyDrone.prototype.update = function(options) {
 				);
 			}
 
-			this.velocity.x = (table.cos(deg) * this.velocityMod);
-			this.velocity.y = (table.sin(deg) * this.velocityMod);
+			this.velocity.x = (table.cos(this.baseRotationDeg) * this.velocityMod);
+			this.velocity.y = (table.sin(this.baseRotationDeg) * this.velocityMod);
 		}
+
+		this.base.rotation = this.baseRotationDeg + 90;
 
 		this.container.x += this.velocity.x;
 		this.container.y += this.velocity.y;
@@ -126,6 +121,16 @@ EnemyDrone.prototype.update = function(options) {
 */
 EnemyDrone.prototype.clear = function() {
 	
+};
+
+/**
+*@override
+*@public
+*/
+EnemyDrone.prototype.setIsAlive = function(value) {
+	Enemy.prototype.setIsAlive.call(this, value);
+
+	this.base.play();
 };
 
 /**
