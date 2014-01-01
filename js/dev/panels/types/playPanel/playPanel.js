@@ -240,6 +240,7 @@ PlayPanel.prototype.updateHud = function(options) {
 */
 PlayPanel.prototype.updateLayers = function() {
 	Panel.prototype.update.call(this);
+	
 };
 
 PlayPanel.prototype.setLayers = function() {

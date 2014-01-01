@@ -1,6 +1,5 @@
 goog.provide('EnemyClasses');
 
-goog.require('EnemyDrone');
 goog.require('EnemyTank');
 goog.require('EnemyTurret');
 goog.require('EnemyCopter');
@@ -11,7 +10,6 @@ goog.require('EnemyCentipede');
  * @type {Object}
  */
 EnemyClasses = {
-	enemyDrone: EnemyDrone,
 	enemyTank: EnemyTank,
 	enemyTurret: EnemyTurret,
 	enemyCopter: EnemyCopter,

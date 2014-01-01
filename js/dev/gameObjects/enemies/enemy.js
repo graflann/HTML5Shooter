@@ -17,6 +17,10 @@ Enemy = function() {
 
 	this.health = 0;
 
+	this.categoryBits = null;
+
+	this.maskBits = null;
+
 	this.enemyKilledEvent = new goog.events.Event(EventNames.ENEMY_KILLED, this);
 };
 
@@ -89,6 +93,14 @@ Enemy.prototype.modifyHealth = function(value) {
 	}
 
 	return false;
+};
+
+
+/**
+*@public
+*/
+Enemy.prototype.getCategoryBits = function() {
+	return this.categoryBits;
 };
 
 /**

@@ -1,9 +1,7 @@
 goog.provide('EnemyTank');
 
 goog.require('Enemy');
-goog.require('Turret');
-goog.require('TurretClasses');
-goog.require('TurretTypes');
+goog.require('Navigation');
 
 /**
 *@constructor
@@ -16,27 +14,27 @@ EnemyTank = function(projectileSystem) {
 	 */
 	this.projectileSystem = projectileSystem;
 
-	this.turretType = projectileSystem.type;
-
 	this.categoryBits = CollisionCategories.GROUND_ENEMY;
 
-	this.maskBits = CollisionCategories.PLAYER_PROJECTILE;
-
-	this.turretBody = null;
-
-	/**
-	*@type  {String}
-	*/
-	this.color = Constants.RED;
+	this.maskBits = CollisionCategories.PLAYER_PROJECTILE | CollisionCategories.PLAYER_BASE;
 
 	this.base = null;
 
 	this.turret = null;
 
-	this.force = new app.b2Vec2();
+	this.turretOffsetY = 6;
 
-	this.rad = 0;
-	this.deg = 0;
+	this.homingRate = 15;
+
+	this.navigation = null;
+
+	this.health = 1;
+
+	this.intendedRotation = 0;
+
+	this.rotationRate = 5;
+
+	this.baseRotationDeg = 0;
 
 	this.init();
 };
@@ -48,24 +46,31 @@ goog.inherits(EnemyTank, Enemy);
 *@public
 */
 EnemyTank.prototype.init = function() {
+	var droneBaseSpriteSheet = app.assetsProxy.arrSpriteSheet["enemyDroneBase"],
+		droneTurretSpriteSheet = app.assetsProxy.arrSpriteSheet["enemyDroneTurret"];
+
 	this.container = new createjs.Container();
 
-	this.width = 48;
-	this.height = 64;
+	this.width = droneBaseSpriteSheet._frames[0].rect.width;
+	this.height = droneBaseSpriteSheet._frames[0].rect.height;
 
-	this.velocity.x = 2400;
-	this.velocity.y = 2400;
+	this.velocityMod = 1.5;
 
-	this.base = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["enemyTankBase"]);
-	this.base.x = this.base.regX = this.width * 0.5;
-	this.base.y = this.base.regY = this.height * 0.5;
+	this.base = new createjs.BitmapAnimation(droneBaseSpriteSheet);
+	this.base.regX = this.width * 0.5;
+	this.base.regY = this.height * 0.5;
+	this.base.gotoAndStop(0);
 	this.container.addChild(this.base);
 
-	this.setTurret();
-
-	this.base.gotoAndStop(0);
+	this.turret = new createjs.BitmapAnimation(droneTurretSpriteSheet);
+	this.turret.regX = droneTurretSpriteSheet._frames[0].rect.width * 0.5;
+	this.turret.regY = (droneTurretSpriteSheet._frames[0].rect.height * 0.5) + this.turretOffsetY;
+	this.turret.gotoAndStop(0);
+	this.container.addChild(this.turret);
 
 	this.setPhysics();
+
+	this.navigation = new Navigation();
 
 	this.setIsAlive(false);
 };
@@ -75,35 +80,108 @@ EnemyTank.prototype.init = function() {
 *@public
 */
 EnemyTank.prototype.update = function(options) {
+
 	if(this.isAlive) {
 		var target = options.target,
-			trigTable = app.trigTable,
-			worldCenter = this.body.GetWorldCenter();
+			sin,
+			cos,
+			table = app.trigTable;
 
+		//only calculates homing to target on selected frames
+		if(target && createjs.Ticker.getTicks() % this.homingRate == 0) {
 
-		//zero out any linear velocity
-		this.body.SetLinearVelocity(app.vecZero);
+			//out of the arena
+			if(this.position.x < 0 || this.position.y < 0 ||
+				this.position.x > app.arenaWidth || this.position.y > app.arenaHeight)
+			{
+				this.baseRotationDeg = Math.radToDeg(
+					Math.atan2(
+						target.position.y - this.position.y, 
+						target.position.x - this.position.x
+					)
+				);
+			}
+			else //within the arena
+			{
+				this.navigation.update(this.position, target.position);
 
-		if(createjs.Ticker.getTicks() % 5 == 0) {
-			this.rad = Math.atan2(
-				target.position.y - this.position.y, 
-				target.position.x - this.position.x
-			);
+				this.baseRotationDeg = Math.radToDeg(
+					Math.atan2(
+						this.navigation.targetPosition.y - this.position.y, 
+						this.navigation.targetPosition.x - this.position.x
+					)
+				);
+			}
 
-			this.deg = Math.radToDeg(this.rad);
-
-			this.force.x = this.velocity.x * trigTable.cos(this.deg);
-			this.force.y = this.velocity.y * trigTable.sin(this.deg);
+			this.velocity.x = (table.cos(this.baseRotationDeg) * this.velocityMod);
+			this.velocity.y = (table.sin(this.baseRotationDeg) * this.velocityMod);
 		}
 
-		this.body.ApplyForce(this.force, worldCenter);
+		//this.container.rotation = this.baseRotationDeg + 90;
 
-		this.base.play();
-		this.base.rotation = this.deg + 90;
-		 
-		this.setPosition(this.body.GetPosition());
+		this.container.x += this.velocity.x;
+		this.container.y += this.velocity.y;
 
-		this.turret.update({ target: options.target.position });
+		this.setPosition(this.container.x, this.container.y);
+
+		this.updateRotation();
+	}
+};
+
+/**
+*@private
+*/
+EnemyTank.prototype.updateRotation = function() {
+	var absAngleDif = 0;
+
+	this.intendedRotation = this.baseRotationDeg + 90;
+
+	//adjust intended for 
+	if(this.intendedRotation >= 360) {
+		this.intendedRotation -= 360;
+	} else if(this.intendedRotation < 0) {
+		this.intendedRotation += 360;
+	}
+
+	absAngleDif = Math.abs(this.intendedRotation - this.container.rotation);
+
+	//continuously update rotation 
+	if(absAngleDif > this.rotationRate)
+	{
+		if(absAngleDif >= 180) {
+			if(this.intendedRotation > this.container.rotation) {
+				this.rotateToAngle(-this.rotationRate);
+			}
+			else if(this.intendedRotation < this.container.rotation) {
+				this.rotateToAngle(this.rotationRate);
+			}
+		} else {
+			if(this.intendedRotation > this.container.rotation) {
+				this.rotateToAngle(this.rotationRate);
+			}
+			else if(this.intendedRotation < this.container.rotation) {
+				this.rotateToAngle(-this.rotationRate);
+			}
+		}
+	}
+};
+
+/**
+*@private
+*/
+EnemyTank.prototype.rotateToAngle = function(rotationRate) {
+	if(rotationRate == 0){
+		return;
+	}
+
+	this.container.rotation += rotationRate;
+
+	if(this.container.rotation <= 0) {
+		this.container.rotation += 360;
+	}
+
+	if(this.container.rotation >= 360) {
+		this.container.rotation -= 360;
 	}
 };
 
@@ -119,96 +197,42 @@ EnemyTank.prototype.clear = function() {
 *@override
 *@public
 */
-EnemyTank.prototype.kill = function() {
-	if(this.isAlive) {
-		this.setIsAlive(false);
-
-		this.container.getStage().removeChild(this.container);
-
-		this.turret.fireCounter = 0;
-
-		goog.events.dispatchEvent(this, this.enemyKilledEvent);
-	}
-};
-
-EnemyTank.prototype.setPosition = function(pos) {
-	var scale = app.physicsScale;
-
-	this.physicalPosition = pos;
-
-	this.container.x = (this.physicalPosition.x * scale) - this.turret.shape.x;
-	this.container.y = (this.physicalPosition.y * scale) - this.turret.shape.y;
-
-	this.position.x = this.container.x + this.turret.shape.x;
-	this.position.y = this.container.y + this.turret.shape.y;
-
-	//SET TANK AND TURRET BODY POSITIONS
-	this.body.SetPositionAndAngle(pos, Math.degToRad(this.base.rotation));
-	this.turretBody.SetPosition(this.physicalPosition);
-};
-
 EnemyTank.prototype.setIsAlive = function(value) {
 	Enemy.prototype.setIsAlive.call(this, value);
 
-	this.turretBody.SetAwake(value);
-	this.turretBody.SetActive(value);
+	(this.isAlive) ? this.base.play() : this.base.gotoAndStop(0);
 };
 
-EnemyTank.prototype.setTurret = function() {
-	var TurretClass = TurretClasses[this.turretType + "Vulcan"];
+/**
+*@private
+*/
+EnemyTank.prototype.setPosition = function(x, y) {
+	this.position.x = this.container.x = x;
+	this.position.y = this.container.y = y;
 
-	this.turret = new TurretClass(this.color, this.projectileSystem, true);
-	this.turret.shape.x = this.width * 0.5;
-	this.turret.shape.y = this.height * 0.5;
-	this.container.addChild(this.turret.shape);
-
-	this.turret.fireThreshold = 180;
+	this.physicalPosition.x = this.position.x / app.physicsScale;
+	this.physicalPosition.y = this.position.y / app.physicsScale;
+	
+	this.body.SetPosition(this.physicalPosition);
 };
 
 EnemyTank.prototype.setPhysics = function() {
-	this.setBaseBody();
-	this.setTurretBody();
-};
-
-EnemyTank.prototype.setBaseBody = function() {
-	var fixDef = new app.b2FixtureDef(),
-		bodyDef = new app.b2BodyDef(),
-		scale = app.physicsScale * 2;
-	
-	fixDef.density = 1.0;
-	fixDef.friction = 0;
-	fixDef.restitution = 0;
-	fixDef.filter.categoryBits = CollisionCategories.GROUND_ENEMY_BASE;
-	fixDef.filter.maskBits = CollisionCategories.SCENE_OBJECT | CollisionCategories.PLAYER_BASE;
-	fixDef.shape = new app.b2PolygonShape();
-	fixDef.shape.SetAsBox(this.width / scale, this.height / scale);
-	
-	bodyDef.type = app.b2Body.b2_dynamicBody;
-	this.body = app.physicsWorld.CreateBody(bodyDef);
-	this.body.CreateFixture(fixDef);
-	this.body.SetUserData(this);
-	this.body.SetAwake(true);
-	this.body.SetActive(true);
-};
-
-EnemyTank.prototype.setTurretBody = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef();
 	
 	fixDef.density = 1.0;
 	fixDef.friction = 0;
 	fixDef.restitution = 1.0;
-	fixDef.filter.categoryBits = CollisionCategories.GROUND_ENEMY;
-	fixDef.filter.maskBits = CollisionCategories.PLAYER_PROJECTILE;
+	fixDef.filter.categoryBits = this.categoryBits;
+	fixDef.filter.maskBits = this.maskBits;
 	fixDef.isSensor = true;
 	fixDef.shape = new app.b2CircleShape(1);
 	
 	bodyDef.type = app.b2Body.b2_dynamicBody;
-	this.turretBody = app.physicsWorld.CreateBody(bodyDef);
-	this.turretBody.CreateFixture(fixDef);
-	this.turretBody.SetUserData(this);
-	this.turretBody.SetAwake(true);
-	this.turretBody.SetActive(true);
+	this.body = app.physicsWorld.CreateBody(bodyDef);
+	this.body.CreateFixture(fixDef);
+	this.body.SetUserData(this);
+	this.body.SetAwake(true);
 };
 
 goog.exportSymbol('EnemyTank', EnemyTank);

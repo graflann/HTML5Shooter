@@ -5,7 +5,6 @@ goog.provide('EnemyTypes');
  * @type {Object}
  */
 EnemyTypes = {
-	DRONE: 	'enemyDrone',
 	TANK: 	'enemyTank',
 	TURRET: 'enemyTurret',
 	COPTER: 'enemyCopter',

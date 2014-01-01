@@ -6,6 +6,7 @@ goog.require('goog.events');
 goog.require('EventNames');
 goog.require('Enemy');
 goog.require('EnemyClasses');
+goog.require('CollisionCategories');
 
 /**
 *@constructor
@@ -89,7 +90,7 @@ EnemySystem.prototype.generate = function(options) {
 		if (enemy) {
 
 			//set enemy position; varies by type
-			if(enemy instanceof EnemyTank || enemy instanceof EnemyCentipede) {
+			if(enemy instanceof EnemyCentipede) {
 				if(enemy instanceof EnemyCentipede) {
 					enemy.add();
 				}
@@ -111,8 +112,8 @@ EnemySystem.prototype.generate = function(options) {
 				);
 			}
 
-			//set spawn position
-			if(enemy instanceof EnemyTurret || enemy instanceof EnemyCopter) {
+			//set target layer for Enemy container; foreground for air, main for ground
+			if(enemy.getCategoryBits() === CollisionCategories.AIR_ENEMY) {
 				app.layers.getStage(LayerTypes.FOREGROUND).addChild(enemy.container);
 			} else {
 				app.layers.getStage(LayerTypes.MAIN).addChild(enemy.container);

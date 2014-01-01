@@ -25,11 +25,6 @@ Level = function(options) {
 			height: Constants.HEIGHT * 2
 		},
 		enemies: {
-			enemyDrone: {
-				max: 64,
-				projectileSystem: "ground"
-			},
-
 			enemyTank: {
 				max: 1,
 				projectileSystem: "ground"
@@ -51,49 +46,49 @@ Level = function(options) {
 			}
 		},
 		waves : [
-			// [
-			// 	{ 
-			// 		type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
-			// 		positionX: 240, positionY: 320
-			// 	}
-			// ],
-			// [
-			// 	{ 
-			// 		type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
-			// 		positionX: 640, positionY: 640
-			// 	}
-			// ],
 			[
 				{ 
-					type: "enemyDrone", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
+					positionX: 240, positionY: 320
+				}
+			],
+			[
+				{ 
+					type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
+					positionX: 640, positionY: 640
+				}
+			],
+			[
+				{ 
+					type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
 					positionX: 0, positionY: 64, posOffsetX: 64, posOffsetY: 64
 				}
+			],
+			[
+				{ 
+					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: -240, positionY: 64
+				},
+				{ 
+					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: -240, positionY: 416
+				},
+				{ 
+					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: 64, positionY: -240
+				},
+				{ 
+					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: 360, positionY: -240
+				}
 			]//,
-			// [
-			// 	{ 
-			// 		type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
-			// 		positionX: -240, positionY: 64
-			// 	},
-			// 	{ 
-			// 		type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
-			// 		positionX: -240, positionY: 416
-			// 	},
-			// 	{ 
-			// 		type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
-			// 		positionX: 64, positionY: -240
-			// 	},
-			// 	{ 
-			// 		type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
-			// 		positionX: 360, positionY: -240
-			// 	}
-			// ],
 		// 	[
 		// 		{ 
-		// 			type: "enemyDrone", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
+		// 			type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
 		// 			positionX: 64, positionY: -240, posOffsetX: 64, posOffsetY: 64
 		// 		},
 		// 		{ 
-		// 			type: "enemyDrone", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
+		// 			type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
 		// 			positionX: 360, positionY: -240, posOffsetX: 64, posOffsetY: 64
 		// 		},
 		// 		{ 

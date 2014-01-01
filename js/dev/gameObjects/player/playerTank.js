@@ -118,8 +118,7 @@ PlayerTank.prototype.init = function() {
 	this.width = 52;
 	this.height = 67;
 
-	this.velocity.x = 6400;
-	this.velocity.y = 6400;
+	this.velocity.x = this.velocity.y = 6400;
 
 	this.baseContainer = new createjs.Container();
 
