@@ -5,7 +5,6 @@ goog.require('AnimationUtility');
 
 /**
 *@constructor
-*Main turret/cannon used in play
 */
 EnemyVulcanTurret = function(hasAI, arrProjectileSystems) {	
 	Turret.call(this, hasAI, arrProjectileSystems);

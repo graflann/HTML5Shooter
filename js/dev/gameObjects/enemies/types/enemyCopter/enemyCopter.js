@@ -32,8 +32,6 @@ EnemyCopter = function(projectileSystem) {
 
 	this.fireCounter = 0;
 
-	this.arrFireOffsets = [-10, 10];
-
 	this.ammoDistance = 60 / app.physicsScale;
 
 	this.minDistance = Math.pow(160, 2);
@@ -44,6 +42,8 @@ EnemyCopter = function(projectileSystem) {
 };
 
 goog.inherits(EnemyCopter, Enemy);
+
+EnemyCopter.FIRE_OFFSETS = [-10, 10];
 
 /**
 *@override
@@ -193,13 +193,13 @@ EnemyCopter.prototype.fire = function() {
 		cos,
 		firingPosDeg,
 		firingPosSin,
-		firingPOsCos,
+		firingPosCos,
 		vector2D = new app.b2Vec2(),
 		trigTable = app.trigTable,
 		stage = app.layers.getStage(LayerTypes.FOREGROUND),
 		projectile = null,
 		i = -1,
-		length = this.arrFireOffsets.length;
+		length = EnemyCopter.FIRE_OFFSETS.length;
 
 	//acquire rotation of Copter instance in degrees and add ammo at table-referenced distance			
 	deg = this.container.rotation - 90;
@@ -215,7 +215,7 @@ EnemyCopter.prototype.fire = function() {
 			projectile.body.SetLinearVelocity(app.vecZero);
 
 			//acquire values to determine firing position
-			firingPosDeg = (deg + this.arrFireOffsets[i]);
+			firingPosDeg = (deg + EnemyCopter.FIRE_OFFSETS[i]);
 			firingPosSin = trigTable.sin(firingPosDeg);
 			firingPosCos = trigTable.cos(firingPosDeg); 
 			

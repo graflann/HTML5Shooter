@@ -2,6 +2,7 @@ goog.provide('EnemyTank');
 
 goog.require('Enemy');
 goog.require('Navigation');
+goog.require('EnemyDroneTurret');
 
 /**
 *@constructor
@@ -46,8 +47,7 @@ goog.inherits(EnemyTank, Enemy);
 *@public
 */
 EnemyTank.prototype.init = function() {
-	var droneBaseSpriteSheet = app.assetsProxy.arrSpriteSheet["enemyDroneBase"],
-		droneTurretSpriteSheet = app.assetsProxy.arrSpriteSheet["enemyDroneTurret"];
+	var droneBaseSpriteSheet = app.assetsProxy.arrSpriteSheet["enemyDroneBase"];
 
 	this.container = new createjs.Container();
 
@@ -62,11 +62,12 @@ EnemyTank.prototype.init = function() {
 	this.base.gotoAndStop(0);
 	this.container.addChild(this.base);
 
-	this.turret = new createjs.BitmapAnimation(droneTurretSpriteSheet);
-	this.turret.regX = droneTurretSpriteSheet._frames[0].rect.width * 0.5;
-	this.turret.regY = (droneTurretSpriteSheet._frames[0].rect.height * 0.5) + this.turretOffsetY;
-	this.turret.gotoAndStop(0);
-	this.container.addChild(this.turret);
+	this.turret = new EnemyDroneTurret(true, [ this.projectileSystem ]);
+	//this.turret.shape.x = -this.base.regX;
+	//this.turret.shape.y = -this.base.regY;
+	this.turret.fireCounter = 0;
+	this.turret.fireThreshold = 180;
+	this.container.addChild(this.turret.shape);
 
 	this.setPhysics();
 
@@ -117,14 +118,14 @@ EnemyTank.prototype.update = function(options) {
 			this.velocity.y = (table.sin(this.baseRotationDeg) * this.velocityMod);
 		}
 
-		//this.container.rotation = this.baseRotationDeg + 90;
-
 		this.container.x += this.velocity.x;
 		this.container.y += this.velocity.y;
 
 		this.setPosition(this.container.x, this.container.y);
 
 		this.updateRotation();
+
+		this.turret.update({ target: options.target.position });
 	}
 };
 
@@ -143,23 +144,23 @@ EnemyTank.prototype.updateRotation = function() {
 		this.intendedRotation += 360;
 	}
 
-	absAngleDif = Math.abs(this.intendedRotation - this.container.rotation);
+	absAngleDif = Math.abs(this.intendedRotation - this.base.rotation);
 
 	//continuously update rotation 
 	if(absAngleDif > this.rotationRate)
 	{
 		if(absAngleDif >= 180) {
-			if(this.intendedRotation > this.container.rotation) {
+			if(this.intendedRotation > this.base.rotation) {
 				this.rotateToAngle(-this.rotationRate);
 			}
-			else if(this.intendedRotation < this.container.rotation) {
+			else if(this.intendedRotation < this.base.rotation) {
 				this.rotateToAngle(this.rotationRate);
 			}
 		} else {
-			if(this.intendedRotation > this.container.rotation) {
+			if(this.intendedRotation > this.base.rotation) {
 				this.rotateToAngle(this.rotationRate);
 			}
-			else if(this.intendedRotation < this.container.rotation) {
+			else if(this.intendedRotation < this.base.rotation) {
 				this.rotateToAngle(-this.rotationRate);
 			}
 		}
@@ -170,18 +171,18 @@ EnemyTank.prototype.updateRotation = function() {
 *@private
 */
 EnemyTank.prototype.rotateToAngle = function(rotationRate) {
-	if(rotationRate == 0){
+	if(rotationRate == 0) {
 		return;
 	}
 
-	this.container.rotation += rotationRate;
+	this.base.rotation += rotationRate;
 
-	if(this.container.rotation <= 0) {
-		this.container.rotation += 360;
+	if(this.base.rotation <= 0) {
+		this.base.rotation += 360;
 	}
 
-	if(this.container.rotation >= 360) {
-		this.container.rotation -= 360;
+	if(this.base.rotation >= 360) {
+		this.base.rotation -= 360;
 	}
 };
 
