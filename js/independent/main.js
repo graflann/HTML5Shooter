@@ -91,6 +91,13 @@ Math.randomInRange = function(min, max) {
     return min + (Math.random() * (max - min));
 };
 
+Math.randomInRangeWhole = function(min, max) {
+    min = Math.round(min);
+    max = Math.round(max);
+
+    return min + Math.round(Math.random() * (max - min));
+};
+
 Math.degToRad = function(deg) {
 	return deg * Math.PI / 180;
 };

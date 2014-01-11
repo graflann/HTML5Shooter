@@ -3,6 +3,9 @@ goog.provide('EnemyTank');
 goog.require('Enemy');
 goog.require('Navigation');
 goog.require('EnemyDroneTurret');
+goog.require('EnemyTankRoamingState');
+goog.require('EnemyTankSnipingState');
+goog.require('EnemyTankStrafingState');
 
 /**
 *@constructor
@@ -37,6 +40,8 @@ EnemyTank = function(projectileSystem) {
 
 	this.baseRotationDeg = 0;
 
+	this.stateMachine = null;
+
 	this.init();
 };
 
@@ -63,15 +68,15 @@ EnemyTank.prototype.init = function() {
 	this.container.addChild(this.base);
 
 	this.turret = new EnemyDroneTurret(true, [ this.projectileSystem ]);
-	//this.turret.shape.x = -this.base.regX;
-	//this.turret.shape.y = -this.base.regY;
 	this.turret.fireCounter = 0;
-	this.turret.fireThreshold = 180;
+	this.turret.fireThreshold = 90;
 	this.container.addChild(this.turret.shape);
 
 	this.setPhysics();
 
 	this.navigation = new Navigation();
+
+	this.setStateMachine();
 
 	this.setIsAlive(false);
 };
@@ -82,52 +87,109 @@ EnemyTank.prototype.init = function() {
 */
 EnemyTank.prototype.update = function(options) {
 
-	if(this.isAlive) {
-		var target = options.target,
+	if(this.isAlive) {	
+		this.stateMachine.update(options);
+	}
+};
+
+EnemyTank.prototype.updateBase = function(options) {
+	var target = options.target,
 			sin,
 			cos,
 			table = app.trigTable;
 
-		//only calculates homing to target on selected frames
-		if(target && createjs.Ticker.getTicks() % this.homingRate == 0) {
+	//only calculates homing to target on selected frames
+	if(target && createjs.Ticker.getTicks() % this.homingRate == 0) {
 
-			//out of the arena
-			if(this.position.x < 0 || this.position.y < 0 ||
-				this.position.x > app.arenaWidth || this.position.y > app.arenaHeight)
-			{
-				this.baseRotationDeg = Math.radToDeg(
-					Math.atan2(
-						target.position.y - this.position.y, 
-						target.position.x - this.position.x
-					)
-				);
-			}
-			else //within the arena
-			{
-				this.navigation.update(this.position, target.position);
+		//out of the arena
+		if(this.position.x < 0 || this.position.y < 0 ||
+			this.position.x > app.arenaWidth || this.position.y > app.arenaHeight)
+		{
+			this.baseRotationDeg = Math.radToDeg(
+				Math.atan2(
+					target.position.y - this.position.y, 
+					target.position.x - this.position.x
+				)
+			);
+		}
+		else //within the arena
+		{
+			this.navigation.update(this.position, target.position);
 
-				this.baseRotationDeg = Math.radToDeg(
-					Math.atan2(
-						this.navigation.targetPosition.y - this.position.y, 
-						this.navigation.targetPosition.x - this.position.x
-					)
-				);
-			}
-
-			this.velocity.x = (table.cos(this.baseRotationDeg) * this.velocityMod);
-			this.velocity.y = (table.sin(this.baseRotationDeg) * this.velocityMod);
+			this.baseRotationDeg = Math.radToDeg(
+				Math.atan2(
+					this.navigation.targetPosition.y - this.position.y, 
+					this.navigation.targetPosition.x - this.position.x
+				)
+			);
 		}
 
-		this.container.x += this.velocity.x;
-		this.container.y += this.velocity.y;
-
-		this.setPosition(this.container.x, this.container.y);
-
-		this.updateRotation();
-
-		this.turret.update({ target: options.target.position });
+		this.velocity.x = (table.cos(this.baseRotationDeg) * this.velocityMod);
+		this.velocity.y = (table.sin(this.baseRotationDeg) * this.velocityMod);
 	}
+
+	this.container.x += this.velocity.x;
+	this.container.y += this.velocity.y;
+
+	this.setPosition(this.container.x, this.container.y);
+
+	this.updateRotation();
 };
+
+/**
+*@override
+*@public
+*/
+EnemyTank.prototype.updateTurretToBase = function(options) {
+	//ensure the turret faces the direction the tank is moving when roaming
+	this.turret.baseRotationDeg = this.baseRotationDeg;
+	this.turret.updateRotation();
+};
+
+/**
+*@public
+*/
+EnemyTank.prototype.enterRoaming = function(options) {
+	this.base.play();
+}
+
+/**
+*@public
+*/
+EnemyTank.prototype.updateRoaming = function(options) {
+	this.updateBase(options);
+	this.updateTurretToBase(options);
+}
+
+/**
+*@public
+*/
+EnemyTank.prototype.enterSniping = function(options) {
+	this.base.gotoAndStop(0);
+}
+
+/**
+*@public
+*/
+EnemyTank.prototype.updateSniping = function(options) {
+	this.turret.update({ target: options.target.position });
+}
+
+/**
+*@public
+*/
+EnemyTank.prototype.enterStrafing = function(options) {
+	this.base.play();
+}
+
+/**
+*@public
+*/
+EnemyTank.prototype.updateStrafing = function(options) {
+	this.updateBase(options);
+	this.turret.update({ target: options.target.position });
+}
+
 
 /**
 *@private
@@ -135,6 +197,7 @@ EnemyTank.prototype.update = function(options) {
 EnemyTank.prototype.updateRotation = function() {
 	var absAngleDif = 0;
 
+	//art is natively offset by 90 deg compared to default createJS rotation value so an adjustment is made
 	this.intendedRotation = this.baseRotationDeg + 90;
 
 	//adjust intended for 
@@ -234,6 +297,30 @@ EnemyTank.prototype.setPhysics = function() {
 	this.body.CreateFixture(fixDef);
 	this.body.SetUserData(this);
 	this.body.SetAwake(true);
+};
+
+EnemyTank.prototype.setStateMachine = function() {
+	this.stateMachine = new StateMachine();
+
+	this.stateMachine.addState(
+		EnemyTankRoamingState.KEY,
+		new EnemyTankRoamingState(this),
+		[ EnemyTankSnipingState.KEY, EnemyTankStrafingState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		EnemyTankSnipingState.KEY,
+		new EnemyTankSnipingState(this),
+		[ EnemyTankRoamingState.KEY, EnemyTankStrafingState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		EnemyTankStrafingState.KEY,
+		new EnemyTankStrafingState(this),
+		[ EnemyTankRoamingState.KEY, EnemyTankSnipingState.KEY ]
+	);
+	
+	this.stateMachine.setState(EnemyTankRoamingState.KEY);
 };
 
 goog.exportSymbol('EnemyTank', EnemyTank);
