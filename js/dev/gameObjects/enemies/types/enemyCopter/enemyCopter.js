@@ -5,6 +5,7 @@ goog.require('Rotor');
 goog.require('EnemyCopterShadow');
 goog.require('EnemyCopterFiringState');
 goog.require('EnemyCopterSeekingState');
+goog.require('RotationUtils');
 
 /**
 *@constructor
@@ -41,6 +42,12 @@ EnemyCopter = function(projectileSystem) {
 
 	this.stateMachine = null;
 
+	this.intendedRotation = 0;
+
+	this.rotationRate = 5;
+
+	this.baseRotationDeg = 0;
+
 	this.init();
 };
 
@@ -53,31 +60,25 @@ EnemyCopter.FIRE_OFFSETS = [-10, 10];
 *@public
 */
 EnemyCopter.prototype.init = function() {
+	var copterSpriteSheet = app.assetsProxy.arrSpriteSheet["copter"];
+
 	this.container = new createjs.Container();
 
-	this.width = 89;
-	this.height = 107;
+	this.width = copterSpriteSheet._frames[0].rect.width;
+	this.height = copterSpriteSheet._frames[0].rect.height;
 
 	this.velocityMod = 3;
 
 	this.fireThreshold = 30;
 
-	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["copter"]);
-	//this.shape.cache(0, 0, this.width, this.height);
+	this.shape = new createjs.BitmapAnimation(copterSpriteSheet);
 	this.shape.regX = 44;
 	this.shape.regY = 53;
 	this.container.addChild(this.shape);
 
 	this.shape.gotoAndStop(0);
 
-	for(var i = 0; i < this.arrRotors.length; i++) {
-		this.arrRotors[i] = new Rotor(Constants.YELLOW, 16);
-		this.container.addChild(this.arrRotors[i].shape);
-	}
-
-	this.arrRotors[0].shape.x = this.shape.regX - 22;
-	this.arrRotors[1].shape.x = this.shape.regX - 66;
-	this.arrRotors[0].shape.y = this.arrRotors[1].shape.y = this.shape.regY - 51;
+	this.setRotors();
 
 	this.shadow = new EnemyCopterShadow(this);
 
@@ -93,7 +94,6 @@ EnemyCopter.prototype.init = function() {
 *@public
 */
 EnemyCopter.prototype.update = function(options) {
-
 	if(this.isAlive) {
 		var target = options.target,
 			i = -1;
@@ -105,6 +105,9 @@ EnemyCopter.prototype.update = function(options) {
 		while(++i < this.arrRotors.length) {
 			this.arrRotors[i].update();
 		}
+
+		//update rotation (yaw)
+		RotationUtils.updateContainerRotation(this);
 
 		//update the shadow
 		this.shadow.update(options);
@@ -128,6 +131,22 @@ EnemyCopter.prototype.clear = function() {
 /**
 *@public
 */
+EnemyCopter.prototype.kill = function() {
+	if(this.isAlive) {
+		this.setIsAlive(false);
+
+		this.container.getStage().removeChild(this.container);
+
+		//remove the shadow too
+		this.shadow.container.getStage().removeChild(this.shadow.container);
+
+		goog.events.dispatchEvent(this, this.enemyKilledEvent);
+	}
+};
+
+/**
+*@public
+*/
 EnemyCopter.prototype.updateSeeking = function(options) {
 	var target = options.target,
 		deg,
@@ -138,17 +157,15 @@ EnemyCopter.prototype.updateSeeking = function(options) {
 
 	//only calculates homing to target on selected frames
 	if(target && createjs.Ticker.getTicks() % this.homingRate == 0) {
-		deg = Math.radToDeg(
+		this.baseRotationDeg = Math.radToDeg(
 			Math.atan2(
 				target.position.y - this.position.y, 
 				target.position.x - this.position.x
 			)
 		);
 
-		this.velocity.x = (table.cos(deg) * this.velocityMod);
-		this.velocity.y = (table.sin(deg) * this.velocityMod);
-
-		this.container.rotation = deg + 90;
+		this.velocity.x = (table.cos(this.baseRotationDeg) * this.velocityMod);
+		this.velocity.y = (table.sin(this.baseRotationDeg) * this.velocityMod);
 
 		distance = this.position.DistanceSqrd(target.position);
 
@@ -176,14 +193,12 @@ EnemyCopter.prototype.updateFiring = function(options) {
 
 	//only calculates facing target on selected frames
 	if(target && createjs.Ticker.getTicks() % this.homingRate == 0) {
-		deg = Math.radToDeg(
+		this.baseRotationDeg = Math.radToDeg(
 			Math.atan2(
 				target.position.y - this.position.y, 
 				target.position.x - this.position.x
 			)
 		);
-
-		this.container.rotation = deg + 90;
 	}
 
 	//check fire
@@ -255,6 +270,17 @@ EnemyCopter.prototype.setPosition = function(x, y) {
 	this.physicalPosition.y = this.position.y / app.physicsScale;
 	
 	this.body.SetPosition(this.physicalPosition);
+};
+
+EnemyCopter.prototype.setRotors = function() {
+	for(var i = 0; i < this.arrRotors.length; i++) {
+		this.arrRotors[i] = new Rotor(Constants.YELLOW, 16);
+		this.container.addChild(this.arrRotors[i].shape);
+	}
+
+	this.arrRotors[0].shape.x = this.shape.regX - 22;
+	this.arrRotors[1].shape.x = this.shape.regX - 66;
+	this.arrRotors[0].shape.y = this.arrRotors[1].shape.y = this.shape.regY - 51;
 };
 
 EnemyCopter.prototype.setPhysics = function() {

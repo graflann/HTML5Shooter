@@ -7,6 +7,7 @@ goog.require('InputConfig');
 goog.require('PayloadEvent');
 goog.require('DefaultFireState');
 goog.require('AlternativeFireState');
+goog.require('RotationUtils');
 
 /**
 *@constructor
@@ -183,8 +184,7 @@ Turret.prototype.aiControl = function(options) {
 
 	this.baseRotationDeg = Math.radToDeg(rad);
 
-	//this.shape.rotation = deg;
-	this.updateRotation();
+	RotationUtils.updateShapeRotation(this);
 
 	if(this.fireCounter++ > this.fireThreshold){
 		this.fire();
@@ -257,60 +257,60 @@ Turret.prototype.setFiringState = function(value) {
 /**
 *@private
 */
-Turret.prototype.updateRotation = function() {
-	var absAngleDif = 0;
+// Turret.prototype.updateRotation = function() {
+// 	var absAngleDif = 0;
 
-	//art is natively offset by 90 deg compared to default createJS rotation value so an adjustment is made
-	this.intendedRotation = this.baseRotationDeg + 90;
+// 	//art is natively offset by 90 deg compared to default createJS rotation value so an adjustment is made
+// 	this.intendedRotation = this.baseRotationDeg + 90;
 
-	//adjust intended for 
-	if(this.intendedRotation >= 360) {
-		this.intendedRotation -= 360;
-	} else if(this.intendedRotation < 0) {
-		this.intendedRotation += 360;
-	}
+// 	//adjust intended for 
+// 	if(this.intendedRotation >= 360) {
+// 		this.intendedRotation -= 360;
+// 	} else if(this.intendedRotation < 0) {
+// 		this.intendedRotation += 360;
+// 	}
 
-	absAngleDif = Math.abs(this.intendedRotation - this.shape.rotation);
+// 	absAngleDif = Math.abs(this.intendedRotation - this.shape.rotation);
 
-	//continuously update rotation 
-	if(absAngleDif > this.rotationRate)
-	{
-		if(absAngleDif >= 180) {
-			if(this.intendedRotation > this.shape.rotation) {
-				this.rotateToAngle(-this.rotationRate);
-			}
-			else if(this.intendedRotation < this.shape.rotation) {
-				this.rotateToAngle(this.rotationRate);
-			}
-		} else {
-			if(this.intendedRotation > this.shape.rotation) {
-				this.rotateToAngle(this.rotationRate);
-			}
-			else if(this.intendedRotation < this.shape.rotation) {
-				this.rotateToAngle(-this.rotationRate);
-			}
-		}
-	}
-};
+// 	//continuously update rotation 
+// 	if(absAngleDif > this.rotationRate)
+// 	{
+// 		if(absAngleDif >= 180) {
+// 			if(this.intendedRotation > this.shape.rotation) {
+// 				this.rotateToAngle(-this.rotationRate);
+// 			}
+// 			else if(this.intendedRotation < this.shape.rotation) {
+// 				this.rotateToAngle(this.rotationRate);
+// 			}
+// 		} else {
+// 			if(this.intendedRotation > this.shape.rotation) {
+// 				this.rotateToAngle(this.rotationRate);
+// 			}
+// 			else if(this.intendedRotation < this.shape.rotation) {
+// 				this.rotateToAngle(-this.rotationRate);
+// 			}
+// 		}
+// 	}
+// };
 
-/**
-*@private
-*/
-Turret.prototype.rotateToAngle = function(rotationRate) {
-	if(rotationRate == 0) {
-		return;
-	}
+// /**
+// *@private
+// */
+// Turret.prototype.rotateToAngle = function(rotationRate) {
+// 	if(rotationRate == 0) {
+// 		return;
+// 	}
 
-	this.shape.rotation += rotationRate;
+// 	this.shape.rotation += rotationRate;
 
-	if(this.shape.rotation <= 0) {
-		this.shape.rotation += 360;
-	}
+// 	if(this.shape.rotation <= 0) {
+// 		this.shape.rotation += 360;
+// 	}
 
-	if(this.shape.rotation >= 360) {
-		this.shape.rotation -= 360;
-	}
-};
+// 	if(this.shape.rotation >= 360) {
+// 		this.shape.rotation -= 360;
+// 	}
+// };
 
 Turret.prototype.setStateMachine = function() {
 	this.stateMachine = new StateMachine();

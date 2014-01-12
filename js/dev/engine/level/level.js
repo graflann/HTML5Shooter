@@ -26,7 +26,7 @@ Level = function(options) {
 		},
 		enemies: {
 			enemyTank: {
-				max: 16,
+				max: 1,
 				projectileSystem: "ground"
 			},
 

@@ -18,7 +18,7 @@ Shadow = function(parentObject) {
 
 goog.inherits(Shadow, GameObject);
 
-Shadow.COLOR_FILTERS = [ new createjs.ColorFilter(0, 0, 0.25, 0.75, 0, 0, 0, 0) ];
+Shadow.COLOR_FILTERS = [ new createjs.ColorFilter(0, 0, 0.25, 0.75) ];
 
 Shadow.FLICKER_RATE = 2;
 
