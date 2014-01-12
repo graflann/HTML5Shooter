@@ -114,7 +114,8 @@ EnemySystem.prototype.generate = function(options) {
 
 			//set target layer for Enemy container; foreground for air, main for ground
 			if(enemy.getCategoryBits() === CollisionCategories.AIR_ENEMY) {
-				app.layers.getStage(LayerTypes.FOREGROUND).addChild(enemy.container);
+				app.layers.getStage(LayerTypes.AIR).addChild(enemy.container);
+				app.layers.getStage(LayerTypes.SHADOW).addChild(enemy.shadow.container);
 			} else {
 				app.layers.getStage(LayerTypes.MAIN).addChild(enemy.container);
 			}

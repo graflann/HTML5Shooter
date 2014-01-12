@@ -245,11 +245,12 @@ PlayPanel.prototype.updateLayers = function() {
 
 PlayPanel.prototype.setLayers = function() {
 	app.layers.add(LayerTypes.BACKGROUND);
-	app.layers.add(LayerTypes.PROJECTILE);
 	app.layers.add(LayerTypes.FOREGROUND);
+	app.layers.add(LayerTypes.SHADOW);
+	app.layers.add(LayerTypes.PROJECTILE);
+	app.layers.add(LayerTypes.AIR);
 	app.layers.add(LayerTypes.HOMING);
 	app.layers.add(LayerTypes.HUD);
-	app.layers.add(LayerTypes.PATHING);
 	app.layers.addDebug();
 
 	//set BACKGROUND to z-index of 0 as MAIN has it by default
@@ -465,10 +466,11 @@ PlayPanel.prototype.setCamera = function() {
 		this.player.container, 
 		[
 			app.layers.getStage(LayerTypes.MAIN),
-			app.layers.getStage(LayerTypes.PROJECTILE),
 			app.layers.getStage(LayerTypes.FOREGROUND),
-			app.layers.getStage(LayerTypes.HOMING),
-			app.layers.getStage(LayerTypes.PATHING)
+			app.layers.getStage(LayerTypes.SHADOW),
+			app.layers.getStage(LayerTypes.PROJECTILE),
+			app.layers.getStage(LayerTypes.AIR),
+			app.layers.getStage(LayerTypes.HOMING)
 		],
 		app.layers.getDebugContext(),
 		new app.b2Vec2(

@@ -69,7 +69,7 @@ EnemyTank.prototype.init = function() {
 
 	this.turret = new EnemyDroneTurret(true, [ this.projectileSystem ]);
 	this.turret.fireCounter = 0;
-	this.turret.fireThreshold = 90;
+	this.turret.fireThreshold = 30;
 	this.container.addChild(this.turret.shape);
 
 	this.setPhysics();
@@ -86,7 +86,6 @@ EnemyTank.prototype.init = function() {
 *@public
 */
 EnemyTank.prototype.update = function(options) {
-
 	if(this.isAlive) {	
 		this.stateMachine.update(options);
 	}
@@ -166,6 +165,8 @@ EnemyTank.prototype.updateRoaming = function(options) {
 */
 EnemyTank.prototype.enterSniping = function(options) {
 	this.base.gotoAndStop(0);
+	this.turret.fireCounter = 0;
+	this.turret.fireThreshold = 30;
 }
 
 /**
@@ -180,6 +181,8 @@ EnemyTank.prototype.updateSniping = function(options) {
 */
 EnemyTank.prototype.enterStrafing = function(options) {
 	this.base.play();
+	this.turret.fireCounter = 0;
+	this.turret.fireThreshold = 45;
 }
 
 /**

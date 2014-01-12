@@ -2,6 +2,7 @@ goog.provide('EnemyCopter');
 
 goog.require('Enemy');
 goog.require('Rotor');
+goog.require('EnemyCopterShadow');
 goog.require('EnemyCopterFiringState');
 goog.require('EnemyCopterSeekingState');
 
@@ -36,6 +37,8 @@ EnemyCopter = function(projectileSystem) {
 
 	this.minDistance = Math.pow(160, 2);
 
+	this.shadow = null;
+
 	this.stateMachine = null;
 
 	this.init();
@@ -60,6 +63,7 @@ EnemyCopter.prototype.init = function() {
 	this.fireThreshold = 30;
 
 	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["copter"]);
+	//this.shape.cache(0, 0, this.width, this.height);
 	this.shape.regX = 44;
 	this.shape.regY = 53;
 	this.container.addChild(this.shape);
@@ -74,6 +78,8 @@ EnemyCopter.prototype.init = function() {
 	this.arrRotors[0].shape.x = this.shape.regX - 22;
 	this.arrRotors[1].shape.x = this.shape.regX - 66;
 	this.arrRotors[0].shape.y = this.arrRotors[1].shape.y = this.shape.regY - 51;
+
+	this.shadow = new EnemyCopterShadow(this);
 
 	this.setPhysics();
 
@@ -99,6 +105,9 @@ EnemyCopter.prototype.update = function(options) {
 		while(++i < this.arrRotors.length) {
 			this.arrRotors[i].update();
 		}
+
+		//update the shadow
+		this.shadow.update(options);
 
 		//updates applicable homing reticle
 		if(this.reticle) {
@@ -196,7 +205,7 @@ EnemyCopter.prototype.fire = function() {
 		firingPosCos,
 		vector2D = new app.b2Vec2(),
 		trigTable = app.trigTable,
-		stage = app.layers.getStage(LayerTypes.FOREGROUND),
+		stage = app.layers.getStage(LayerTypes.PROJECTILE),
 		projectile = null,
 		i = -1,
 		length = EnemyCopter.FIRE_OFFSETS.length;

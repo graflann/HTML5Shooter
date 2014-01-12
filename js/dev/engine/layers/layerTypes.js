@@ -12,6 +12,8 @@ LayerTypes = {
     HOMING:			"homing",
     PATHING: 		"pathing", 
     HUD:			"hud",
+    SHADOW:			"shadow",
+    AIR:			"air",
     DEBUG: 			"debug"
 };
 

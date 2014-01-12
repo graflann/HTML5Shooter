@@ -26,7 +26,7 @@ Level = function(options) {
 		},
 		enemies: {
 			enemyTank: {
-				max: 1,
+				max: 16,
 				projectileSystem: "ground"
 			},
 
@@ -46,60 +46,172 @@ Level = function(options) {
 			}
 		},
 		waves : [
+			// [
+			// 	{ 
+			// 		type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 240, positionY: 320
+			// 	}
+			// ],
+			// [
+			// 	{ 
+			// 		type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 640, positionY: 640
+			// 	}
+			// ],
+			// [
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 0, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -128, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -128, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 0, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -128, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -128, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 0, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -128, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -128, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 0, positionY: 64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -128, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -128, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 0, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -128, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -128, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 0, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -128, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -128, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 0, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -128, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -128, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: 0, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -128, positionY: -64, posOffsetX: 64, posOffsetY: 64
+			// 	},
+			// 	{ 
+			// 		type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+			// 		positionX: -64, positionY: -128, posOffsetX: 64, posOffsetY: 64
+			// 	}
+			// ],
 			[
 				{ 
-					type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
-					positionX: 240, positionY: 320
-				}
-			],
-			[
-				{ 
-					type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
-					positionX: 640, positionY: 640
-				}
-			],
-			[
-				{ 
-					type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
-					positionX: 0, positionY: 64, posOffsetX: 64, posOffsetY: 64
-				}
+					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
+					positionX: -240, positionY: 64
+				},
 			],
 			[
 				{ 
 					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
 					positionX: -240, positionY: 64
 				},
+			],
+			[
 				{ 
 					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
-					positionX: -240, positionY: 416
+					positionX: -240, positionY: 64
 				},
+			],
+			[
 				{ 
 					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
-					positionX: 64, positionY: -240
+					positionX: -240, positionY: 64
 				},
-				{ 
-					type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
-					positionX: 360, positionY: -240
-				}
-			]//,
-		// 	[
-		// 		{ 
-		// 			type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
-		// 			positionX: 64, positionY: -240, posOffsetX: 64, posOffsetY: 64
-		// 		},
-		// 		{ 
-		// 			type: "enemyTank", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 8,
-		// 			positionX: 360, positionY: -240, posOffsetX: 64, posOffsetY: 64
-		// 		},
-		// 		{ 
-		// 			type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
-		// 			positionX: 720, positionY: 1600
-		// 		},
-		// 		{ 
-		// 			type: "enemyCopter", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 1,
-		// 			positionX: 1080, positionY: 1600
-		// 		},
-		// 	]
+			]
 		],
 		sceneObjects: {
 			wall: [
@@ -119,7 +231,7 @@ Level = function(options) {
 					x: 512, 
 					y: 128
 				}
-			]//,
+			 ]//,
 			// tower: [
 			// 	{ 	
 			// 		width: Constants.UNIT,

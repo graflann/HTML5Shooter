@@ -12,7 +12,7 @@ goog.require('AlternativeFireState');
 *@constructor
 *Main turret/cannon used in play
 */
-Turret = function(hasAI, arrProjectileSystems) {	
+Turret = function(hasAI, arrProjectileSystems) {
 	/**
 	*@type {ProjectileSystem}
 	*/

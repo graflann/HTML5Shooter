@@ -16,10 +16,10 @@ goog.inherits(EnemyTankRoamingState, State);
 
 EnemyTankRoamingState.KEY = "roaming";
 
-// EnemyTankRoamingState.NEXT_STATE_MAP = [
-// 	EnemyTankSnipingState.KEY//,
-// 	//EnemyTankStrafingState.KEY
-// ];
+EnemyTankRoamingState.NEXT_STATE_MAP = [
+	"sniping",
+	"strafing"
+];
 
 EnemyTankRoamingState.MIN_ROAM_TIME = 4000;
 EnemyTankRoamingState.MAX_ROAM_TIME = 6000;
@@ -29,12 +29,15 @@ EnemyTankRoamingState.MAX_ROAM_TIME = 6000;
 */
 EnemyTankRoamingState.prototype.enter = function(options) {
 	var self = this;
-	//var maxIndex = EnemyTankRoamingState.NEXT_STATE_MAP.length - 1;
-	var randIndex = 0; //Math.randomInRangeWhole(0, maxIndex);
-	var randRoamTime = 2000; //Math.randomInRangeWhole(MIN_ROAM_TIME, MAX_ROAM_TIME);
+	var maxIndex = EnemyTankRoamingState.NEXT_STATE_MAP.length - 1;
+	var randIndex = Math.randomInRangeWhole(0, maxIndex);
+	var randRoamTime = Math.randomInRangeWhole(
+		EnemyTankRoamingState.MIN_ROAM_TIME, 
+		EnemyTankRoamingState.MAX_ROAM_TIME
+	);
 
 	setTimeout(function() {
-		self.enemy.stateMachine.setState(EnemyTankStrafingState.KEY);
+		self.enemy.stateMachine.setState(EnemyTankRoamingState.NEXT_STATE_MAP[randIndex]);
 	}, randRoamTime);
 
 	this.enemy.enterRoaming(options);
