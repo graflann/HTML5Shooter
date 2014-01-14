@@ -29,8 +29,6 @@ EnemyTank = function(projectileSystem) {
 
 	this.turretOffsetY = 6;
 
-	this.homingRate = 15;
-
 	this.navigation = null;
 
 	this.health = 1;
@@ -47,6 +45,8 @@ EnemyTank = function(projectileSystem) {
 };
 
 goog.inherits(EnemyTank, Enemy);
+
+EnemyTank.HOMING_RATE = 15;
 
 /**
 *@override
@@ -99,7 +99,7 @@ EnemyTank.prototype.updateBase = function(options) {
 			table = app.trigTable;
 
 	//only calculates homing to target on selected frames
-	if(target && createjs.Ticker.getTicks() % this.homingRate === 0) {
+	if(target && createjs.Ticker.getTicks() % EnemyTank.HOMING_RATE === 0) {
 
 		//out of the arena
 		if(this.position.x < 0 || this.position.y < 0 ||
@@ -133,7 +133,7 @@ EnemyTank.prototype.updateBase = function(options) {
 
 	this.setPosition(this.container.x, this.container.y);
 
-	RotationUtils.updateShapeRotation(this);
+	RotationUtils.updateRotation(this, this.shape, 90);
 };
 
 /**
@@ -144,7 +144,7 @@ EnemyTank.prototype.updateTurretToBase = function(options) {
 	//ensure the turret faces the direction the tank is moving when roaming
 	this.turret.baseRotationDeg = this.baseRotationDeg;
 	//this.turret.updateRotation();
-	RotationUtils.updateShapeRotation(this.turret);
+	RotationUtils.updateRotation(this.turret, this.turret.shape, 90);
 };
 
 /**
@@ -194,65 +194,6 @@ EnemyTank.prototype.updateStrafing = function(options) {
 	this.updateBase(options);
 	this.turret.update({ target: options.target.position });
 }
-
-
-/**
-*@private
-*/
-// EnemyTank.prototype.updateRotation = function() {
-// 	var absAngleDif = 0;
-
-// 	//art is natively offset by 90 deg compared to default createJS rotation value so an adjustment is made
-// 	this.intendedRotation = this.baseRotationDeg + 90;
-
-// 	//adjust intended for 
-// 	if(this.intendedRotation >= 360) {
-// 		this.intendedRotation -= 360;
-// 	} else if(this.intendedRotation < 0) {
-// 		this.intendedRotation += 360;
-// 	}
-
-// 	absAngleDif = Math.abs(this.intendedRotation - this.shape.rotation);
-
-// 	//continuously update rotation 
-// 	if(absAngleDif > this.rotationRate)
-// 	{
-// 		if(absAngleDif >= 180) {
-// 			if(this.intendedRotation > this.shape.rotation) {
-// 				this.rotateToAngle(-this.rotationRate);
-// 			}
-// 			else if(this.intendedRotation < this.shape.rotation) {
-// 				this.rotateToAngle(this.rotationRate);
-// 			}
-// 		} else {
-// 			if(this.intendedRotation > this.shape.rotation) {
-// 				this.rotateToAngle(this.rotationRate);
-// 			}
-// 			else if(this.intendedRotation < this.shape.rotation) {
-// 				this.rotateToAngle(-this.rotationRate);
-// 			}
-// 		}
-// 	}
-// };
-
-// /**
-// *@private
-// */
-// EnemyTank.prototype.rotateToAngle = function(rotationRate) {
-// 	if(rotationRate == 0) {
-// 		return;
-// 	}
-
-// 	this.shape.rotation += rotationRate;
-
-// 	if(this.shape.rotation <= 0) {
-// 		this.shape.rotation += 360;
-// 	}
-
-// 	if(this.shape.rotation >= 360) {
-// 		this.shape.rotation -= 360;
-// 	}
-// };
 
 /**
 *@override

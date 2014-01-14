@@ -5,10 +5,11 @@ goog.provide('EnemyTypes');
  * @type {Object}
  */
 EnemyTypes = {
-	TANK: 	'enemyTank',
-	TURRET: 'enemyTurret',
-	COPTER: 'enemyCopter',
-	CENTIPEDE: 'enemyCentipede'
+	TROOPER: 	'enemyTrooper',
+	TANK: 		'enemyTank',
+	TURRET: 	'enemyTurret',
+	COPTER: 	'enemyCopter',
+	CENTIPEDE: 	'enemyCentipede'
 };
 
 goog.exportSymbol('EnemyTypes', EnemyTypes);

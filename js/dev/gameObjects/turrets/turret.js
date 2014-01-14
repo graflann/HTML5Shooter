@@ -184,7 +184,7 @@ Turret.prototype.aiControl = function(options) {
 
 	this.baseRotationDeg = Math.radToDeg(rad);
 
-	RotationUtils.updateShapeRotation(this);
+	RotationUtils.updateRotation(this, this.shape, 90);
 
 	if(this.fireCounter++ > this.fireThreshold){
 		this.fire();

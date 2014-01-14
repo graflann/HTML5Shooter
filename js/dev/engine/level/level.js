@@ -30,6 +30,11 @@ Level = function(options) {
 				projectileSystem: "ground"
 			},
 
+			enemyTrooper: {
+				max: 1,
+				projectileSystem: "ground"
+			},
+
 			enemyCentipede: {
 				max: 1,
 				projectileSystem: "ground"
@@ -46,6 +51,12 @@ Level = function(options) {
 			}
 		},
 		waves : [
+			[
+				{ 
+					type: "enemyTrooper", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
+					positionX: 64, positionY: 64
+				}
+			],
 			// [
 			// 	{ 
 			// 		type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,

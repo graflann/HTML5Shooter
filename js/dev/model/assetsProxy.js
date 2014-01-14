@@ -43,7 +43,8 @@ AssetsProxy = function() {
 		'assets/finished/copter.json',
 		'assets/finished/centipedeHead.json',
 		'assets/finished/centipedeSegment.json',
-		'assets/finished/centipedeTail.json'//,
+		'assets/finished/centipedeTail.json',
+		'assets/finished/enemyTrooper.json'//,
 		//'assets/finished/master.json'
 	];
 
@@ -67,7 +68,8 @@ AssetsProxy = function() {
 		{id: "copter",				src: "assets/finished/copter.png"},
 		{id: "centipedeHead",		src: "assets/finished/centipedeHead.png"},
 		{id: "centipedeSegment",	src: "assets/finished/centipedeSegment.png"},
-		{id: "centipedeTail",		src: "assets/finished/centipedeTail.png"}//,
+		{id: "centipedeTail",		src: "assets/finished/centipedeTail.png"},
+		{id: "enemyTrooper",		src: "assets/finished/enemyTrooper.png"}//,
 		//{id: "master",				src: "assets/finished/master.png"}
 	];
 

@@ -12,6 +12,7 @@ goog.require('EventNames');
 goog.require('StateMachine');
 goog.require('PlayerDefaultState');
 goog.require('PlayerBoostState');
+goog.require('RotationUtils');
 
 /**
 *@constructor
@@ -23,11 +24,6 @@ PlayerTank = function(arrProjectileSystems) {
 	 * @type {Array}
 	 */
 	this.arrProjectileSystems = arrProjectileSystems;
-		
-	/**
-	*@type  {String}
-	*/
-	this.color = Constants.BLUE;
 	
 	/**
 	*@type {ProjectileSystem}
@@ -463,39 +459,38 @@ PlayerTank.prototype.updateRotation = function() {
 
 		if(absAngleDif >= 180) {
 			if(this.intendedRotation > this.baseContainer.rotation) {
-				this.rotateToAngle(-this.rotationRate);
-
-				for(var i = 0; i < this.arrWheels.length; i++) {
-					this.arrWheels[i].rotation = -45;
-				}
+				//this.rotateToAngle(-this.rotationRate);
+				RotationUtils.rotateToAngle(this.baseContainer, -this.rotationRate);
+				this.turnWheels(-45);
 			}
 			else if(this.intendedRotation < this.baseContainer.rotation) {
-				this.rotateToAngle(this.rotationRate);
-
-				for(var i = 0; i < this.arrWheels.length; i++) {
-					this.arrWheels[i].rotation = 45;
-				}
+				//this.rotateToAngle(this.rotationRate);
+				RotationUtils.rotateToAngle(this.baseContainer, this.rotationRate);
+				this.turnWheels(45);
 			}
 		} else {
 			if(this.intendedRotation > this.baseContainer.rotation) {
-				this.rotateToAngle(this.rotationRate);
-
-				for(var i = 0; i < this.arrWheels.length; i++) {
-					this.arrWheels[i].rotation = 45;
-				}
+				//this.rotateToAngle(this.rotationRate);
+				RotationUtils.rotateToAngle(this.baseContainer, this.rotationRate);
+				this.turnWheels(45);
 			}
 			else if(this.intendedRotation < this.baseContainer.rotation) {
-				this.rotateToAngle(-this.rotationRate);
-
-				for(var i = 0; i < this.arrWheels.length; i++) {
-					this.arrWheels[i].rotation = -45;
-				}
+				//this.rotateToAngle(-this.rotationRate);
+				RotationUtils.rotateToAngle(this.baseContainer, -this.rotationRate);
+				this.turnWheels(-45);
 			}
 		}
 	} else {
-		for(var i = 0; i < this.arrWheels.length; i++) {
-			this.arrWheels[i].rotation = 0;
-		}
+		this.turnWheels(0);
+	}
+};
+
+PlayerTank.prototype.turnWheels = function(deg) {
+	var i = -1,
+		length = this.arrWheels.length;
+
+	while(++i < length) {
+		this.arrWheels[i].rotation = deg;
 	}
 };
 

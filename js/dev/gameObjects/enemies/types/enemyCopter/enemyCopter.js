@@ -107,7 +107,7 @@ EnemyCopter.prototype.update = function(options) {
 		}
 
 		//update rotation (yaw)
-		RotationUtils.updateContainerRotation(this);
+		RotationUtils.updateRotation(this, this.container, 90);
 
 		//update the shadow
 		this.shadow.update(options);
