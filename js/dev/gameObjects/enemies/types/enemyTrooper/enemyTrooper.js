@@ -2,6 +2,9 @@ goog.provide('EnemyTrooper');
 
 goog.require('Enemy');
 goog.require('Navigation');
+goog.require('EnemyTrooperRoamingState');
+goog.require('EnemyTrooperSnipingState');
+goog.require('EnemyTrooperStrafingState');
 goog.require('RotationUtils');
 
 EnemyTrooper = function(projectileSystem) {
@@ -28,7 +31,11 @@ EnemyTrooper = function(projectileSystem) {
 
 	this.baseRotationDeg = 0;
 
+	this.degToTarget = 0;
+
 	this.stateMachine = null;
+
+	this.walkAnimUtil = null;
 
 	this.init();
 };
@@ -52,11 +59,13 @@ EnemyTrooper.prototype.init = function() {
 	this.velocityMod = 0.75;
 
 	this.shape = new createjs.BitmapAnimation(trooperSpriteSheet);
-	this.shape.gotoAndStop(0);
-	this.shape.cache(0, 0, this.width, this.height);
+	//this.shape.gotoAndStop(0);
+	//this.shape.cache(0, 0, this.width, this.height);
 	this.shape.regX = this.width * 0.5;
 	this.shape.regY = this.height * 0.5;
 	this.container.addChild(this.shape);
+
+	this.walkAnimUtil = new AnimationUtility("walk", this.shape, 4);
 
 	this.setPhysics();
 
@@ -73,9 +82,7 @@ EnemyTrooper.prototype.init = function() {
 */
 EnemyTrooper.prototype.update = function(options) {
 	if(this.isAlive) {	
-		//this.stateMachine.update(options);
-
-		this.updateRoaming(options);
+		this.stateMachine.update(options);
 	}
 };
 
@@ -83,8 +90,9 @@ EnemyTrooper.prototype.update = function(options) {
 *@public
 */
 EnemyTrooper.prototype.enterRoaming = function(options) {
-	
-}
+	this.walkAnimUtil.play();
+	this.walkAnimUtil.loop(true);
+};
 
 /**
 *@public
@@ -96,13 +104,13 @@ EnemyTrooper.prototype.updateRoaming = function(options) {
 			table = app.trigTable;
 
 	//only calculates homing to target on selected frames
-	if(target && createjs.Ticker.getTicks() % EnemyTank.HOMING_RATE === 0) {
+	if(target && createjs.Ticker.getTicks() % EnemyTrooper.HOMING_RATE === 0) {
 
 		//out of the arena
 		if(this.position.x < 0 || this.position.y < 0 ||
 			this.position.x > app.arenaWidth || this.position.y > app.arenaHeight)
 		{
-			this.baseRotationDeg = Math.radToDeg(
+			this.degToTarget = this.baseRotationDeg = Math.radToDeg(
 				Math.atan2(
 					target.position.y - this.position.y, 
 					target.position.x - this.position.x
@@ -113,7 +121,7 @@ EnemyTrooper.prototype.updateRoaming = function(options) {
 		{
 			this.navigation.update(this.position, target.position);
 
-			this.baseRotationDeg = Math.radToDeg(
+			this.degToTarget = this.baseRotationDeg = Math.radToDeg(
 				Math.atan2(
 					this.navigation.targetPosition.y - this.position.y, 
 					this.navigation.targetPosition.x - this.position.x
@@ -131,41 +139,119 @@ EnemyTrooper.prototype.updateRoaming = function(options) {
 	this.setPosition(this.container.x, this.container.y);
 
 	RotationUtils.updateRotation(this, this.container, 90);
-}
+
+	this.walkAnimUtil.update();
+};
 
 /**
 *@public
 */
 EnemyTrooper.prototype.enterSniping = function(options) {
-	
-}
+	this.walkAnimUtil.stop();
+};
 
 /**
 *@public
 */
 EnemyTrooper.prototype.updateSniping = function(options) {
-	
-}
+	var target = options.target,
+		sin,
+		cos,
+		table = app.trigTable;
+
+	//only calculates homing to target on selected frames
+	if(target && createjs.Ticker.getTicks() % EnemyTrooper.HOMING_RATE === 0) {
+
+		this.degToTarget = this.baseRotationDeg = Math.radToDeg(
+			Math.atan2(
+				target.position.y - this.position.y, 
+				target.position.x - this.position.x
+			)
+		);
+	}
+
+	//TODO: check some firing
+
+	RotationUtils.updateRotation(this, this.container, 90);
+};
 
 /**
 *@public
 */
 EnemyTrooper.prototype.enterStrafing = function(options) {
-	
-}
+	this.walkAnimUtil.play();
+	this.walkAnimUtil.loop(true);
+};
 
 /**
 *@public
 */
 EnemyTrooper.prototype.updateStrafing = function(options) {
-	
-}
+	var target = options.target,
+			sin,
+			cos,
+			table = app.trigTable;
+
+	//only calculates homing to target on selected frames
+	if(target && createjs.Ticker.getTicks() % EnemyTrooper.HOMING_RATE === 0) {
+
+		//out of the arena
+		if(this.position.x < 0 || this.position.y < 0 ||
+			this.position.x > app.arenaWidth || this.position.y > app.arenaHeight)
+		{
+			this.baseRotationDeg = Math.radToDeg(
+				Math.atan2(
+					target.position.y - this.position.y, 
+					target.position.x - this.position.x
+				)
+			);
+		}
+		else //within the arena
+		{
+			this.navigation.update(this.position, target.position);
+
+			this.degToTarget = Math.radToDeg(
+				Math.atan2(
+					this.navigation.targetPosition.y - this.position.y, 
+					this.navigation.targetPosition.x - this.position.x
+				)
+			);
+
+			this.baseRotationDeg = Math.radToDeg(
+				Math.atan2(
+					target.position.y - this.position.y, 
+					target.position.x - this.position.x
+				)
+			);
+		}
+
+		this.velocity.x = (table.cos(this.degToTarget) * this.velocityMod);
+		this.velocity.y = (table.sin(this.degToTarget) * this.velocityMod);
+	}
+
+	this.container.x += this.velocity.x;
+	this.container.y += this.velocity.y;
+
+	this.setPosition(this.container.x, this.container.y);
+
+	RotationUtils.updateRotation(this, this.container, 90);
+
+	this.walkAnimUtil.update();
+};
 
 /**
 *@override
 *@public
 */
 EnemyTrooper.prototype.clear = function() {
+	
+};
+
+/**
+*@override
+*@public
+*/
+EnemyTrooper.prototype.fire = function() {
 	
 };
 
@@ -202,27 +288,27 @@ EnemyTrooper.prototype.setPhysics = function() {
 };
 
 EnemyTrooper.prototype.setStateMachine = function() {
-	// this.stateMachine = new StateMachine();
+	this.stateMachine = new StateMachine();
 
-	// this.stateMachine.addState(
-	// 	EnemyTankRoamingState.KEY,
-	// 	new EnemyTankRoamingState(this),
-	// 	[ EnemyTankSnipingState.KEY, EnemyTankStrafingState.KEY ]
-	// );
+	this.stateMachine.addState(
+		EnemyTrooperRoamingState.KEY,
+		new EnemyTrooperRoamingState(this),
+		[ EnemyTrooperSnipingState.KEY, EnemyTrooperStrafingState.KEY ]
+	);
 
-	// this.stateMachine.addState(
-	// 	EnemyTankSnipingState.KEY,
-	// 	new EnemyTankSnipingState(this),
-	// 	[ EnemyTankRoamingState.KEY, EnemyTankStrafingState.KEY ]
-	// );
+	this.stateMachine.addState(
+		EnemyTrooperSnipingState.KEY,
+		new EnemyTrooperSnipingState(this),
+		[ EnemyTrooperRoamingState.KEY, EnemyTrooperStrafingState.KEY ]
+	);
 
-	// this.stateMachine.addState(
-	// 	EnemyTankStrafingState.KEY,
-	// 	new EnemyTankStrafingState(this),
-	// 	[ EnemyTankRoamingState.KEY, EnemyTankSnipingState.KEY ]
-	// );
+	this.stateMachine.addState(
+		EnemyTrooperStrafingState.KEY,
+		new EnemyTrooperStrafingState(this),
+		[ EnemyTrooperRoamingState.KEY, EnemyTrooperSnipingState.KEY ]
+	);
 	
-	// this.stateMachine.setState(EnemyTankRoamingState.KEY);
+	this.stateMachine.setState(EnemyTrooperRoamingState.KEY);
 };
 
 goog.exportSymbol('EnemyTrooper', EnemyTrooper);
