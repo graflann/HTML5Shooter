@@ -5,6 +5,7 @@ goog.require('EnemyTrooper');
 goog.require('EnemyTurret');
 goog.require('EnemyCopter');
 goog.require('EnemyCentipede');
+goog.require('EnemyCarrier');
 
 /**
  * Exposes available Particle classes by String
@@ -15,7 +16,8 @@ EnemyClasses = {
 	enemyTrooper: 	EnemyTrooper,
 	enemyTurret: 	EnemyTurret,
 	enemyCopter: 	EnemyCopter,
-	enemyCentipede: EnemyCentipede
+	enemyCentipede: EnemyCentipede,
+	enemyCarrier: 	EnemyCarrier,
 };
 
 goog.exportSymbol('EnemyClasses', EnemyClasses);

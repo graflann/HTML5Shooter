@@ -1,4 +1,4 @@
-goog.provide('EnemyCopter');
+goog.provide('EnemyCarrier');
 
 goog.require('Enemy');
 goog.require('Rotor');
@@ -10,7 +10,7 @@ goog.require('RotationUtils');
 /**
 *@constructor
 */
-EnemyCopter = function(projectileSystem) {
+EnemyCarrier = function(projectileSystem) {
 	Enemy.call(this);
 
 	/**
@@ -40,54 +40,60 @@ EnemyCopter = function(projectileSystem) {
 
 	this.intendedRotation = 0;
 
-	this.rotationRate = 5;
+	this.rotationRate = 1;
 
 	this.baseRotationDeg = 0;
 
 	this.init();
 };
 
-goog.inherits(EnemyCopter, Enemy);
+goog.inherits(EnemyCarrier, Enemy);
 
-EnemyCopter.HOMING_RATE = 5;
+EnemyCarrier.HOMING_RATE = 5;
 
-EnemyCopter.FIRE_OFFSETS = [-10, 10];
+EnemyCarrier.FIRE_OFFSETS = [-10, 10];
 
-EnemyCopter.AMMO_DISTANCE = 60 / app.physicsScale;
+EnemyCarrier.AMMO_DISTANCE = 60 / app.physicsScale;
 
-EnemyCopter.ROTOR_RADIUS = 16;
+EnemyCarrier.ROTOR_RADIUS = 30;
 
-EnemyCopter.ROTOR_OFFSETS = [
-	new app.b2Vec2(22, 51),
-	new app.b2Vec2(66, 51)
+EnemyCarrier.ROTOR_THICKNESS = 3;
+
+EnemyCarrier.ROTOR_OFFSETS = [
+	new app.b2Vec2(95, -107),
+	new app.b2Vec2(-95, -107),
+	new app.b2Vec2(177, 0),
+	new app.b2Vec2(-177, 0),
+	new app.b2Vec2(95, 107),
+	new app.b2Vec2(-95, 107)
 ];
 
 /**
 *@override
 *@public
 */
-EnemyCopter.prototype.init = function() {
-	var copterSpriteSheet = app.assetsProxy.arrSpriteSheet["copter"];
+EnemyCarrier.prototype.init = function() {
+	var carrierSpriteSheet = app.assetsProxy.arrSpriteSheet["enemyCarrier"];
 
 	this.container = new createjs.Container();
 
-	this.width = copterSpriteSheet._frames[0].rect.width;
-	this.height = copterSpriteSheet._frames[0].rect.height;
+	this.width = carrierSpriteSheet._frames[0].rect.width;
+	this.height = carrierSpriteSheet._frames[0].rect.height;
 
-	this.velocityMod = 3;
+	this.velocityMod = 1.5;
 
 	this.fireThreshold = 30;
 
-	this.shape = new createjs.BitmapAnimation(copterSpriteSheet);
-	this.shape.regX = 44;
-	this.shape.regY = 53;
+	this.shape = new createjs.BitmapAnimation(carrierSpriteSheet);
+	this.shape.regX = this.width * 0.5;
+	this.shape.regY = this.height * 0.5;
 	this.container.addChild(this.shape);
 
 	this.shape.gotoAndStop(0);
 
 	this.setRotors();
 
-	this.shadow = new EnemyCopterShadow(this);
+	//this.shadow = new EnemyCopterShadow(this);
 
 	this.setPhysics();
 
@@ -100,7 +106,7 @@ EnemyCopter.prototype.init = function() {
 *@override
 *@public
 */
-EnemyCopter.prototype.update = function(options) {
+EnemyCarrier.prototype.update = function(options) {
 	if(this.isAlive) {
 
 		//update current state
@@ -113,7 +119,7 @@ EnemyCopter.prototype.update = function(options) {
 		RotationUtils.updateRotation(this, this.container, 90);
 
 		//update the shadow
-		this.shadow.update(options);
+		//this.shadow.update(options);
 
 		//updates applicable homing reticle
 		if(this.reticle) {
@@ -123,7 +129,7 @@ EnemyCopter.prototype.update = function(options) {
 	}
 };
 
-EnemyCopter.prototype.updateRotors = function() {
+EnemyCarrier.prototype.updateRotors = function() {
 	var i = -1,
 		length = this.arrRotors.length;
 
@@ -136,21 +142,21 @@ EnemyCopter.prototype.updateRotors = function() {
 *@override
 *@public
 */
-EnemyCopter.prototype.clear = function() {
+EnemyCarrier.prototype.clear = function() {
 	
 };
 
 /**
 *@public
 */
-EnemyCopter.prototype.kill = function() {
+EnemyCarrier.prototype.kill = function() {
 	if(this.isAlive) {
 		this.setIsAlive(false);
 
 		this.container.getStage().removeChild(this.container);
 
 		//remove the shadow too
-		this.shadow.container.getStage().removeChild(this.shadow.container);
+		//this.shadow.container.getStage().removeChild(this.shadow.container);
 
 		goog.events.dispatchEvent(this, this.enemyKilledEvent);
 	}
@@ -159,7 +165,7 @@ EnemyCopter.prototype.kill = function() {
 /**
 *@public
 */
-EnemyCopter.prototype.updateSeeking = function(options) {
+EnemyCarrier.prototype.updateSeeking = function(options) {
 	var target = options.target,
 		deg,
 		sin,
@@ -168,7 +174,7 @@ EnemyCopter.prototype.updateSeeking = function(options) {
 		table = app.trigTable;
 
 	//only calculates homing to target on selected frames
-	if(target && createjs.Ticker.getTicks() % EnemyCopter.HOMING_RATE == 0) {
+	if(target && createjs.Ticker.getTicks() % EnemyCarrier.HOMING_RATE == 0) {
 		this.baseRotationDeg = Math.radToDeg(
 			Math.atan2(
 				target.position.y - this.position.y, 
@@ -196,7 +202,7 @@ EnemyCopter.prototype.updateSeeking = function(options) {
  *Face player and fire in bursts
 *@public
 */
-EnemyCopter.prototype.updateFiring = function(options) {
+EnemyCarrier.prototype.updateFiring = function(options) {
 	var target = options.target,
 		deg,
 		sin,
@@ -204,7 +210,7 @@ EnemyCopter.prototype.updateFiring = function(options) {
 		table = app.trigTable;
 
 	//only calculates facing target on selected frames
-	if(target && createjs.Ticker.getTicks() % EnemyCopter.HOMING_RATE == 0) {
+	if(target && createjs.Ticker.getTicks() % EnemyCarrier.HOMING_RATE == 0) {
 		this.baseRotationDeg = Math.radToDeg(
 			Math.atan2(
 				target.position.y - this.position.y, 
@@ -223,7 +229,7 @@ EnemyCopter.prototype.updateFiring = function(options) {
 /**
 *@public
 */
-EnemyCopter.prototype.fire = function() {
+EnemyCarrier.prototype.fire = function() {
 	var deg,
 		sin,
 		cos,
@@ -235,7 +241,7 @@ EnemyCopter.prototype.fire = function() {
 		stage = app.layers.getStage(LayerTypes.PROJECTILE),
 		projectile = null,
 		i = -1,
-		length = EnemyCopter.FIRE_OFFSETS.length;
+		length = EnemyCarrier.FIRE_OFFSETS.length;
 
 	//acquire rotation of Copter instance in degrees and add ammo at table-referenced distance			
 	deg = this.container.rotation - 90;
@@ -251,12 +257,12 @@ EnemyCopter.prototype.fire = function() {
 			projectile.body.SetLinearVelocity(app.vecZero);
 
 			//acquire values to determine firing position
-			firingPosDeg = (deg + EnemyCopter.FIRE_OFFSETS[i]);
+			firingPosDeg = (deg + EnemyCarrier.FIRE_OFFSETS[i]);
 			firingPosSin = trigTable.sin(firingPosDeg);
 			firingPosCos = trigTable.cos(firingPosDeg); 
 			
-			vector2D.x = (this.position.x / app.physicsScale) + (firingPosCos * EnemyCopter.AMMO_DISTANCE);
-			vector2D.y = (this.position.y / app.physicsScale) + (firingPosSin * EnemyCopter.AMMO_DISTANCE);				
+			vector2D.x = (this.position.x / app.physicsScale) + (firingPosCos * EnemyCarrier.AMMO_DISTANCE);
+			vector2D.y = (this.position.y / app.physicsScale) + (firingPosSin * EnemyCarrier.AMMO_DISTANCE);				
 			projectile.body.SetPosition(vector2D);
 			
 			vector2D.x = cos * projectile.velocityMod;
@@ -274,7 +280,7 @@ EnemyCopter.prototype.fire = function() {
 /**
 *@private
 */
-EnemyCopter.prototype.setPosition = function(x, y) {
+EnemyCarrier.prototype.setPosition = function(x, y) {
 	this.position.x = this.container.x = x;
 	this.position.y = this.container.y = y;
 
@@ -284,16 +290,21 @@ EnemyCopter.prototype.setPosition = function(x, y) {
 	this.body.SetPosition(this.physicalPosition);
 };
 
-EnemyCopter.prototype.setRotors = function() {
+EnemyCarrier.prototype.setRotors = function() {
 	var rotor,
 		offset;
 
-	for(var i = 0; i < EnemyCopter.ROTOR_OFFSETS.length; i++) {
-		rotor = new Rotor(Constants.YELLOW, EnemyCopter.ROTOR_RADIUS);
-		offset = EnemyCopter.ROTOR_OFFSETS[i];
+	for(var i = 0; i < EnemyCarrier.ROTOR_OFFSETS.length; i++) {
+		rotor = new Rotor(
+			Constants.YELLOW, 
+			EnemyCarrier.ROTOR_RADIUS,
+			EnemyCarrier.ROTOR_THICKNESS
+		);
 
-		rotor.shape.x = this.shape.regX - offset.x;
-		rotor.shape.y = this.shape.regY - offset.y;
+		offset = EnemyCarrier.ROTOR_OFFSETS[i];
+
+		rotor.shape.x = offset.x;
+		rotor.shape.y = offset.y;
 
 		this.container.addChild(rotor.shape);
 
@@ -301,7 +312,7 @@ EnemyCopter.prototype.setRotors = function() {
 	}
 };
 
-EnemyCopter.prototype.setPhysics = function() {
+EnemyCarrier.prototype.setPhysics = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef();
 	
@@ -320,7 +331,7 @@ EnemyCopter.prototype.setPhysics = function() {
 	this.body.SetAwake(true);
 };
 
-EnemyCopter.prototype.setStateMachine = function() {
+EnemyCarrier.prototype.setStateMachine = function() {
 	this.stateMachine = new StateMachine();
 
 	this.stateMachine.addState(
@@ -341,7 +352,7 @@ EnemyCopter.prototype.setStateMachine = function() {
 /**
 *@public
 */
-EnemyCopter.prototype.onHoming = function(homingObject, options) {
+EnemyCarrier.prototype.onHoming = function(homingObject, options) {
 	if(!this.reticle) {
 		options.reticles.emit(1, {
 			posX: this.container.x + this.offset,
@@ -352,4 +363,4 @@ EnemyCopter.prototype.onHoming = function(homingObject, options) {
 	}
 };
 
-goog.exportSymbol('EnemyCopter', EnemyCopter);
+goog.exportSymbol('EnemyCarrier', EnemyCarrier);

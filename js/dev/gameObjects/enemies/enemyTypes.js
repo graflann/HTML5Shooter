@@ -1,7 +1,7 @@
 goog.provide('EnemyTypes');
 
 /**
- * Exposes available Particle classes by String
+ * Exposes available Enemy classes by String
  * @type {Object}
  */
 EnemyTypes = {
@@ -9,7 +9,8 @@ EnemyTypes = {
 	TANK: 		'enemyTank',
 	TURRET: 	'enemyTurret',
 	COPTER: 	'enemyCopter',
-	CENTIPEDE: 	'enemyCentipede'
+	CENTIPEDE: 	'enemyCentipede',
+	CARRIER: 	'enemyCarrier',
 };
 
 goog.exportSymbol('EnemyTypes', EnemyTypes);

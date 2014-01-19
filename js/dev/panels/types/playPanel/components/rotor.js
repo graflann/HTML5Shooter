@@ -3,10 +3,12 @@ goog.provide('Rotor');
 /**
 *@constructor
 */
-Rotor = function(color, radius) {
+Rotor = function(color, radius, thickness) {
 	this.color = color;
 
 	this.radius = radius;
+
+	this.thickness = thickness || 2;
 
 	this.shape = null;
 	
@@ -21,7 +23,7 @@ Rotor.prototype.init = function() {
 
 	this.shape = new createjs.Shape();
 	this.shape.graphics
-		.ss(2)
+		.ss(this.thickness)
 		.s(this.color)
 		.dc(0, 0, this.radius)
 		.mt(0, 0)
