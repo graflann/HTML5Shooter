@@ -62,6 +62,10 @@ EnemyCopter.ROTOR_OFFSETS = [
 	new app.b2Vec2(66, 51)
 ];
 
+EnemyCopter.SHADOW_OFFSET = new app.b2Vec2(48, 48);
+
+EnemyCopter.SHADOW_SCALE = 0.6;
+
 /**
 *@override
 *@public

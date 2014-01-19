@@ -6,10 +6,14 @@ goog.require('GameObject');
 *@constructor
 *A shadow effect rendering below an airborne enemy to accentuate a sense of depth
 */
-Shadow = function(parentObject) {
+Shadow = function(parentObject, offset, scale) {
 	GameObject.call(this);
 
 	this.parentObject = parentObject;
+
+	this.offset = offset || new app.b2Vec2(48, 48);
+
+	this.scale = scale || 0.6;
 
 	this.container = null;
 

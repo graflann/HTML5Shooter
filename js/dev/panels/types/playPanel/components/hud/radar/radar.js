@@ -23,8 +23,6 @@ Radar = function() {
 
 	this.fieldOffset = new app.b2Vec2();
 
-	this.scale = Constants.HEIGHT / 64;
-
 	this.fieldBoarder = null;
 
 	this.echo = null;
@@ -33,6 +31,8 @@ Radar = function() {
 	
 	this.init();
 };
+
+Radar.SCALE = new app.b2Vec2(Constants.WIDTH / 64, Constants.HEIGHT / 64);
 
 /** 
 *@public
@@ -86,12 +86,12 @@ Radar.prototype.update = function(options) {
 	this.echo.rotation -= 2;
 
 	//update field container postion to that of camera
-	this.fieldContainer.x = (camera.position.x / this.scale) + this.fieldOffset.x;
-	this.fieldContainer.y = camera.position.y / this.scale + this.fieldOffset.y;
+	this.fieldContainer.x = (camera.position.x / Radar.SCALE.x) + this.fieldOffset.x;
+	this.fieldContainer.y = (camera.position.y / Radar.SCALE.y) + this.fieldOffset.y;
 
 	//update player marker
-	playerMarker.shape.x = player.position.x / this.scale;
-	playerMarker.shape.y = player.position.y / this.scale;
+	playerMarker.shape.x = player.position.x / Radar.SCALE.x;
+	playerMarker.shape.y = player.position.y / Radar.SCALE.y;
 
 	//update enemy markers
 	for(key in arrEnemySystems) {
@@ -109,8 +109,8 @@ Radar.prototype.update = function(options) {
 				}
 
 				//update the marker based on enemy position divided by scale
-				marker.shape.x = enemy.position.x / this.scale;
-				marker.shape.y = enemy.position.y / this.scale;
+				marker.shape.x = enemy.position.x / Radar.SCALE.x;
+				marker.shape.y = enemy.position.y / Radar.SCALE.y;
 			} else {
 
 				//enemy is not alive so if marker is present on container it gets removed
@@ -136,11 +136,11 @@ Radar.prototype.setField = function(w, h, player, arrEnemySystems) {
 	var arrEnemies = null;
 
 	//set field-related dimensions
-	this.fieldWidth = w / this.scale;
-	this.fieldHeight = h / this.scale;
+	this.fieldWidth = w / Radar.SCALE.x;
+	this.fieldHeight = h / Radar.SCALE.y;
 
-	this.fieldOffset.x = (Constants.WIDTH / this.scale) * 0.5;
-	this.fieldOffset.y = (Constants.HEIGHT / this.scale) * 0.5;
+	this.fieldOffset.x = (Constants.WIDTH / Radar.SCALE.x) * 0.5;
+	this.fieldOffset.y = (Constants.HEIGHT / Radar.SCALE.y) * 0.5;
 
 	//create border
 	this.fieldBoarder = new createjs.Shape();

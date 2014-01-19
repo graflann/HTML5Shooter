@@ -68,6 +68,10 @@ EnemyCarrier.ROTOR_OFFSETS = [
 	new app.b2Vec2(-95, 107)
 ];
 
+EnemyCarrier.SHADOW_OFFSET = new app.b2Vec2(128, 128);
+
+EnemyCarrier.SHADOW_SCALE = 0.75;
+
 /**
 *@override
 *@public
@@ -93,7 +97,7 @@ EnemyCarrier.prototype.init = function() {
 
 	this.setRotors();
 
-	//this.shadow = new EnemyCopterShadow(this);
+	this.shadow = new EnemyCopterShadow(this, EnemyCarrier.SHADOW_OFFSET, EnemyCarrier.SHADOW_SCALE);
 
 	this.setPhysics();
 
@@ -119,7 +123,7 @@ EnemyCarrier.prototype.update = function(options) {
 		RotationUtils.updateRotation(this, this.container, 90);
 
 		//update the shadow
-		//this.shadow.update(options);
+		this.shadow.update(options);
 
 		//updates applicable homing reticle
 		if(this.reticle) {
@@ -156,7 +160,7 @@ EnemyCarrier.prototype.kill = function() {
 		this.container.getStage().removeChild(this.container);
 
 		//remove the shadow too
-		//this.shadow.container.getStage().removeChild(this.shadow.container);
+		this.shadow.container.getStage().removeChild(this.shadow.container);
 
 		goog.events.dispatchEvent(this, this.enemyKilledEvent);
 	}

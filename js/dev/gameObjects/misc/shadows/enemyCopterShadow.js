@@ -6,8 +6,8 @@ goog.require('Shadow');
 *@constructor
 *A shadow effect rendering below an airborne enemy to accentuate a sense of depth
 */
-EnemyCopterShadow = function(parentObject) {
-	Shadow.call(this, parentObject);
+EnemyCopterShadow = function(parentObject, offset, scale) {
+	Shadow.call(this, parentObject, offset, scale);
 
 	this.arrRotors = [];
 
@@ -15,10 +15,6 @@ EnemyCopterShadow = function(parentObject) {
 };
 
 goog.inherits(EnemyCopterShadow, Shadow);
-
-EnemyCopterShadow.OFFSET = new app.b2Vec2(48, 48);
-
-EnemyCopterShadow.SCALE = 0.6;
 
 /**
 *@public
@@ -38,8 +34,8 @@ EnemyCopterShadow.prototype.update = function(options) {
 
 	Shadow.prototype.update.call(this, options);
 
-	this.position.x = this.container.x = this.parentObject.position.x + EnemyCopterShadow.OFFSET.x;
-	this.position.y = this.container.y = this.parentObject.position.y + EnemyCopterShadow.OFFSET.y;
+	this.position.x = this.container.x = this.parentObject.position.x + this.offset.x;
+	this.position.y = this.container.y = this.parentObject.position.y + this.offset.y;
 
 	this.container.rotation = this.parentObject.container.rotation;
 
@@ -89,8 +85,8 @@ EnemyCopterShadow.prototype.setRotors = function() {
 		this.container.addChild(this.arrRotors[i]);
 	}
 
-	this.container.scaleX = EnemyCopterShadow.SCALE;
-	this.container.scaleY = EnemyCopterShadow.SCALE;
+	this.container.scaleX = this.scale;
+	this.container.scaleY = this.scale;
 };
 
 goog.exportSymbol('EnemyCopterShadow', EnemyCopterShadow);
