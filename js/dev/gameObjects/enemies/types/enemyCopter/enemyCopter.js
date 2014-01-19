@@ -34,8 +34,6 @@ EnemyCopter = function(projectileSystem) {
 
 	this.fireCounter = 0;
 
-	this.ammoDistance = 60 / app.physicsScale;
-
 	this.minDistance = Math.pow(160, 2);
 
 	this.shadow = null;
@@ -54,6 +52,8 @@ EnemyCopter = function(projectileSystem) {
 goog.inherits(EnemyCopter, Enemy);
 
 EnemyCopter.FIRE_OFFSETS = [-10, 10];
+
+EnemyCopter.AMMO_DISTANCE = 60 / app.physicsScale;
 
 /**
 *@override
@@ -243,8 +243,8 @@ EnemyCopter.prototype.fire = function() {
 			firingPosSin = trigTable.sin(firingPosDeg);
 			firingPosCos = trigTable.cos(firingPosDeg); 
 			
-			vector2D.x = (this.position.x / app.physicsScale) + (firingPosCos * this.ammoDistance);
-			vector2D.y = (this.position.y / app.physicsScale) + (firingPosSin * this.ammoDistance);				
+			vector2D.x = (this.position.x / app.physicsScale) + (firingPosCos * EnemyCopter.AMMO_DISTANCE);
+			vector2D.y = (this.position.y / app.physicsScale) + (firingPosSin * EnemyCopter.AMMO_DISTANCE);				
 			projectile.body.SetPosition(vector2D);
 			
 			vector2D.x = cos * projectile.velocityMod;

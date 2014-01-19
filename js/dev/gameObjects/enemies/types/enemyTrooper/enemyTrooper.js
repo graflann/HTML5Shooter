@@ -25,6 +25,10 @@ EnemyTrooper = function(projectileSystem) {
 
 	this.health = 1;
 
+	this.fireThreshold = 0;
+
+	this.fireCounter = 0;
+
 	this.intendedRotation = 0;
 
 	this.rotationRate = 5;
@@ -43,6 +47,10 @@ EnemyTrooper = function(projectileSystem) {
 goog.inherits(EnemyTrooper, Enemy);
 
 EnemyTrooper.HOMING_RATE = 15;
+
+EnemyTrooper.AMMO_DISTANCE = 16 / app.physicsScale;
+
+EnemyTrooper.FIRE_OFFSET = -20;
 
 /**
 *@override
@@ -148,6 +156,9 @@ EnemyTrooper.prototype.updateRoaming = function(options) {
 */
 EnemyTrooper.prototype.enterSniping = function(options) {
 	this.walkAnimUtil.stop();
+
+	this.fireCounter = 0;
+	this.fireThreshold = 30;
 };
 
 /**
@@ -161,7 +172,6 @@ EnemyTrooper.prototype.updateSniping = function(options) {
 
 	//only calculates homing to target on selected frames
 	if(target && createjs.Ticker.getTicks() % EnemyTrooper.HOMING_RATE === 0) {
-
 		this.degToTarget = this.baseRotationDeg = Math.radToDeg(
 			Math.atan2(
 				target.position.y - this.position.y, 
@@ -170,9 +180,9 @@ EnemyTrooper.prototype.updateSniping = function(options) {
 		);
 	}
 
-	//TODO: check some firing
-
 	RotationUtils.updateRotation(this, this.container, 90);
+
+	this.updateFiring();
 };
 
 /**
@@ -181,6 +191,9 @@ EnemyTrooper.prototype.updateSniping = function(options) {
 EnemyTrooper.prototype.enterStrafing = function(options) {
 	this.walkAnimUtil.play();
 	this.walkAnimUtil.loop(true);
+
+	this.fireCounter = 0;
+	this.fireThreshold = 60;
 };
 
 /**
@@ -237,6 +250,8 @@ EnemyTrooper.prototype.updateStrafing = function(options) {
 	RotationUtils.updateRotation(this, this.container, 90);
 
 	this.walkAnimUtil.update();
+
+	this.updateFiring();
 };
 
 /**
@@ -248,11 +263,59 @@ EnemyTrooper.prototype.clear = function() {
 };
 
 /**
-*@override
+ *Face player and fires
 *@public
 */
+EnemyTrooper.prototype.updateFiring = function(options) {
+	//check fire
+	if(this.fireCounter++ > this.fireThreshold) {
+		this.fire();
+		this.fireCounter = 0;
+	}
+};
+
+/**
+*@private
+*/
 EnemyTrooper.prototype.fire = function() {
-	
+	var deg,
+		sin,
+		cos,
+		firingPosDeg,
+		firingPosSin,
+		firingPosCos,
+		vector2D = new app.b2Vec2(),
+		trigTable = app.trigTable,
+		stage = app.layers.getStage(LayerTypes.PROJECTILE),
+		projectile = null
+
+	sin = trigTable.sin(this.baseRotationDeg);
+	cos = trigTable.cos(this.baseRotationDeg);
+
+	//acquire values to determine firing position
+	firingPosDeg = this.baseRotationDeg + EnemyTrooper.FIRE_OFFSET;
+	firingPosSin = trigTable.sin(firingPosDeg);
+	firingPosCos = trigTable.cos(firingPosDeg);
+
+	projectile = this.projectileSystem.getProjectile();
+
+	if(projectile) {			
+		//zero out existing linear velocity
+		projectile.body.SetLinearVelocity(app.vecZero);
+		
+		vector2D.x = (this.position.x / app.physicsScale) + (firingPosCos * EnemyTrooper.AMMO_DISTANCE);
+		vector2D.y = (this.position.y / app.physicsScale) + (firingPosSin * EnemyTrooper.AMMO_DISTANCE);				
+		projectile.body.SetPosition(vector2D);
+		
+		vector2D.x = cos * projectile.velocityMod;
+		vector2D.y = sin * projectile.velocityMod;		
+		projectile.body.ApplyForce(vector2D, projectile.body.GetWorldCenter());
+
+		projectile.setIsAlive(true);
+		
+		projectile.shape.rotation = this.container.rotation;
+		stage.addChild(projectile.shape);
+	}
 };
 
 /**
