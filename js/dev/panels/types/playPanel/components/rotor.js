@@ -26,7 +26,7 @@ Rotor.prototype.init = function() {
 	this.container = new createjs.Container();
 
 	this.setPropellers();
-	this.setOuterGuard();
+	this.setPropellerGuard();
 };
 
 /**

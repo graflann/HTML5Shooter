@@ -160,6 +160,10 @@ EnemyCopter.prototype.kill = function() {
 	}
 };
 
+EnemyCopter.prototype.enterSeeking = function(options) {
+
+};
+
 /**
 *@public
 */

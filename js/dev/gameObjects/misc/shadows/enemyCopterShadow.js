@@ -76,7 +76,7 @@ EnemyCopterShadow.prototype.setRotors = function() {
 		diameter = radius * 2;
 
 	for(var i = 0; i < this.parentObject.arrRotors.length; i++) {
-		this.arrRotors.push(this.parentObject.arrRotors[i].shape.clone(false));
+		this.arrRotors.push(this.parentObject.arrRotors[i].container.clone(true));
 		this.arrRotors[i].filters = Shadow.COLOR_FILTERS;
 		this.arrRotors[i].cache(-radius, -radius, diameter, diameter);
 		this.arrRotors[i].x = this.parentObject.arrRotors[i].container.x;

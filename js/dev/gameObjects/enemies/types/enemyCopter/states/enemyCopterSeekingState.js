@@ -18,7 +18,7 @@ EnemyCopterSeekingState.KEY = "seeking";
 *@public
 */
 EnemyCopterSeekingState.prototype.enter = function(options) {
-
+	this.enemy.enterSeeking(options);
 };
 
 /**

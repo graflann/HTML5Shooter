@@ -2,6 +2,7 @@ goog.provide('EnemyCarrier');
 
 goog.require('Enemy');
 goog.require('Rotor');
+goog.require('HatchDoor');
 goog.require('EnemyCopterShadow');
 goog.require('EnemyCopterFiringState');
 goog.require('EnemyCopterSeekingState');
@@ -44,11 +45,14 @@ EnemyCarrier = function(projectileSystem) {
 
 	this.baseRotationDeg = 0;
 
+	this.arrDoors = [];
+
 	this.init();
 };
 
 goog.inherits(EnemyCarrier, Enemy);
 
+//CONSTANTS///////////////////////////////////////
 EnemyCarrier.HOMING_RATE = 5;
 
 EnemyCarrier.FIRE_OFFSETS = [-10, 10];
@@ -71,6 +75,19 @@ EnemyCarrier.ROTOR_OFFSETS = [
 EnemyCarrier.SHADOW_OFFSET = new app.b2Vec2(128, 128);
 
 EnemyCarrier.SHADOW_SCALE = 0.75;
+
+EnemyCarrier.DOOR_DIMENSIONS = new app.b2Vec2(91, 109);
+
+EnemyCarrier.DOOR_OFFSETS = [
+	new app.b2Vec2(24, -54),
+	new app.b2Vec2(-115, -54)
+];
+
+EnemyCarrier.DOOR_ALPHA = 0.75;
+
+EnemyCarrier.LEFT_DOOR 	= 0;
+EnemyCarrier.RIGHT_DOOR = 1;
+///////////////////////////////////////////////////
 
 /**
 *@override
@@ -96,6 +113,8 @@ EnemyCarrier.prototype.init = function() {
 	this.shape.gotoAndStop(0);
 
 	this.setRotors();
+
+	this.setDoors();
 
 	this.shadow = new EnemyCopterShadow(this, EnemyCarrier.SHADOW_OFFSET, EnemyCarrier.SHADOW_SCALE);
 
@@ -164,6 +183,15 @@ EnemyCarrier.prototype.kill = function() {
 
 		goog.events.dispatchEvent(this, this.enemyKilledEvent);
 	}
+};
+
+EnemyCarrier.prototype.enterSeeking = function(options) {
+	self = this;
+
+	setTimeout(function() {
+		self.openDoor(EnemyCarrier.LEFT_DOOR);
+		self.openDoor(EnemyCarrier.RIGHT_DOOR);
+	}, 5000);
 };
 
 /**
@@ -281,6 +309,20 @@ EnemyCarrier.prototype.fire = function() {
 	}
 };
 
+EnemyCarrier.prototype.openDoor = function(index) {
+	var self  = this;
+
+	this.arrDoors[index].open();
+
+	setTimeout(function() {
+		self.closeDoor(index);
+	}, 2000);
+};
+
+EnemyCarrier.prototype.closeDoor = function(index) {
+	this.arrDoors[index].close();
+};
+
 /**
 *@private
 */
@@ -314,6 +356,46 @@ EnemyCarrier.prototype.setRotors = function() {
 
 		this.arrRotors.push(rotor);
 	}
+};
+
+EnemyCarrier.prototype.setDoors = function() {
+	var door,
+		offset;
+
+	//LEFT
+	door = new HatchDoor(
+		EnemyCarrier.DOOR_DIMENSIONS.x,
+		EnemyCarrier.DOOR_DIMENSIONS.y,
+		[ Constants.YELLOW, Constants.DARK_RED ], //invert the left door gradient to get them to line up when adjusted
+		EnemyCarrier.DOOR_ALPHA
+	);
+
+	offset = EnemyCarrier.DOOR_OFFSETS[EnemyCarrier.RIGHT_DOOR];
+
+	//the doors appear to slide in opposite directions
+	//so the right door is inverted via adjustments to the position and rotation
+	door.shape.x = offset.x + door.width;
+	door.shape.y = offset.y + door.height;
+	door.shape.rotation = 180;
+
+	this.container.addChild(door.shape);
+	this.arrDoors.push(door);
+
+	//RIGHT
+	door = new HatchDoor(
+		EnemyCarrier.DOOR_DIMENSIONS.x,
+		EnemyCarrier.DOOR_DIMENSIONS.y,
+		[ Constants.YELLOW, Constants.DARK_RED ], //default gradient
+		EnemyCarrier.DOOR_ALPHA
+	);
+
+	offset = EnemyCarrier.DOOR_OFFSETS[EnemyCarrier.LEFT_DOOR];
+
+	door.shape.x = offset.x;
+	door.shape.y = offset.y;
+
+	this.container.addChild(door.shape);
+	this.arrDoors.push(door);
 };
 
 EnemyCarrier.prototype.setPhysics = function() {
