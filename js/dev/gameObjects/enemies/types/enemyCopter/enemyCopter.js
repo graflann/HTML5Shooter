@@ -91,7 +91,7 @@ EnemyCopter.prototype.init = function() {
 
 	this.setRotors();
 
-	this.shadow = new EnemyCopterShadow(this);
+	this.shadow = new EnemyCopterShadow(this, EnemyCopter.SHADOW_OFFSET, EnemyCopter.SHADOW_SCALE);
 
 	this.setPhysics();
 
@@ -296,10 +296,10 @@ EnemyCopter.prototype.setRotors = function() {
 		rotor = new Rotor(Constants.YELLOW, EnemyCopter.ROTOR_RADIUS);
 		offset = EnemyCopter.ROTOR_OFFSETS[i];
 
-		rotor.shape.x = this.shape.regX - offset.x;
-		rotor.shape.y = this.shape.regY - offset.y;
+		rotor.container.x = this.shape.regX - offset.x;
+		rotor.container.y = this.shape.regY - offset.y;
 
-		this.container.addChild(rotor.shape);
+		this.container.addChild(rotor.container);
 
 		this.arrRotors.push(rotor);
 	}

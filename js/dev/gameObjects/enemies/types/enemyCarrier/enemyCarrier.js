@@ -307,10 +307,10 @@ EnemyCarrier.prototype.setRotors = function() {
 
 		offset = EnemyCarrier.ROTOR_OFFSETS[i];
 
-		rotor.shape.x = offset.x;
-		rotor.shape.y = offset.y;
+		rotor.container.x = offset.x;
+		rotor.container.y = offset.y;
 
-		this.container.addChild(rotor.shape);
+		this.container.addChild(rotor.container);
 
 		this.arrRotors.push(rotor);
 	}

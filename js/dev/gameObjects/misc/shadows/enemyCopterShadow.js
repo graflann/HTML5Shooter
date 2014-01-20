@@ -40,7 +40,7 @@ EnemyCopterShadow.prototype.update = function(options) {
 	this.container.rotation = this.parentObject.container.rotation;
 
 	while(++i < length) {
-	 	this.arrRotors[i].rotation = this.parentObject.arrRotors[i].shape.rotation;
+	 	this.arrRotors[i].rotation = this.parentObject.arrRotors[i].container.rotation;
 	}
 };
 
@@ -79,8 +79,8 @@ EnemyCopterShadow.prototype.setRotors = function() {
 		this.arrRotors.push(this.parentObject.arrRotors[i].shape.clone(false));
 		this.arrRotors[i].filters = Shadow.COLOR_FILTERS;
 		this.arrRotors[i].cache(-radius, -radius, diameter, diameter);
-		this.arrRotors[i].x = this.parentObject.arrRotors[i].shape.x;
-		this.arrRotors[i].y = this.parentObject.arrRotors[i].shape.y;
+		this.arrRotors[i].x = this.parentObject.arrRotors[i].container.x;
+		this.arrRotors[i].y = this.parentObject.arrRotors[i].container.y;
 
 		this.container.addChild(this.arrRotors[i]);
 	}
