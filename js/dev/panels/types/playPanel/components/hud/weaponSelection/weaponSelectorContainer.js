@@ -97,5 +97,5 @@ WeaponSelectorContainer.prototype.setSelection = function(index) {
 
 	//fades the selector in
 	weaponSelector.container.alpha = 0;
-	createjs.Tween.get(weaponSelector.container).to({alpha: 1}, 350);
+	createjs.Tween.get(weaponSelector.container).to({ alpha: 1 }, 350);
 };

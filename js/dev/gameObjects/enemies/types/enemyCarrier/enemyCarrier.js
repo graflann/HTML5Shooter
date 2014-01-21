@@ -11,13 +11,18 @@ goog.require('RotationUtils');
 /**
 *@constructor
 */
-EnemyCarrier = function(projectileSystem) {
+EnemyCarrier = function(projectileSystem, enemySystem) {
 	Enemy.call(this);
 
 	/**
 	 * @type {ProjectileSystem}
 	 */
 	this.projectileSystem = projectileSystem;
+
+	/**
+	*Requires a reference to an enemy system to spawn EnemyCopter instances
+	**/
+	this.enemySystem = enemySystem;
 
 	this.categoryBits = CollisionCategories.AIR_ENEMY;
 
@@ -46,6 +51,8 @@ EnemyCarrier = function(projectileSystem) {
 	this.baseRotationDeg = 0;
 
 	this.arrDoors = [];
+
+	this.arrPlatforms = [];
 
 	this.init();
 };
@@ -113,6 +120,8 @@ EnemyCarrier.prototype.init = function() {
 	this.shape.gotoAndStop(0);
 
 	this.setRotors();
+
+	this.setPlatforms();
 
 	this.setDoors();
 
@@ -415,6 +424,10 @@ EnemyCarrier.prototype.setPhysics = function() {
 	this.body.CreateFixture(fixDef);
 	this.body.SetUserData(this);
 	this.body.SetAwake(true);
+};
+
+EnemyCarrier.prototype.setPlatforms = function() {
+	
 };
 
 EnemyCarrier.prototype.setStateMachine = function() {
