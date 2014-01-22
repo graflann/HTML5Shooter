@@ -59,18 +59,26 @@ HatchDoor.prototype.kill = function() {
 /**
 *@public
 */
-HatchDoor.prototype.open = function() {
+HatchDoor.prototype.open = function(callback) {
 	if(this.shape.scaleX !== 0) {
-		createjs.Tween.get(this.shape).to({ scaleX: 0 }, HatchDoor.SLIDE_RATE);
+		if(callback) {
+			createjs.Tween.get(this.shape).to({ scaleX: 0 }, HatchDoor.SLIDE_RATE).call(callback);
+		} else {
+			createjs.Tween.get(this.shape).to({ scaleX: 0 }, HatchDoor.SLIDE_RATE);
+		}
 	}
 };
 
 /**
 *@public
 */
-HatchDoor.prototype.close = function() {
+HatchDoor.prototype.close = function(callback) {
 	if(this.shape.scaleX !== 1) {
-		createjs.Tween.get(this.shape).to({ scaleX: 1 }, HatchDoor.SLIDE_RATE);
+		if(callback) {
+			createjs.Tween.get(this.shape).to({ scaleX: 1 }, HatchDoor.SLIDE_RATE).call(callback);
+		} else {
+			createjs.Tween.get(this.shape).to({ scaleX: 1 }, HatchDoor.SLIDE_RATE);
+		}
 	}
 };
 

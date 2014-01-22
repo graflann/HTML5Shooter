@@ -3,6 +3,7 @@ goog.provide('EnemyCarrier');
 goog.require('Enemy');
 goog.require('Rotor');
 goog.require('HatchDoor');
+goog.require('Platform');
 goog.require('EnemyCopterShadow');
 goog.require('EnemyCopterFiringState');
 goog.require('EnemyCopterSeekingState');
@@ -52,6 +53,8 @@ EnemyCarrier = function(projectileSystem, enemySystem) {
 
 	this.arrDoors = [];
 
+	this.currentDoorIndex = 0;
+
 	this.arrPlatforms = [];
 
 	this.init();
@@ -92,8 +95,10 @@ EnemyCarrier.DOOR_OFFSETS = [
 
 EnemyCarrier.DOOR_ALPHA = 0.75;
 
+//Door / platform indices
 EnemyCarrier.LEFT_DOOR 	= 0;
 EnemyCarrier.RIGHT_DOOR = 1;
+
 ///////////////////////////////////////////////////
 
 /**
@@ -121,9 +126,9 @@ EnemyCarrier.prototype.init = function() {
 
 	this.setRotors();
 
-	this.setPlatforms();
-
 	this.setDoors();
+
+	this.setPlatforms();
 
 	this.shadow = new EnemyCopterShadow(this, EnemyCarrier.SHADOW_OFFSET, EnemyCarrier.SHADOW_SCALE);
 
@@ -195,11 +200,10 @@ EnemyCarrier.prototype.kill = function() {
 };
 
 EnemyCarrier.prototype.enterSeeking = function(options) {
-	self = this;
+	var self = this;
 
 	setTimeout(function() {
-		self.openDoor(EnemyCarrier.LEFT_DOOR);
-		self.openDoor(EnemyCarrier.RIGHT_DOOR);
+		self.spawnEnemy();
 	}, 5000);
 };
 
@@ -318,18 +322,76 @@ EnemyCarrier.prototype.fire = function() {
 	}
 };
 
-EnemyCarrier.prototype.openDoor = function(index) {
-	var self  = this;
-
-	this.arrDoors[index].open();
-
-	setTimeout(function() {
-		self.closeDoor(index);
-	}, 2000);
+EnemyCarrier.prototype.openDoor = function(index, callback) {
+	this.arrDoors[index].open(callback);
 };
 
-EnemyCarrier.prototype.closeDoor = function(index) {
-	this.arrDoors[index].close();
+EnemyCarrier.prototype.closeDoor = function(index, callback) {
+	this.arrDoors[index].close(callback);
+};
+
+/**
+*Sets forth a sequence of animations / activity to spawn an airborne enemy from a hatch door / platform
+*/
+EnemyCarrier.prototype.spawnEnemy = function() {
+	var self = this,
+		enemy = null,
+		platform = this.arrPlatforms[this.currentDoorIndex],
+		spawnOptions = { intervalQuantity: 1 };
+
+	enemy = this.enemySystem.generate(spawnOptions)[0];
+
+	if(enemy) {
+		//grabs the next available enemy in the pool and adds it to the platform
+		enemy.setIsAlive(false);
+		enemy.container.rotation = 0;
+		platform.container.addChild(enemy.container);
+
+		//on opening an enemy is added to the air layer and becomes live
+		//after the door has been opened for a set time,
+		//the door closes and the platform moves down to its default position
+		var onDoorOpened = function() {
+			var trigTable = app.trigTable,
+				deg = 0,
+				sin = trigTable.sin(deg),
+				cos = trigTable.cos(deg),
+				spawnDistance = app.vecZero.Distance(platform.position);
+
+			(self.currentDoorIndex == EnemyCarrier.LEFT_DOOR) ? deg = self.baseRotationDeg - 90 : deg = self.baseRotationDeg + 90;
+			sin = trigTable.sin(deg);
+			cos = trigTable.cos(deg);
+
+			platform.container.removeChild(enemy.container);
+			
+			app.layers.getStage(LayerTypes.AIR).addChild(enemy.container);
+			app.layers.getStage(LayerTypes.SHADOW).addChild(enemy.shadow.container);
+
+			enemy.container.rotation = self.container.rotation;
+			enemy.container.x = self.container.x + (cos * spawnDistance);
+			enemy.container.y = self.container.y + (sin * spawnDistance);
+			enemy.setIsAlive(true);
+
+			setTimeout(function() {
+				self.closeDoor(self.currentDoorIndex);
+
+				self.arrPlatforms[self.currentDoorIndex].moveDown();
+
+				//update current door index; alternates between left and right
+				self.currentDoorIndex++;
+
+				if(self.currentDoorIndex > EnemyCarrier.RIGHT_DOOR) {
+					self.currentDoorIndex = 0;
+				}
+			}, 2000);
+		};
+
+		//upon the platform moving up into place the door opens
+		var onMovedUp = function() {
+			self.openDoor(self.currentDoorIndex, onDoorOpened);
+		};
+
+		this.arrPlatforms[this.currentDoorIndex].moveUp(onMovedUp);
+	}
 };
 
 /**
@@ -369,20 +431,21 @@ EnemyCarrier.prototype.setRotors = function() {
 
 EnemyCarrier.prototype.setDoors = function() {
 	var door,
-		offset;
+		offset,
+		arrColors = [Constants.YELLOW, Constants.DARK_RED];
 
 	//LEFT
 	door = new HatchDoor(
 		EnemyCarrier.DOOR_DIMENSIONS.x,
 		EnemyCarrier.DOOR_DIMENSIONS.y,
-		[ Constants.YELLOW, Constants.DARK_RED ], //invert the left door gradient to get them to line up when adjusted
+		arrColors,
 		EnemyCarrier.DOOR_ALPHA
 	);
 
 	offset = EnemyCarrier.DOOR_OFFSETS[EnemyCarrier.RIGHT_DOOR];
 
 	//the doors appear to slide in opposite directions
-	//so the right door is inverted via adjustments to the position and rotation
+	//so the left door is inverted via adjustments to the position and rotation
 	door.shape.x = offset.x + door.width;
 	door.shape.y = offset.y + door.height;
 	door.shape.rotation = 180;
@@ -394,7 +457,7 @@ EnemyCarrier.prototype.setDoors = function() {
 	door = new HatchDoor(
 		EnemyCarrier.DOOR_DIMENSIONS.x,
 		EnemyCarrier.DOOR_DIMENSIONS.y,
-		[ Constants.YELLOW, Constants.DARK_RED ], //default gradient
+		arrColors,
 		EnemyCarrier.DOOR_ALPHA
 	);
 
@@ -405,6 +468,37 @@ EnemyCarrier.prototype.setDoors = function() {
 
 	this.container.addChild(door.shape);
 	this.arrDoors.push(door);
+};
+
+EnemyCarrier.prototype.setPlatforms = function() {
+	var platform,
+		offset,
+		door = null,
+		offset = new app.b2Vec2();
+
+	for(var i = 0; i < EnemyCarrier.DOOR_OFFSETS.length; i++) {
+		door = this.arrDoors[i];
+
+		offset.x = Math.floor(door.width * 0.5);
+		offset.y = Math.floor(door.height * 0.5);
+
+		platform = new Platform(door.width, door.height, Constants.DARK_RED);
+
+		if(i == EnemyCarrier.RIGHT_DOOR) {
+			platform.container.x = door.shape.x + offset.x;
+			platform.container.y = door.shape.y + offset.y;
+		} else {
+			platform.container.x = door.shape.x - offset.x;
+			platform.container.y = door.shape.y - offset.y;
+		}
+
+		this.container.addChildAt(platform.container, this.container.getChildIndex(door.shape));
+		this.arrPlatforms.push(platform);
+
+		platform.setScale(Platform.MIN_SCALE);
+		platform.position.x = platform.container.x;
+		platform.position.y = platform.container.y;
+	}
 };
 
 EnemyCarrier.prototype.setPhysics = function() {
@@ -424,10 +518,6 @@ EnemyCarrier.prototype.setPhysics = function() {
 	this.body.CreateFixture(fixDef);
 	this.body.SetUserData(this);
 	this.body.SetAwake(true);
-};
-
-EnemyCarrier.prototype.setPlatforms = function() {
-	
 };
 
 EnemyCarrier.prototype.setStateMachine = function() {

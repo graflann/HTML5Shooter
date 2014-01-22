@@ -12,12 +12,14 @@ goog.require('CollisionCategories');
 *@constructor
 *Ammo for Turret instaces
 */
-EnemySystem = function(type, max, projectileSystem) {
+EnemySystem = function(type, max, projectileSystem, enemySystem) {
 	this.type = type;
 
 	this.max = max;
 
 	this.projectileSystem = projectileSystem;
+
+	this.enemySystem = enemySystem || null;
 
 	this.arrEnemies = new Array(this.max);
 
@@ -38,7 +40,12 @@ EnemySystem.prototype.init = function() {
 		i = -1;
 
 	while(++i < this.max) {
-		this.arrEnemies[i] = new EnemyClass(this.projectileSystem);
+
+		if(this.enemySystem) {
+			this.arrEnemies[i] = new EnemyClass(this.projectileSystem, this.enemySystem);
+		} else {
+			this.arrEnemies[i] = new EnemyClass(this.projectileSystem);
+		}
 
 		goog.events.listen(
 			this.arrEnemies[i], 
@@ -73,6 +80,7 @@ EnemySystem.prototype.clear = function() {
 EnemySystem.prototype.generate = function(options) {
 	var i = -1,
 		enemy,
+		arrEnemies = [],
 		options = options || {};
 		
 	options.intervalQuantity = options.intervalQuantity || 1;
@@ -122,8 +130,12 @@ EnemySystem.prototype.generate = function(options) {
 			}
 
 			enemy.setIsAlive(true);
+
+			arrEnemies.push(enemy);
 		}
 	}
+
+	return arrEnemies;
 };
 
 EnemySystem.prototype.generateByTime = function(options) {

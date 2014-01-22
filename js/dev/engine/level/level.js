@@ -578,11 +578,22 @@ Level.prototype.setEnemies = function() {
 	for(var key in this.options.enemies) {
 		rawEnemy = this.options.enemies[key];
 
-		this.arrEnemySystems[key] = new EnemySystem(
-			key, 
-			rawEnemy.max, 
-			this.arrEnemyProjectileSystems[rawEnemy.projectileSystem] 
-		);
+		//EnemyCarrier instances spawn EnemyCopter instances
+		//this needs refactoring to be more elegant at some point...
+		if(key === "enemyCarrier") {
+			this.arrEnemySystems[key] = new EnemySystem(
+				key, 
+				rawEnemy.max, 
+				this.arrEnemyProjectileSystems[rawEnemy.projectileSystem],
+				this.arrEnemySystems["enemyCopter"]
+			);
+		} else {
+			this.arrEnemySystems[key] = new EnemySystem(
+				key, 
+				rawEnemy.max, 
+				this.arrEnemyProjectileSystems[rawEnemy.projectileSystem] 
+			);
+		}
 	}
 };
 
