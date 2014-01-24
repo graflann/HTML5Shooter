@@ -3,9 +3,9 @@ goog.provide('EnemyTank');
 goog.require('Enemy');
 goog.require('Navigation');
 goog.require('EnemyDroneTurret');
-goog.require('EnemyTankRoamingState');
-goog.require('EnemyTankSnipingState');
-goog.require('EnemyTankStrafingState');
+goog.require('EnemyRoamingState');
+goog.require('EnemySnipingState');
+goog.require('EnemyStrafingState');
 goog.require('RotationUtils');
 
 /**
@@ -249,24 +249,24 @@ EnemyTank.prototype.setStateMachine = function() {
 	this.stateMachine = new StateMachine();
 
 	this.stateMachine.addState(
-		EnemyTankRoamingState.KEY,
-		new EnemyTankRoamingState(this),
-		[ EnemyTankSnipingState.KEY, EnemyTankStrafingState.KEY ]
+		EnemyRoamingState.KEY,
+		new EnemyRoamingState(this),
+		[ EnemySnipingState.KEY, EnemyStrafingState.KEY ]
 	);
 
 	this.stateMachine.addState(
-		EnemyTankSnipingState.KEY,
-		new EnemyTankSnipingState(this),
-		[ EnemyTankRoamingState.KEY, EnemyTankStrafingState.KEY ]
+		EnemySnipingState.KEY,
+		new EnemySnipingState(this),
+		[ EnemyRoamingState.KEY, EnemyStrafingState.KEY ]
 	);
 
 	this.stateMachine.addState(
-		EnemyTankStrafingState.KEY,
-		new EnemyTankStrafingState(this),
-		[ EnemyTankRoamingState.KEY, EnemyTankSnipingState.KEY ]
+		EnemyStrafingState.KEY,
+		new EnemyStrafingState(this),
+		[ EnemyRoamingState.KEY, EnemySnipingState.KEY ]
 	);
 	
-	this.stateMachine.setState(EnemyTankRoamingState.KEY);
+	this.stateMachine.setState(EnemyRoamingState.KEY);
 };
 
 goog.exportSymbol('EnemyTank', EnemyTank);

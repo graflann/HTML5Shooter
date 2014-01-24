@@ -3,6 +3,7 @@ goog.provide('Hud');
 goog.require('Radar');
 goog.require('WeaponSelectorContainer');
 goog.require('EnergyMeter');
+goog.require('OverdriveMeter');
 
 /**
 *@constructor
@@ -19,6 +20,8 @@ Hud = function() {
 	this.weaponSelectorContainer = null;
 
 	this.energyMeter = null;
+
+	this.overdriveMeter = null;
 
 	this.score = null;
 
@@ -37,16 +40,12 @@ Hud.prototype.init = function() {
 	this.radar = new Radar();
 	this.weaponSelectorContainer = new WeaponSelectorContainer();
 
-	this.energyMeter = new EnergyMeter(
-		this.weaponSelectorContainer.arrWeaponSelectors[0].width * 4, 
-		Constants.UNIT * 0.25
-	);
-	this.energyMeter.container.x = this.weaponSelectorContainer.arrWeaponSelectors[0].container.x;
-	this.energyMeter.container.y = this.weaponSelectorContainer.container.y + 4;
+	this.setMeters();
 
 	this.container.addChild(this.radar.container);
 	this.container.addChild(this.weaponSelectorContainer.container);
 	this.container.addChild(this.energyMeter.container);
+	this.container.addChild(this.overdriveMeter.container);
 };
 
 /**
@@ -67,6 +66,24 @@ Hud.prototype.clear = function() {
 
 	this.weaponSelectorContainer.clear();
 	this.weaponSelectorContainer = null;
+};
+
+Hud.prototype.setMeters = function() {
+	//Energy meter
+	this.energyMeter = new EnergyMeter(
+		this.weaponSelectorContainer.arrWeaponSelectors[0].width * 4, 
+		Constants.UNIT * 0.25
+	);
+	this.energyMeter.container.x = this.weaponSelectorContainer.arrWeaponSelectors[0].container.x;
+	this.energyMeter.container.y = this.weaponSelectorContainer.container.y + 2;
+
+	//Overdrive meter
+	this.overdriveMeter = new OverdriveMeter(
+		this.energyMeter.width, 
+		Constants.UNIT * 0.25
+	);
+	this.overdriveMeter.container.x = this.energyMeter.container.x;
+	this.overdriveMeter.container.y = this.energyMeter.container.y + this.energyMeter.height + 8;
 };
 
 Hud.prototype.setRadar = function(w, h, player, arrEnemySystems) {

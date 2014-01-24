@@ -107,7 +107,8 @@ Item.prototype.create = function(options) {
 
 	//create an off-center target to produce some spin
 	forceTarget = this.body.GetWorldCenter();
-	forceTarget.x += 0.5;
+	forceTarget.x += 0.75;
+	forceTarget.y += 0.75;
 
 	this.body.ApplyForce(this.velocity, forceTarget);
 	

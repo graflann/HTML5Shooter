@@ -40,12 +40,12 @@ WeaponSelectorContainer.prototype.init = function() {
 	this.container = new createjs.Container();
 
 	this.width = Constants.WIDTH;
-	this.height = Constants.UNIT + (Constants.UNIT * 0.5);
+	this.height = Constants.UNIT * 2;;
 
 	this.background = new createjs.Shape();
 	this.background.graphics
 		.ss(1)
-		.s(Constants.LIGHT_BLUE)
+		.s(Constants.BLUE)
 		.f(Constants.BLACK)
 		.dr(0, 0, this.width, this.height);
 
@@ -57,7 +57,7 @@ WeaponSelectorContainer.prototype.init = function() {
 		weaponSelector = new WeaponSelector(WeaponTypes[key]);
 
 		weaponSelector.container.x = (Constants.WIDTH * 0.1) + i * weaponSelector.width;
-		weaponSelector.container.y = (Constants.UNIT * 0.5) + 6;
+		weaponSelector.container.y = Constants.UNIT + 6;
 
 		this.arrWeaponSelectors[i] = weaponSelector;
 

@@ -5,8 +5,8 @@ goog.require('Rotor');
 goog.require('HatchDoor');
 goog.require('Platform');
 goog.require('EnemyCopterShadow');
-goog.require('EnemyCopterFiringState');
-goog.require('EnemyCopterSeekingState');
+goog.require('EnemySnipingState');
+goog.require('EnemySeekingState');
 goog.require('RotationUtils');
 
 /**
@@ -199,6 +199,17 @@ EnemyCarrier.prototype.kill = function() {
 	}
 };
 
+/**
+*@public
+*/
+EnemyCarrier.prototype.setIsAlive = function(value) {
+	Enemy.prototype.setIsAlive.call(this, value);
+
+	if(this.isAlive) {
+		this.stateMachine.setState(EnemySeekingState.KEY);
+	}
+};
+
 EnemyCarrier.prototype.enterSeeking = function(options) {
 	var self = this;
 
@@ -233,7 +244,7 @@ EnemyCarrier.prototype.updateSeeking = function(options) {
 		distance = this.position.DistanceSqrd(target.position);
 
 		if(distance < this.minDistance) {
-			this.stateMachine.setState(EnemyCopterFiringState.KEY);
+			this.stateMachine.setState(EnemySnipingState.KEY);
 		}
 	}
 
@@ -524,18 +535,16 @@ EnemyCarrier.prototype.setStateMachine = function() {
 	this.stateMachine = new StateMachine();
 
 	this.stateMachine.addState(
-		EnemyCopterSeekingState.KEY,
-		new EnemyCopterSeekingState(this),
-		[ EnemyCopterFiringState.KEY ]
+		EnemySeekingState.KEY,
+		new EnemySeekingState(this),
+		[ EnemySnipingState.KEY ]
 	);
 
 	this.stateMachine.addState(
-		EnemyCopterFiringState.KEY,
-		new EnemyCopterFiringState(this),
-		[ EnemyCopterSeekingState.KEY ]
+		EnemySnipingState.KEY,
+		new EnemySnipingState(this),
+		[ EnemySeekingState.KEY ]
 	);
-	
-	this.stateMachine.setState(EnemyCopterSeekingState.KEY);
 };
 
 /**

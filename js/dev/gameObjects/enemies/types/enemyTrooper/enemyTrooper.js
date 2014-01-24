@@ -2,9 +2,9 @@ goog.provide('EnemyTrooper');
 
 goog.require('Enemy');
 goog.require('Navigation');
-goog.require('EnemyTrooperRoamingState');
-goog.require('EnemyTrooperSnipingState');
-goog.require('EnemyTrooperStrafingState');
+goog.require('EnemyRoamingState');
+goog.require('EnemySnipingState');
+goog.require('EnemyStrafingState');
 goog.require('RotationUtils');
 
 EnemyTrooper = function(projectileSystem) {
@@ -286,7 +286,7 @@ EnemyTrooper.prototype.fire = function() {
 		firingPosCos,
 		vector2D = new app.b2Vec2(),
 		trigTable = app.trigTable,
-		stage = app.layers.getStage(LayerTypes.PROJECTILE),
+		stage = this.container.getStage(),
 		projectile = null
 
 	sin = trigTable.sin(this.baseRotationDeg);
@@ -354,24 +354,24 @@ EnemyTrooper.prototype.setStateMachine = function() {
 	this.stateMachine = new StateMachine();
 
 	this.stateMachine.addState(
-		EnemyTrooperRoamingState.KEY,
-		new EnemyTrooperRoamingState(this),
-		[ EnemyTrooperSnipingState.KEY, EnemyTrooperStrafingState.KEY ]
+		EnemyRoamingState.KEY,
+		new EnemyRoamingState(this),
+		[ EnemySnipingState.KEY, EnemyStrafingState.KEY ]
 	);
 
 	this.stateMachine.addState(
-		EnemyTrooperSnipingState.KEY,
-		new EnemyTrooperSnipingState(this),
-		[ EnemyTrooperRoamingState.KEY, EnemyTrooperStrafingState.KEY ]
+		EnemySnipingState.KEY,
+		new EnemySnipingState(this),
+		[ EnemyRoamingState.KEY, EnemyStrafingState.KEY ]
 	);
 
 	this.stateMachine.addState(
-		EnemyTrooperStrafingState.KEY,
-		new EnemyTrooperStrafingState(this),
-		[ EnemyTrooperRoamingState.KEY, EnemyTrooperSnipingState.KEY ]
+		EnemyStrafingState.KEY,
+		new EnemyStrafingState(this),
+		[ EnemyRoamingState.KEY, EnemySnipingState.KEY ]
 	);
 	
-	this.stateMachine.setState(EnemyTrooperRoamingState.KEY);
+	this.stateMachine.setState(EnemyRoamingState.KEY);
 };
 
 goog.exportSymbol('EnemyTrooper', EnemyTrooper);

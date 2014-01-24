@@ -414,10 +414,21 @@ PlayPanel.prototype.setParticles = function() {
 *@private
 */
 PlayPanel.prototype.setItems = function() {
-	this.arrItemSystems[ItemTypes.ENERGY] = new ItemSystem(
-		ItemTypes.ENERGY,
-		16
-	);
+	var itemType;
+
+	for(var key in ItemTypes) {
+		itemType = ItemTypes[key];
+
+		this.arrItemSystems[itemType] = new ItemSystem(
+			itemType,
+			16
+		);
+	}
+
+	// this.arrItemSystems[ItemTypes.ENERGY] = new ItemSystem(
+	// 	ItemTypes.ENERGY,
+	// 	16
+	// );
 };
 
 /**

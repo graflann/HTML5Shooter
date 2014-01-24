@@ -231,7 +231,7 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
             this.killList.push(object);
             this.activationList.push(
                 {
-                    system: this.arrItemSystems[ItemTypes.ENERGY],
+                    system: this.arrItemSystems[ItemTypes.OVERDRIVE],
                     qty: 1,
                     posX: object.container.x, 
                     posY: object.container.y,
@@ -294,7 +294,7 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
             this.killList.push(object);
             this.activationList.push(
                 {
-                    system: this.arrItemSystems[ItemTypes.ENERGY],
+                    system: this.arrItemSystems[ItemTypes.OVERDRIVE],
                     qty: 1,
                     posX: object.container.x, 
                     posY: object.container.y,
@@ -307,11 +307,16 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
         return;
     }
 
-    if(object instanceof Item) {
+    if(object instanceof EnergyItem) {
         player.energy += object.value;
 
         player.changeEnergy(player.energy);
 
+        this.killList.push(object);
+        return;
+    }
+
+    if(object instanceof OverdriveItem) {
         this.killList.push(object);
         return;
     }

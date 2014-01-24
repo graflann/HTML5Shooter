@@ -3,8 +3,8 @@ goog.provide('EnemyCopter');
 goog.require('Enemy');
 goog.require('Rotor');
 goog.require('EnemyCopterShadow');
-goog.require('EnemyCopterFiringState');
-goog.require('EnemyCopterSeekingState');
+goog.require('EnemySnipingState');
+goog.require('EnemySeekingState');
 goog.require('RotationUtils');
 
 /**
@@ -190,7 +190,7 @@ EnemyCopter.prototype.updateSeeking = function(options) {
 		distance = this.position.DistanceSqrd(target.position);
 
 		if(distance < this.minDistance) {
-			this.stateMachine.setState(EnemyCopterFiringState.KEY);
+			this.stateMachine.setState(EnemySnipingState.KEY);
 		}
 	}
 
@@ -200,11 +200,19 @@ EnemyCopter.prototype.updateSeeking = function(options) {
 	this.setPosition(this.container.x, this.container.y);
 };
 
+EnemyCopter.prototype.enterSniping = function(options) {
+	var self = this;
+
+	setTimeout(function() {
+		self.stateMachine.setState(EnemySeekingState.KEY);
+	}, 2000);
+};
+
 /**
  *Face player and fire in bursts
 *@public
 */
-EnemyCopter.prototype.updateFiring = function(options) {
+EnemyCopter.prototype.updateSniping = function(options) {
 	var target = options.target,
 		deg,
 		sin,
@@ -332,18 +340,18 @@ EnemyCopter.prototype.setStateMachine = function() {
 	this.stateMachine = new StateMachine();
 
 	this.stateMachine.addState(
-		EnemyCopterSeekingState.KEY,
-		new EnemyCopterSeekingState(this),
-		[ EnemyCopterFiringState.KEY ]
+		EnemySeekingState.KEY,
+		new EnemySeekingState(this),
+		[ EnemySnipingState.KEY ]
 	);
 
 	this.stateMachine.addState(
-		EnemyCopterFiringState.KEY,
-		new EnemyCopterFiringState(this),
-		[ EnemyCopterSeekingState.KEY ]
+		EnemySnipingState.KEY,
+		new EnemySnipingState(this),
+		[ EnemySeekingState.KEY ]
 	);
 	
-	this.stateMachine.setState(EnemyCopterSeekingState.KEY);
+	this.stateMachine.setState(EnemySeekingState.KEY);
 };
 
 /**

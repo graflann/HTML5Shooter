@@ -3,8 +3,8 @@ goog.provide('EnemyCentipede');
 goog.require('Enemy');
 goog.require('CentipedeHead');
 goog.require('CentipedeSegment');
-goog.require('EnemyCentipedeSeekingState');
-goog.require('EnemyCentipedeRetreatingState');
+goog.require('EnemySeekingState');
+goog.require('EnemyRetreatingState');
 
 /**
 *@constructor
@@ -68,6 +68,13 @@ EnemyCentipede.prototype.update = function(options) {
 /**
 *@public
 */
+EnemyCentipede.prototype.enterSeeking = function(options) {
+	
+};
+
+/**
+*@public
+*/
 EnemyCentipede.prototype.updateSeeking = function(options) {
 	var target = options.target;
 
@@ -75,6 +82,19 @@ EnemyCentipede.prototype.updateSeeking = function(options) {
 		target: target.position
 	});
 };
+
+/**
+*@public
+*/
+EnemyCentipede.prototype.enterRetreating = function(options) {
+	var deg = Math.randomInRange(0, 360),
+		trigTable = app.trigTable;
+
+	//Set retreat target to a random spot with a radius of screen dimensions
+	this.retreatTarget.x = this.position.x + (trigTable.cos(deg) * Constants.WIDTH);
+	this.retreatTarget.y = this.position.y + (trigTable.sin(deg) * Constants.HEIGHT);
+};
+
 
 /**
 *@public
@@ -93,7 +113,7 @@ EnemyCentipede.prototype.updateRetreating = function(options) {
 
 	//check out of retreat upon reaching the destination
 	if(this.retreatTarget.DistanceSqrd(this.head.position) < 2) {
-		this.stateMachine.setState(EnemyCentipedeSeekingState.KEY);
+		this.stateMachine.setState(EnemySeekingState.KEY);
 	}
 };
 
@@ -276,26 +296,26 @@ EnemyCentipede.prototype.setStateMachine = function() {
 	this.stateMachine = new StateMachine();
 
 	this.stateMachine.addState(
-		EnemyCentipedeSeekingState.KEY,
-		new EnemyCentipedeSeekingState(this),
-		[ EnemyCentipedeRetreatingState.KEY ]
+		EnemySeekingState.KEY,
+		new EnemySeekingState(this),
+		[ EnemyRetreatingState.KEY ]
 	);
 
 	this.stateMachine.addState(
-		EnemyCentipedeRetreatingState.KEY,
-		new EnemyCentipedeRetreatingState(this),
-		[ EnemyCentipedeSeekingState.KEY ]
+		EnemyRetreatingState.KEY,
+		new EnemyRetreatingState(this),
+		[ EnemySeekingState.KEY ]
 	);
 	
-	this.stateMachine.setState(EnemyCentipedeSeekingState.KEY);
+	this.stateMachine.setState(EnemySeekingState.KEY);
 };
 
 //EVENT HANDLERS
 EnemyCentipede.prototype.onHeadCollision = function(e) {
-	if(this.stateMachine.currentKey === EnemyCentipedeSeekingState.KEY) {
-		this.stateMachine.setState(EnemyCentipedeRetreatingState.KEY);
+	if(this.stateMachine.currentKey === EnemySeekingState.KEY) {
+		this.stateMachine.setState(EnemyRetreatingState.KEY);
 	} else {
-		this.stateMachine.setState(EnemyCentipedeSeekingState.KEY);
+		this.stateMachine.setState(EnemySeekingState.KEY);
 	}
 };
 

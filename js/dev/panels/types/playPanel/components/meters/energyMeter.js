@@ -100,10 +100,3 @@ EnergyMeter.prototype.changeEnergy = function(value) {
 		.mt(0, 0)
 		.lt(this.energy, 0);
 };
-
-/**
-*@public
-*/
-EnergyMeter.prototype.processValue = function(value) {
-	return 0;
-};
