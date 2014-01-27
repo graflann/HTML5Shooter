@@ -97,3 +97,7 @@ Hud.prototype.setSelection = function(index) {
 Hud.prototype.changeEnergy = function(value) {
 	this.energyMeter.changeEnergy(value);
 };
+
+Hud.prototype.changeOverdrive = function(value) {
+	this.overdriveMeter.changeEnergy(value);
+};

@@ -8,7 +8,8 @@ TurretTypes = {
     SPREAD: 		'spread',
     BLADE: 			'blade',
     SNIPER: 		'sniper',
-    ENEMY_VULCAN: 	'enemyVulcan'
+    ENEMY_VULCAN: 	'enemyVulcan',
+    ENEMY_DRONE: 	'enemyDrone'
 };
 
 goog.exportSymbol('TurretTypes', TurretTypes);

@@ -18,7 +18,7 @@ PlayerDefaultState.KEY = "default";
 *@public
 */
 PlayerDefaultState.prototype.enter = function(options) {
-	
+	console.log("Entering state: " + PlayerDefaultState.KEY);
 };
 
 /**

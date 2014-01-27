@@ -15,6 +15,8 @@ InputConfig = {
 		SWITCH: "switch weapon",
 		ROTATE_LEFT: "rotate left",
 		ROTATE_RIGHT: "rotate right",
-		HOMING: "homing"
+		HOMING: "homing",
+		BOOST: "boost",
+		RELOAD: "reload"
 	}
 }

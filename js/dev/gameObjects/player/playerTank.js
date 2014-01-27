@@ -12,6 +12,7 @@ goog.require('EventNames');
 goog.require('StateMachine');
 goog.require('PlayerDefaultState');
 goog.require('PlayerBoostState');
+goog.require('PlayerRechargeState');
 goog.require('RotationUtils');
 
 /**
@@ -64,8 +65,6 @@ PlayerTank = function(arrProjectileSystems) {
 
 	this.turretTransitionRate = 500;
 
-	this.isTransitioning = false;
-
 	this.arrTurrets = [];
 
 	this.isHoming = false;
@@ -80,7 +79,13 @@ PlayerTank = function(arrProjectileSystems) {
 
 	this.isOverdrive = false;
 
+	this.isTransitioning = false;
+
+	this.isRecharging = false;
+
 	this.energy = 100;
+
+	this.overdrive = 0;
 
 	this.damage = 0;
 
@@ -91,6 +96,7 @@ PlayerTank = function(arrProjectileSystems) {
 	this.addHomingOverlayEvent 		= new goog.events.Event(EventNames.ADD_HOMING_OVERLAY, this);
 	this.removeHomingOverlayEvent 	= new goog.events.Event(EventNames.REMOVE_HOMING_OVERLAY, this);
 	this.energyChangeEvent 			= new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energy);
+	this.overdriveChangeEvent 		= new PayloadEvent(EventNames.OVERDRIVE_CHANGE, this, this.overdrive);
 
 	this.init();
 };
@@ -100,6 +106,11 @@ goog.inherits(PlayerTank, GameObject);
 PlayerTank.KEY = "player";
 
 PlayerTank.HOMING_OFFSETS = [-150, 150, -120, 120];
+
+PlayerTank.MAX_ENERGY 		= 100;
+PlayerTank.MAX_OVERDRIVE 	= 100;
+
+PlayerTank.OVERDRIVE_DURATION = 5000;
 
 /**
 *@override
@@ -195,7 +206,7 @@ PlayerTank.prototype.updateDefault = function(options) {
 	this.body.SetLinearVelocity(app.vecZero);
 
 	//increases at a determined rate continuously by default
-	this.updateEnergy();
+	//this.updateEnergy();
 
 	this.checkMovement();
 
@@ -212,6 +223,8 @@ PlayerTank.prototype.updateDefault = function(options) {
 
 	this.updateTurret();
 
+	this.checkReload();
+
 	this.checkBoost();
 };
 
@@ -219,7 +232,8 @@ PlayerTank.prototype.updateDefault = function(options) {
 *@public
 */
 PlayerTank.prototype.enterBoost = function(options) {
-	var rotation = this.baseContainer.rotation - 90,
+	var self = this,
+		rotation = this.baseContainer.rotation - 90,
 		boostVelX = this.velocity.x * 2,
 		boostVelY = this.velocity.y * 2;
 
@@ -233,6 +247,16 @@ PlayerTank.prototype.enterBoost = function(options) {
 	this.isMoving = true;
 
 	this.damage = 100;
+
+	this.changeEnergy(0);
+
+	setTimeout(function() {
+		if(self.isOverdrive) {
+			self.stateMachine.setState(PlayerDefaultState.KEY);
+		} else {
+			self.stateMachine.setState(PlayerRechargeState.KEY);
+		}
+	}, PlayerBoostState.DURATION);
 };
 
 /**
@@ -245,6 +269,48 @@ PlayerTank.prototype.updateBoost = function(options) {
 
 	this.updateTurret();
 };
+
+PlayerTank.prototype.exitBoost = function(options) {
+	this.isBoosting = false;
+	this.damage = 0;
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.enterRecharge = function(options) {
+	this.isRecharging = true;
+}
+
+/**
+*@public
+*/
+PlayerTank.prototype.updateRecharge = function(options) {
+	//zero out body's linear velocity
+	this.body.SetLinearVelocity(app.vecZero);
+
+	this.checkMovement();
+
+	//Updates the base rotation with a smooth transition
+	this.updateRotation();
+
+	this.animateWheels();
+
+	this.setPosition(this.body.GetPosition());
+
+	this.checkTurretTransition();
+
+	this.updateTurret();
+
+	this.updateEnergy();
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.exitRecharge = function(options) {
+	this.isRecharging = false;
+}
 
 /**
 *@public
@@ -379,12 +445,12 @@ PlayerTank.prototype.updateHoming = function(options) {
 
 	//HOMING
 	//hold to init homing target overlay
-	if(this.energy === 100 && input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && !this.isHoming) {
+	if(this.energy === PlayerTank.MAX_ENERGY && !this.isHoming &&
+		input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
 		this.isHoming = true;
 
 		//zero out the energy level upon homing
-		this.energy = 0;
-		this.changeEnergy(this.energy);
+		this.changeEnergy(0);
 
 		//initializes the homing target overlay
 		goog.events.dispatchEvent(this, this.addHomingOverlayEvent);
@@ -399,6 +465,8 @@ PlayerTank.prototype.updateHoming = function(options) {
 			this.fireHoming();
 		}
 
+		this.reload();
+
 		//starts removal of homing overlay
 		goog.events.dispatchEvent(this, this.removeHomingOverlayEvent);
 	}
@@ -408,10 +476,11 @@ PlayerTank.prototype.updateHoming = function(options) {
 *@public
 */
 PlayerTank.prototype.updateTurret = function(options) {
+	var firingIsNotReady = this.isTransitioning | this.isRecharging;
 
 	this.turret.update({ 
 		energy: 			this.energy,
-		isTransitioning: 	this.isTransitioning 
+		firingIsNotReady: 	firingIsNotReady
 	});
 
 	this.turretTransition.rotation = this.turret.shape.rotation;
@@ -422,11 +491,25 @@ PlayerTank.prototype.updateTurret = function(options) {
 PlayerTank.prototype.checkBoost = function() {
 	var input = app.input;
 
-	if(this.energy === 100 && input.isButtonPressedOnce(GamepadCode.BUTTONS.RT)) {
-		this.changeEnergy(0)
-
+	if(this.energy === PlayerTank.MAX_ENERGY && 
+		input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.BOOST])) {
 		this.stateMachine.setState(PlayerBoostState.KEY);
 	}
+};
+
+PlayerTank.prototype.checkReload = function() {
+	var input = app.input;
+
+	if(!this.isHoming && input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.RELOAD])) {
+		this.reload();
+	}
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.reload = function() {
+	this.changeEnergy(0);
 };
 
 /**
@@ -438,11 +521,11 @@ PlayerTank.prototype.clear = function() {
 };
 
 PlayerTank.prototype.updateEnergy = function() {
-	 if(!this.isHoming && this.energy < 100) {
-	 	this.energy++;
+	if(!this.isHoming && this.energy < PlayerTank.MAX_ENERGY) {
+		this.energy++;
 
-	 	this.changeEnergy(this.energy);
-	 }
+		this.changeEnergy(this.energy);
+	}
 };
 
 /**
@@ -459,23 +542,19 @@ PlayerTank.prototype.updateRotation = function() {
 
 		if(absAngleDif >= 180) {
 			if(this.intendedRotation > this.baseContainer.rotation) {
-				//this.rotateToAngle(-this.rotationRate);
 				RotationUtils.rotateToAngle(this.baseContainer, -this.rotationRate);
 				this.turnWheels(-45);
 			}
 			else if(this.intendedRotation < this.baseContainer.rotation) {
-				//this.rotateToAngle(this.rotationRate);
 				RotationUtils.rotateToAngle(this.baseContainer, this.rotationRate);
 				this.turnWheels(45);
 			}
 		} else {
 			if(this.intendedRotation > this.baseContainer.rotation) {
-				//this.rotateToAngle(this.rotationRate);
 				RotationUtils.rotateToAngle(this.baseContainer, this.rotationRate);
 				this.turnWheels(45);
 			}
 			else if(this.intendedRotation < this.baseContainer.rotation) {
-				//this.rotateToAngle(-this.rotationRate);
 				RotationUtils.rotateToAngle(this.baseContainer, -this.rotationRate);
 				this.turnWheels(-45);
 			}
@@ -491,25 +570,6 @@ PlayerTank.prototype.turnWheels = function(deg) {
 
 	while(++i < length) {
 		this.arrWheels[i].rotation = deg;
-	}
-};
-
-/**
-*@private
-*/
-PlayerTank.prototype.rotateToAngle = function(rotationRate) {
-	if(rotationRate == 0){
-		return;
-	}
-
-	this.baseContainer.rotation += rotationRate;
-
-	if(this.baseContainer.rotation <= 0) {
-		this.baseContainer.rotation += 360;
-	}
-
-	if(this.baseContainer.rotation >= 360) {
-		this.baseContainer.rotation -= 360;
 	}
 };
 
@@ -612,16 +672,13 @@ PlayerTank.prototype.setTurretMap = function() {
 };
 
 PlayerTank.prototype.setTurret = function(turretType, projectileType) {
-	var self = prevTurret = this.turret;
+	var prevTurret = this.turret;
 
 	this.isTransitioning = true;
 
 	if(this.currentProjectileSystem) {
 		this.currentProjectileSystem.kill();
 	}
-
-	this.currentTurretType = turretType;
-	this.currentProjectileType = projectileType;
 
 	if(prevTurret) {
 		this.changeTurret(turretType, prevTurret);
@@ -775,12 +832,18 @@ PlayerTank.prototype.setStateMachine = function() {
 	this.stateMachine.addState(
 		PlayerDefaultState.KEY,
 		new PlayerDefaultState(this),
-		[ PlayerBoostState.KEY ]
+		[ PlayerBoostState.KEY, PlayerRechargeState.KEY ]
 	);
 
 	this.stateMachine.addState(
 		PlayerBoostState.KEY,
 		new PlayerBoostState(this),
+		[ PlayerDefaultState.KEY, PlayerRechargeState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		PlayerRechargeState.KEY,
+		new PlayerRechargeState(this),
 		[ PlayerDefaultState.KEY ]
 	);
 	
@@ -788,22 +851,85 @@ PlayerTank.prototype.setStateMachine = function() {
 };
 
 PlayerTank.prototype.changeEnergy = function (value) {
-	if(value < 0) {
-		value = 0;
-	} else if(value > 100) {
-		value = 100;
-	}
+	if(!this.isOverdrive) {
+		if(value < 0) {
+			value = 0;
+		} else if(value > PlayerTank.MAX_ENERGY) {
+			value = PlayerTank.MAX_ENERGY;
+		}
 
-	this.energyChangeEvent.payload = this.energy = value;
-	goog.events.dispatchEvent(this, this.energyChangeEvent);
+		this.energyChangeEvent.payload = this.energy = value;
+		goog.events.dispatchEvent(this, this.energyChangeEvent);
+
+		if(!this.isHoming && !this.isBoosting) {
+			if(this.energy < Math.abs(this.turret.energyConsumption)) {
+				this.stateMachine.setState(PlayerRechargeState.KEY);
+			} else if(this.energy === PlayerTank.MAX_ENERGY) {
+				this.stateMachine.setState(PlayerDefaultState.KEY);
+			}
+		}
+	}
+};
+
+PlayerTank.prototype.changeOverdrive = function (value) {
+	if(!this.isOverdrive) {
+		if(value < 0) {
+			value = 0;
+		} else if(value > PlayerTank.MAX_OVERDRIVE) {
+			value = PlayerTank.MAX_OVERDRIVE;
+		}
+
+		this.overdriveChangeEvent.payload = this.overdrive = value;
+		goog.events.dispatchEvent(this, this.overdriveChangeEvent);
+
+		if(this.overdrive === PlayerTank.MAX_OVERDRIVE) {
+			var self = this;
+
+			this.isOverdrive = true;
+
+			//force end of recharge state to auto set full energy
+			if(this.stateMachine.getCurrentState() === PlayerRechargeState.KEY) {
+				this.stateMachine.setState(PlayerDefaultState.KEY);
+			}
+
+			//max energy going into overdrive
+			this.energyChangeEvent.payload = this.energy = PlayerTank.MAX_ENERGY;
+			goog.events.dispatchEvent(this, this.energyChangeEvent);
+
+			this.turret.setFiringState(Turret.FIRE_TYPES.ALT);
+
+			this.currentProjectileSystem.kill();
+			this.currentProjectileSystem = this.turret.currentProjectileSystem;
+
+			setTimeout(function(){
+				self.turret.setFiringState(Turret.FIRE_TYPES.DEFAULT);
+				self.currentProjectileSystem.kill();
+				self.currentProjectileSystem = self.turret.currentProjectileSystem;
+
+				self.isOverdrive = false;
+			}, PlayerTank.OVERDRIVE_DURATION);
+		}
+	}
 };
 
 PlayerTank.prototype.onEnergyChange = function(e) {
-	this.energy += e.payload;
+	if(!this.isOverdrive) {
+		this.energy += e.payload;
 
-	//console.log("Energy qty: " + this.energy);
+		//console.log("Energy qty: " + this.energy);
 
-	this.changeEnergy(this.energy);
+		this.changeEnergy(this.energy);
+	}
+};
+
+PlayerTank.prototype.onOverdriveChange = function(e) {
+	if(!this.isOverdrive) {
+		this.overdrive += e.payload;
+
+		console.log("Overdrive qty: " + this.overdrive);
+
+		this.changeOverdrive(this.overdrive);
+	}
 };
 
 goog.exportSymbol('PlayerTank', PlayerTank);

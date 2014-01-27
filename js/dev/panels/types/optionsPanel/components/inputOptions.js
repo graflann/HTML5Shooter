@@ -104,7 +104,9 @@ InputOptions.prototype.setOptions = function() {
 			InputConfig.BUTTONS.SWITCH,
 			InputConfig.BUTTONS.ROTATE_LEFT,
 			InputConfig.BUTTONS.ROTATE_RIGHT,
-			InputConfig.BUTTONS.HOMING
+			InputConfig.BUTTONS.HOMING, 
+			InputConfig.BUTTONS.BOOST,
+			InputConfig.BUTTONS.RELOAD
 		];
 
 	this.arrOptionRows = [
@@ -148,12 +150,15 @@ InputOptions.prototype.setOptions = function() {
 	//default to first selection
 	this.arrOptionRows[0].setSelection(true);
 
-	//set option defaults
+	//set option defaults; 
+	//maps InputConfig.BUTTON property index to OptionConfigurationRow index
 	this.arrOptionRows[0].selectOption(1);
 	this.arrOptionRows[2].selectOption(2);
 	this.arrOptionRows[3].selectOption(5);
 	this.arrOptionRows[4].selectOption(3);
 	this.arrOptionRows[5].selectOption(4);
+	this.arrOptionRows[6].selectOption(6);
+	this.arrOptionRows[7].selectOption(5);
 };
 
 InputOptions.prototype.setSelection = function(index) {

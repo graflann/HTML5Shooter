@@ -28,7 +28,7 @@ StateMachine.prototype.setState = function(key, options) {
 	
 	//redundancy
 	if (this.currentKey === key) {
-		console.log("Attempting to go from " + this.currentKey + " to " + key + "  is redundant.");
+		//console.log("Attempting to go from " + this.currentKey + " to " + key + "  is redundant.");
 		return;
 	}
 	
@@ -65,6 +65,10 @@ StateMachine.prototype.update = function(options) {
 
 StateMachine.prototype.clear = function() {
 
+};
+
+StateMachine.prototype.getCurrentState = function() {
+	return this.currentKey;
 };
 
 goog.exportSymbol('StateMachine', StateMachine);

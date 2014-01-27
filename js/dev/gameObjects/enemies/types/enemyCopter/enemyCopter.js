@@ -5,6 +5,7 @@ goog.require('Rotor');
 goog.require('EnemyCopterShadow');
 goog.require('EnemySnipingState');
 goog.require('EnemySeekingState');
+goog.require('EnemyStrafingState');
 goog.require('RotationUtils');
 
 /**
@@ -230,6 +231,26 @@ EnemyCopter.prototype.updateSniping = function(options) {
 	}
 
 	//check fire
+	this.updateFire();
+};
+
+EnemyCopter.prototype.enterStrafing = function(options) {
+	
+};
+
+/**
+ *Faces player, moves in a direction, and fire in bursts
+*@public
+*/
+EnemyCopter.prototype.updateStrafing = function(options) {
+	
+};
+
+/**
+*@private
+*/
+EnemyCopter.prototype.updateFire = function(options) {
+	//check fire
 	if(this.fireCounter++ > this.fireThreshold) {
 		this.fire();
 		this.fireCounter = 0;
@@ -342,13 +363,19 @@ EnemyCopter.prototype.setStateMachine = function() {
 	this.stateMachine.addState(
 		EnemySeekingState.KEY,
 		new EnemySeekingState(this),
-		[ EnemySnipingState.KEY ]
+		[ EnemySnipingState.KEY, EnemyStrafingState.KEY ]
 	);
 
 	this.stateMachine.addState(
 		EnemySnipingState.KEY,
 		new EnemySnipingState(this),
-		[ EnemySeekingState.KEY ]
+		[ EnemySeekingState.KEY, EnemyStrafingState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		EnemyStrafingState.KEY,
+		new EnemyStrafingState(this),
+		[ EnemySeekingState.KEY, EnemySnipingState.KEY ]
 	);
 	
 	this.stateMachine.setState(EnemySeekingState.KEY);

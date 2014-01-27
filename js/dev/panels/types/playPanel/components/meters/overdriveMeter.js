@@ -1,5 +1,7 @@
 goog.provide('OverdriveMeter');
 
+goog.require('PlayerTank');
+
 /**
 *@constructor
 *Energy meter displaying user's current level
@@ -20,7 +22,7 @@ OverdriveMeter = function(w, h) {
 	this.energy = 0;
 
 	this.regenerationRate = 0;
-	
+
 	this.init();
 };
 
@@ -49,8 +51,8 @@ OverdriveMeter.prototype.init = function() {
 	this.meter.y = this.background.y + 4;
 
 	OverdriveMeter.MAX = this.width - this.meter.x - 1;
-	this.energy = OverdriveMeter.MAX;
-	this.regenerationRate = OverdriveMeter.MAX * 0.01;
+	this.energy = 0;
+	this.regenerationRate = OverdriveMeter.MAX / PlayerTank.MAX_OVERDRIVE;
 
 	this.meter.graphics
 		.ss(4)
@@ -77,26 +79,26 @@ OverdriveMeter.prototype.clear = function() {
 	this.container.removeAllChildren();
 };
 
-// /**
-// *@public
-// */
-// OverdriveMeter.prototype.changeEnergy = function(value) {
-// 	this.energy = this.regenerationRate * value;
+/**
+*@public
+*/
+OverdriveMeter.prototype.changeEnergy = function(value) {
+	this.energy = this.regenerationRate * value;
 
-// 	//console.log("Energy MAX: " + OverdriveMeter.MAX);
-// 	//console.log("Energy changing: " + this.energy);
+	//console.log("Energy MAX: " + OverdriveMeter.MAX);
+	//console.log("Energy changing: " + this.energy);
 
-// 	if(this.energy < OverdriveMeter.MIN) {
-// 		this.energy = OverdriveMeter.MIN;
-// 	} else if (this.energy > OverdriveMeter.MAX) {
-// 		this.energy = OverdriveMeter.MAX
-// 	}
+	if(this.energy < OverdriveMeter.MIN) {
+		this.energy = OverdriveMeter.MIN;
+	} else if (this.energy > OverdriveMeter.MAX) {
+		this.energy = OverdriveMeter.MAX
+	}
 
-// 	//adjust meter to reflect current level
-// 	this.meter.graphics
-//  		.c()
-// 		.ss(4)
-// 		.s(Constants.YELLOW)
-// 		.mt(0, 0)
-// 		.lt(this.energy, 0);
-// };
+	//adjust meter to reflect current level
+	this.meter.graphics
+ 		.c()
+		.ss(4)
+		.s(Constants.YELLOW)
+		.mt(0, 0)
+		.lt(this.energy, 0);
+};

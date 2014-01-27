@@ -2,6 +2,7 @@ goog.provide('VulcanTurret');
 
 goog.require('Turret');
 goog.require('AnimationUtility');
+goog.require('PlayerTank');
 
 /**
 *@constructor
@@ -29,7 +30,7 @@ VulcanTurret.prototype.init = function() {
 	this.fireThreshold = 4;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.energyConsumption = -7;
+	this.energyConsumption = -PlayerTank.MAX_ENERGY / 50;
 
 	this.ammoDistance = 48 / app.physicsScale;
 
@@ -42,7 +43,7 @@ VulcanTurret.prototype.init = function() {
 	this.turretAnimUtil.loop(true);
 
 	this.setStateMachine();
-	this.setFiringState(Turret.FIRE_TYPES.ALT);
+	this.setFiringState(Turret.FIRE_TYPES.DEFAULT);
 
 	Turret.prototype.init.call(this);
 };
@@ -70,7 +71,7 @@ VulcanTurret.prototype.enterDefaultFire = function(options) {
 	this.fireThreshold = 4;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.energyConsumption = -7;
+	//this.energyConsumption = -7;
 };
 
 /**
@@ -83,7 +84,7 @@ VulcanTurret.prototype.enterAltFire = function(options) {
 	this.fireThreshold = 3;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.energyConsumption = -6;
+	//this.energyConsumption = -6;
 };
 
 VulcanTurret.prototype.defaultFire = function() {

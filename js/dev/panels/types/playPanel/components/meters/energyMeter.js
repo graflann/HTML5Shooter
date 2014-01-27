@@ -1,5 +1,7 @@
 goog.provide('EnergyMeter');
 
+goog.require('PlayerTank');
+
 /**
 *@constructor
 *Energy meter displaying user's current level
@@ -50,7 +52,7 @@ EnergyMeter.prototype.init = function() {
 
 	EnergyMeter.MAX = this.width - this.meter.x - 1;
 	this.energy = EnergyMeter.MAX;
-	this.regenerationRate = EnergyMeter.MAX * 0.01;
+	this.regenerationRate = EnergyMeter.MAX / PlayerTank.MAX_ENERGY;
 
 	this.meter.graphics
 		.ss(4)

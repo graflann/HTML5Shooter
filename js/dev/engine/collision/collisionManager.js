@@ -317,6 +317,10 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
     }
 
     if(object instanceof OverdriveItem) {
+        player.overdrive += object.value;
+
+        player.changeOverdrive(player.overdrive);
+
         this.killList.push(object);
         return;
     }

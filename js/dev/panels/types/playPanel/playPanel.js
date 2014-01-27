@@ -526,6 +526,14 @@ PlayPanel.prototype.setEventListeners = function() {
 		false, 
 		this
 	);
+
+	goog.events.listen(
+		this.player, 
+		EventNames.OVERDRIVE_CHANGE, 
+		this.onOverdriveChange, 
+		false, 
+		this
+	);
 	/////////////////////////////////////
 };
 
@@ -559,4 +567,11 @@ PlayPanel.prototype.onRemoveHomingOverlay = function(e) {
 */
 PlayPanel.prototype.onEnergyChange = function(e) {
 	this.hud.changeEnergy(e.payload);
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.onOverdriveChange = function(e) {
+	this.hud.changeOverdrive(e.payload);
 };

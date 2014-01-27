@@ -1,6 +1,7 @@
 goog.provide('BladeTurret');
 
 goog.require('Turret');
+goog.require('PlayerTank');
 
 /**
 *@constructor
@@ -30,7 +31,7 @@ BladeTurret.prototype.init = function() {
 	this.fireThreshold = 2;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.energyConsumption = -5;
+	this.energyConsumption = -PlayerTank.MAX_ENERGY / 40;
 
 	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["bladeTurret"]);
 	this.shape.regX = 47;
@@ -40,7 +41,7 @@ BladeTurret.prototype.init = function() {
 	this.offsetLength = BladeTurret.FIRE_OFFSETS.ALT.length;
 
 	this.setStateMachine();
-	this.setFiringState(Turret.FIRE_TYPES.ALT);
+	this.setFiringState(Turret.FIRE_TYPES.DEFAULT);
 
 	Turret.prototype.init.call(this);
 };

@@ -72,6 +72,8 @@ Turret.FIRE_TYPES = {
 	ALT: 1
 };
 
+Turret.ROTATION_RATE = 5;
+
 /**
 *@override
 *@public
@@ -115,18 +117,18 @@ Turret.prototype.manualControl = function(options) {
 	if(input.isKeyDown(KeyCode.LEFT) || 
 		input.isButtonDown(input.config[InputConfig.BUTTONS.ROTATE_LEFT])) /*||
 		input.isButtonDown(GamepadCode.BUTTONS.X))*/ {
-		this.shape.rotation -= 5;
+		this.shape.rotation -= Turret.ROTATION_RATE;
 	}
 	
 	//rotate clock-wise
 	if(input.isKeyDown(KeyCode.RIGHT) || 
 		input.isButtonDown(input.config[InputConfig.BUTTONS.ROTATE_RIGHT])) /*||
 		input.isButtonDown(GamepadCode.BUTTONS.B))*/ {
-		this.shape.rotation += 5;
+		this.shape.rotation += Turret.ROTATION_RATE;
 	}
 	
 	//fire if PlayerTank is not transitioning Turret instances
-	if(!options.isTransitioning && -options.energy < this.energyConsumption) {
+	if(!options.firingIsNotReady && options.energy !== 0) {
 		//Keyboard or Button fire
 		if(input.isKeyDown(KeyCode.SPACE) || 
 			input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT])) {
@@ -242,6 +244,9 @@ Turret.prototype.exitAltFire = function(options) {
 	
 };
 
+/**
+*@public				
+*/
 Turret.prototype.setFiringState = function(value) {
 	this.firingState = value;
 
@@ -253,64 +258,6 @@ Turret.prototype.setFiringState = function(value) {
 		this.stateMachine.setState(AlternativeFireState.KEY);
 	}
 };
-
-/**
-*@private
-*/
-// Turret.prototype.updateRotation = function() {
-// 	var absAngleDif = 0;
-
-// 	//art is natively offset by 90 deg compared to default createJS rotation value so an adjustment is made
-// 	this.intendedRotation = this.baseRotationDeg + 90;
-
-// 	//adjust intended for 
-// 	if(this.intendedRotation >= 360) {
-// 		this.intendedRotation -= 360;
-// 	} else if(this.intendedRotation < 0) {
-// 		this.intendedRotation += 360;
-// 	}
-
-// 	absAngleDif = Math.abs(this.intendedRotation - this.shape.rotation);
-
-// 	//continuously update rotation 
-// 	if(absAngleDif > this.rotationRate)
-// 	{
-// 		if(absAngleDif >= 180) {
-// 			if(this.intendedRotation > this.shape.rotation) {
-// 				this.rotateToAngle(-this.rotationRate);
-// 			}
-// 			else if(this.intendedRotation < this.shape.rotation) {
-// 				this.rotateToAngle(this.rotationRate);
-// 			}
-// 		} else {
-// 			if(this.intendedRotation > this.shape.rotation) {
-// 				this.rotateToAngle(this.rotationRate);
-// 			}
-// 			else if(this.intendedRotation < this.shape.rotation) {
-// 				this.rotateToAngle(-this.rotationRate);
-// 			}
-// 		}
-// 	}
-// };
-
-// /**
-// *@private
-// */
-// Turret.prototype.rotateToAngle = function(rotationRate) {
-// 	if(rotationRate == 0) {
-// 		return;
-// 	}
-
-// 	this.shape.rotation += rotationRate;
-
-// 	if(this.shape.rotation <= 0) {
-// 		this.shape.rotation += 360;
-// 	}
-
-// 	if(this.shape.rotation >= 360) {
-// 		this.shape.rotation -= 360;
-// 	}
-// };
 
 Turret.prototype.setStateMachine = function() {
 	this.stateMachine = new StateMachine();

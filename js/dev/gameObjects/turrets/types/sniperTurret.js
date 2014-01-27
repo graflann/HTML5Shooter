@@ -2,6 +2,7 @@ goog.provide('SniperTurret');
 
 goog.require('Turret');
 goog.require('AnimationUtility');
+goog.require('PlayerTank');
 
 /**
 *@constructor
@@ -35,7 +36,7 @@ SniperTurret.prototype.init = function() {
 	this.fireThreshold = 30;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.energyConsumption = -40;
+	this.energyConsumption = -PlayerTank.MAX_ENERGY / 4;
 
 	this.ammoDistance = 96 / app.physicsScale;
 
@@ -61,7 +62,7 @@ SniperTurret.prototype.init = function() {
 	this.laserSight.cache(-2, -Constants.HEIGHT, 2, Constants.HEIGHT);
 
 	this.setStateMachine();
-	this.setFiringState(Turret.FIRE_TYPES.ALT);
+	this.setFiringState(Turret.FIRE_TYPES.DEFAULT);
 
 	Turret.prototype.init.call(this);
 };
@@ -92,7 +93,7 @@ SniperTurret.prototype.enterDefaultFire = function(options) {
 	this.fireThreshold = 30;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.energyConsumption = -40;
+	//this.energyConsumption = -40;
 };
 
 /**
@@ -105,7 +106,7 @@ SniperTurret.prototype.enterAltFire = function(options) {
 	this.fireThreshold = 2;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.energyConsumption = -5;
+	//this.energyConsumption = -5;
 };
 
 /**

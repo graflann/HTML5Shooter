@@ -88,6 +88,8 @@ Input.prototype.setConfig = function() {
 	this.config[InputConfig.BUTTONS.ROTATE_LEFT] 	= GamepadCode.BUTTONS.LB;
 	this.config[InputConfig.BUTTONS.ROTATE_RIGHT] 	= GamepadCode.BUTTONS.RB;
 	this.config[InputConfig.BUTTONS.HOMING] 		= GamepadCode.BUTTONS.Y;
+	this.config[InputConfig.BUTTONS.BOOST] 			= GamepadCode.BUTTONS.RT;
+	this.config[InputConfig.BUTTONS.RELOAD] 		= GamepadCode.BUTTONS.LT;
 
 	console.log(this.config);
 };

@@ -1,6 +1,7 @@
 goog.provide('SpreadTurret');
 
 goog.require('Turret');
+goog.require('PlayerTank');
 
 /**
 *@constructor
@@ -31,7 +32,7 @@ SpreadTurret.prototype.init = function() {
 	this.fireThreshold = 18;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.energyConsumption = -30;
+	this.energyConsumption = -PlayerTank.MAX_ENERGY / 8;
 
 	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["spreadTurret"]);
 	this.shape.regX = 16;
@@ -39,7 +40,7 @@ SpreadTurret.prototype.init = function() {
 	this.shape.gotoAndStop(0);
 
 	this.setStateMachine();
-	this.setFiringState(Turret.FIRE_TYPES.ALT);
+	this.setFiringState(Turret.FIRE_TYPES.DEFAULT);
 
 	Turret.prototype.init.call(this);
 };
