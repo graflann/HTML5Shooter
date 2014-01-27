@@ -896,16 +896,26 @@ PlayerTank.prototype.changeOverdrive = function (value) {
 			this.energyChangeEvent.payload = this.energy = PlayerTank.MAX_ENERGY;
 			goog.events.dispatchEvent(this, this.energyChangeEvent);
 
-			this.turret.setFiringState(Turret.FIRE_TYPES.ALT);
+			//set all turrets to overdrive firing
+			for(var key in this.arrTurrets) {
+				this.arrTurrets[key].setFiringState(Turret.FIRE_TYPES.ALT);
+			}
 
+			//remove old projectiles and update PlayerTank proj system reference to most recent proj system
 			this.currentProjectileSystem.kill();
 			this.currentProjectileSystem = this.turret.currentProjectileSystem;
 
 			setTimeout(function(){
-				self.turret.setFiringState(Turret.FIRE_TYPES.DEFAULT);
+				//set all turrets to default firing
+				for(var key in self.arrTurrets) {
+					self.arrTurrets[key].setFiringState(Turret.FIRE_TYPES.DEFAULT);
+				}
+
+				//remove old projectiles and update PlayerTank proj system reference to most recent proj system
 				self.currentProjectileSystem.kill();
 				self.currentProjectileSystem = self.turret.currentProjectileSystem;
 
+				//cease overdrive status
 				self.isOverdrive = false;
 			}, PlayerTank.OVERDRIVE_DURATION);
 		}
