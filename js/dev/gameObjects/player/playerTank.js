@@ -476,11 +476,12 @@ PlayerTank.prototype.updateHoming = function(options) {
 *@public
 */
 PlayerTank.prototype.updateTurret = function(options) {
-	var firingIsNotReady = this.isTransitioning | this.isRecharging;
+	//if not transitioning or recharging the turret can fire
+	var firingIsReady = !(this.isTransitioning | this.isRecharging);
 
 	this.turret.update({ 
-		energy: 			this.energy,
-		firingIsNotReady: 	firingIsNotReady
+		energy: 		this.energy,
+		firingIsReady: 	firingIsReady
 	});
 
 	this.turretTransition.rotation = this.turret.shape.rotation;

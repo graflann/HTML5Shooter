@@ -40,15 +40,15 @@ CollisionManager = function(
     	},
 
     	enemy: {
-    		explosions: this.arrParticleSystems[ParticleSystemNames.ENEMY_EXPLOSION],
-            reticles: this.arrParticleSystems[ParticleSystemNames.PLAYER_RETICLE]
+    		explosions:         this.arrParticleSystems[ParticleSystemNames.ENEMY_EXPLOSION],
+            reticles:           this.arrParticleSystems[ParticleSystemNames.PLAYER_RETICLE]
     	},
 
     	projectile: {
-    		positiveHit: this.arrParticleSystems[ParticleSystemNames.POSITIVE_HIT],
-            neutralHit: this.arrParticleSystems[ParticleSystemNames.NEUTRAL_HIT],
-    		grenade: this.arrParticleSystems[ParticleSystemNames.GRENADE],
-            activationList: this.activationList
+    		positiveHit:      this.arrParticleSystems[ParticleSystemNames.POSITIVE_HIT],
+            neutralHit:       this.arrParticleSystems[ParticleSystemNames.NEUTRAL_HIT],
+    		grenade:          this.arrParticleSystems[ParticleSystemNames.GRENADE],
+            activationList:   this.activationList
     	},
 
     	sceneObject: {
@@ -320,6 +320,11 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
         player.overdrive += object.value;
 
         player.changeOverdrive(player.overdrive);
+
+        this.arrParticleSystems[ParticleSystemNames.OVERDRIVE_PICK_UP].emit(1, {
+            posX: player.position.x,
+            posY: player.position.y
+        });
 
         this.killList.push(object);
         return;

@@ -196,9 +196,9 @@ PlayPanel.prototype.updateLevel = function(options) {
 /**
 *@private
 */
-PlayPanel.prototype.updateParticles = function() {
+PlayPanel.prototype.updateParticles = function(options) {
 	for(var key in this.arrParticleSystems) {
-		this.arrParticleSystems[key].update();
+		this.arrParticleSystems[key].update(options);
 	}
 };
 
@@ -407,6 +407,12 @@ PlayPanel.prototype.setParticles = function() {
 		ParticleTypes.GRENADE,
 		Constants.RED,
 		32
+	);
+
+	this.arrParticleSystems[ParticleSystemNames.OVERDRIVE_PICK_UP] = new ParticleSystem(
+		ParticleTypes.PICK_UP,
+		Constants.ORANGE,
+		4
 	);
 };
 

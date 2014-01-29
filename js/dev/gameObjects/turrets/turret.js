@@ -128,7 +128,7 @@ Turret.prototype.manualControl = function(options) {
 	}
 	
 	//fire if PlayerTank is not transitioning Turret instances
-	if(!options.firingIsNotReady && options.energy !== 0) {
+	if(options.firingIsReady && options.energy !== 0) {
 		//Keyboard or Button fire
 		if(input.isKeyDown(KeyCode.SPACE) || 
 			input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT])) {
