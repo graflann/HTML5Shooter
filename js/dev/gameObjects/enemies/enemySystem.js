@@ -131,6 +131,11 @@ EnemySystem.prototype.generate = function(options) {
 
 			enemy.setIsAlive(true);
 
+			//notify the wavemanager of this enemy's kill as a default;
+			//this may be changed by other spawn entities outside the general wave spawn scope (eg EnemyCarrier)
+			//as those entities or generators spawn until they are killed
+			enemy.isWaveEnabled = true;
+
 			arrEnemies.push(enemy);
 		}
 	}

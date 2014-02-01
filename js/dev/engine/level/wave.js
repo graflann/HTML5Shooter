@@ -36,6 +36,8 @@ Wave.prototype.init = function() {
 
 	for(var i = 0; i < this.arrRawSpawns.length; i++) {
 		this.arrSpawns.push(new Spawn(this.arrEnemySystems, this.arrRawSpawns[i]));
+
+		
 		this.enemyTotal += this.arrRawSpawns[i].targetQuantity;
 	}
 };

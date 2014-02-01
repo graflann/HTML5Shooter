@@ -19,7 +19,9 @@ goog.inherits(PickUpParticle, Particle)
 */
 PickUpParticle.prototype.init = function() {
 	this.shape = new createjs.Shape();
-	this.shape.graphics.ss(0.5).s(this.color).f(this.color).dc(0, 0, 4);
+	this.shape.graphics
+		.f(this.color)
+		.dc(0, 0, 4);
 
 	Particle.prototype.init.call(this);
 };

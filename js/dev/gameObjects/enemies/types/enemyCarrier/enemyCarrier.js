@@ -195,7 +195,7 @@ EnemyCarrier.prototype.kill = function() {
 		//remove the shadow too
 		this.shadow.container.getStage().removeChild(this.shadow.container);
 
-		goog.events.dispatchEvent(this, this.enemyKilledEvent);
+		dispatchKillEvent();
 	}
 };
 
@@ -381,6 +381,9 @@ EnemyCarrier.prototype.spawnEnemy = function() {
 			enemy.container.x = self.container.x + (cos * spawnDistance);
 			enemy.container.y = self.container.y + (sin * spawnDistance);
 			enemy.setIsAlive(true);
+
+			//do not notify the wavemanager of this enemy's kill as it exists outside of the wave
+			enemy.isWaveEnabled = false; 
 
 			setTimeout(function() {
 				self.closeDoor(self.currentDoorIndex);

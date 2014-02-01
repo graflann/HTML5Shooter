@@ -8,7 +8,8 @@ ParticleTypes = {
     RETICLE: 	'reticle',
     HIT: 		'hit',
     GRENADE: 	'grenade',
-    PICK_UP: 	'pickUp'
+    PICK_UP: 	'pickUp',
+    BOOST: 		'boost'
 };
 
 goog.exportSymbol('ParticleTypes', ParticleTypes);

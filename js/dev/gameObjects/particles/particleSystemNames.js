@@ -9,7 +9,8 @@ ParticleSystemNames = {
     NEUTRAL_HIT: 		'neutralHit',
     PLAYER_RETICLE: 	'playerReticle',
     GRENADE: 			'grenade',
-    OVERDRIVE_PICK_UP:  'overdrivePickUp'
+    OVERDRIVE_PICK_UP:  'overdrivePickUp',
+    BOOST:  			'boost'
 };
 
 goog.exportSymbol('ParticleSystemNames', ParticleSystemNames);

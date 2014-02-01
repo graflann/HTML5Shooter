@@ -179,7 +179,7 @@ EnemyCentipede.prototype.kill = function() {
 
 		this.tail = this.arrSegments[this.arrSegments.length - 1];
 
-		goog.events.dispatchEvent(this, this.enemyKilledEvent);
+		this.dispatchKillEvent();
 	}
 };
 

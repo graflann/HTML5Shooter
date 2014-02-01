@@ -157,7 +157,7 @@ EnemyCopter.prototype.kill = function() {
 		//remove the shadow too
 		this.shadow.container.getStage().removeChild(this.shadow.container);
 
-		goog.events.dispatchEvent(this, this.enemyKilledEvent);
+		dispatchKillEvent();
 	}
 };
 

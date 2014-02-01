@@ -414,6 +414,12 @@ PlayPanel.prototype.setParticles = function() {
 		Constants.ORANGE,
 		4
 	);
+
+	this.arrParticleSystems[ParticleSystemNames.BOOST] = new ParticleSystem(
+		ParticleTypes.BOOST,
+		null,
+		2
+	);
 };
 
 /**
@@ -441,7 +447,10 @@ PlayPanel.prototype.setItems = function() {
 *@private
 */
 PlayPanel.prototype.setPlayer = function() {
-	this.player = new PlayerTank(this.arrPlayerProjectileSystems);
+	this.player = new PlayerTank(
+		this.arrPlayerProjectileSystems,
+		this.arrParticleSystems[ParticleSystemNames.BOOST]
+	);
 	
 	this.player.setPosition(
 		new app.b2Vec2(

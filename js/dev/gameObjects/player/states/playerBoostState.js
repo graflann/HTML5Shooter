@@ -17,7 +17,7 @@ PlayerBoostState.KEY = "boost";
 /**
 * Duration of boost in ms
 */
-PlayerBoostState.DURATION = 750;
+PlayerBoostState.DURATION = 1000;
 
 /**
 *@public

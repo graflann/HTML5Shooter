@@ -21,6 +21,8 @@ Enemy = function() {
 
 	this.maskBits = null;
 
+	this.isWaveEnabled = true;
+
 	this.enemyKilledEvent = new goog.events.Event(EventNames.ENEMY_KILLED, this);
 };
 
@@ -63,7 +65,7 @@ Enemy.prototype.kill = function() {
 
 		this.container.getStage().removeChild(this.container);
 
-		goog.events.dispatchEvent(this, this.enemyKilledEvent);
+		this.dispatchKillEvent();
 	}
 };
 
@@ -101,6 +103,15 @@ Enemy.prototype.modifyHealth = function(value) {
 */
 Enemy.prototype.getCategoryBits = function() {
 	return this.categoryBits;
+};
+
+/**
+*@public
+*/
+Enemy.prototype.dispatchKillEvent = function() {
+	if(this.isWaveEnabled) {
+		goog.events.dispatchEvent(this, this.enemyKilledEvent);
+	}
 };
 
 /**
