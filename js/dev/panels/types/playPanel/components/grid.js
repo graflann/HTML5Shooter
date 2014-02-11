@@ -25,6 +25,8 @@ Grid = function(w, h, unit, color) {
 	*@type {Shape}
 	*/
 	this.shape;
+
+	this.alphaDelta = Grid.ALPHA_DELTA;
 	
 	this.init();
 };
@@ -55,15 +57,19 @@ Grid.prototype.init = function() {
 	this.shape.alpha = 0.5;
 };
 
+Grid.ALPHA_DELTA = 0.005;
+
 /**
 *Scroll the grid automatically (use in background)
 *@public
 */
 Grid.prototype.update = function() {
-	this.shape.x -= 4;
+	this.shape.alpha += this.alphaDelta;
 
-	if(this.shape.x <= -Constants.UNIT) {
-		this.shape.x = 0;
+	if(this.shape.alpha > 0.75) {
+		this.alphaDelta =  -Grid.ALPHA_DELTA;
+	} else if(this.shape.alpha < 0.25) {
+		this.alphaDelta = Grid.ALPHA_DELTA;
 	}
 };
 

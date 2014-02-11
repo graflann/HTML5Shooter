@@ -15,6 +15,27 @@ AssetsProxy = function() {
     *@type {LoadQueue}
     */
 	this.queue = new createjs.LoadQueue(false);
+
+	this.arrAssetNames = [
+		'titleGraphic',
+		'striker',
+		'strikerWheel',
+		'enemyDroneBase',
+		'enemyDroneTurret',
+		'vulcanTurret',
+		'spreadTurret',
+		'railTurret',
+		'bladeTurret',
+		'enemyVulcanTurret',
+		'turretTransition',
+		'copter',
+		'centipedeHead',
+		'centipedeSegment',
+		'centipedeTail',
+		'enemyTrooper',
+		'enemyCarrier',
+		'boost'
+	];
 	
 	/**
 	*Instantiate array of SpriteSheet instances using JSON data
@@ -28,63 +49,41 @@ AssetsProxy = function() {
 	*master compiled spritesheet is used in prod, individual files in dev
     *@type {Array.<SpriteSheet>}
     */
-	this.arrSpriteSheetData = [
-		'assets/finished/titleGraphic.json',
-		'assets/finished/striker.json',
-		'assets/finished/strikerWheel.json',
-		'assets/finished/enemyDroneBase.json',
-		'assets/finished/enemyDroneTurret.json',
-		'assets/finished/vulcanTurret.json',
-		'assets/finished/spreadTurret.json',
-		'assets/finished/railTurret.json',
-		'assets/finished/bladeTurret.json',
-		'assets/finished/enemyVulcanTurret.json',
-		'assets/finished/turretTransition.json',
-		'assets/finished/copter.json',
-		'assets/finished/centipedeHead.json',
-		'assets/finished/centipedeSegment.json',
-		'assets/finished/centipedeTail.json',
-		'assets/finished/enemyTrooper.json',
-		'assets/finished/enemyCarrier.json',
-		'assets/finished/boost.json'//,
-		//'assets/finished/master.json'
-	];
+	this.arrSpriteSheetData = [];
 
 	/**
 	 * Caches resources in Array for queue manifest
 	 * --Must map to same indices as respective json files--
 	 * @type {Array}
 	 */
-	this.arrManifest = [
-		{id: "titleGraphic",		src: "assets/finished/titleGraphic.png"},
-		{id: "striker",				src: "assets/finished/striker.png"},
-		{id: "strikerWheel",		src: "assets/finished/strikerWheel.png"},
-		{id: "enemyDroneBase",		src: "assets/finished/enemyDroneBase.png"},
-		{id: "enemyDroneTurret",	src: "assets/finished/enemyDroneTurret.png"},
-		{id: "vulcanTurret",		src: "assets/finished/vulcanTurret.png"},
-		{id: "spreadTurret",		src: "assets/finished/spreadTurret.png"},
-		{id: "railTurret",			src: "assets/finished/railTurret.png"},
-		{id: "bladeTurret",			src: "assets/finished/bladeTurret.png"},
-		{id: "enemyVulcanTurret",	src: "assets/finished/enemyVulcanTurret.png"},
-		{id: "turretTransition",	src: "assets/finished/turretTransition.png"},
-		{id: "copter",				src: "assets/finished/copter.png"},
-		{id: "centipedeHead",		src: "assets/finished/centipedeHead.png"},
-		{id: "centipedeSegment",	src: "assets/finished/centipedeSegment.png"},
-		{id: "centipedeTail",		src: "assets/finished/centipedeTail.png"},
-		{id: "enemyTrooper",		src: "assets/finished/enemyTrooper.png"},
-		{id: "enemyCarrier",		src: "assets/finished/enemyCarrier.png"},
-		{id: "boost",				src: "assets/finished/boost.png"}//,
-		//{id: "master",				src: "assets/finished/master.png"}
-	];
+	this.arrManifest = [];
 
 	/**
 	 * Current asset index for arrSpriteSheetData / arrManifest use
 	 * @type {Number}
 	 */
 	this.assetIndex = 0;
+
+	this.init();
 };
 
 goog.inherits(AssetsProxy, goog.events.EventTarget);
+
+AssetsProxy.PATH = 'assets/finished/';
+
+/**
+*@private
+*/
+AssetsProxy.prototype.init = function() {
+	for(var i = 0; i < this.arrAssetNames.length; i++) {
+		this.arrSpriteSheetData.push(AssetsProxy.PATH + this.arrAssetNames[i] + '.json');
+
+		this.arrManifest.push({
+			id: this.arrAssetNames[i],
+			src: AssetsProxy.PATH + this.arrAssetNames[i] + '.png'
+		});
+	}
+};
 
 /**
 *@private

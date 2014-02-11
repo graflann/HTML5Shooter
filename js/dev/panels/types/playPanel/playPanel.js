@@ -241,6 +241,7 @@ PlayPanel.prototype.updateHud = function(options) {
 PlayPanel.prototype.updateLayers = function() {
 	Panel.prototype.update.call(this);
 	
+	this.grid.update();
 };
 
 PlayPanel.prototype.setLayers = function() {
@@ -258,7 +259,7 @@ PlayPanel.prototype.setLayers = function() {
 
 	this.background = new createjs.Shape();
 	this.background.graphics
-		.lf([Constants.DARK_BLUE, Constants.BLACK], [0, 1], 0, Constants.WIDTH, 0, Constants.HEIGHT)
+		.lf([Constants.DARK_BLUE, Constants.BLACK], [0, 0.75], 0, 0, 0, Constants.HEIGHT)
 		.dr(0, 0, Constants.WIDTH, Constants.HEIGHT);
 
 	app.layers.getStage(LayerTypes.BACKGROUND).addChild(this.background);
