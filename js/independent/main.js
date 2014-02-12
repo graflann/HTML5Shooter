@@ -43,7 +43,6 @@ app.browserUtils 	= null;
 app.input			= null;
 app.pathFinder      = null;
 app.assetsProxy     = null;
-//app.levelProxy 	= null;
 app.vecZero         = null;
 app.arenaWidth      = 0;
 app.arenaHeight     = 0;
@@ -53,6 +52,9 @@ app.charWidth       = 6;
 
 //POINT OF ENTRY//////////////////////////////////////////////////
 $(function() {
+    //disallow any jQuery ajax caching
+    //$.ajaxSetup ({ cache: false }); 
+
 	app.browserUtils 	= BrowserUtils.getInstance();
 	app.trigTable 		= TrigonometricTable.getInstance();
     app.layers          = LayerSystem.getInstance();

@@ -44,6 +44,8 @@ TitlePanel.prototype.init = function() {
 		Constants.WHITE
 	);
 
+	this.grid.autoScroll = true;
+
 	this.gameOptions = new GameOptions();
 	this.gameOptions.container.x = (Constants.WIDTH * 0.5) - (this.gameOptions.width * 0.5);
 	this.gameOptions.container.y = Constants.HEIGHT * 0.75;
@@ -117,17 +119,25 @@ TitlePanel.prototype.clear = function() {
 TitlePanel.prototype.setTitle = function() {
 	var self = this,
     	stage = app.layers.getStage(LayerTypes.MAIN),
-		titleDest = new app.b2Vec2(
-			Constants.WIDTH * 0.125, 
-			Constants.HEIGHT * 0.125
-		),
-		titleComponentDest = new app.b2Vec2(
-			titleDest.x + 10,
-			titleDest.y + 43
-		);
+		titleDest = null,
+		titleComponentDest = null,
+		width = 0,
+		titleSpriteSheet = app.assetsProxy.arrSpriteSheet["titleGraphic"];
 
 	//the main title graphic "strike"
-	this.title = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["titleGraphic"]);
+	this.title = new createjs.BitmapAnimation(titleSpriteSheet);
+	width = titleSpriteSheet._frames[0].rect.width;
+
+	titleDest = new app.b2Vec2(
+		(Constants.WIDTH * 0.5) - (width * 0.5), 
+		Constants.HEIGHT * 0.125
+	);
+
+	titleComponentDest = new app.b2Vec2(
+		titleDest.x + 10,
+		titleDest.y + 43
+	);
+
 	this.title.x = titleDest.x - 240; 	//initial horizontal offset
 	this.title.y = titleDest.y + 80;	//initial vertical offset	
 	this.title.scaleX = 2;

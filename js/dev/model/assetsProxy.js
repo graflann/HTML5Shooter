@@ -7,7 +7,7 @@ goog.require('EventNames');
 
 /**
 *@constructor
-*Entity that loads / retrieves w/external data
+*Entity that loads / retrieves w/external asset data
 */
 AssetsProxy = function() {	
 	/**
@@ -69,7 +69,7 @@ AssetsProxy = function() {
 
 goog.inherits(AssetsProxy, goog.events.EventTarget);
 
-AssetsProxy.PATH = 'assets/finished/';
+AssetsProxy.PATH = "assets/finished/";
 
 /**
 *@private

@@ -25,6 +25,7 @@ goog.require('ParticleSystemNames');
 goog.require('ItemSystem');
 goog.require('ItemTypes');
 goog.require('EventNames');
+goog.require('LevelProxy');
 
 /**
 *@constructor
@@ -72,6 +73,8 @@ PlayPanel = function() {
 
 	this.camera = null;
 
+	this.levelProxy = null;
+
 	this.level = null;
 
 	/**
@@ -86,10 +89,28 @@ PlayPanel = function() {
 	*/
 	this.hto = null;
 
-	this.init();
+	this.load();
 };
 
 goog.inherits(PlayPanel, Panel);
+
+/**
+*@override
+*@protected
+*/
+PlayPanel.prototype.load = function() {
+	this.levelProxy = new LevelProxy();
+
+	goog.events.listen(
+		this.levelProxy, 
+		EventNames.LOAD_COMPLETE, 
+		this.onLoadComplete, 
+		false, 
+		this
+	);
+
+	this.levelProxy.load();
+};
 
 /**
 *@override
@@ -466,7 +487,7 @@ PlayPanel.prototype.setPlayer = function() {
 };
 
 PlayPanel.prototype.setLevel = function() {
-	this.level = new Level();
+	this.level = new Level(this.levelProxy.currentLevelData);
 
 	this.hud.setRadar(
 		this.grid.width, 
@@ -554,6 +575,22 @@ PlayPanel.prototype.setEventListeners = function() {
 };
 
 //EVENT HANDLERS////////////////////////////////////////////////////
+/**
+*@private
+*@param {goog.events.Event} e
+**/
+PlayPanel.prototype.onLoadComplete = function(e) {
+    goog.events.unlisten(
+    	this.levelProxy, 
+    	EventNames.LOAD_COMPLETE, 
+    	this.onLoadComplete, 
+    	false, 
+    	this
+    );
+
+    this.init();
+};
+
 /**
 *@private
 */

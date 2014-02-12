@@ -27,6 +27,15 @@ Game = function() {
 	*/
 	this.factory = null;
 	
+	this.load();
+};
+
+goog.inherits(Game, goog.events.EventTarget);
+
+/**
+*@private
+*/
+Game.prototype.load = function() {
 	goog.events.listen(
 		app.assetsProxy, 
 		EventNames.LOAD_COMPLETE, 
@@ -37,8 +46,6 @@ Game = function() {
 
 	app.assetsProxy.load();
 };
-
-goog.inherits(Game, goog.events.EventTarget);
 
 /**
 *@private
@@ -53,9 +60,9 @@ Game.prototype.init = function() {
 	createjs.Ticker.useRAF = true; 
 	createjs.Ticker.setFPS(60);
 
-	//this.setPanel(PanelTypes.TITLE_PANEL);
+	this.setPanel(PanelTypes.TITLE_PANEL);
 	//this.setPanel(PanelTypes.OPTIONS_PANEL);
-	this.setPanel(PanelTypes.PLAY_PANEL);
+	//this.setPanel(PanelTypes.PLAY_PANEL);
 	//this.setPanel(PanelTypes.PATH_FINDING_PANEL);
 		
 	createjs.Ticker.addEventListener("tick", function() { self.update(); } );

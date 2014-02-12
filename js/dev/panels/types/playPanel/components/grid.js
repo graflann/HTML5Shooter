@@ -27,6 +27,8 @@ Grid = function(w, h, unit, color) {
 	this.shape;
 
 	this.alphaDelta = Grid.ALPHA_DELTA;
+
+	this.autoScroll = false;
 	
 	this.init();
 };
@@ -55,12 +57,16 @@ Grid.prototype.init = function() {
 	}
 	
 	this.shape.alpha = 0.5;
+
+	this.autoScroll = false;
 };
 
 Grid.ALPHA_DELTA = 0.005;
 
+Grid.AUTO_SCROLL_RATE = 4;
+
 /**
-*Scroll the grid automatically (use in background)
+*Pulse and/or scroll the grid automatically (use in background)
 *@public
 */
 Grid.prototype.update = function() {
@@ -70,6 +76,14 @@ Grid.prototype.update = function() {
 		this.alphaDelta =  -Grid.ALPHA_DELTA;
 	} else if(this.shape.alpha < 0.25) {
 		this.alphaDelta = Grid.ALPHA_DELTA;
+	}
+
+	if(this.autoScroll) {
+		this.shape.x -= Grid.AUTO_SCROLL_RATE;
+
+		if(this.shape.x <= -Constants.UNIT) {
+			this.shape.x = 0;
+		}
 	}
 };
 

@@ -33,7 +33,7 @@ goog.inherits(SniperTurret, Turret);
 SniperTurret.prototype.init = function() {
 	var self = this;
 
-	this.fireThreshold = 30;
+	this.fireThreshold = 20;
 	this.fireCounter = this.fireThreshold - 1;
 
 	this.energyConsumption = -PlayerTank.MAX_ENERGY / 4;
@@ -90,7 +90,7 @@ SniperTurret.prototype.clear = function() {
 SniperTurret.prototype.enterDefaultFire = function(options) {
 	Turret.prototype.enterDefaultFire.call(this, options);
 
-	this.fireThreshold = 30;
+	this.fireThreshold = 20;
 	this.fireCounter = this.fireThreshold - 1;
 
 	//this.energyConsumption = -40;
@@ -103,7 +103,7 @@ SniperTurret.prototype.enterDefaultFire = function(options) {
 SniperTurret.prototype.enterAltFire = function(options) {
 	Turret.prototype.enterAltFire.call(this, options);
 
-	this.fireThreshold = 2;
+	this.fireThreshold = 5;
 	this.fireCounter = this.fireThreshold - 1;
 
 	//this.energyConsumption = -5;

@@ -17,50 +17,50 @@ goog.require('PathFinder');
 /**
 *@constructor
 */
-Level = function(options) {
+Level = function(data) {
 
-	this.options = {
-		dimensions: { 
-			width: Constants.WIDTH * 4, 
-			height: Constants.HEIGHT * 2
-		},
-		enemies: {
-			enemyTank: {
-				max: 64,
-				projectileSystem: "ground"
-			},
+	//this.data = {
+		// dimensions: { 
+		// 	width: Constants.WIDTH * 4, 
+		// 	height: Constants.HEIGHT * 2
+		// },
+		// enemies: {
+		// 	enemyTank: {
+		// 		max: 64,
+		// 		projectileSystem: "ground"
+		// 	},
 
-			enemyTrooper: {
-				max: 64,
-				projectileSystem: "ground"
-			},
+		// 	enemyTrooper: {
+		// 		max: 64,
+		// 		projectileSystem: "ground"
+		// 	},
 
-			enemyCentipede: {
-				max: 16,
-				projectileSystem: "ground"
-			},
+		// 	enemyCentipede: {
+		// 		max: 16,
+		// 		projectileSystem: "ground"
+		// 	},
 
-			enemyTurret: {
-				max: 32, projectileSystem: "air"
-			},
+		// 	enemyTurret: {
+		// 		max: 32, projectileSystem: "air"
+		// 	},
 
-			enemyCopter: {
-				max: 16,
-				projectileSystem: "air"
-			}//,
+		// 	enemyCopter: {
+		// 		max: 16,
+		// 		projectileSystem: "air"
+		// 	},
 
-			// enemyCarrier: {
-			// 	max: 1,
-			// 	projectileSystem: "air"
-			// }
-		},
-		waves : [
-			[
-				{ 
-					type: "enemyTrooper", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 16,
-					positionX: 32, positionY: 32, posOffsetX: 64, posOffsetY: 64
-				}
-			],
+		// 	 enemyCarrier: {
+		// 	 	max: 1,
+		// 	 	projectileSystem: "air"
+		// 	 }
+		// },
+		// waves : [
+		// 	[
+		// 		{ 
+		// 			type: "enemyTrooper", intervalTime: 1000, intervalQuantity: 1, targetQuantity: 16,
+		// 			positionX: 32, positionY: 32, posOffsetX: 64, posOffsetY: 64
+		// 		}
+		// 	],
 			// [
 			// 	{ 
 			// 		type: "enemyCentipede", intervalTime: 1, intervalQuantity: 1, targetQuantity: 1,
@@ -85,26 +85,26 @@ Level = function(options) {
 			// 		positionX: -240, positionY: 64
 			// 	}
 			// ]
-		],
-		sceneObjects: {
-			wall: [
-				{ 	
-					width: Constants.UNIT * 4 + 16,
-					height: Constants.UNIT * 4 + 16,
-					color: Constants.BLUE,
-					numFloors: 7,
-					x: 248, 
-					y: 208
-				},
-				{ 	
-					width: Constants.UNIT,
-					height: Constants.UNIT * 4,
-					color: Constants.BLUE,
-					numFloors: 4,
-					x: 512, 
-					y: 128
-				}
-			 ]//,
+		// ],
+		// sceneObjects: {
+		// 	wall: [
+		// 		{ 	
+		// 			width: Constants.UNIT * 4 + 16,
+		// 			height: Constants.UNIT * 4 + 16,
+		// 			color: Constants.BLUE,
+		// 			numFloors: 7,
+		// 			x: 248, 
+		// 			y: 208
+		// 		},
+		// 		{ 	
+		// 			width: Constants.UNIT,
+		// 			height: Constants.UNIT * 4,
+		// 			color: Constants.BLUE,
+		// 			numFloors: 4,
+		// 			x: 512, 
+		// 			y: 128
+		// 		}
+		// 	 ],
 			// tower: [
 			// 	{ 	
 			// 		width: Constants.UNIT,
@@ -113,171 +113,15 @@ Level = function(options) {
 			// 		enemy: "enemyTurret", 
 			// 		x: Constants.WIDTH * 0.5 - (Constants.UNIT * 0.5), 
 			// 		y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5)
-			// 	},
-			// 	{ 	
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5)
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 1.5 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5)
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 2 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5) 
-			// 	},
-			// 	{ 	
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 2.5 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5)
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 3 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5) 
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 3.5 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 0.5  - (Constants.UNIT * 0.5) 
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 0.5 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT - (Constants.UNIT * 0.5) 
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT - (Constants.UNIT * 0.5)  
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 1.5 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT - (Constants.UNIT * 0.5)
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 2 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT - (Constants.UNIT * 0.5) 
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 2.5 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT - (Constants.UNIT * 0.5)
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 3 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT - (Constants.UNIT * 0.5) 
-			// 	},
-			// 	{ width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 3.5 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT - (Constants.UNIT * 0.5) 
-			// 	},
-
-
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 0.5 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5) 
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5)  
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 1.5 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5)
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 2 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5) 
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 2.5- (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5)  
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 3 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5)
-			// 	},
-			// 	{ 
-			// 		width: Constants.UNIT,
-			// 		height: Constants.UNIT,
-			// 		color: Constants.BLUE,
-			// 		enemy: "enemyTurret", 
-			// 		x: Constants.WIDTH * 3.5 - (Constants.UNIT * 0.5), 
-			// 		y: Constants.HEIGHT * 1.5 - (Constants.UNIT * 0.5) 
 			// 	}
 			// ]
-		}
-	};
+		//;}
+	//};
+
+	/**
+	*External JSON object provided by a LevelProxy instance
+	*/
+	this.data = data;
 
 	this.waveManager = null;
 
@@ -306,7 +150,7 @@ Level.prototype.init = function() {
 	this.setGraph();
 
 	this.waveManager = new WaveManager(
-		this.options.waves, 
+		this.data.waves, 
 		this.arrEnemySystems
 	);
 
@@ -399,8 +243,8 @@ Level.prototype.setProjectiles = function() {
 Level.prototype.setEnemies = function() {
 	var rawEnemy;
 
-	for(var key in this.options.enemies) {
-		rawEnemy = this.options.enemies[key];
+	for(var key in this.data.enemies) {
+		rawEnemy = this.data.enemies[key];
 
 		//EnemyCarrier instances spawn EnemyCopter instances
 		//this needs refactoring to be more elegant at some point...
@@ -432,8 +276,8 @@ Level.prototype.setSceneObjects = function() {
 		SceneObjectClass;
 
 	//Dynamically resolve the derived SceneObject class and create an instance of it
-	for(var key in this.options.sceneObjects) {
-		arrSO = this.options.sceneObjects[key];
+	for(var key in this.data.sceneObjects) {
+		arrSO = this.data.sceneObjects[key];
 
 		SceneObjectClass = SceneObjectClasses[key];
 
@@ -463,9 +307,9 @@ Level.prototype.setSceneObjects = function() {
 
 Level.prototype.setGraph = function() {
 	app.pathFinder = new PathFinder(
-		this.options.dimensions.width,
-		this.options.dimensions.height,
-		this.options.sceneObjects
+		this.data.dimensions.width,
+		this.data.dimensions.height,
+		this.data.sceneObjects
 	);
 };
 

@@ -7,19 +7,35 @@ goog.require('EventNames');
 
 /**
 *@constructor
-*Entity that loads / retrieves w/external data
+*Entity that loads / retrieves w/external level data
 */
-LevelProxy = function() {	
+LevelProxy = function() {
 
+	this.levelIndex = 0;
+
+	this.currentPath = "";
+
+	this.currentLevelData = null;
+
+	this.init();
 };
 
 goog.inherits(LevelProxy, goog.events.EventTarget);
+
+LevelProxy.PATH = "data/level";
+
+/**
+*@private
+*/
+LevelProxy.prototype.init = function() {
+	this.setLevel(1);
+};
 
 /**
 *@private
 */
 LevelProxy.prototype.load = function() {
-	
+	this.loadXHR();
 };
 
 /**
@@ -30,8 +46,10 @@ LevelProxy.prototype.load = function() {
 LevelProxy.prototype.loadXHR = function() {
 	var proxy = this;
 
-	$.get(proxy.arrSpriteSheetData[proxy.assetIndex], function(data) {
-		
+	$.get(this.currentPath, function(data) {
+		proxy.currentLevelData = JSON.parse(data);
+
+		goog.events.dispatchEvent(proxy, new goog.events.Event(EventNames.LOAD_COMPLETE, proxy));
 	})
 	.done(function() {
 		console.log("Done");
@@ -44,36 +62,8 @@ LevelProxy.prototype.loadXHR = function() {
 	});
 };
 
-/**
-*@private
-*/
-LevelProxy.prototype.onComplete = function(e) { 
-	
-};
-
-/**
-*@private
-*/
-LevelProxy.prototype.onProgress = function(e) {
-	console.log("progress...");
-	//show progress of loading and remove when complete
-};
-
-/**
-*@private
-*/
-LevelProxy.prototype.onFileLoad = function(e) {
-	console.log("fileLoaded...");
-	console.log(e);
-	//show progress of loading and remove when complete
-};
-
-/**
-*@private
-*/
-LevelProxy.prototype.onError = function(e) {
-	console.log(e);
-	console.log(e.item.id.toString() + " haz mad queue loading errorz dawg");
+LevelProxy.prototype.setLevel = function(index) {
+	this.currentPath = LevelProxy.PATH + index.toString() + ".json";
 };
 
 goog.exportSymbol('LevelProxy', LevelProxy);
