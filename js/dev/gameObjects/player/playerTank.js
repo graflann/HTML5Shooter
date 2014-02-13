@@ -99,7 +99,9 @@ PlayerTank = function(arrProjectileSystems, boostSystem) {
 	//cache events
 	this.weaponSelectEvent 			= new goog.events.Event(EventNames.WEAPON_SELECT, this);
 	this.addHomingOverlayEvent 		= new goog.events.Event(EventNames.ADD_HOMING_OVERLAY, this);
+	this.increaseHomingOverlayEvent = new goog.events.Event(EventNames.INCREASE_HOMING_OVERLAY, this);
 	this.removeHomingOverlayEvent 	= new goog.events.Event(EventNames.REMOVE_HOMING_OVERLAY, this);
+
 	this.energyChangeEvent 			= new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energy);
 	this.overdriveChangeEvent 		= new PayloadEvent(EventNames.OVERDRIVE_CHANGE, this, this.overdrive);
 
@@ -491,19 +493,33 @@ PlayerTank.prototype.updateHoming = function(options) {
 		goog.events.dispatchEvent(this, this.addHomingOverlayEvent);
 	}
 
+	// if(this.energy > 0 && !this.isHoming &&
+	// 	input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
+	// 	this.isHoming = true;
+
+	// 	//zero out the energy level upon homing
+	// 	//this.changeEnergy(0);
+
+	// 	//initializes the homing target overlay
+	// 	goog.events.dispatchEvent(this, this.addHomingOverlayEvent);
+	// }
+
 	//release to fire if hto is operational
-	if(!input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && this.isHoming) {
-		this.isHoming = false;
 
-		//hto is operational so firing may commence
-		if(hto.getCurrentState() === HomingTargetingOverlayOperationState.KEY) {
-			this.fireHoming();
+	if(this.isHoming) {
+		if(!input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
+			this.isHoming = false;
+
+			//hto is operational so firing may commence
+			if(hto.getCurrentState() === HomingTargetingOverlayOperationState.KEY) {
+				this.fireHoming();
+			}
+
+			this.reload();
+
+			//starts removal of homing overlay
+			goog.events.dispatchEvent(this, this.removeHomingOverlayEvent);
 		}
-
-		this.reload();
-
-		//starts removal of homing overlay
-		goog.events.dispatchEvent(this, this.removeHomingOverlayEvent);
 	}
 };
 

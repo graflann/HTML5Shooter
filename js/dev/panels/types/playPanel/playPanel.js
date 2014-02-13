@@ -550,6 +550,14 @@ PlayPanel.prototype.setEventListeners = function() {
 
 	goog.events.listen(
 		this.player, 
+		EventNames.INCREASE_HOMING_OVERLAY, 
+		this.onIncreaseHomingOverlay, 
+		false, 
+		this
+	);
+
+	goog.events.listen(
+		this.player, 
 		EventNames.REMOVE_HOMING_OVERLAY, 
 		this.onRemoveHomingOverlay, 
 		false, 
@@ -605,6 +613,13 @@ PlayPanel.prototype.onAddHomingOverlay = function(e) {
 	this.arrParticleSystems[ParticleSystemNames.PLAYER_RETICLE].kill();
 	this.collisionManager.resetHomingList();
 	this.hto.add();
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.onIncreaseHomingOverlay = function(e) {
+	this.hto.increase();
 };
 
 /**
