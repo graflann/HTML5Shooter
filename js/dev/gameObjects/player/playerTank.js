@@ -88,7 +88,11 @@ PlayerTank = function(arrProjectileSystems, boostSystem) {
 
 	this.isRecharging = false;
 
+	this.homingInc = 0;
+
 	this.energy = 100;
+
+	this.prevEnergy = this.energy;
 
 	this.overdrive = 0;
 
@@ -99,9 +103,9 @@ PlayerTank = function(arrProjectileSystems, boostSystem) {
 	//cache events
 	this.weaponSelectEvent 			= new goog.events.Event(EventNames.WEAPON_SELECT, this);
 	this.addHomingOverlayEvent 		= new goog.events.Event(EventNames.ADD_HOMING_OVERLAY, this);
-	this.increaseHomingOverlayEvent = new goog.events.Event(EventNames.INCREASE_HOMING_OVERLAY, this);
 	this.removeHomingOverlayEvent 	= new goog.events.Event(EventNames.REMOVE_HOMING_OVERLAY, this);
 
+	this.increaseHomingOverlayEvent = new PayloadEvent(EventNames.INCREASE_HOMING_OVERLAY, this, this.homingInc);
 	this.energyChangeEvent 			= new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energy);
 	this.overdriveChangeEvent 		= new PayloadEvent(EventNames.OVERDRIVE_CHANGE, this, this.overdrive);
 
@@ -482,12 +486,14 @@ PlayerTank.prototype.updateHoming = function(options) {
 
 	//HOMING
 	//hold to init homing target overlay
-	if(this.energy === PlayerTank.MAX_ENERGY && !this.isHoming &&
+	if(this.energy > 0 && !this.isHoming &&
 		input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
 		this.isHoming = true;
 
 		//zero out the energy level upon homing
-		this.changeEnergy(0);
+		//this.changeEnergy(0);
+
+		this.prevEnergy = this.energy;
 
 		//initializes the homing target overlay
 		goog.events.dispatchEvent(this, this.addHomingOverlayEvent);
@@ -519,6 +525,22 @@ PlayerTank.prototype.updateHoming = function(options) {
 
 			//starts removal of homing overlay
 			goog.events.dispatchEvent(this, this.removeHomingOverlayEvent);
+		} 
+
+		if(input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
+
+			if(this.energy > 0) {
+				var homingInc = this.energy - 1;
+
+				this.increaseHomingOverlayEvent.payload = 7.5;
+
+				this.changeEnergy(homingInc);
+			} else {
+				this.increaseHomingOverlayEvent.payload = 0;
+			}	
+
+			//gradually increases the size of the HTO while the homing button is pressed down
+			goog.events.dispatchEvent(this, this.increaseHomingOverlayEvent);
 		}
 	}
 };

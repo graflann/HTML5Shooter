@@ -8,8 +8,6 @@ goog.require('State');
 */
 HomingTargetingOverlayOperationState = function(hto) {
 	this.hto = hto;
-
-	this.scalar = HomingTargetingOverlayOperationState.SCALAR;
 };
 
 goog.inherits(HomingTargetingOverlayOperationState, State);

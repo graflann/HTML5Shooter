@@ -619,7 +619,7 @@ PlayPanel.prototype.onAddHomingOverlay = function(e) {
 *@private
 */
 PlayPanel.prototype.onIncreaseHomingOverlay = function(e) {
-	this.hto.increase();
+	this.hto.increase(e.payload);
 };
 
 /**
