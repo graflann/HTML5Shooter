@@ -31,8 +31,20 @@
 	"waves" : [
 		[
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 16,
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 64,
 				"positionX": 32, "positionY": 32, "posOffsetX": 64, "posOffsetY": 64
+			},
+			{ 
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 64,
+				"positionX": 3808, "positionY": 32, "posOffsetX": 64, "posOffsetY": 64
+			},
+			{ 
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 64,
+				"positionX": 3808, "positionY": 1408, "posOffsetX": 64, "posOffsetY": 64
+			},
+			{ 
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 64,
+				"positionX": 32, "positionY": 1408, "posOffsetX": 64, "posOffsetY": 64
 			}
 		],
 		[

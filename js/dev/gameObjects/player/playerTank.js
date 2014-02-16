@@ -121,7 +121,7 @@ PlayerTank.HOMING_OFFSETS = [-150, 150, -120, 120];
 PlayerTank.MAX_ENERGY 		= 100;
 PlayerTank.MAX_OVERDRIVE 	= 100;
 
-PlayerTank.OVERDRIVE_DURATION = 5000;
+PlayerTank.OVERDRIVE_DURATION = 20000;
 
 PlayerTank.BOOST_SCALE_X = 0.9;
 PlayerTank.BOOST_SCALE_Y = 1.1;

@@ -18,6 +18,9 @@ Radar = function() {
 	this.width = Constants.UNIT * 4;
 	this.height = this.width;
 
+	this.overlapWidth = this.width + Constants.UNIT;
+	this.overlapHeight = this.overlapWidth;
+
 	this.fieldWidth = 0;
 	this.fieldHeight = 0;
 
@@ -112,7 +115,6 @@ Radar.prototype.update = function(options) {
 				marker.shape.x = enemy.position.x / Radar.SCALE.x;
 				marker.shape.y = enemy.position.y / Radar.SCALE.y;
 			} else {
-
 				//enemy is not alive so if marker is present on container it gets removed
 				if(this.fieldContainer.getChildIndex(marker.shape) > -1) {
 					this.fieldContainer.removeChild(marker.shape);
