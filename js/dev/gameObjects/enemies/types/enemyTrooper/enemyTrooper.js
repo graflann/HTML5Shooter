@@ -341,7 +341,7 @@ EnemyTrooper.prototype.setPhysics = function() {
 	fixDef.filter.categoryBits = this.categoryBits;
 	fixDef.filter.maskBits = this.maskBits;
 	fixDef.isSensor = true;
-	fixDef.shape = new app.b2CircleShape(0.5);
+	fixDef.shape = new app.b2CircleShape(0.65);
 	
 	bodyDef.type = app.b2Body.b2_dynamicBody;
 	this.body = app.physicsWorld.CreateBody(bodyDef);

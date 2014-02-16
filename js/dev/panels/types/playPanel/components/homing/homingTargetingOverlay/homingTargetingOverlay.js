@@ -17,6 +17,8 @@ HomingTargetingOverlay = function() {
 
 	this.body = null;
 
+	this.fixDef = null;
+
 	/**
 	*@type {Shape}
 	*/
@@ -31,7 +33,7 @@ HomingTargetingOverlay = function() {
 
 	this.physicalPosition = new app.b2Vec2();
 
-	this.radius = Constants.WIDTH * 0.375;
+	this.radius = 0;
 
 	this.scalar = HomingTargetingOverlayOperationState.SCALAR;
 
@@ -44,7 +46,7 @@ HomingTargetingOverlay = function() {
 
 HomingTargetingOverlay.MAX_RADIUS = Constants.WIDTH * 0.375;
 
-HomingTargetingOverlay.RADIUS_INC = (HomingTargetingOverlay.MAX_RADIUS * 0.001);
+HomingTargetingOverlay.RADIUS_INC = (HomingTargetingOverlay.MAX_RADIUS * 0.01);
 
 /**
 *@public
@@ -198,31 +200,31 @@ HomingTargetingOverlay.prototype.updateOperation = function(options) {
 		.ss(2)
 		.s(Constants.LIGHT_BLUE)
 		.f(Constants.BLUE)
-		.dc(0, 0, this.radius);
+		.dc(0, 0, HomingTargetingOverlay.MAX_RADIUS);
 
 	this.arrReticles[0].graphics
 		.ss(4)
 		.s(Constants.LIGHT_BLUE)
-		.dc(0, 0, this.radius)
+		.dc(0, 0, HomingTargetingOverlay.MAX_RADIUS)
 		.mt(0, 0)
-		.dc(0, 0, this.radius * 0.5)
+		.dc(0, 0, HomingTargetingOverlay.MAX_RADIUS * 0.5)
 		.mt(0, 0)
-		.lt(this.radius, 0)
+		.lt(HomingTargetingOverlay.MAX_RADIUS, 0)
 		.mt(0, 0)
-		.lt(0, this.radius);
+		.lt(0, HomingTargetingOverlay.MAX_RADIUS);
 
 	this.arrReticles[1].graphics
 		.ss(4)
 		.s(Constants.DARK_BLUE)
 		.mt(0, 0)
-		.lt(this.radius, 0)
+		.lt(HomingTargetingOverlay.MAX_RADIUS, 0)
 		.mt(0, 0)
-		.lt(0, this.radius);
+		.lt(0, HomingTargetingOverlay.MAX_RADIUS);
 
 	this.arrReticles[2].graphics
 		.ss(4)
 		.s(Constants.BLUE)
-		.dc(0, 0, this.radius);
+		.dc(0, 0, HomingTargetingOverlay.MAX_RADIUS);
 
 	//UPDATE BACKGROUND OPACITY
 	if(this.background.alpha < 0.125) {
@@ -257,13 +259,15 @@ HomingTargetingOverlay.prototype.updateOperation = function(options) {
 *@public
 */
 HomingTargetingOverlay.prototype.exitOperation = function(options) {
-	this.arrReticles[0].graphics.clear();
-	this.arrReticles[1].graphics.clear();
-	this.arrReticles[2].graphics.clear();
+	var i = -1,
+		reticle = null;
 
-	this.container.removeChild(this.arrReticles[0]);
-	this.container.removeChild(this.arrReticles[1]);
-	this.container.removeChild(this.arrReticles[2]);
+	while(++i < this.arrReticles.length) {
+		reticle = this.arrReticles[i];
+
+		reticle.graphics.clear();
+		this.container.removeChild(reticle);
+	}
 
 	this.body.SetAwake(false);
 	this.body.SetActive(false);
@@ -334,6 +338,9 @@ HomingTargetingOverlay.prototype.increase = function(qty) {
 
 		this.container.scaleX += value;
 		this.container.scaleY = this.container.scaleX;
+
+		//scales the Box2D physics world sensor to match the container size
+		this.scaleSensor();
 	}
 };
 
@@ -347,6 +354,31 @@ HomingTargetingOverlay.prototype.remove = function() {
 /**
 *@public
 */
+HomingTargetingOverlay.prototype.scaleSensor = function() {
+	var fixDef = new app.b2FixtureDef(),
+		oldFixDef = this.body.GetFixtureList();
+	
+	this.radius = (this.container.scaleX * HomingTargetingOverlay.MAX_RADIUS) / app.physicsScale;
+
+	fixDef.density = 1.0;
+	fixDef.friction = 0;
+	fixDef.restitution = 1.0;
+	fixDef.filter.categoryBits = CollisionCategories.HOMING_OVERLAY;
+	fixDef.filter.maskBits = CollisionCategories.AIR_ENEMY;
+	fixDef.isSensor = true;
+	fixDef.shape = new app.b2CircleShape(this.radius);
+
+	
+	if(oldFixDef) {
+		this.body.DestroyFixture(oldFixDef);
+	}
+	
+	this.body.CreateFixture(fixDef);
+};
+
+/**
+*@public
+*/
 HomingTargetingOverlay.prototype.getCurrentState = function() {
 	return this.stateMachine.currentKey;
 };
@@ -355,16 +387,16 @@ HomingTargetingOverlay.prototype.getCurrentState = function() {
 *@private
 */
 HomingTargetingOverlay.prototype.setPhysics = function() {
-	var fixDef = new app.b2FixtureDef(),
-		bodyDef = new app.b2BodyDef();
-	
+	var fixDef = new app.b2FixtureDef();
+	var bodyDef = new app.b2BodyDef();
+
 	fixDef.density = 1.0;
 	fixDef.friction = 0;
 	fixDef.restitution = 1.0;
 	fixDef.filter.categoryBits = CollisionCategories.HOMING_OVERLAY;
 	fixDef.filter.maskBits = CollisionCategories.AIR_ENEMY;
 	fixDef.isSensor = true;
-	fixDef.shape = new app.b2CircleShape(12);
+	fixDef.shape = new app.b2CircleShape(1);
 	
 	bodyDef.type = app.b2Body.b2_dynamicBody;
 	this.body = app.physicsWorld.CreateBody(bodyDef);

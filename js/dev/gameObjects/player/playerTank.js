@@ -89,10 +89,10 @@ PlayerTank = function(arrProjectileSystems, boostSystem) {
 	this.isRecharging = false;
 
 	this.homingInc = 0;
+	
+	this.totalHomingValue = 0;
 
 	this.energy = 100;
-
-	this.prevEnergy = this.energy;
 
 	this.overdrive = 0;
 
@@ -125,7 +125,11 @@ PlayerTank.OVERDRIVE_DURATION = 5000;
 
 PlayerTank.BOOST_SCALE_X = 0.9;
 PlayerTank.BOOST_SCALE_Y = 1.1;
-PlayerTank.BOOST_ALPHA = 0.75; 
+PlayerTank.BOOST_ALPHA = 0.75;
+PlayerTank.REQUIRED_FOR_BOOST = PlayerTank.MAX_ENERGY * 0.5;
+
+PlayerTank.HOMING_INCREMENT = 2;
+PlayerTank.HOMING_LIMIT = PlayerTank.MAX_ENERGY * 0.5;
 
 /**
 *@override
@@ -264,7 +268,7 @@ PlayerTank.prototype.enterBoost = function(options) {
 
 	this.damage = 100;
 
-	this.changeEnergy(0);
+	this.changeEnergy(this.energy - PlayerTank.REQUIRED_FOR_BOOST);
 
 	this.boostSystem.emit(1, { target: this });
 
@@ -288,10 +292,10 @@ PlayerTank.prototype.enterBoost = function(options) {
 		});
 
 	setTimeout(function() {
-		if(self.isOverdrive) {
-			self.stateMachine.setState(PlayerDefaultState.KEY);
-		} else {
+		if(self.energy === 0) {
 			self.stateMachine.setState(PlayerRechargeState.KEY);
+		} else {
+			self.stateMachine.setState(PlayerDefaultState.KEY);
 		}
 	}, PlayerBoostState.DURATION);
 };
@@ -490,10 +494,8 @@ PlayerTank.prototype.updateHoming = function(options) {
 		input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
 		this.isHoming = true;
 
-		//zero out the energy level upon homing
-		//this.changeEnergy(0);
-
-		this.prevEnergy = this.energy;
+		//reset the total homing value; it will increment on HTO increase
+		this.totalHomingValue = 0;
 
 		//initializes the homing target overlay
 		goog.events.dispatchEvent(this, this.addHomingOverlayEvent);
@@ -521,7 +523,9 @@ PlayerTank.prototype.updateHoming = function(options) {
 				this.fireHoming();
 			}
 
-			this.reload();
+			if(this.energy === 0) {
+				this.reload();
+			}
 
 			//starts removal of homing overlay
 			goog.events.dispatchEvent(this, this.removeHomingOverlayEvent);
@@ -529,18 +533,24 @@ PlayerTank.prototype.updateHoming = function(options) {
 
 		if(input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
 
-			if(this.energy > 0) {
-				var homingInc = this.energy - 1;
+			if(this.energy > 0 && this.totalHomingValue <= PlayerTank.MAX_ENERGY) {
+				this.homingInc = this.energy - 1;
 
-				this.increaseHomingOverlayEvent.payload = 7.5;
+				if(this.isOverdrive){
+					this.increaseHomingOverlayEvent.payload = PlayerTank.HOMING_INCREMENT * 2;
+				} else {
+					this.increaseHomingOverlayEvent.payload = PlayerTank.HOMING_INCREMENT;
+				}
 
-				this.changeEnergy(homingInc);
-			} else {
-				this.increaseHomingOverlayEvent.payload = 0;
-			}	
+				this.changeEnergy(this.homingInc);
 
-			//gradually increases the size of the HTO while the homing button is pressed down
-			goog.events.dispatchEvent(this, this.increaseHomingOverlayEvent);
+				//cache the total homing value based on payload; 
+				//determines the total qty of homing missles fired
+				this.totalHomingValue += this.increaseHomingOverlayEvent.payload
+
+				//gradually increases the size of the HTO while the homing button is pressed down
+				goog.events.dispatchEvent(this, this.increaseHomingOverlayEvent);
+			}
 		}
 	}
 };
@@ -565,7 +575,7 @@ PlayerTank.prototype.updateTurret = function(options) {
 PlayerTank.prototype.checkBoost = function() {
 	var input = app.input;
 
-	if(this.energy === PlayerTank.MAX_ENERGY && 
+	if(this.energy >= PlayerTank.REQUIRED_FOR_BOOST && 
 		input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.BOOST])) {
 		this.stateMachine.setState(PlayerBoostState.KEY);
 	}

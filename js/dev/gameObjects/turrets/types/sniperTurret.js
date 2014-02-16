@@ -36,7 +36,7 @@ SniperTurret.prototype.init = function() {
 	this.fireThreshold = 20;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.energyConsumption = -PlayerTank.MAX_ENERGY / 4;
+	this.energyConsumption = -PlayerTank.MAX_ENERGY / 5;
 
 	this.ammoDistance = 96 / app.physicsScale;
 
@@ -92,8 +92,6 @@ SniperTurret.prototype.enterDefaultFire = function(options) {
 
 	this.fireThreshold = 20;
 	this.fireCounter = this.fireThreshold - 1;
-
-	//this.energyConsumption = -40;
 };
 
 /**
@@ -105,8 +103,6 @@ SniperTurret.prototype.enterAltFire = function(options) {
 
 	this.fireThreshold = 5;
 	this.fireCounter = this.fireThreshold - 1;
-
-	//this.energyConsumption = -5;
 };
 
 /**
