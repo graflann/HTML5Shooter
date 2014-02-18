@@ -20,7 +20,7 @@
 		},
 
 		"enemyTurret": {
-			"max": 32, "projectileSystem": "air"
+			"max": 16, "projectileSystem": "air"
 		},
 
 		"enemyCopter": {
@@ -31,20 +31,50 @@
 	"waves" : [
 		[
 			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 64,
-				"positionX": 32, "positionY": 32, "posOffsetX": 64, "posOffsetY": 64
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 24,
+				"positionX": 1920, "positionY": -32, "posOffsetX": 64, "posOffsetY": 32
+			}
+		],
+		[
+			{ 
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 24,
+				"positionX": 1920, "positionY": 1472, "posOffsetX": 64, "posOffsetY": 32
+			}
+		],
+		[
+			{ 
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
+				"positionX": 1920, "positionY": -32, "posOffsetX": 64, "posOffsetY": 32
 			},
 			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 64,
-				"positionX": 3808, "positionY": 32, "posOffsetX": 64, "posOffsetY": 64
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
+				"positionX": 1920, "positionY": 1472, "posOffsetX": 64, "posOffsetY": 32
 			},
 			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 64,
-				"positionX": 3808, "positionY": 1408, "posOffsetX": 64, "posOffsetY": 64
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
+				"positionX": 1920, "positionY": -32, "posOffsetX": 64, "posOffsetY": 32
 			},
 			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 64,
-				"positionX": 32, "positionY": 1408, "posOffsetX": 64, "posOffsetY": 64
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
+				"positionX": 1920, "positionY": 1472, "posOffsetX": 64, "posOffsetY": 32
+			}
+		],
+		[
+			{ 
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
+				"positionX": -64, "positionY": -64, "posOffsetX": 64, "posOffsetY": 64
+			},
+			{ 
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
+				"positionX": 3904, "positionY": -64, "posOffsetX": 64, "posOffsetY": 64
+			},
+			{ 
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
+				"positionX": 3904, "positionY": 1504, "posOffsetX": 64, "posOffsetY": 64
+			},
+			{ 
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
+				"positionX": -64, "positionY": 1504, "posOffsetX": 64, "posOffsetY": 64
 			}
 		],
 		[
@@ -69,20 +99,68 @@
 	"sceneObjects": {
 		"wall": [
 			{ 	
-				"width": 144,
-				"height": 144,
+				"width": 32,
+				"height": 512,
 				"color": "#6FC3DF",
-				"numFloors": 7,
-				"x": 568, 
-				"y": 208
+				"numFloors": 4,
+				"x": 512, 
+				"y": 64
 			},
 			{ 	
 				"width": 32,
-				"height": 128,
+				"height": 512,
 				"color": "#6FC3DF",
 				"numFloors": 4,
-				"x": 832, 
-				"y": 128
+				"x": 512, 
+				"y": 896
+			},
+			{ 	
+				"width": 512,
+				"height": 32,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 640, 
+				"y": 576
+			},
+			{ 	
+				"width": 512,
+				"height": 32,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 640, 
+				"y": 864
+			},
+			{ 	
+				"width": 512,
+				"height": 32,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 2688, 
+				"y": 576
+			},
+			{ 	
+				"width": 512,
+				"height": 32,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 2688, 
+				"y": 864
+			},
+			{ 	
+				"width": 32,
+				"height": 512,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 3296, 
+				"y": 64
+			},
+			{ 	
+				"width": 32,
+				"height": 512,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 3296, 
+				"y": 896
 			}
 		 ],
 		"tower": [
@@ -100,7 +178,7 @@
 				"color": "#6FC3DF",
 				"enemy": "enemyTurret", 
 				"x": 112, 
-				"y": 240
+				"y": 400
 			},
 			{ 
 				"width": 32,
@@ -108,7 +186,7 @@
 				"color": "#6FC3DF",
 				"enemy": "enemyTurret", 
 				"x": 112, 
-				"y": 368
+				"y": 688
 			},
 			{ 
 				"width": 32,
@@ -116,7 +194,135 @@
 				"color": "#6FC3DF",
 				"enemy": "enemyTurret", 
 				"x": 112, 
-				"y": 496
+				"y": 976
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 112, 
+				"y": 1264
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1840, 
+				"y": 112
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1840, 
+				"y": 400
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1840, 
+				"y": 688
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1840, 
+				"y": 976
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1840, 
+				"y": 1264
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1936, 
+				"y": 112
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1936, 
+				"y": 400
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1936, 
+				"y": 688
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1936, 
+				"y": 976
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1936, 
+				"y": 1264
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 3712, 
+				"y": 112
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 3712, 
+				"y": 400
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 3712, 
+				"y": 688
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 3712, 
+				"y": 976
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 3712, 
+				"y": 1264
 			}
 		]
 	}

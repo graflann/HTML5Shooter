@@ -13,7 +13,7 @@ LaserProjectile = function(colors, categoryBits, maskBits) {
 	*physical body added to Box2D physicsWorld
 	*@type {}
 	*/
-	this.velocityMod = 1024;
+	this.velocityMod = 1536;
 	
 	
 	this.init();
@@ -87,7 +87,7 @@ LaserProjectile.prototype.setPhysics = function() {
 	fixDef.filter.categoryBits = this.categoryBits;
 	fixDef.filter.maskBits = this.maskBits;
 	fixDef.isSensor = true;
-	fixDef.shape = new app.b2CircleShape(0.25);
+	fixDef.shape = new app.b2CircleShape(0.35);
 	
 	bodyDef.type = app.b2Body.b2_dynamicBody;
 	this.body = app.physicsWorld.CreateBody(bodyDef);

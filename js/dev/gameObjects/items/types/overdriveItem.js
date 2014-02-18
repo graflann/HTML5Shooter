@@ -11,7 +11,7 @@ OverdriveItem = function(categoryBits) {
 
 	this.label = null;
 
-	this.value = 100;
+	this.value = 1;
 	
 	this.init();
 };

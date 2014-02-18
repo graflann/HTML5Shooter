@@ -31,7 +31,7 @@ BladeTurret.prototype.init = function() {
 	this.fireThreshold = 2;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.energyConsumption = -PlayerTank.MAX_ENERGY / 40;
+	this.energyConsumption = -PlayerTank.MAX_ENERGY / 75;
 
 	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["bladeTurret"]);
 	this.shape.regX = 47;

@@ -204,6 +204,21 @@ EnemyTank.prototype.clear = function() {
 };
 
 /**
+*@public
+*/
+EnemyTank.prototype.kill = function() {
+	if(this.isAlive) {
+		this.setIsAlive(false);
+
+		this.navigation.reset();
+
+		this.container.getStage().removeChild(this.container);
+
+		this.dispatchKillEvent();
+	}
+};
+
+/**
 *@override
 *@public
 */

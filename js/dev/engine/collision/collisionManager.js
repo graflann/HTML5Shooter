@@ -218,10 +218,10 @@ CollisionManager.prototype.preSolve = function(contact, oldManifold) {
 
 //VERSUS/////////////////////////////////////////////////////////////////////
 CollisionManager.prototype.projectileVsObject = function(projectile, object) {
-    //console.log(projectile);
-    //console.log(object);
+    //PROCESS PROJECTILE
+    projectile.onCollide(object, this.collisionOptions.projectile);
 
-	//PROCESS ENEMY
+	//PROCESS VS. ENEMY
 	if(object instanceof Enemy) {
 		object.onCollide(projectile, this.collisionOptions.enemy);
 
@@ -241,22 +241,32 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
                 }
             );
         }
-	}
-    //TODO: process collision w player
 
-	//PROCESS PROJECTILE
-	projectile.onCollide(object, this.collisionOptions.projectile);
-
-	//certain projectile types go "through" objects during collision,
-	//so opt out of the remaining function code or execute
-	if(projectile instanceof SniperProjectile || 
-        projectile instanceof BladeProjectile ||
-        projectile instanceof ReflectProjectile ||
-        projectile instanceof LaserProjectile
-    ) {
-		//console.log("Sniper");
-		return;
-	}
+        //certain projectile types go "through" objects during collision,
+        //so opt out of the remaining function code or execute
+        if(projectile instanceof SniperProjectile || 
+            projectile instanceof BladeProjectile ||
+            projectile instanceof LaserProjectile ||
+            projectile instanceof RotarySawProjectile
+        ) {
+            return;
+        }
+    //PROCESS VS. SCENE OBJECT
+	} else if (object instanceof SceneObject) {
+        //certain projectile types go "through" objects during collision,
+        //so opt out of the remaining function code or execute
+        if(projectile instanceof SniperProjectile || 
+            projectile instanceof BladeProjectile ||
+            projectile instanceof ReflectProjectile || //"bounces" off of SceneObjects but not Enemy instances
+            projectile instanceof LaserProjectile ||
+            projectile instanceof RotarySawProjectile
+        ) {
+            return;
+        }
+    }/*else if (object instanceof PlayerTank) { 
+        //TODO: process collision w player
+        
+    }*/
 
 	this.killList.push(projectile);
 };

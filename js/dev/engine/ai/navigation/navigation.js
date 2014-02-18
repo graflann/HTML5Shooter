@@ -14,6 +14,8 @@ Navigation = function() {
 	this.init();
 };
 
+Navigation.MAX_POSITIONS = 8;
+
 Navigation.prototype.init = function() {
 	this.arrNodePositions = [];
 };
@@ -55,18 +57,20 @@ Navigation.prototype.update = function(sourcePos, targetPos) {
 
 			//console.log("Updating target: " + this.positionIndex.toString());
 
-			if(this.positionIndex < this.arrNodePositions.length)
+			if(this.positionIndex < this.arrNodePositions.length && this.positionIndex < Navigation.MAX_POSITIONS)
 			{
 				this.targetPosition = this.arrNodePositions[this.positionIndex];
-
-				console.log();
 			}
 			else
 			{
-				this.arrNodePositions.length = 0;
+				this.reset();
 			}
 		}
 	}
+};
+
+Navigation.prototype.reset = function() {
+	this.arrNodePositions.length = 0;
 };
 
 Navigation.prototype.clear = function() {

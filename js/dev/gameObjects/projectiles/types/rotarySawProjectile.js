@@ -17,7 +17,7 @@ RotarySawProjectile = function(colors, categoryBits, maskBits) {
 
 	this.timer = 0;
 
-	this.secondsAlive = 0.2;
+	this.secondsAlive = 0.3;
 
 	this.timerThreshold = createjs.Ticker.getFPS() * this.secondsAlive;
 	

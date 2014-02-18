@@ -43,6 +43,7 @@ Hud.prototype.init = function() {
 	this.setMeters();
 
 	this.container.addChild(this.radar.container);
+	this.container.addChild(this.radar.arrowContainer);
 	this.container.addChild(this.weaponSelectorContainer.container);
 	this.container.addChild(this.energyMeter.container);
 	this.container.addChild(this.overdriveMeter.container);

@@ -263,6 +263,21 @@ EnemyTrooper.prototype.clear = function() {
 };
 
 /**
+*@public
+*/
+EnemyTrooper.prototype.kill = function() {
+	if(this.isAlive) {
+		this.setIsAlive(false);
+
+		this.navigation.reset();
+
+		this.container.getStage().removeChild(this.container);
+
+		this.dispatchKillEvent();
+	}
+};
+
+/**
  *Face player and fires
 *@public
 */

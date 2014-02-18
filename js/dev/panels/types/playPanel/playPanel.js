@@ -377,8 +377,8 @@ PlayPanel.prototype.setProjectiles = function() {
 	];
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.BLADE] = [
-		new ProjectileSystem(ProjectileTypes.BLADE, [Constants.LIGHT_BLUE, Constants.DARK_BLUE], 16),
-		new ProjectileSystem(ProjectileTypes.ROTARY_SAW, [Constants.YELLOW, Constants.RED], 64)
+		new ProjectileSystem(ProjectileTypes.BLADE, [Constants.LIGHT_BLUE, Constants.DARK_BLUE], 32),
+		new ProjectileSystem(ProjectileTypes.ROTARY_SAW, [Constants.YELLOW, Constants.RED], 128)
 	];
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.SNIPER] = [
@@ -476,8 +476,8 @@ PlayPanel.prototype.setPlayer = function() {
 	
 	this.player.setPosition(
 		new app.b2Vec2(
-			((Constants.WIDTH * 0.25) - (this.player.width * 0.5)) / app.physicsScale,
-			((Constants.HEIGHT * 0.5) - (this.player.height * 0.5)) / app.physicsScale
+			((app.arenaWidth * 0.5) - (this.player.width * 0.5)) / app.physicsScale,
+			((app.arenaHeight * 0.5) - (this.player.height * 0.5)) / app.physicsScale
 		)
 	);
 	app.layers.getStage(LayerTypes.MAIN).addChild(this.player.container);
