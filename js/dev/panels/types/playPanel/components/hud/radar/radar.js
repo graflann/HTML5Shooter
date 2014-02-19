@@ -1,7 +1,6 @@
 goog.provide('Radar');
 
 goog.require('Marker');
-goog.require('ArrowMarker');
 
 /**
 *@constructor
@@ -10,7 +9,7 @@ goog.require('ArrowMarker');
 Radar = function() {	
 	this.container = null;
 
-	this.arrowContainer = null;
+	this.externalContainer = null;
 
 	this.fieldContainer = null;
 
@@ -37,9 +36,7 @@ Radar = function() {
 
 	this.arrMarkers = [];
 
-	this.arrArrowMarkers = [];
-
-	this.arrowMarkerDistance = (this.width * 0.5) + 4;
+	this.externalMarkerDistance = (this.width * 0.5) + 4;
 	
 	this.init();
 };
@@ -80,9 +77,9 @@ Radar.prototype.init = function() {
 	this.container.addChild(this.echo);
 	this.container.mask = this.mask;
 
-	this.arrowContainer = new createjs.Container();
-	this.arrowContainer.x = this.container.x + this.echo.x;
-	this.arrowContainer.y = this.container.y + this.echo.y;
+	this.externalContainer = new createjs.Container();
+	this.externalContainer.x = this.container.x + this.echo.x;
+	this.externalContainer.y = this.container.y + this.echo.y;
 };
 
 /**
@@ -90,15 +87,10 @@ Radar.prototype.init = function() {
 */
 Radar.prototype.update = function(options) {
 	var arrEnemySystems = options.arrEnemySystems,
-		arrEnemies = null,
 		playerMarker = this.arrMarkers[PlayerTank.KEY],
-		arrEnemyMarkers = null,
-		enemy = null,
-		marker = null,
 		camera = options.camera,
 		player = options.player,
-		key = "",
-		i = -1;
+		playerMarkerPos = new app.b2Vec2(player.position.x / Radar.SCALE.x, player.position.y / Radar.SCALE.y);
 
 	//update radar echo effect
 	this.echo.rotation -= 2;
@@ -108,78 +100,95 @@ Radar.prototype.update = function(options) {
 	this.fieldContainer.y = (camera.position.y / Radar.SCALE.y) + this.fieldOffset.y;
 
 	//update player marker
-	playerMarker.shape.x = player.position.x / Radar.SCALE.x;
-	playerMarker.shape.y = player.position.y / Radar.SCALE.y;
+	playerMarker.shape.x = playerMarkerPos.x;
+	playerMarker.shape.y = playerMarkerPos.y;
 
 	//update enemy markers
+	this.updateEnemyMarkers(player, playerMarkerPos, arrEnemySystems);
+};
+
+/**
+*@public
+*/
+Radar.prototype.clear = function(enemy) {
+	//TODO: Clean this up...
+};
+
+Radar.prototype.updateEnemyMarkers = function(player, playerMarkerPos, arrEnemySystems) {
+	var arrEnemyMarkers = null,
+		arrEnemies = null,
+		enemy = null,
+		marker = null,
+		enemyMarkerPos = new app.b2Vec2(0, 0),
+		key = "",
+		i = -1;
+
 	for(key in arrEnemySystems) {
 		arrEnemies = arrEnemySystems[key].arrEnemies;
 		arrEnemyMarkers = this.arrMarkers[key];
-		arrArrowMarkers = this.arrArrowMarkers[key];
 
 		i = -1;
 		while(++i < arrEnemies.length) {
 			enemy = arrEnemies[i];
 			marker = arrEnemyMarkers[i];
-			arrowMarker = arrArrowMarkers[i];
 
 			//Enemy instance is within scope and depicted within radar
-			if(this.isEnemyInRadarScope(playerMarker, enemy)) {
-				if(enemy.isAlive) {
+			if(enemy.isAlive) {
+				enemyMarkerPos.x = enemy.position.x / Radar.SCALE.x;
+				enemyMarkerPos.y = enemy.position.y / Radar.SCALE.y;
 
-					if(this.arrowContainer.getChildIndex(arrowMarker.shape) > -1) {
-						this.arrowContainer.removeChild(arrowMarker.shape);
-					}
-
-					if(this.fieldContainer.getChildIndex(marker.shape) < 0) {
-						this.fieldContainer.addChild(marker.shape);
-					}
-
-					//update the marker based on enemy position divided by scale
-					marker.shape.x = enemy.position.x / Radar.SCALE.x;
-					marker.shape.y = enemy.position.y / Radar.SCALE.y;
+				if(this.isEnemyInRadarScope(playerMarkerPos, enemyMarkerPos)) {
+					this.updateMarkerWithinScope(enemyMarkerPos, marker);
 				} else {
-					//enemy is not alive so if marker is present on container it gets removed
-					if(this.fieldContainer.getChildIndex(marker.shape) > -1) {
-						this.fieldContainer.removeChild(marker.shape);
-					}
+					this.updateMarkerOutOfScope(player, enemy, marker);
 				}
-			//Enemy is out of radar field and an arrow points 
-			//to its location just outside radar scope diameter
 			} else {
-				if(enemy.isAlive) {
-					if(this.fieldContainer.getChildIndex(marker.shape) > -1) {
-						this.fieldContainer.removeChild(marker.shape);
-					}
+				//enemy is not alive so if marker is present on container it gets removed
+				if(this.fieldContainer.getChildIndex(marker.shape) > -1) {
+					this.fieldContainer.removeChild(marker.shape);
+				}
 
-					if(this.arrowContainer.getChildIndex(arrowMarker.shape) < 0) {
-						this.arrowContainer.addChild(arrowMarker.shape);
-					}
-				} else {
-					var rad = Math.atan2(enemy.position.y - player.position.y, enemy.position.x - player.position.x),
-						deg = Math.radToDeg(rad);
-
-					//update the marker based on enemy position divided by scale
-					arrowMarker.shape.x = app.trigTable.cos(deg) * this.arrowMarkerDistance;
-					arrowMarker.shape.y = app.trigTable.sin(deg) * this.arrowMarkerDistance;
+				if(this.externalContainer.getChildIndex(marker.shape) > -1) {
+					this.externalContainer.removeChild(marker.shape);
 				}
 			}
 		}
 	}
 };
 
-/**
-*@public
-*/
-Radar.prototype.clear = function() {
-	//TODO: Clean this up...
+Radar.prototype.isEnemyInRadarScope = function(playerMarkerPos, enemyMarkerPos) {
+	return (enemyMarkerPos.DistanceSqrd(playerMarkerPos) < this.distanceThreshold);
 };
 
-Radar.prototype.isEnemyInRadarScope = function(playerMarker, enemy) {
-	var enemyMarkerPos = new app.b2Vec2(enemy.position.x / Radar.SCALE.x, enemy.position.y / Radar.SCALE.y),
-		playerMarkerPos = new app.b2Vec2(playerMarker.shape.x, playerMarker.shape.y);
+Radar.prototype.updateMarkerWithinScope = function(enemyMarkerPos, marker) {
+	if(this.externalContainer.getChildIndex(marker.shape) > -1) {
+		this.externalContainer.removeChild(marker.shape);
+	}
 
-	return (enemyMarkerPos.DistanceSqrd(playerMarkerPos) < this.distanceThreshold);
+	if(this.fieldContainer.getChildIndex(marker.shape) < 0) {
+		this.fieldContainer.addChild(marker.shape);
+	}
+
+	//update the marker based on enemy position divided by scale
+	marker.shape.x = enemyMarkerPos.x;
+	marker.shape.y = enemyMarkerPos.y;
+};
+
+Radar.prototype.updateMarkerOutOfScope = function(player, enemy, marker) {
+	var rad = Math.atan2(enemy.position.y - player.position.y, enemy.position.x - player.position.x),
+		deg = Math.radToDeg(rad);
+
+	if(this.fieldContainer.getChildIndex(marker.shape) > -1) {
+		this.fieldContainer.removeChild(marker.shape);
+	}
+
+	if(this.externalContainer.getChildIndex(marker.shape) < 0) {
+		this.externalContainer.addChild(marker.shape);
+	}
+
+	//update the marker based on enemy position divided by scale
+	marker.shape.x = app.trigTable.cos(deg) * this.externalMarkerDistance;
+	marker.shape.y = app.trigTable.sin(deg) * this.externalMarkerDistance;
 };
 
 /**
@@ -215,11 +224,9 @@ Radar.prototype.setField = function(w, h, player, arrEnemySystems) {
 		arrEnemies = arrEnemySystems[key].arrEnemies;
 
 		this.arrMarkers[key] = [];
-		this.arrArrowMarkers[key] = [];
 
 		for(var i = 0; i < arrEnemies.length; i++) {
 			this.arrMarkers[key][i] = new Marker(arrEnemies[i]);
-			this.arrArrowMarkers[key][i] = new ArrowMarker(arrEnemies[i]);
 		}
 	}
 };
