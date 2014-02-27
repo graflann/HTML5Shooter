@@ -66,4 +66,12 @@ LevelProxy.prototype.setLevel = function(index) {
 	this.currentPath = LevelProxy.PATH + index.toString() + ".json";
 };
 
+LevelProxy.prototype.getImageNames = function() {
+	return this.currentLevelData.images;
+};
+
+LevelProxy.prototype.getSoundNames = function() {
+	return this.currentLevelData.sounds;
+};
+
 goog.exportSymbol('LevelProxy', LevelProxy);

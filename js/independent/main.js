@@ -53,7 +53,7 @@ app.charWidth       = 6;
 //POINT OF ENTRY//////////////////////////////////////////////////
 $(function() {
     //disallow any jQuery ajax caching
-    //$.ajaxSetup ({ cache: false }); 
+    $.ajaxSetup ({ cache: false }); 
 
 	app.browserUtils 	= BrowserUtils.getInstance();
 	app.trigTable 		= TrigonometricTable.getInstance();

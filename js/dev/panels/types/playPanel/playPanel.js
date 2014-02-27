@@ -104,7 +104,7 @@ PlayPanel.prototype.load = function() {
 	goog.events.listen(
 		this.levelProxy, 
 		EventNames.LOAD_COMPLETE, 
-		this.onLoadComplete, 
+		this.onLevelLoadComplete, 
 		false, 
 		this
 	);
@@ -127,6 +127,8 @@ PlayPanel.prototype.init = function() {
 	this.setCollisionManager();
 	this.setCamera();
 	this.setEventListeners();
+
+	//app.assetsProxy.playSound('musicLevel_1');
 };
 
 /**
@@ -587,11 +589,38 @@ PlayPanel.prototype.setEventListeners = function() {
 *@private
 *@param {goog.events.Event} e
 **/
-PlayPanel.prototype.onLoadComplete = function(e) {
+PlayPanel.prototype.onLevelLoadComplete = function(e) {
     goog.events.unlisten(
     	this.levelProxy, 
     	EventNames.LOAD_COMPLETE, 
-    	this.onLoadComplete, 
+    	this.onLevelLoadComplete, 
+    	false, 
+    	this
+    );
+
+    goog.events.listen(
+    	app.assetsProxy, 
+    	EventNames.LOAD_COMPLETE, 
+    	this.onAssetsLoadComplete, 
+    	false, 
+    	this
+    );
+
+   	app.assetsProxy.load(
+   		this.levelProxy.getImageNames(), 
+   		this.levelProxy.getSoundNames()
+   	);
+};
+
+/**
+*@private
+*@param {goog.events.Event} e
+**/
+PlayPanel.prototype.onAssetsLoadComplete = function(e) {
+    goog.events.listen(
+    	this.levelProxy, 
+    	EventNames.LOAD_COMPLETE, 
+    	this.onAssetsLoadComplete, 
     	false, 
     	this
     );

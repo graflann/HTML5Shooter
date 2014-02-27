@@ -90,17 +90,15 @@ LayerSystem.prototype.clear = function() {
 *@public
 */
 LayerSystem.prototype.add = function(id) {
-	//console.log("z-index: " + this.length() + " - " + id);
-
 	this.arrLayers[id] = new Layer(this.container, id, this.length());
+
+	return this.arrLayers[id];
 };
 
 /**
 *@public
 */
 LayerSystem.prototype.addDebug = function() {
-	//console.log("z-index: " + this.length() + " - " + LayerTypes.DEBUG);
-
 	this.debugLayer = new Layer(this.container, LayerTypes.DEBUG, this.length());
 };
 
@@ -110,7 +108,7 @@ LayerSystem.prototype.addDebug = function() {
 LayerSystem.prototype.remove = function(id) {
 	this.arrLayers[id].clear();
 	this.arrLayers[id] = null;
-	//this.arrLayers.splice(id, 1);
+
 	delete this.arrLayers[id];
 };
 

@@ -34,7 +34,7 @@ TitlePanel.prototype.init = function() {
 
     this.background = new createjs.Shape();
 	this.background.graphics
-		.lf([Constants.DARK_BLUE, Constants.BLACK], [0, 1], 0, Constants.WIDTH, 0, Constants.HEIGHT)
+		.lf([Constants.DARK_BLUE, Constants.BLACK], [0, 0.75], 0, 0, 0, Constants.HEIGHT)
 		.dr(0, 0, Constants.WIDTH, Constants.HEIGHT);
 
 	this.grid = new Grid(

@@ -13,6 +13,8 @@ ReticleParticle = function(color) {
 
 goog.inherits(ReticleParticle, Particle)
 
+ReticleParticle.ROTATION_RATE = 4;
+
 /**
 *@override
 *@public
@@ -41,7 +43,7 @@ ReticleParticle.prototype.init = function() {
 */
 ReticleParticle.prototype.update = function(options) {
 	if (this.isAlive) {
-		this.shape.rotation += 4;
+		this.shape.rotation += ReticleParticle.ROTATION_RATE;
 	}
 };
 

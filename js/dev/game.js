@@ -27,7 +27,8 @@ Game = function() {
 	*/
 	this.factory = null;
 	
-	this.load();
+	//this.load();
+	this.init();
 };
 
 goog.inherits(Game, goog.events.EventTarget);
@@ -35,17 +36,23 @@ goog.inherits(Game, goog.events.EventTarget);
 /**
 *@private
 */
-Game.prototype.load = function() {
-	goog.events.listen(
-		app.assetsProxy, 
-		EventNames.LOAD_COMPLETE, 
-		this.onLoadComplete, 
-		false, 
-		this
-	);
+// Game.prototype.load = function() {
+// 	goog.events.listen(
+// 		app.assetsProxy, 
+// 		EventNames.LOAD_COMPLETE, 
+// 		this.onLoadComplete, 
+// 		false, 
+// 		this
+// 	);
 
-	app.assetsProxy.load();
-};
+// 	app.assetsProxy.load([
+// 			'titleGraphic'
+// 		],
+// 		[
+// 			'musicLevel_1'
+// 		]
+// 	);
+// };
 
 /**
 *@private
@@ -64,6 +71,7 @@ Game.prototype.init = function() {
 	//this.setPanel(PanelTypes.OPTIONS_PANEL);
 	this.setPanel(PanelTypes.PLAY_PANEL);
 	//this.setPanel(PanelTypes.PATH_FINDING_PANEL);
+	//this.setPanel(PanelTypes.LOADING_PANEL);
 		
 	createjs.Ticker.addEventListener("tick", function() { self.update(); } );
 };
@@ -112,17 +120,17 @@ Game.prototype.setPanel = function(key) {
 *@private
 *@param {goog.events.Event} e
 **/
-Game.prototype.onLoadComplete = function(e) {
-    goog.events.unlisten(
-    	app.assetsProxy, 
-    	EventNames.LOAD_COMPLETE, 
-    	this.onLoadComplete, 
-    	false, 
-    	this
-    );
+// Game.prototype.onLoadComplete = function(e) {
+//     goog.events.unlisten(
+//     	app.assetsProxy, 
+//     	EventNames.LOAD_COMPLETE, 
+//     	this.onLoadComplete, 
+//     	false, 
+//     	this
+//     );
 
-    this.init();
-};
+//     this.init();
+// };
 
 /**
 *@private

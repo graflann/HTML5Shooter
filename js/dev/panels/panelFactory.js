@@ -4,6 +4,7 @@ goog.require('PlayPanel');
 goog.require('TitlePanel');
 goog.require('OptionsPanel');
 goog.require('PathFindingPanel');
+goog.require('LoadingPanel');
 
 /**
 *@constructor
@@ -28,6 +29,7 @@ PanelFactory.prototype.setCore = function() {
 	this.core.TitlePanel 		= function getTitlePanel()		{ return new TitlePanel(); };
 	this.core.OptionsPanel 		= function getOptionsPanel()	{ return new OptionsPanel(); };
 	this.core.PathFindingPanel 	= function getPathFindingPanel(){ return new PathFindingPanel(); };
+	this.core.LoadingPanel 		= function getLoadingPanel()	{ return new LoadingPanel(); };
 };
 
 /**

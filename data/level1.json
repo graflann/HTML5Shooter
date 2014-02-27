@@ -1,8 +1,33 @@
 {
+	"images": [
+		"striker",
+		"strikerWheel",
+		"enemyDroneBase",
+		"enemyDroneTurret",
+		"vulcanTurret",
+		"spreadTurret",
+		"railTurret",
+		"bladeTurret",
+		"enemyVulcanTurret",
+		"turretTransition",
+		"copter",
+		"centipedeHead",
+		"centipedeSegment",
+		"centipedeTail",
+		"enemyTrooper",
+		"enemyCarrier",
+		"boost"
+	],
+
+	"sounds": [
+		"musicLevel_1"
+	],
+
 	"dimensions": { 
 		"width": 3840, 
 		"height": 1440
 	},
+
 	"enemies": {
 		"enemyTank": {
 			"max": 64,
@@ -28,6 +53,7 @@
 			"projectileSystem": "air"
 		}
 	},
+
 	"waves" : [
 		[
 			{ 
@@ -96,6 +122,7 @@
 			}
 		]
 	],
+
 	"sceneObjects": {
 		"wall": [
 			{ 	

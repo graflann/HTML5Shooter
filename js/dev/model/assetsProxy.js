@@ -14,28 +14,13 @@ AssetsProxy = function() {
 	*PreloadJS file-loading object; sets useXHR to false to load some file types by tag
     *@type {LoadQueue}
     */
-	this.queue = new createjs.LoadQueue(false);
+	this.imageQueue = new createjs.LoadQueue(false);
 
-	this.arrAssetNames = [
-		'titleGraphic',
-		'striker',
-		'strikerWheel',
-		'enemyDroneBase',
-		'enemyDroneTurret',
-		'vulcanTurret',
-		'spreadTurret',
-		'railTurret',
-		'bladeTurret',
-		'enemyVulcanTurret',
-		'turretTransition',
-		'copter',
-		'centipedeHead',
-		'centipedeSegment',
-		'centipedeTail',
-		'enemyTrooper',
-		'enemyCarrier',
-		'boost'
-	];
+	this.soundQueue = new createjs.LoadQueue(false);
+
+	this.arrImageNames = null;
+
+	this.arrSoundNames = null;
 	
 	/**
 	*Instantiate array of SpriteSheet instances using JSON data
@@ -52,11 +37,17 @@ AssetsProxy = function() {
 	this.arrSpriteSheetData = [];
 
 	/**
-	 * Caches resources in Array for queue manifest
+	 * Caches resources in Array for image queue manifest
 	 * --Must map to same indices as respective json files--
 	 * @type {Array}
 	 */
-	this.arrManifest = [];
+	this.arrImageManifest = [];
+
+	/**
+	 * Caches resources in Array for sound queue manifest
+	 * @type {Array}
+	 */
+	this.arrSoundManifest = [];
 
 	/**
 	 * Current asset index for arrSpriteSheetData / arrManifest use
@@ -64,23 +55,90 @@ AssetsProxy = function() {
 	 */
 	this.assetIndex = 0;
 
-	this.init();
+	this.completeEvent = new goog.events.Event(EventNames.LOAD_COMPLETE, this);
+
+	createjs.Sound.alternateExtensions = ["mp3"];
 };
 
 goog.inherits(AssetsProxy, goog.events.EventTarget);
 
-AssetsProxy.PATH = "assets/finished/";
+AssetsProxy.IMAGE_PATH = "assets/finished/";
+
+AssetsProxy.SOUND_PATH = "assets/sound/";
 
 /**
 *@private
 */
-AssetsProxy.prototype.init = function() {
-	for(var i = 0; i < this.arrAssetNames.length; i++) {
-		this.arrSpriteSheetData.push(AssetsProxy.PATH + this.arrAssetNames[i] + '.json');
+AssetsProxy.prototype.load = function(arrImageNames, arrSoundNames) {
+	this.setImageManifest(arrImageNames);
 
-		this.arrManifest.push({
-			id: this.arrAssetNames[i],
-			src: AssetsProxy.PATH + this.arrAssetNames[i] + '.png'
+	if (arrSoundNames){
+		this.setSoundManifest(arrSoundNames);
+	}
+
+	this.loadImages();
+};
+
+AssetsProxy.prototype.loadImages = function () {
+	var proxy = this;
+
+	//event handling
+	this.imageQueue.addEventListener("complete", 	function(e) { proxy.onImagesComplete(e); });
+	this.imageQueue.addEventListener("progress", 	function(e) { proxy.onProgress(e); });
+	this.imageQueue.addEventListener("fileload", 	function(e) { proxy.onFileLoad(e); });
+	this.imageQueue.addEventListener("error", 		function(e) { proxy.onError(e); });
+	
+	//total assets
+	this.imageQueue.loadManifest(this.arrImageManifest);
+};
+
+AssetsProxy.prototype.loadSounds = function () {
+	var proxy = this;
+
+	if(this.arrSoundManifest) {
+		//install plug-ins prior to any file loading dependent on that plug-in
+		this.soundQueue.installPlugin(createjs.Sound); //sound
+
+		//event handling
+		this.soundQueue.addEventListener("complete", 	function(e) { proxy.onSoundsComplete(e); });
+		this.soundQueue.addEventListener("progress", 	function(e) { proxy.onProgress(e); });
+		this.soundQueue.addEventListener("fileload", 	function(e) { proxy.onFileLoad(e); });
+		this.soundQueue.addEventListener("error", 		function(e) { proxy.onError(e); });
+		
+		//total assets
+		this.soundQueue.loadManifest(this.arrSoundManifest);
+	} else {
+		goog.events.dispatchEvent(this, this.completeEvent);
+	}
+};
+
+/**
+*@private
+*/
+AssetsProxy.prototype.setImageManifest = function(arrImageNames) {
+	if(this.arrImageNames) {
+		this.arrImageNames.length = 0;
+		this.arrImageNames = null;
+	}
+
+	this.arrImageNames = arrImageNames;
+
+	this.arrImageManifest.length = 0;
+	this.arrSpriteSheetData.length = 0;
+
+	this.assetIndex = 0;
+
+	//clean and reuse LoadQueue instances
+	//proxy.imageQueue.removeAll();
+	//proxy.imageQueue.reset();
+
+	//build sprite sheet data array and image manifest
+	for(var i = 0; i < this.arrImageNames.length; i++) {
+		this.arrSpriteSheetData.push(AssetsProxy.IMAGE_PATH + this.arrImageNames[i] + '.json');
+
+		this.arrImageManifest.push({
+			id: this.arrImageNames[i],
+			src: AssetsProxy.IMAGE_PATH + this.arrImageNames[i] + '.png'
 		});
 	}
 };
@@ -88,20 +146,26 @@ AssetsProxy.prototype.init = function() {
 /**
 *@private
 */
-AssetsProxy.prototype.load = function() {
-	var proxy = this;
+AssetsProxy.prototype.setSoundManifest = function(arrSoundNames) {
+	if(this.arrSoundNames) {
+		this.arrSoundNames.length = 0;
+		this.arrSoundNames = null;
+	}
 
-	//event handling
-	this.queue.addEventListener("complete", function(e) { proxy.onComplete(e); });
-	this.queue.addEventListener("progress", function(e) { proxy.onProgress(e); });
-	this.queue.addEventListener("fileload", function(e) { proxy.onFileLoad(e); });
-	this.queue.addEventListener("error", function(e) { proxy.onError(e); });
-	
-	//install plug-ins prior to any file loading dependent on that plug-in
-	this.queue.installPlugin(createjs.Sound); //sound
-	
-	//total assets
-	this.queue.loadManifest(this.arrManifest);
+	this.arrSoundNames = arrSoundNames;
+
+	this.arrSoundManifest.length = 0;
+
+	//proxy.soundQueue.removeAll();
+	//proxy.soundQueue.reset();
+
+	//build sound manifest
+	for(i = 0; i < this.arrSoundNames.length; i++) {
+		this.arrSoundManifest.push({
+			id: this.arrSoundNames[i],
+			src: AssetsProxy.SOUND_PATH + this.arrSoundNames[i] + '.mp3'
+		});
+	}
 };
 
 /**
@@ -118,17 +182,20 @@ AssetsProxy.prototype.loadXHR = function() {
 		console.log(data);
 
 		//override image property to use preloaded img file from the queue
-		data.images[0] = proxy.queue.getResult(proxy.arrManifest[proxy.assetIndex].id);
+		data.images[0] = proxy.imageQueue.getResult(proxy.arrImageManifest[proxy.assetIndex].id);
 
 		//map the data to a hash of SpriteSheet instances
-		proxy.arrSpriteSheet[proxy.arrManifest[proxy.assetIndex].id] = new createjs.SpriteSheet(data);
+		proxy.arrSpriteSheet[proxy.arrImageManifest[proxy.assetIndex].id] = new createjs.SpriteSheet(data);
 
 		proxy.assetIndex++;
 
-		if(proxy.assetIndex < proxy.arrManifest.length){
+		if(proxy.assetIndex < proxy.arrImageManifest.length){
 			proxy.loadXHR();
 		} else {
-			goog.events.dispatchEvent(proxy, new goog.events.Event(EventNames.LOAD_COMPLETE, proxy));
+			//remove listeners so the imageQueue is deaf to those for soundQueue
+			proxy.imageQueue.removeAllEventListeners();
+
+			proxy.loadSounds();
 		}
 	})
 	.done(function() {
@@ -142,36 +209,65 @@ AssetsProxy.prototype.loadXHR = function() {
 	});
 };
 
+//PUBLIC HELPER METHODS
+/**
+*@public
+*/
+AssetsProxy.prototype.playSound = function(id, isLooping) {
+	var sound = createjs.Sound.play(id);
+
+	if(isLooping) {
+		var onLoop = function(e) {
+			sound.play();
+		}
+
+		sound.addEventListener("loop", onLoop);
+	}
+
+	return sound;
+};
+
+/**
+*@public
+*/
+AssetsProxy.prototype.getSpriteSheet = function(id) {
+	return proxy.arrSpriteSheet[id];
+};
+
+//EVENT HANDLERS////////////////////////////////////
 /**
 *@private
 */
-AssetsProxy.prototype.onComplete = function(e) { 
+AssetsProxy.prototype.onImagesComplete = function(e) { 
 	this.loadXHR();
 };
 
 /**
 *@private
 */
+AssetsProxy.prototype.onSoundsComplete = function(e) {
+	goog.events.dispatchEvent(this, this.completeEvent);
+};
+
+/**
+*@private
+*/
 AssetsProxy.prototype.onProgress = function(e) {
-	console.log("progress...");
-	//show progress of loading and remove when complete
+	console.log(e + " loading in progress.");
 };
 
 /**
 *@private
 */
 AssetsProxy.prototype.onFileLoad = function(e) {
-	console.log("fileLoaded...");
-	console.log(e);
-	//show progress of loading and remove when complete
+	console.log(e + " has loaded.");
 };
 
 /**
 *@private
 */
 AssetsProxy.prototype.onError = function(e) {
-	console.log(e);
-	console.log(e.item.id.toString() + " haz mad queue loading errorz dawg");
+	console.log(e.item.id.toString() + " haz mad loading errorz dawg");
 };
 
 goog.exportSymbol('AssetsProxy', AssetsProxy);
