@@ -6,7 +6,9 @@ goog.provide('EventNames');
 */
 EventNames = {
     PANEL_CHANGE:               'panelChange', 
-    LOAD_COMPLETE:      	    'loadComplete',
+    LOAD_COMPLETE:              'loadComplete',
+    PANEL_LOAD_COMPLETE:        'panelLoadComplete',
+    CLEAR_COMPLETE:      	    'clearComplete',
     SPAWN_COMPLETE:     	    'spawnComplete',
     WAVE_COMPLETE:  		    'waveComplete',
     LEVEL_COMPLETE:  		    'levelComplete',

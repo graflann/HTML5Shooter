@@ -10,6 +10,8 @@ goog.require('InputOptions');
 OptionsPanel = function() {
 	Panel.call(this);
 
+	this.container = null;
+
 	this.background = null;
 
 	this.grid = null;
@@ -28,8 +30,11 @@ goog.inherits(OptionsPanel, Panel);
 *@protected
 */
 OptionsPanel.prototype.init = function() {
-	var stage = app.layers.getStage(LayerTypes.MAIN),
+	var self = this,
+		stage = app.layers.getStage(LayerTypes.MAIN),
 		exitLabel = "press b to exit";
+
+	this.container = new createjs.Container();
 
 	this.background = new createjs.Shape();
 	this.background.graphics
@@ -56,10 +61,19 @@ OptionsPanel.prototype.init = function() {
 		(exitLabel.length * app.charWidth);
 	this.exitText.y = this.inputOptions.container.y + this.inputOptions.height;
 
+	this.container.addChild(this.grid.shape);
+	this.container.addChild(this.inputOptions.container);
+	this.container.addChild(this.exitText);
+
 	stage.addChild(this.background);
-	stage.addChild(this.grid.shape);
-    stage.addChild(this.inputOptions.container);
-    stage.addChild(this.exitText);
+    stage.addChild(this.container);
+
+    setTimeout(function() {
+    		self.isInited = true;
+
+			//once loaded and inited notify the game to remove the loading screen
+    		goog.events.dispatchEvent(self, new goog.events.Event(EventNames.PANEL_LOAD_COMPLETE, self));
+	}, 1000);
 };
 
 /**
@@ -76,14 +90,7 @@ OptionsPanel.prototype.update = function() {
 	this.inputOptions.update();
 
 	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.B)) {
-		goog.events.dispatchEvent(
-			this, 
-			new PayloadEvent(
-				EventNames.PANEL_CHANGE, 
-				this,
-				{ panelKey: PanelTypes.PLAY_PANEL }
-			)
-		);
+		this.onExit();
 	}
 
 	// app.input.checkPrevKeyDown([
@@ -116,4 +123,29 @@ OptionsPanel.prototype.clear = function() {
 	this.background = null;
 	this.grid = null;
 	this.inputOptions = null;
+};
+
+/**
+*@override
+*@protected
+*/
+OptionsPanel.prototype.onExit = function() {
+	var self = this;
+
+	createjs.Tween.get(this.container)
+		.to({ 
+			alpha: 0
+		}, 1000)
+		.call(function () { 
+			self.isInited = false;
+			
+			goog.events.dispatchEvent(
+				self, 
+				new PayloadEvent(
+					EventNames.PANEL_CHANGE, 
+					self,
+					{ panelKey: PanelTypes.PLAY_PANEL }
+				)
+			);
+		});
 };

@@ -13,9 +13,13 @@ LoadingPanel = function() {
 
 	this.background = null;
 
+	this.container = null;
+
 	this.loadingText = null;
 
 	this.reticle = null;
+
+	this.clearCompleteEvent = new goog.events.Event(EventNames.CLEAR_COMPLETE, this);
 
 	this.init();
 };
@@ -26,7 +30,7 @@ LoadingPanel.Z_INDEX = 1000;
 
 /**
 *@override
-*@protected
+*@public
 */
 LoadingPanel.prototype.init = function() {
 	var	layer = app.layers.add(LayerTypes.LOADING);
@@ -41,6 +45,8 @@ LoadingPanel.prototype.init = function() {
 		.lf([Constants.DARK_BLUE, Constants.BLACK], [0, 0.75], 0, 0, 0, Constants.HEIGHT)
 		.dr(0, 0, Constants.WIDTH, Constants.HEIGHT);
 
+	this.container = new createjs.Container();
+
 	this.loadingText = new createjs.Text(
 		loadingLabel, 
 		"16px AXI_Fixed_Caps_5x5", 
@@ -54,14 +60,21 @@ LoadingPanel.prototype.init = function() {
 	this.reticle.shape.y = this.loadingText.y + 6;
 	this.reticle.isAlive = true;
 
+	this.container.addChild(this.loadingText);
+    this.container.addChild(this.reticle.shape);
+    
 	stage.addChild(this.background);
-    stage.addChild(this.loadingText);
-    stage.addChild(this.reticle.shape);
+	stage.addChild(this.container);
+
+	this.container.alpha = 0;
+
+	//fades in the loading text and reticle
+    createjs.Tween.get(this.container).to({ alpha: 1 }, 1000);
 };
 
 /**
 *@override
-*@protected
+*@public
 */
 LoadingPanel.prototype.update = function() {
 	Panel.prototype.update.call(this);
@@ -71,16 +84,34 @@ LoadingPanel.prototype.update = function() {
 
 /**
 *@override
-*@protected
+*@public
 */
 LoadingPanel.prototype.clear = function() {
-	Panel.prototype.clear.call(this);
+	var self = this;
 
 	this.background.graphics.clear();
 	this.background = null;
 
-	this.loadingText = null;
+	this.container.removeAllChildren();
+	this.container = null;
 
-	this.reticle.clear();
+	this.loadingText = null;
 	this.reticle = null;
+
+	app.layers.remove(LayerTypes.LOADING);
+};
+
+/**
+*@public
+*/
+LoadingPanel.prototype.startClear = function() {
+	var self = this;
+
+	createjs.Tween.removeTweens(this.container);
+
+	this.container.alpha = 1;
+
+	createjs.Tween.get(self.container)
+		.to({ alpha: 0 }, 1000)
+		.call(function() { goog.events.dispatchEvent(self, self.clearCompleteEvent); });
 };

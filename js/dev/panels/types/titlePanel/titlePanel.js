@@ -9,6 +9,8 @@ goog.require('GameOptions');
 */
 TitlePanel = function() {
 	Panel.call(this);
+
+	this.container = null;
 	
 	this.background = null;
 
@@ -20,10 +22,25 @@ TitlePanel = function() {
 
 	this.gameOptions = null;
 
-	this.init();
+	this.load();
 };
 
 goog.inherits(TitlePanel, Panel);
+
+TitlePanel.prototype.load = function() {
+	goog.events.listen(
+		app.assetsProxy, 
+		EventNames.LOAD_COMPLETE, 
+		this.onLoadComplete, 
+		false, 
+		this
+	);
+
+	app.assetsProxy.load(
+		["titleGraphic"], 
+		["Dark Curiosity"]
+	);
+};
 
 /**
 *@override
@@ -31,6 +48,8 @@ goog.inherits(TitlePanel, Panel);
 */
 TitlePanel.prototype.init = function() {	
     var stage = app.layers.getStage(LayerTypes.MAIN);
+
+    this.container = new createjs.Container();
 
     this.background = new createjs.Shape();
 	this.background.graphics
@@ -52,11 +71,12 @@ TitlePanel.prototype.init = function() {
 	this.gameOptions.container.alpha = 0;
 	this.gameOptions.container.visible = false;
 
-	stage.addChild(this.background);
-	stage.addChild(this.grid.shape);
-	stage.addChild(this.gameOptions.container);
 
-	this.setTitle();
+	this.container.addChild(this.grid.shape);
+	this.container.addChild(this.gameOptions.container);
+
+	stage.addChild(this.background);
+	stage.addChild(this.container);
 
 	goog.events.listen(
 		this.gameOptions, 
@@ -74,18 +94,13 @@ TitlePanel.prototype.init = function() {
 TitlePanel.prototype.update = function() {
 	Panel.prototype.update.call(this);
 
-	this.grid.update();
+	if(this.grid) {
+		this.grid.update();
+	}
 
 	if(this.gameOptions.container.visible) {
 		this.gameOptions.update();
 	}
-
-	// app.input.checkPrevKeyDown([
-	// 	KeyCode.UP,
-	// 	KeyCode.DOWN,
-	// 	KeyCode.LEFT,
-	// 	KeyCode.RIGHT
-	// ]);
 
 	app.input.checkPrevButtonDown([
 		GamepadCode.BUTTONS.DPAD_UP,
@@ -104,6 +119,9 @@ TitlePanel.prototype.update = function() {
 TitlePanel.prototype.clear = function() {
 	Panel.prototype.clear.call(this);
 
+	this.container.removeAllChildren();
+	this.container = null;
+
 	this.background.graphics.clear();
 	this.grid.clear();
 	this.titleComponent.graphics.clear();
@@ -118,7 +136,6 @@ TitlePanel.prototype.clear = function() {
 
 TitlePanel.prototype.setTitle = function() {
 	var self = this,
-    	stage = app.layers.getStage(LayerTypes.MAIN),
 		titleDest = null,
 		titleComponentDest = null,
 		width = 0,
@@ -160,8 +177,8 @@ TitlePanel.prototype.setTitle = function() {
 	this.titleComponent.scaleY = 0.5;
 	this.titleComponent.alpha = 0.25;
 
-	stage.addChild(this.title);
-	stage.addChild(this.titleComponent);
+	this.container.addChild(this.title);
+	this.container.addChild(this.titleComponent);
 
 	//set title component animation sequences
 	var sequence3 = function(){
@@ -197,11 +214,48 @@ TitlePanel.prototype.setTitle = function() {
 			scaleY: 1 
 		}, 750);
 
-	//tween in title component"flash"
+	//tween in title component "flash"
 	sequence1();
 };
 
+TitlePanel.prototype.onLoadComplete = function(e) {
+	var self = this;
+
+	goog.events.unlisten(
+    	app.assetsProxy, 
+    	EventNames.LOAD_COMPLETE, 
+    	this.onLoadComplete, 
+    	false, 
+    	this
+    );
+
+	this.init();
+
+	//app.assetsProxy.playSound("Dark Curiosity");
+
+	this.isInited = true;
+
+	setTimeout(function() {
+			self.setTitle();
+	}, 1000);
+
+	//once loaded and inited notify the game to remove the loading screen
+    goog.events.dispatchEvent(this, new goog.events.Event(EventNames.PANEL_LOAD_COMPLETE, this));
+};
+
 TitlePanel.prototype.onOptionSelect = function(e) {
+	var self = this;
+
+	createjs.Tween.get(this.container)
+		.to({ 
+			alpha: 0
+		}, 1000)
+		.call(function () { self.endOptionSelect(e); });	
+};
+
+TitlePanel.prototype.endOptionSelect = function(e) {
+	this.isInited = false;
+
 	goog.events.unlisten(
 		this.gameOptions, 
 		EventNames.OPTION_SELECT, 

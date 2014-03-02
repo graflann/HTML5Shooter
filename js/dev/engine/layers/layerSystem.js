@@ -75,6 +75,10 @@ LayerSystem.prototype.clear = function() {
 			//only remove children / listeners from main Stage
 			this.getStage(LayerTypes.MAIN).removeAllChildren();
 			this.getStage(LayerTypes.MAIN).removeAllEventListeners();
+
+		//a LoadingPanel instance handle this Layer in house; force other Panel clean-up to ignore
+		} else if (key === LayerTypes.LOADING){
+			continue;
 		} else {
 			this.remove(key);
 		}

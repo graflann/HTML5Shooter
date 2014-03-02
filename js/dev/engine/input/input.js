@@ -140,10 +140,12 @@ Input.prototype.setGamepad = function() {
 		// It doesn't seem Gamepad API is available – show a message telling
 		// the visitor about it.
 		//TODO: Modal message alerting user to gamepad support in Chrome or something...
+
+
 	} else {
 		// Firefox supports the connect/disconnect event, so we attach event handlers to those.
-		window.addEventListener('MozGamepadConnected', this.onGamepadConnect, false);
-		window.addEventListener('MozGamepadDisconnected', this.onGamepadDisconnect, false);
+		//window.addEventListener('MozGamepadConnected', this.onGamepadConnect, false);
+		//window.addEventListener('MozGamepadDisconnected', this.onGamepadDisconnect, false);
 
 		// Since Chrome only supports polling, we initiate polling loop straight
 		// away. For Firefox, we will only do it if we get a connect event.
@@ -393,10 +395,10 @@ Input.prototype.onKeyUp = function(e) {
 	this.arrKeyDown[e.keyCode] = false;
 };
 
-Input.prototype.onGamepadConnect = function(e) {
-	//TODO: Mozilla specific stuff here
-};
+// Input.prototype.onGamepadConnect = function(e) {
+// 	//TODO: Mozilla specific stuff here
+// };
 
-Input.prototype.onGamepadDisconnect = function(e) {
-	//TODO: Mozilla specific stuff here
-};
+// Input.prototype.onGamepadDisconnect = function(e) {
+// 	//TODO: Mozilla specific stuff here
+// };

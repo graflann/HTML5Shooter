@@ -21,6 +21,8 @@ Game = function() {
 	*@type {Panel}
 	*/
 	this.currentPanel = null;
+
+	this.loadingPanel = null;
 	
 	/**
 	*@type {PanelFactory}
@@ -36,27 +38,6 @@ goog.inherits(Game, goog.events.EventTarget);
 /**
 *@private
 */
-// Game.prototype.load = function() {
-// 	goog.events.listen(
-// 		app.assetsProxy, 
-// 		EventNames.LOAD_COMPLETE, 
-// 		this.onLoadComplete, 
-// 		false, 
-// 		this
-// 	);
-
-// 	app.assetsProxy.load([
-// 			'titleGraphic'
-// 		],
-// 		[
-// 			'musicLevel_1'
-// 		]
-// 	);
-// };
-
-/**
-*@private
-*/
 Game.prototype.init = function() {
 	var self = this;
 
@@ -66,6 +47,8 @@ Game.prototype.init = function() {
 	//updates @ 60fps (this may change pending performance)
 	createjs.Ticker.useRAF = true; 
 	createjs.Ticker.setFPS(60);
+
+	this.addLoadingPanel();
 
 	//this.setPanel(PanelTypes.TITLE_PANEL);
 	//this.setPanel(PanelTypes.OPTIONS_PANEL);
@@ -82,7 +65,13 @@ Game.prototype.init = function() {
 Game.prototype.update = function() {
 	app.input.updateGamepads();
 
-	this.currentPanel.update();
+	if(this.currentPanel.isInited) {
+		this.currentPanel.update();
+	}
+
+	if(this.loadingPanel) {
+		this.loadingPanel.update();
+	}
 };
 
 /**
@@ -113,28 +102,65 @@ Game.prototype.setPanel = function(key) {
 		false, 
 		this
 	);
+
+	goog.events.listen(
+		this.currentPanel, 
+		EventNames.PANEL_LOAD_COMPLETE, 
+		this.onPanelLoadComplete, 
+		false, 
+		this
+	);
+};
+
+Game.prototype.addLoadingPanel = function() {
+	this.loadingPanel = this.factory.getPanel(PanelTypes.LOADING_PANEL);
+
+	goog.events.listen(
+		this.loadingPanel, 
+		EventNames.CLEAR_COMPLETE, 
+		this.onLoadPanelClearComplete, 
+		false, 
+		this
+	);
 };
 
 //EVENT HANDLING////////////////////////////////////////////////////////
 /**
 *@private
-*@param {goog.events.Event} e
-**/
-// Game.prototype.onLoadComplete = function(e) {
-//     goog.events.unlisten(
-//     	app.assetsProxy, 
-//     	EventNames.LOAD_COMPLETE, 
-//     	this.onLoadComplete, 
-//     	false, 
-//     	this
-//     );
+*/
+Game.prototype.onPanelChange = function(e) {
+	this.addLoadingPanel();
 
-//     this.init();
-// };
+	this.setPanel(e.payload.panelKey);
+};
 
 /**
 *@private
 */
-Game.prototype.onPanelChange = function(e) {
-	this.setPanel(e.payload.panelKey);
-}
+Game.prototype.onPanelLoadComplete = function(e) {
+	this.loadingPanel.startClear();
+
+	goog.events.unlisten(
+		this.currentPanel, 
+		EventNames.PANEL_LOAD_COMPLETE, 
+		this.onPanelLoadComplete, 
+		false, 
+		this
+	);
+};
+
+/**
+*@private
+*/
+Game.prototype.onLoadPanelClearComplete = function(e) {
+	goog.events.unlisten(
+		this.loadingPanel, 
+		EventNames.CLEAR_COMPLETE, 
+		this.onLoadPanelClearComplete, 
+		false, 
+		this
+	);
+
+	this.loadingPanel.clear();
+	this.loadingPanel = null;
+};

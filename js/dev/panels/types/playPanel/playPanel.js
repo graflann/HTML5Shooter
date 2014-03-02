@@ -617,8 +617,8 @@ PlayPanel.prototype.onLevelLoadComplete = function(e) {
 *@param {goog.events.Event} e
 **/
 PlayPanel.prototype.onAssetsLoadComplete = function(e) {
-    goog.events.listen(
-    	this.levelProxy, 
+    goog.events.unlisten(
+    	app.assetsProxy, 
     	EventNames.LOAD_COMPLETE, 
     	this.onAssetsLoadComplete, 
     	false, 
@@ -626,6 +626,11 @@ PlayPanel.prototype.onAssetsLoadComplete = function(e) {
     );
 
     this.init();
+
+    this.isInited = true;
+
+    //once loaded and inited notify the game to remove the loading screen
+    goog.events.dispatchEvent(this, new goog.events.Event(EventNames.PANEL_LOAD_COMPLETE, this));
 };
 
 /**

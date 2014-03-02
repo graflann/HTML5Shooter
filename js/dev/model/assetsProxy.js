@@ -128,9 +128,9 @@ AssetsProxy.prototype.setImageManifest = function(arrImageNames) {
 
 	this.assetIndex = 0;
 
-	//clean and reuse LoadQueue instances
-	//proxy.imageQueue.removeAll();
-	//proxy.imageQueue.reset();
+	//reset LoadQueue instance for reuse
+	this.imageQueue.removeAll();
+	//this.imageQueue.reset();
 
 	//build sprite sheet data array and image manifest
 	for(var i = 0; i < this.arrImageNames.length; i++) {
@@ -156,8 +156,9 @@ AssetsProxy.prototype.setSoundManifest = function(arrSoundNames) {
 
 	this.arrSoundManifest.length = 0;
 
-	//proxy.soundQueue.removeAll();
-	//proxy.soundQueue.reset();
+	//reset LoadQueue instance for reuse
+	this.soundQueue.removeAll();
+	//this.soundQueue.reset();
 
 	//build sound manifest
 	for(i = 0; i < this.arrSoundNames.length; i++) {

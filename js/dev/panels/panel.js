@@ -9,7 +9,7 @@ goog.require('goog.events');
 *Primary / root rendering Object
 */
 Panel = function() {
-	
+	this.isInited = false;
 };
 
 goog.inherits(Panel, goog.events.EventTarget);
