@@ -240,6 +240,8 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
                     isRotated: true
                 }
             );
+
+            app.assetsProxy.playSound("impact1", 0.5);
         }
 
         //certain projectile types go "through" objects during collision,
@@ -292,6 +294,8 @@ CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
 
         //push onto the homing list if not already present
         this.homingList.push(enemy);
+
+        app.assetsProxy.playSound("menuFX2", 0.5);
     }
 };
 
@@ -314,6 +318,8 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
                 }
             );
         }
+
+        app.assetsProxy.playSound("impact1", 0.5);
         return;
     }
 
@@ -337,6 +343,8 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
         });
 
         this.killList.push(object);
+
+        app.assetsProxy.playSound("menuFX1", 0.5);
         return;
     }
 

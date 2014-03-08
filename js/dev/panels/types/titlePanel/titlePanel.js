@@ -187,7 +187,9 @@ TitlePanel.prototype.setTitle = function() {
 			createjs.Tween.get(self.gameOptions.container)
 				.to({ alpha: 1 }, 250);
 		},
-		sequence2 = function(){
+		sequence2 = function(){			
+			app.assetsProxy.playSound('Dark Curiosity');
+
 			createjs.Tween.get(self.titleComponent)
 				.to({ 
 					alpha: 0.75, 
@@ -231,8 +233,6 @@ TitlePanel.prototype.onLoadComplete = function(e) {
 
 	this.init();
 
-	//app.assetsProxy.playSound("Dark Curiosity");
-
 	this.isInited = true;
 
 	setTimeout(function() {
@@ -245,6 +245,8 @@ TitlePanel.prototype.onLoadComplete = function(e) {
 
 TitlePanel.prototype.onOptionSelect = function(e) {
 	var self = this;
+
+	createjs.Sound.stop();
 
 	createjs.Tween.get(this.container)
 		.to({ 

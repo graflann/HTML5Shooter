@@ -20,7 +20,15 @@
 	],
 
 	"sounds": [
-		"Maze"
+		"Glide",
+		"laser_large",
+		"weaponchange1",
+		"weaponchange2",
+		"swoosh1",
+		"shot1",
+		"menuFX1",
+		"menuFX2",
+		"impact1"
 	],
 
 	"dimensions": { 

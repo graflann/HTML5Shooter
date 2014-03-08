@@ -6,7 +6,7 @@ goog.require('goog.events');
 
 /**
 *@constructor
-*Primary / root rendering Object
+*Primary / root scene rendering container
 */
 Panel = function() {
 	this.isInited = false;

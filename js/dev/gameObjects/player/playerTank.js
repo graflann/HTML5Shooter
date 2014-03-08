@@ -325,6 +325,8 @@ PlayerTank.prototype.exitBoost = function(options) {
 */
 PlayerTank.prototype.enterRecharge = function(options) {
 	this.isRecharging = true;
+
+	app.assetsProxy.playSound("weaponchange2");
 }
 
 /**
@@ -444,6 +446,8 @@ PlayerTank.prototype.checkTurretTransition = function(options) {
 		if(input.isKeyPressedOnce(KeyCode.X) || 
 			input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.SWITCH])) {
 				
+			app.assetsProxy.playSound("weaponchange1", 0.5);
+
 			this.currentWeaponIndex++;
 
 			if(this.currentWeaponIndex > (WeaponMap.length - 1)) {
@@ -578,6 +582,8 @@ PlayerTank.prototype.checkBoost = function() {
 	if(this.energy >= PlayerTank.REQUIRED_FOR_BOOST && 
 		input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.BOOST])) {
 		this.stateMachine.setState(PlayerBoostState.KEY);
+
+		app.assetsProxy.playSound("swoosh1");
 	}
 };
 
@@ -725,6 +731,10 @@ PlayerTank.prototype.fireHoming = function() {
 			
 			stage.addChild(projectile.shape);
 		}
+	}
+
+	if(projectile) {
+		app.assetsProxy.playSound("laser_large");
 	}
 };
 

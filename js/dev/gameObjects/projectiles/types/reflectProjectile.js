@@ -27,19 +27,9 @@ goog.inherits(ReflectProjectile, Projectile)
 */
 ReflectProjectile.prototype.init = function(options)
 {
-	//this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["spreadProjectile"]);
 	this.shape = new createjs.Shape();
-	this.shape.graphics
-		.ss(4, "round")
-		//.s(Constants.BLUE)
-		.ls([this.arrColors[0], this.arrColors[1]], [0, 1], 0, 0, 0, 16)
-		//.rs([this.color, Constants.DARK_BLUE], [0.5, 1], 0, 0, 32, 32, 32, 32)
-		.mt(-6, 0)
-		.qt(0, -12, 6, 0);
-	//this.shape.regX = 8;
-	//this.shape.regY = 8;
+	this.shape.graphics.ss(3).s(this.arrColors[0]).f(this.arrColors[1]).dc(0, 0, 6);
 	this.shape.snapToPixel = true;
-	this.shape.cache(-6, -12, 12, 12);
 	
 	this.setPhysics();
 

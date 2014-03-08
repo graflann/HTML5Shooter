@@ -26,6 +26,7 @@ goog.require('ItemSystem');
 goog.require('ItemTypes');
 goog.require('EventNames');
 goog.require('LevelProxy');
+goog.require('EnterLevelOverlay');
 
 /**
 *@constructor
@@ -89,6 +90,8 @@ PlayPanel = function() {
 	*/
 	this.hto = null;
 
+	this.enterLevelOverlay = null;
+
 	this.load();
 };
 
@@ -127,8 +130,6 @@ PlayPanel.prototype.init = function() {
 	this.setCollisionManager();
 	this.setCamera();
 	this.setEventListeners();
-
-	//app.assetsProxy.playSound('musicLevel_1');
 };
 
 /**
@@ -300,6 +301,7 @@ PlayPanel.prototype.setLayers = function() {
 
 	this.hud = new Hud();
 	app.layers.getStage(LayerTypes.HUD).addChild(this.hud.container);
+	this.hud.container.alpha = 0;
 };
 
 /**
@@ -375,7 +377,7 @@ PlayPanel.prototype.setProjectiles = function() {
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.SPREAD] = [
 		new ProjectileSystem(ProjectileTypes.SPREAD, [Constants.LIGHT_BLUE, Constants.DARK_BLUE], 30),
-		new ProjectileSystem(ProjectileTypes.REFLECT, [Constants.YELLOW, Constants.RED], 32)
+		new ProjectileSystem(ProjectileTypes.REFLECT, [Constants.YELLOW, Constants.DARK_BLUE], 32)
 	];
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.BLADE] = [
@@ -617,6 +619,9 @@ PlayPanel.prototype.onLevelLoadComplete = function(e) {
 *@param {goog.events.Event} e
 **/
 PlayPanel.prototype.onAssetsLoadComplete = function(e) {
+	var self,
+		stage;
+
     goog.events.unlisten(
     	app.assetsProxy, 
     	EventNames.LOAD_COMPLETE, 
@@ -629,8 +634,32 @@ PlayPanel.prototype.onAssetsLoadComplete = function(e) {
 
     this.isInited = true;
 
+    self = this;
+    stage = app.layers.getStage(LayerTypes.HUD);
+
     //once loaded and inited notify the game to remove the loading screen
     goog.events.dispatchEvent(this, new goog.events.Event(EventNames.PANEL_LOAD_COMPLETE, this));
+
+	this.enterLevelOverlay = new EnterLevelOverlay();
+	stage.addChild(this.enterLevelOverlay.container);
+
+	//app.assetsProxy.playSound('Glide', 1, true);
+
+	//some delays set to let the overlay animate correctly
+	setTimeout(function() {
+		self.enterLevelOverlay.animate();
+
+		setTimeout(function() {
+
+			createjs.Tween.get(self.enterLevelOverlay.container).to({ alpha: 0 }, 1000)
+				.call(function() {
+					self.enterLevelOverlay.clear();
+					self.enterLevelOverlay = null;
+				});
+
+			createjs.Tween.get(self.hud.container).to({ alpha: 1 }, 1000);
+		}, 4500);
+	}, 500);
 };
 
 /**

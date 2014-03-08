@@ -50,9 +50,9 @@ Game.prototype.init = function() {
 
 	this.addLoadingPanel();
 
-	//this.setPanel(PanelTypes.TITLE_PANEL);
+	this.setPanel(PanelTypes.TITLE_PANEL);
 	//this.setPanel(PanelTypes.OPTIONS_PANEL);
-	this.setPanel(PanelTypes.PLAY_PANEL);
+	//this.setPanel(PanelTypes.PLAY_PANEL);
 	//this.setPanel(PanelTypes.PATH_FINDING_PANEL);
 	//this.setPanel(PanelTypes.LOADING_PANEL);
 		

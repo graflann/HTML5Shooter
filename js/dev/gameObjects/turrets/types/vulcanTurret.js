@@ -83,8 +83,6 @@ VulcanTurret.prototype.enterAltFire = function(options) {
 
 	this.fireThreshold = 3;
 	this.fireCounter = this.fireThreshold - 1;
-
-	//this.energyConsumption = -6;
 };
 
 VulcanTurret.prototype.defaultFire = function() {
@@ -127,5 +125,7 @@ VulcanTurret.prototype.baseFire = function() {
 		projectile.body.ApplyForce(vector2D, projectile.body.GetWorldCenter());
 		
 		stage.addChild(projectile.shape);
+
+		app.assetsProxy.playSound("shot1", 0.5);
 	}
 };

@@ -120,9 +120,12 @@ SpreadTurret.prototype.defaultFire = function() {
 
 			projectile.setIsAlive(true);
 			
-			projectile.shape.rotation = this.shape.rotation;
 			stage.addChild(projectile.shape);
 		}
+	}
+
+	if(projectile) {
+		app.assetsProxy.playSound("shot1", 0.5);
 	}
 };
 
@@ -165,8 +168,11 @@ SpreadTurret.prototype.altFire = function() {
 
 			projectile.setIsAlive(true);
 			
-			projectile.shape.rotation = this.shape.rotation;
 			stage.addChild(projectile.shape);
 		}
+	}
+
+	if(projectile) {
+		app.assetsProxy.playSound("shot1", 0.5);
 	}
 };
