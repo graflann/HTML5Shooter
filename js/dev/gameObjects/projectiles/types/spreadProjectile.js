@@ -15,6 +15,16 @@ SpreadProjectile = function(colors, categoryBits, maskBits)
 	*@type {}
 	*/
 	this.velocityMod = 512;
+
+	this.secondsAlive = 0.45;
+
+	this.timerThreshold = createjs.Ticker.getFPS() * this.secondsAlive;
+
+	this.alphaTimer = 0;
+
+	this.alphaTimerThreshold =  this.timerThreshold * 0.75;
+
+	this.alphaDecrement = (this.timerThreshold - this.alphaTimerThreshold) / createjs.Ticker.getFPS();
 	
 	this.init();
 };
@@ -31,6 +41,8 @@ SpreadProjectile.prototype.init = function(options)
 	this.shape.graphics.ss(3).s(this.arrColors[0]).f(this.arrColors[1]).dc(0, 0, 6);
 	this.shape.snapToPixel = true;
 	this.shape.cache(-9, -9, 18, 18);
+
+	this.alphaTimer = 0;
 	
 	this.setPhysics();
 
@@ -50,15 +62,30 @@ SpreadProjectile.prototype.update = function()
 		this.shape.x = this.body.GetWorldCenter().x * scale;
 		this.shape.y = this.body.GetWorldCenter().y * scale;
 
+		if(++this.alphaTimer > this.alphaTimerThreshold) {
+			this.shape.alpha -= this.alphaDecrement;
+
+			if(this.shape.alpha <= 0) {
+				this.alphaTimer = 0;
+				this.kill();
+			}
+		}
+
 		Projectile.prototype.update.call(this);
 	}
+};
+
+SpreadProjectile.prototype.setIsAlive = function(value) {
+	Projectile.prototype.setIsAlive.call(this, value);
+
+	this.shape.alpha = 1;
+	this.alphaTimer = 0;
 };
 
 /**
 *@private
 */
-SpreadProjectile.prototype.setPhysics = function()
-{
+SpreadProjectile.prototype.setPhysics = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef();
 	

@@ -15,6 +15,16 @@ ReflectProjectile = function(colors, categoryBits, maskBits)
 	*@type {}
 	*/
 	this.velocityMod = 512;
+
+	this.secondsAlive = 1;
+
+	this.timerThreshold = createjs.Ticker.getFPS() * this.secondsAlive;
+
+	this.alphaTimer = 0;
+
+	this.alphaTimerThreshold =  this.timerThreshold * 0.75;
+
+	this.alphaDecrement = (this.timerThreshold - this.alphaTimerThreshold) / createjs.Ticker.getFPS();
 	
 	this.init();
 };
@@ -30,6 +40,8 @@ ReflectProjectile.prototype.init = function(options)
 	this.shape = new createjs.Shape();
 	this.shape.graphics.ss(3).s(this.arrColors[0]).f(this.arrColors[1]).dc(0, 0, 6);
 	this.shape.snapToPixel = true;
+
+	this.alphaTimer = 0;
 	
 	this.setPhysics();
 
@@ -49,15 +61,30 @@ ReflectProjectile.prototype.update = function()
 		this.shape.x = this.body.GetWorldCenter().x * scale;
 		this.shape.y = this.body.GetWorldCenter().y * scale;
 
+		if(++this.alphaTimer > this.alphaTimerThreshold) {
+			this.shape.alpha -= this.alphaDecrement;
+
+			if(this.shape.alpha <= 0) {
+				this.alphaTimer = 0;
+				this.kill();
+			}
+		}
+
 		Projectile.prototype.update.call(this);
 	}
+};
+
+ReflectProjectile.prototype.setIsAlive = function(value) {
+	Projectile.prototype.setIsAlive.call(this, value);
+
+	this.shape.alpha = 1;
+	this.alphaTimer = 0;
 };
 
 /**
 *@private
 */
-ReflectProjectile.prototype.setPhysics = function()
-{
+ReflectProjectile.prototype.setPhysics = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef();
 	

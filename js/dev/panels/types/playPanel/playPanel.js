@@ -583,6 +583,23 @@ PlayPanel.prototype.setEventListeners = function() {
 		false, 
 		this
 	);
+
+	//SCORE MANAGER
+	goog.events.listen(
+		app.scoreManager, 
+		EventNames.UPDATE_SCORE, 
+		this.onUpdateScore, 
+		false, 
+		this
+	);
+
+	goog.events.listen(
+		app.scoreManager, 
+		EventNames.UPDATE_BONUS, 
+		this.onUpdateBonus,
+		false, 
+		this
+	);
 	/////////////////////////////////////
 };
 
@@ -705,4 +722,18 @@ PlayPanel.prototype.onEnergyChange = function(e) {
 */
 PlayPanel.prototype.onOverdriveChange = function(e) {
 	this.hud.changeOverdrive(e.payload);
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.onUpdateScore = function(e) {
+	this.hud.updateScore(e.payload);
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.onUpdateBonus = function(e) {
+	this.hud.updateBonus(e.payload);
 };

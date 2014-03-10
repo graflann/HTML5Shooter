@@ -12,11 +12,22 @@ OverdriveItem = function(categoryBits) {
 	this.label = null;
 
 	this.value = 1;
+
+	this.secondsAlive = 16;
+
+	this.timerThreshold = createjs.Ticker.getFPS() * this.secondsAlive;
+
+	this.alphaTimer = 0;
+
+	this.alphaTimerThreshold =  this.timerThreshold * 0.75;
+
+	this.alphaDecrement = (this.timerThreshold - this.alphaTimerThreshold) / 
+		(createjs.Ticker.getFPS() * (8 *(this.timerThreshold - this.alphaTimerThreshold)));
 	
 	this.init();
 };
 
-goog.inherits(OverdriveItem, Item)
+goog.inherits(OverdriveItem, Item);
 
 /**
 *@override
@@ -39,11 +50,46 @@ OverdriveItem.prototype.init = function() {
 	
 	this.setPhysics();
 
+	this.alphaTimer = 0;
+
 	this.container.addChild(this.shape);
 	this.container.addChild(this.label);
 	this.container.cache(-14, -14, 28, 28);
 
 	Item.prototype.init.call(this);
+};
+
+/**
+*@override
+*@public
+*/
+OverdriveItem.prototype.update = function(options) {
+	if(this.isAlive) {
+		this.physicalPosition = this.body.GetPosition();
+
+		this.container.x = this.physicalPosition.x * app.physicsScale;
+		this.container.y = this.physicalPosition.y * app.physicsScale;
+
+		this.container.rotation = Math.radToDeg(this.body.GetAngle());
+
+		if(++this.alphaTimer > this.alphaTimerThreshold) {
+			this.container.alpha -= this.alphaDecrement;
+
+			if(this.container.alpha <= 0) {
+				this.alphaTimer = 0;
+				this.kill();
+			}
+		}
+
+		this.checkBounds();
+	}
+};
+
+OverdriveItem.prototype.setIsAlive = function(value) {
+	Item.prototype.setIsAlive.call(this, value);
+
+	this.container.alpha = 1;
+	this.alphaTimer = 0;
 };
 
 /**

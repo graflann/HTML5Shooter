@@ -3,7 +3,7 @@ goog.provide('CollisionManager');
 goog.require('ItemTypes');
 
 /**
-*@enum {string}
+*@constructor
 */
 CollisionManager = function(
     arrParticleSystems, 
@@ -345,6 +345,8 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
         this.killList.push(object);
 
         app.assetsProxy.playSound("menuFX1", 0.5);
+
+        app.scoreManager.updateBonusMultiplier(0.1);
         return;
     }
 

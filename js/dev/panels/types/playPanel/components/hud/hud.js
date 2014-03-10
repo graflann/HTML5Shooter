@@ -4,6 +4,7 @@ goog.require('Radar');
 goog.require('WeaponSelectorContainer');
 goog.require('EnergyMeter');
 goog.require('OverdriveMeter');
+goog.require('ScoreViewComponent');
 
 /**
 *@constructor
@@ -23,7 +24,7 @@ Hud = function() {
 
 	this.overdriveMeter = null;
 
-	this.score = null;
+	this.scoreComponent = null;
 
 	this.width = Constants.WIDTH;
 	this.height = Constants.HEIGHT;
@@ -42,11 +43,16 @@ Hud.prototype.init = function() {
 
 	this.setMeters();
 
+	this.scoreComponent = new ScoreViewComponent();
+	this.scoreComponent.container.x = 16;
+	this.scoreComponent.container.y = this.weaponSelectorContainer.container.y;
+
 	this.container.addChild(this.radar.container);
 	this.container.addChild(this.radar.externalContainer);
 	this.container.addChild(this.weaponSelectorContainer.container);
 	this.container.addChild(this.energyMeter.container);
 	this.container.addChild(this.overdriveMeter.container);
+	this.container.addChild(this.scoreComponent.container);
 };
 
 /**
@@ -101,4 +107,12 @@ Hud.prototype.changeEnergy = function(value) {
 
 Hud.prototype.changeOverdrive = function(value) {
 	this.overdriveMeter.changeEnergy(value);
+};
+
+Hud.prototype.updateScore = function(value) {
+	this.scoreComponent.updateScore(value);
+};
+
+Hud.prototype.updateBonus = function(value) {
+	this.scoreComponent.updateBonus(value);
 };

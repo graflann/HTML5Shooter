@@ -13,7 +13,7 @@ SniperProjectile = function(colors, categoryBits, maskBits) {
 	*physical body added to Box2D physicsWorld
 	*@type {}
 	*/
-	this.velocityMod = 1536;
+	this.velocityMod = 2400;
 	
 	this.init();
 };

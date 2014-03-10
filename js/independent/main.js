@@ -4,6 +4,7 @@ goog.require('TrigonometricTable');
 goog.require('Input');
 goog.require('AssetsProxy');
 goog.require('LayerSystem');
+goog.require('ScoreManager');
 
 /**
 *@preserve
@@ -61,6 +62,7 @@ $(function() {
     app.input           = new Input();
     app.assetsProxy     = new AssetsProxy()
     app.vecZero         = new app.b2Vec2();
+    app.scoreManager    = ScoreManager.getInstance();
 
     app.game 			= new Game();
 });
