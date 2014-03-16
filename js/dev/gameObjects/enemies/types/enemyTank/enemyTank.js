@@ -152,7 +152,7 @@ EnemyTank.prototype.updateTurretToBase = function(options) {
 */
 EnemyTank.prototype.enterRoaming = function(options) {
 	this.shape.play();
-}
+};
 
 /**
 *@public
@@ -160,7 +160,7 @@ EnemyTank.prototype.enterRoaming = function(options) {
 EnemyTank.prototype.updateRoaming = function(options) {
 	this.updateBase(options);
 	this.updateTurretToBase(options);
-}
+};
 
 /**
 *@public
@@ -169,14 +169,14 @@ EnemyTank.prototype.enterSniping = function(options) {
 	this.shape.gotoAndStop(0);
 	this.turret.fireCounter = 0;
 	this.turret.fireThreshold = 30;
-}
+};
 
 /**
 *@public
 */
 EnemyTank.prototype.updateSniping = function(options) {
 	this.turret.update({ target: options.target.position });
-}
+};
 
 /**
 *@public
@@ -185,7 +185,7 @@ EnemyTank.prototype.enterStrafing = function(options) {
 	this.shape.play();
 	this.turret.fireCounter = 0;
 	this.turret.fireThreshold = 45;
-}
+};
 
 /**
 *@public
@@ -193,20 +193,20 @@ EnemyTank.prototype.enterStrafing = function(options) {
 EnemyTank.prototype.updateStrafing = function(options) {
 	this.updateBase(options);
 	this.turret.update({ target: options.target.position });
-}
+};
 
 /**
 *@override
 *@public
 */
 EnemyTank.prototype.clear = function() {
-	Enemy.clear.call(this);
+	Enemy.prototype.clear.call(this);
 
 	this.projectileSystem = null;
 
 	this.shape = null;
 
-	this.turret.clear();
+	//this.turret.clear();
 	this.turret = null;
 
 	this.navigation.clear();

@@ -64,9 +64,17 @@ Item.prototype.update = function(options) {
 *@public
 */
 Item.prototype.clear = function() {
-	this.shape.getStage().removeChild(this.shape);
+	if(this.container) {
+		this.container.removeAllChildren();
+		this.container = null;
+	}
 	
+	this.shape.graphics.clear();
 	this.shape = null;
+
+	this.body.DestroyFixture(this.body.GetFixtureList());
+	app.physicsWorld.DestroyBody(this.body);
+	this.body = null;
 };
 
 Item.prototype.kill = function() {

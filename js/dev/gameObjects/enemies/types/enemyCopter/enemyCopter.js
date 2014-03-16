@@ -142,14 +142,14 @@ EnemyCopter.prototype.updateRotors = function() {
 *@public
 */
 EnemyCopter.prototype.clear = function() {
-	Enemy.clear.call(this);
+	Enemy.prototype.clear.call(this);
 
 	this.projectileSystem = null;
 
 	this.shape.graphics.clear();
 	this.shape = null;
 
-	for(var i = 0; i < this.arrRotors.length) {
+	for(var i = 0; i < this.arrRotors.length; i++) {
 		this.arrRotors[i].clear();
 		this.arrRotors[i] = null;
 	}

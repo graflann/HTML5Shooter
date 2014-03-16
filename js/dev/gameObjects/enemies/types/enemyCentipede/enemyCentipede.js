@@ -148,7 +148,7 @@ EnemyCentipede.prototype.updateSegments = function(options) {
 EnemyCentipede.prototype.clear = function() {
 	var i = 0;
 
-	Enemy.clear.call(this);
+	Enemy.prototype.clear.call(this);
 
 	this.projectileSystem = null;
 

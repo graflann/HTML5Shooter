@@ -134,7 +134,7 @@ CentipedeSegment.prototype.updateFire = function(options) {
 *@public
 */
 CentipedeSegment.prototype.clear = function() {
-	Enemy.clear.call(this);
+	Enemy.prototype.clear.call(this);
 
 	this.physicalVelocity = null;
 

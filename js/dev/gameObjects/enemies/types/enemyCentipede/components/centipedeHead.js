@@ -110,7 +110,7 @@ CentipedeHead.prototype.update = function(options) {
 *@public
 */
 CentipedeHead.prototype.clear = function() {
-	Enemy.clear.call(this);
+	Enemy.prototype.clear.call(this);
 
 	this.projectileSystem = null;
 

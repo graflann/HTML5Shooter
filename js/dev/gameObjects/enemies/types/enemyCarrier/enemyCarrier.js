@@ -182,7 +182,7 @@ EnemyCarrier.prototype.updateRotors = function() {
 EnemyCarrier.prototype.clear = function() {
 	var i = 0;
 
-	Enemy.clear.call(this);
+	Enemy.prototype.clear.call(this);
 
 	this.projectileSystem = null;
 
@@ -201,19 +201,19 @@ EnemyCarrier.prototype.clear = function() {
 	this.stateMachine.clear();
 	this.stateMachine = null;
 
-	for(i = 0; i < this.arrRotors.length) {
+	for(i = 0; i < this.arrRotors.length; i++) {
 		this.arrRotors[i].clear();
 		this.arrRotors[i] = null;
 	}
 	this.arrRotors = null;
 
-	for(i = 0; i < this.arrDoors.length) {
+	for(i = 0; i < this.arrDoors.length; i++) {
 		this.arrDoors[i].clear();
 		this.arrDoors[i] = null;
 	}
 	this.arrDoors = null;
 
-	for(i = 0; i < this.arrPlatforms.length) {
+	for(i = 0; i < this.arrPlatforms.length; i++) {
 		this.arrPlatforms[i].clear();
 		this.arrPlatforms[i] = null;
 	}
