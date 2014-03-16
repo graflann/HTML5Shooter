@@ -23,8 +23,6 @@ OverdriveItem = function(categoryBits) {
 
 	this.alphaDecrement = (this.timerThreshold - this.alphaTimerThreshold) / 
 		(createjs.Ticker.getFPS() * (8 *(this.timerThreshold - this.alphaTimerThreshold)));
-
-	this
 	
 	this.init();
 };
@@ -90,6 +88,16 @@ OverdriveItem.prototype.update = function(options) {
 
 		this.checkBounds();
 	}
+};
+
+/**
+*@override
+*@public
+*/
+OverdriveItem.prototype.clear = function() {
+	Item.prototype.clear.call(this);
+
+	this.label = null;
 };
 
 OverdriveItem.prototype.setIsAlive = function(value) {

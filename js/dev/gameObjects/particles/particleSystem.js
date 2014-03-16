@@ -48,7 +48,6 @@ ParticleSystem.prototype.clear = function() {
 		this.arrParticles[i] = null;
 	}
 	
-	this.arrParticles.length = 0;
 	this.arrParticles = null;
 };
 

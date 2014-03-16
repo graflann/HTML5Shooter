@@ -37,4 +37,11 @@ PlayerRechargeState.prototype.exit = function(options) {
 	this.player.exitRecharge(options);
 };
 
+/**
+*@public
+*/
+PlayerRechargeState.prototype.clear = function() {
+	this.player = null;
+};
+
 goog.exportSymbol('PlayerRechargeState', PlayerRechargeState);

@@ -47,6 +47,16 @@ EnergyItem.prototype.init = function() {
 };
 
 /**
+*@override
+*@public
+*/
+EnergyItem.prototype.clear = function() {
+	Item.prototype.clear.call(this);
+
+	this.label = null;
+};
+
+/**
 *@private
 */
 EnergyItem.prototype.setPhysics = function() {

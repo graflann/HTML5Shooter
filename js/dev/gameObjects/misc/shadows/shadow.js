@@ -52,6 +52,8 @@ Shadow.prototype.update = function(options) {
 *@public
 */
 Shadow.prototype.clear = function() {
+	GameObject.prototype.clear.call(this);
+
 	this.container.removeAllChildren();
 	this.container = null;
 

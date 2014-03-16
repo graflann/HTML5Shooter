@@ -41,4 +41,11 @@ PlayerBoostState.prototype.exit = function(options) {
 	this.player.exitBoost(options);
 };
 
+/**
+*@public
+*/
+PlayerBoostState.prototype.clear = function() {
+	this.player = null;
+};
+
 goog.exportSymbol('PlayerBoostState', PlayerBoostState);

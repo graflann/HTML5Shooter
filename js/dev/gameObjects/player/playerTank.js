@@ -505,19 +505,7 @@ PlayerTank.prototype.updateHoming = function(options) {
 		goog.events.dispatchEvent(this, this.addHomingOverlayEvent);
 	}
 
-	// if(this.energy > 0 && !this.isHoming &&
-	// 	input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
-	// 	this.isHoming = true;
-
-	// 	//zero out the energy level upon homing
-	// 	//this.changeEnergy(0);
-
-	// 	//initializes the homing target overlay
-	// 	goog.events.dispatchEvent(this, this.addHomingOverlayEvent);
-	// }
-
 	//release to fire if hto is operational
-
 	if(this.isHoming) {
 		if(!input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
 			this.isHoming = false;
@@ -533,9 +521,7 @@ PlayerTank.prototype.updateHoming = function(options) {
 
 			//starts removal of homing overlay
 			goog.events.dispatchEvent(this, this.removeHomingOverlayEvent);
-		} 
-
-		if(input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
+		} else {
 
 			if(this.energy > 0 && this.totalHomingValue <= PlayerTank.MAX_ENERGY) {
 				this.homingInc = this.energy - 1;
@@ -607,7 +593,66 @@ PlayerTank.prototype.reload = function() {
 *@public
 */
 PlayerTank.prototype.clear = function() {
+	var i = 0;
+
+	GameObject.prototype.clear.call(this);
+
+	this.arrProjectileSystems = null;
+
+	this.boostSystem = null;
 	
+	this.currentProjectileSystem = null;
+
+	this.homingProjectileSystem = null;
+	
+	this.physicalPosition = null;
+
+	this.body.DestroyFixture(this.body.GetFixtureList());
+	app.physicsWorld.DestroyBody(this.body);
+	this.body = null;
+
+	this.turretBody.DestroyFixture(this.turretBody.GetFixtureList());
+	app.physicsWorld.DestroyBody(this.turretBody);
+	this.turretBody = null;
+
+	this.container.removeAllChildren();
+	this.container = null;
+
+	this.base = null;
+
+	this.baseContainer.removeAllChildren();
+	this.baseContainer = null;
+
+	for(i = 0; i < this.arrWheels.length; i++) {
+		this.arrWheels[i] = null;
+	}
+	this.arrWheels = null;
+
+	this.turretTransition = null;
+
+	this.turretTransitionAddAnimUtil.clear();
+	this.turretTransitionAddAnimUtil = null;
+
+	this.turretTransitionRemoveAnimUtil.clear();
+	this.turretTransitionRemoveAnimUtil = null;
+
+	for(i = 0; i < this.arrTurrets.length; i++) {
+		this.arrTurrets[i].clear();
+		this.arrTurrets[i] = null;
+	}
+	this.arrTurrets = null;
+
+	this.turret = null;
+
+	this.stateMachine.clear();
+	this.stateMachine = null;
+
+	this.weaponSelectEvent 			= null;
+	this.addHomingOverlayEvent 		= null;
+	this.removeHomingOverlayEvent 	= null;
+	this.increaseHomingOverlayEvent = null;
+	this.energyChangeEvent 			= null;
+	this.overdriveChangeEvent 		= null;
 };
 
 PlayerTank.prototype.updateEnergy = function() {

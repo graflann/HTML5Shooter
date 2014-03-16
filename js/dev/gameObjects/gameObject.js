@@ -40,7 +40,8 @@ GameObject.prototype.update = function(options) {
 *@public
 */
 GameObject.prototype.clear = function() {
-	
+	this.position = null;
+	this.velocity = null;
 };
 
 /**

@@ -67,9 +67,15 @@ Projectile.prototype.update = function(options) {
 *@public
 */
 Projectile.prototype.clear = function() {
-	this.shape.getStage().removeChild(this.shape);
-	
+	this.categoryBits = null;
+	this.maskBits = null;
+
+	this.shape.graphics.clear();
 	this.shape = null;
+
+	this.body.DestroyFixture(this.body.GetFixtureList());
+	app.physicsWorld.DestroyBody(this.body);
+	this.body = null;
 };
 
 Projectile.prototype.kill = function() {

@@ -48,8 +48,9 @@ Particle.prototype.update = function(options) {
 *@public
 */
 Particle.prototype.clear = function() {
-	this.shape.getStage().removeChild(this.shape);
+	GameObject.prototype.clear.call(this);
 	
+	this.shape.graphics.clear();
 	this.shape = null;
 };
 

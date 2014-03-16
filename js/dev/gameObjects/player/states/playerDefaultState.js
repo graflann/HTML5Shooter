@@ -35,4 +35,11 @@ PlayerDefaultState.prototype.exit = function(options) {
 
 };
 
+/**
+*@public
+*/
+PlayerDefaultState.prototype.clear = function() {
+	this.player = null;
+};
+
 goog.exportSymbol('PlayerDefaultState', PlayerDefaultState);

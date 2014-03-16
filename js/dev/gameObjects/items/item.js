@@ -64,6 +64,8 @@ Item.prototype.update = function(options) {
 *@public
 */
 Item.prototype.clear = function() {
+	GameObject.prototype.clear.call(this);
+	
 	if(this.container) {
 		this.container.removeAllChildren();
 		this.container = null;

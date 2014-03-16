@@ -56,6 +56,16 @@ GrenadeParticle.prototype.update = function(options) {
 	}
 };
 
+GrenadeParticle.prototype.clear = function() {
+	Particle.prototype.clear.call(this);
+
+	this.body.DestroyFixture(this.body.GetFixtureList());
+	app.physicsWorld.DestroyBody(this.body);
+	this.body = null;
+
+	this.physicalPosition = null;
+};
+
 /**
 *@override
 *@public

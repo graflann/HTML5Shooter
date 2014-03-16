@@ -46,11 +46,15 @@ Enemy.prototype.update = function(options) {
 *@public
 */
 Enemy.prototype.clear = function() {
+	GameObject.prototype.clear.call(this);
+
 	if(this.container) {
 		this.container.removeAllChildren();
 		this.container = null;
 	}
 
+	this.body.DestroyFixture(this.body.GetFixtureList());
+	app.physicsWorld.DestroyBody(this.body);
 	this.body = null;
 
 	this.physicalPosition = null;
