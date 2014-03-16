@@ -82,6 +82,7 @@ AnimationUtility.prototype.clear = function() {
 	this.animations = null;
 	this.spriteSheet = null;
 	this.bmpAnimation = null;
+	this.animation = null;
 };
 
 goog.exportSymbol('AnimationUtility', AnimationUtility);

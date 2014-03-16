@@ -26,6 +26,7 @@ goog.inherits(ScoreManager, goog.events.EventTarget);
 */
 ScoreManager.instance = null;
 
+ScoreManager.MIN_BONUS_MULTIPLIER = 1;
 ScoreManager.MAX_BONUS_MULTIPLIER = 10;
 
 /**
@@ -50,19 +51,20 @@ ScoreManager.prototype.updateScore = function(value) {
 };
 
 ScoreManager.prototype.updateBonusMultiplier = function(value) {
-    if(this.bonusMultiplier < ScoreManager.MAX_BONUS_MULTIPLIER) {
-        this.bonusMultiplier += value;
+    this.bonusMultiplier += value;
 
-        if(this.bonusMultiplier > ScoreManager.MAX_BONUS_MULTIPLIER) {
-            this.bonusMultiplier = MAX_BONUS_MULTIPLIER;
-        }
-
-        this.bonusMultiplier = Math.round(this.bonusMultiplier * 10)/10;
-
-        this.updateBonusEvent.payload = this.bonusMultiplier;
-
-        goog.events.dispatchEvent(this, this.updateBonusEvent);
+    //cap the min / max values of the bonus multiplier
+    if(this.bonusMultiplier > ScoreManager.MAX_BONUS_MULTIPLIER) {
+        this.bonusMultiplier = ScoreManager.MAX_BONUS_MULTIPLIER;
     }
+    else if(this.bonusMultiplier < ScoreManager.MIN_BONUS_MULTIPLIER) {
+        this.bonusMultiplier = ScoreManager.MIN_BONUS_MULTIPLIER;
+    }
+
+    //updates payload with rounded value to tenths
+    this.updateBonusEvent.payload = this.bonusMultiplier = Math.round(this.bonusMultiplier * 10)/10;
+
+    goog.events.dispatchEvent(this, this.updateBonusEvent);
 };
 
 ScoreManager.prototype.reset = function() {

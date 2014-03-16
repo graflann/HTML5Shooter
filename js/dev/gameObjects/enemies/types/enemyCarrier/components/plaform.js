@@ -52,6 +52,10 @@ Platform.prototype.init = function() {
 *@public
 */
 Platform.prototype.clear = function() {
+	this.container.removeAllChildren();
+	this.container = null;
+
+	this.shape.graphics.clear();
 	this.shape = null;
 };
 

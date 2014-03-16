@@ -57,4 +57,11 @@ EnemySnipingState.prototype.exit = function(options) {
 
 };
 
+/**
+*@public
+*/
+EnemySnipingState.prototype.clear = function() {
+	this.enemy = null;
+};
+
 goog.exportSymbol('EnemySnipingState', EnemySnipingState);

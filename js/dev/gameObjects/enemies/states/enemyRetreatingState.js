@@ -35,4 +35,11 @@ EnemyRetreatingState.prototype.exit = function(options) {
 
 };
 
+/**
+*@public
+*/
+EnemyRetreatingState.prototype.clear = function() {
+	this.enemy = null;
+};
+
 goog.exportSymbol('EnemyRetreatingState', EnemyRetreatingState);

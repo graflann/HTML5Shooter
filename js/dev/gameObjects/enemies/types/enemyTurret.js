@@ -10,8 +10,6 @@ goog.require('Turret');
 EnemyTurret = function(projectileSystem) {
 	Enemy.call(this);
 
-	this.container = null;
-
 	/**
 	 * @type {Array}
 	 */
@@ -85,7 +83,15 @@ EnemyTurret.prototype.update = function(options) {
 *@public
 */
 EnemyTurret.prototype.clear = function() {
-	
+	this.projectileSystem = null;
+
+	this.shape.graphics.clear();
+	this.shape = null;
+
+	this.turret.clear();
+	this.turret = null;
+
+	this.reticle = null;
 };
 
 /**

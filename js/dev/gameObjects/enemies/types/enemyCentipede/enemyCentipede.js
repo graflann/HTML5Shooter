@@ -146,25 +146,52 @@ EnemyCentipede.prototype.updateSegments = function(options) {
 *@public
 */
 EnemyCentipede.prototype.clear = function() {
-	this.tail = null;
+	var i = 0;
+
+	Enemy.clear.call(this);
+
+	this.projectileSystem = null;
 
 	//unlisten to head collision
-	// goog.events.unlisten(
-	// 	this.head, 
-	// 	EventNames.COLLISION, 
-	// 	this.onHeadCollision, 
-	// 	false, 
-	// 	this
-	// );
+	goog.events.unlisten(
+		this.head, 
+		EventNames.COLLISION, 
+		this.onHeadCollision, 
+		false, 
+		this
+	);
 
-	//unlisten the dead target piece
-	// goog.events.unlisten(
-	// 	piece, 
-	// 	EventNames.ENEMY_KILLED, 
-	// 	this.onPieceKilled, 
-	// 	false, 
-	// 	this
-	// );
+	goog.events.unlisten(
+		this.head, 
+		EventNames.ENEMY_KILLED, 
+		this.onPieceKilled, 
+		false, 
+		this
+	);
+
+	this.head.clear();
+	this.head = null;
+
+	for(i = 0; i < this.arrSegments.length; i++) {
+		goog.events.unlisten(
+			this.arrSegments[i], 
+			EventNames.ENEMY_KILLED, 
+			this.onPieceKilled, 
+			false, 
+			this
+		);
+
+		this.arrSegments[i].clear();
+		this.arrSegments[i] = null;
+	}
+	this.arrSegments = null;
+
+	this.tail = null;
+
+	this.stateMachine.clear();
+	this.stateMachine = null;
+
+	this.retreatTarget = null;
 };
 
 /**
@@ -328,7 +355,7 @@ EnemyCentipede.prototype.onPieceKilled = function(e) {
 		this.kill();
 	}
 
-	console.log("# of pieces killed: " + this.numPiecesKilled);
+	console.log("# of centipede pieces killed: " + this.numPiecesKilled);
 };
 
 goog.exportSymbol('EnemyCentipede', EnemyCentipede);

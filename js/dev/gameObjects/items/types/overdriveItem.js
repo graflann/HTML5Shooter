@@ -23,11 +23,15 @@ OverdriveItem = function(categoryBits) {
 
 	this.alphaDecrement = (this.timerThreshold - this.alphaTimerThreshold) / 
 		(createjs.Ticker.getFPS() * (8 *(this.timerThreshold - this.alphaTimerThreshold)));
+
+	this
 	
 	this.init();
 };
 
 goog.inherits(OverdriveItem, Item);
+
+OverdriveItem.BONUS_PENALTY = -1;
 
 /**
 *@override
@@ -78,6 +82,9 @@ OverdriveItem.prototype.update = function(options) {
 			if(this.container.alpha <= 0) {
 				this.alphaTimer = 0;
 				this.kill();
+
+				//penalize the bonus multiplier for the item's expiration
+				app.scoreManager.updateBonusMultiplier(OverdriveItem.BONUS_PENALTY);
 			}
 		}
 

@@ -17,7 +17,7 @@ EnemyClasses = {
 	enemyTurret: 	EnemyTurret,
 	enemyCopter: 	EnemyCopter,
 	enemyCentipede: EnemyCentipede,
-	enemyCarrier: 	EnemyCarrier,
+	enemyCarrier: 	EnemyCarrier
 };
 
 goog.exportSymbol('EnemyClasses', EnemyClasses);

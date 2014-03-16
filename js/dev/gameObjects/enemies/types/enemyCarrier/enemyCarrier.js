@@ -31,8 +31,6 @@ EnemyCarrier = function(projectileSystem, enemySystem) {
 
 	this.shape = null;
 
-	this.arrRotors = [];
-
 	this.reticle = null;
 
 	this.fireThreshold = 0;
@@ -50,6 +48,8 @@ EnemyCarrier = function(projectileSystem, enemySystem) {
 	this.rotationRate = 1;
 
 	this.baseRotationDeg = 0;
+
+	this.arrRotors = [];
 
 	this.arrDoors = [];
 
@@ -180,7 +180,44 @@ EnemyCarrier.prototype.updateRotors = function() {
 *@public
 */
 EnemyCarrier.prototype.clear = function() {
-	
+	var i = 0;
+
+	Enemy.clear.call(this);
+
+	this.projectileSystem = null;
+
+	/**
+	*Requires a reference to an enemy system to spawn EnemyCopter instances
+	**/
+	this.enemySystem = null;
+
+	this.shape = null;
+
+	this.reticle = null;
+
+	this.shadow.clear();
+	this.shadow = null;
+
+	this.stateMachine.clear();
+	this.stateMachine = null;
+
+	for(i = 0; i < this.arrRotors.length) {
+		this.arrRotors[i].clear();
+		this.arrRotors[i] = null;
+	}
+	this.arrRotors = null;
+
+	for(i = 0; i < this.arrDoors.length) {
+		this.arrDoors[i].clear();
+		this.arrDoors[i] = null;
+	}
+	this.arrDoors = null;
+
+	for(i = 0; i < this.arrPlatforms.length) {
+		this.arrPlatforms[i].clear();
+		this.arrPlatforms[i] = null;
+	}
+	this.arrPlatforms = null;
 };
 
 /**

@@ -46,7 +46,20 @@ Enemy.prototype.update = function(options) {
 *@public
 */
 Enemy.prototype.clear = function() {
-	
+	this.body = null;
+
+	this.physicalPosition = null;
+
+	if(this.container) {
+		this.container.removeAllChildren();
+		this.container = null;
+	}
+
+	this.categoryBits = null;
+
+	this.maskBits = null;
+
+	this.enemyKilledEvent = null;
 };
 
 /**

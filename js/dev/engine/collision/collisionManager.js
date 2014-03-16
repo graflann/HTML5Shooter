@@ -90,7 +90,21 @@ CollisionManager.prototype.update = function(options) {
 };
 
 CollisionManager.prototype.clear = function() {
+    this.arrParticleSystems = null;
 
+    this.arrPlayerProjectileSystems = null;
+
+    this.arrItemSystems = null;
+
+    this.contactListener = null;
+
+    this.activationList = null;
+
+    this.killList = null;
+
+    this.homingList = null;
+
+    this.collisionOptions = null;
 };
 
 CollisionManager.prototype.resetHomingList = function() {
@@ -106,14 +120,14 @@ CollisionManager.prototype.updateHomingList = function(options) {
             i = -1,
             j = -1;
 
-        //TODO: compare killList elements against homingList and 
+        //Compares killList elements against homingList and 
         //remove matches from homingList, because they're dead...
         while(++i < homingLength) {
             j = -1;
 
             while(++j < killLength) {
                 if(this.homingList[i] === this.killList[j]) {
-                    //remove enemy from the homing list it is set to die
+                    //remove enemy from the homing list if it is set to die
                     this.homingList.splice(i, 1);
                     i--;
                 }
@@ -123,10 +137,10 @@ CollisionManager.prototype.updateHomingList = function(options) {
 };
 
 CollisionManager.prototype.updateKills = function() {
-    var i = 0;
+    var i = -1;
 
-    //"kill" everything that qualified for removal
-    for(i = 0; i < this.killList.length; i++) {
+    //"kill" everything that qualified for removal during collision step
+    while(++i < this.killList.length) {
         this.killList[i].kill();
     }
 
@@ -135,11 +149,11 @@ CollisionManager.prototype.updateKills = function() {
 };
 
 CollisionManager.prototype.updateActivation = function() {
-    var i = 0,
+    var i = -1,
         obj;
 
     //activate items caused by collision
-    for (i = 0; i < this.activationList.length; i++) {
+    while (++i < this.activationList.length) {
         obj = this.activationList[i];
 
         obj.system.emit(obj.qty, obj);
@@ -274,16 +288,10 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
 };
 
 CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
-    //console.log(hto);
-    //console.log(enemy);
-
     var homingLength = this.homingList.length,
         i = -1;
 
     if(homingLength < this.arrPlayerProjectileSystems[ProjectileTypes.HOMING].length()) {
-        //add homing reticle
-        enemy.onHoming(hto, this.collisionOptions.enemy);
-
         //PROCESS ENEMY
         //exits if enemy is already in homing list
         while(++i < homingLength) {
@@ -291,6 +299,9 @@ CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
                 return;
             }
         }
+
+        //add homing reticle
+        enemy.onHoming(hto, this.collisionOptions.enemy);
 
         //push onto the homing list if not already present
         this.homingList.push(enemy);

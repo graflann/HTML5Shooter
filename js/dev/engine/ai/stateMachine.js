@@ -64,7 +64,12 @@ StateMachine.prototype.update = function(options) {
 };
 
 StateMachine.prototype.clear = function() {
+	for(var key in this.arrStates) {
+		this.arrStates[key].clear();
+		this.arrStates[key] = null;
+	}
 
+	this.arrStates = null;
 };
 
 StateMachine.prototype.getCurrentState = function() {

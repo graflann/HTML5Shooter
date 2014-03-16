@@ -228,7 +228,7 @@ Input.prototype.pollGamepads = function() {
 	  // We don’t want to use rawGamepads coming straight from the browser,
 	  // since it can have “holes” (e.g. if you plug two gamepads, and then
 	  // unplug the first one, the remaining one will be at index [1]).
-	  this.gamepads = [];
+	  this.gamepads.length = 0;
 
 	  // We only refresh the display when we detect some gamepads are new
 	  // or removed; we do it by comparing raw gamepad table entries to

@@ -57,4 +57,11 @@ EnemyRoamingState.prototype.exit = function(options) {
 
 };
 
+/**
+*@public
+*/
+EnemyRoamingState.prototype.clear = function() {
+	this.enemy = null;
+};
+
 goog.exportSymbol('EnemyRoamingState', EnemyRoamingState);

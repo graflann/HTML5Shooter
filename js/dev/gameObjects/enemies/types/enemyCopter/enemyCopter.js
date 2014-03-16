@@ -142,7 +142,26 @@ EnemyCopter.prototype.updateRotors = function() {
 *@public
 */
 EnemyCopter.prototype.clear = function() {
-	
+	Enemy.clear.call(this);
+
+	this.projectileSystem = null;
+
+	this.shape.graphics.clear();
+	this.shape = null;
+
+	for(var i = 0; i < this.arrRotors.length) {
+		this.arrRotors[i].clear();
+		this.arrRotors[i] = null;
+	}
+	this.arrRotors = null;
+
+	this.reticle = null;
+
+	this.shadow.clear();
+	this.shadow = null;
+
+	this.stateMachine.clear();
+	this.stateMachine = null;
 };
 
 /**

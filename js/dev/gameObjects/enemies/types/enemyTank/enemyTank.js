@@ -200,7 +200,20 @@ EnemyTank.prototype.updateStrafing = function(options) {
 *@public
 */
 EnemyTank.prototype.clear = function() {
-	
+	Enemy.clear.call(this);
+
+	this.projectileSystem = null;
+
+	this.shape = null;
+
+	this.turret.clear();
+	this.turret = null;
+
+	this.navigation.clear();
+	this.navigation = null;
+
+	this.stateMachine.clear();
+	this.stateMachine = null;
 };
 
 /**

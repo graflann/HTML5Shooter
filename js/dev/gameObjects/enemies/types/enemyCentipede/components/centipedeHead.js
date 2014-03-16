@@ -110,7 +110,20 @@ CentipedeHead.prototype.update = function(options) {
 *@public
 */
 CentipedeHead.prototype.clear = function() {
-	
+	Enemy.clear.call(this);
+
+	this.projectileSystem = null;
+
+	this.shape = null;
+
+	this.force = null;
+
+	this.segmentAnchor = null;
+
+	this.headAnimUtil.clear();
+	this.headAnimUtil = null;
+
+	this.collisionEvent = null;
 };
 
 /**

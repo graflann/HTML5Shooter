@@ -76,4 +76,6 @@ Navigation.prototype.reset = function() {
 Navigation.prototype.clear = function() {
 	this.arrNodePositions.length = 0;
 	this.arrNodePositions = null;
+
+	this.targetPosition = null;
 };

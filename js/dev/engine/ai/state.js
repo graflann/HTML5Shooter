@@ -26,4 +26,9 @@ State.prototype.update = function(options) {};
 */
 State.prototype.exit = function(options) {};
 
+/**
+*@public
+*/
+State.prototype.clear = function() {};
+
 goog.exportSymbol('State', State);

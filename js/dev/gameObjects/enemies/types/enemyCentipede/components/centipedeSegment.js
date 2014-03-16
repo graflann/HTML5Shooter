@@ -32,13 +32,6 @@ CentipedeSegment = function(physicalVelocity, projectileSystem, isTail) {
 
 	this.deg = 0;
 
-	//Ratio translating head physics velocity to pixels per tick
-	this.physicalVelocityMod = Math.round(1000 / 1.77);
-
-	this.arrFireOffsets = [-16, 16];
-
-	this.ammoDistance = -(80 / app.physicsScale);
-
 	this.fireCounter = 0;
 	this.fireThreshold = 30;
 
@@ -46,6 +39,16 @@ CentipedeSegment = function(physicalVelocity, projectileSystem, isTail) {
 };
 
 goog.inherits(CentipedeSegment, Enemy);
+
+
+CentipedeSegment.ARR_FIRE_OFFSETS = [-16, 16];
+
+CentipedeSegment.AMMO_DISTANCE = -(80 / app.physicsScale);
+
+/**
+*Ratio translating head physics velocity to pixels per tick
+*/
+CentipedeSegment.PHYSICAL_VELOCITY_MOD = Math.round(1000 / 1.77);
 
 /**
 *@override
@@ -60,8 +63,8 @@ CentipedeSegment.prototype.init = function() {
 	this.offset.x = -(this.width * 0.5);
 	this.offset.y = -(this.height * 0.5);
 
-	this.velocity.x = this.physicalVelocity.x / this.physicalVelocityMod;
-	this.velocity.y = this.physicalVelocity.y / this.physicalVelocityMod;
+	this.velocity.x = this.physicalVelocity.x / CentipedeSegment.PHYSICAL_VELOCITY_MOD;
+	this.velocity.y = this.physicalVelocity.y / CentipedeSegment.PHYSICAL_VELOCITY_MOD;
 
 	if(!this.isTail) {
 		this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["centipedeSegment"]);
@@ -120,13 +123,10 @@ CentipedeSegment.prototype.update = function(options) {
 *@public
 */
 CentipedeSegment.prototype.updateFire = function(options) {
-	//if(this.isTail) {
-		//check fire
-		if(this.fireCounter++ > this.fireThreshold) {
-			this.fire(options);
-			this.fireCounter = 0;
-		}
-	//}
+	if(this.fireCounter++ > this.fireThreshold) {
+		this.fire(options);
+		this.fireCounter = 0;
+	}
 };
 
 /**
@@ -134,7 +134,17 @@ CentipedeSegment.prototype.updateFire = function(options) {
 *@public
 */
 CentipedeSegment.prototype.clear = function() {
-	
+	Enemy.clear.call(this);
+
+	this.physicalVelocity = null;
+
+	this.projectileSystem = null;
+
+	this.shape = null;
+
+	this.offset = null;
+
+	this.segmentAnchor = null;
 };
 
 /**
@@ -154,7 +164,7 @@ CentipedeSegment.prototype.fire = function(options) {
 		stage = this.container.getStage(),
 		projectile = null,
 		i = -1,
-		length = this.arrFireOffsets.length;
+		length = CentipedeSegment.ARR_FIRE_OFFSETS.length;
 
 	//acquire rotation of Turret instance in degrees and add ammo at table-referenced distance	
 	deg = this.container.rotation;
@@ -176,12 +186,12 @@ CentipedeSegment.prototype.fire = function(options) {
 			projectile.body.SetLinearVelocity(app.vecZero);
 
 			//acquire values to determine firing position
-			firingPosDeg = (deg + this.arrFireOffsets[i]);
+			firingPosDeg = (deg + CentipedeSegment.ARR_FIRE_OFFSETS[i]);
 			firingPosSin = trigTable.sin(firingPosDeg);
 			firingPosCos = trigTable.cos(firingPosDeg); 
 			
-			vector2D.x = (this.position.x / app.physicsScale) + (firingPosCos * this.ammoDistance);
-			vector2D.y = (this.position.y / app.physicsScale) + (firingPosSin * this.ammoDistance);				
+			vector2D.x = (this.position.x / app.physicsScale) + (firingPosCos * CentipedeSegment.AMMO_DISTANCE);
+			vector2D.y = (this.position.y / app.physicsScale) + (firingPosSin * CentipedeSegment.AMMO_DISTANCE);				
 			projectile.body.SetPosition(vector2D);
 			
 			vector2D.x = cos * projectile.velocityMod;

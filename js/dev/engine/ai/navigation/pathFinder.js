@@ -107,10 +107,26 @@ PathFinder.prototype.init = function() {
 };
 
 PathFinder.prototype.clear = function() {
-	this.graph.clear();
+	this.graph.clear();	
+	this.graph = null;
+
+	this.searchAlgorithm.clear();
+	this.searchAlgorithm = null;
 
 	this.arrNodes.length = 0;
 	this.arrNodes = null;
+
+	this.sceneObjects = null;
+
+	this.path = null;
+
+	this.shortestPath = null;
+
+	this.numCells = null;
+
+	this.pathTable = null;
+
+	this.arrSceneObjects = null;
 };
 
 PathFinder.prototype.findPath = function() {

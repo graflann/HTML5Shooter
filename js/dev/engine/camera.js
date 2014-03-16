@@ -87,7 +87,25 @@ Camera.prototype.update = function() {
 *@public
 */
 Camera.prototype.clear = function() {
-	
+	this.target = null;
+
+	this.arrStages = null;
+
+	this.debugContext = null;
+
+	this.offset = null;
+
+	this.minBounds = null;
+
+	this.maxBounds = null;
+
+	this.position = null;
+
+	this.prevPosition = null;
+
+	this.translation = null;
+
+	this.normalizedTranslation = null;
 };
 
 Camera.prototype.updateStages = function() {

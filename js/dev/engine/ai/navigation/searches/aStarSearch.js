@@ -47,6 +47,18 @@ AStarSearch.prototype.init = function() {
 	}
 };
 
+AStarSearch.prototype.clear = function() {
+	this.graph = null;
+
+	this.arrGCosts = null;
+
+	this.arrFCosts = null;
+
+	this.arrShortestPath = null;
+
+	this.arrSearchFrontier = null;
+};
+
 AStarSearch.prototype.search = function() {
 	//create an indexed priority queue of nodes. The nodes with the
 	//lowest overall F cost (G+H) are positioned at the front.

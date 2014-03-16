@@ -259,7 +259,20 @@ EnemyTrooper.prototype.updateStrafing = function(options) {
 *@public
 */
 EnemyTrooper.prototype.clear = function() {
-	
+	Enemy.clear.call(this);
+
+	this.projectileSystem = null;
+
+	this.shape = null;
+
+	this.navigation.clear();
+	this.navigation = null;
+
+	this.stateMachine.clear();
+	this.stateMachine = null;
+
+	this.walkAnimUtil.clear();
+	this.walkAnimUtil = null;
 };
 
 /**

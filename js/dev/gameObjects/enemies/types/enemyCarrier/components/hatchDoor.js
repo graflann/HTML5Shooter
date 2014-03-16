@@ -46,7 +46,10 @@ HatchDoor.prototype.init = function() {
 *@public
 */
 HatchDoor.prototype.clear = function() {
+	this.shape.graphics.clear();
 	this.shape = null;
+
+	this.arrColors = null;
 };
 
 /**

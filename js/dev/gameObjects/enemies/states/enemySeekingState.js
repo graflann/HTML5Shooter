@@ -35,4 +35,11 @@ EnemySeekingState.prototype.exit = function(options) {
 
 };
 
+/**
+*@public
+*/
+EnemySeekingState.prototype.clear = function() {
+	this.enemy = null;
+};
+
 goog.exportSymbol('EnemySeekingState', EnemySeekingState);

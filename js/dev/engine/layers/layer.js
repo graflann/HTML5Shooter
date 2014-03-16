@@ -7,7 +7,7 @@ goog.require('Constants');
 
 /**
 *@constructor
-*Parent in-game action object
+*Layers are HTML canvas element with 2D contexts in screen dimensions
 */
 Layer = function(parent, id, zIndex) {
 	//PRIVATE///////////////////////////////////////////

@@ -72,9 +72,17 @@ EnemySystem.prototype.clear = function() {
 		this.arrEnemies[i].clear();
 		this.arrEnemies[i] = null;
 	}
-	
-	this.arrEnemies.length = 0;
+
 	this.arrEnemies = null;
+
+	this.projectileSystem = null;
+
+	this.enemySystem = null;
+
+	this.position = null;
+
+	this.spawnCompleteEvent = null;
+	this.enemyKilledEvent = null;
 };
 
 EnemySystem.prototype.generate = function(options) {

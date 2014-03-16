@@ -57,4 +57,11 @@ EnemyStrafingState.prototype.exit = function(options) {
 	
 };
 
+/**
+*@public
+*/
+EnemyStrafingState.prototype.clear = function() {
+	this.enemy = null;
+};
+
 goog.exportSymbol('EnemyStrafingState', EnemyStrafingState);
