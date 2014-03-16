@@ -12,7 +12,7 @@ goog.require('ScoreViewComponent');
 */
 Hud = function() {	
 	/**
-	*@type {Shape}
+	*@type {Container}
 	*/
 	this.container = null;
 
@@ -67,12 +67,22 @@ Hud.prototype.update = function(options) {
 */
 Hud.prototype.clear = function() {
 	this.container.removeAllChildren();
+	this.container = null;
 
 	this.radar.clear();
 	this.radar = null;
 
 	this.weaponSelectorContainer.clear();
 	this.weaponSelectorContainer = null;
+
+	this.energyMeter.clear();
+	this.energyMeter = null;
+
+	this.overdriveMeter.clear();
+	this.overdriveMeter = null;
+
+	this.scoreComponent.clear();
+	this.scoreComponent = null;
 };
 
 Hud.prototype.setMeters = function() {

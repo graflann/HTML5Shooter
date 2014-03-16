@@ -52,9 +52,13 @@ WeaponSelector.prototype.init = function() {
 *@public
 */
 WeaponSelector.prototype.clear = function() {
-	this.background.getStage().removeChild(this.background);
-	
+	this.container.removeAllChildren();
+	this.container = null;
+
+	this.background.graphics.clear();
 	this.background = null;
+
+	this.text = null;
 };
 
 /**

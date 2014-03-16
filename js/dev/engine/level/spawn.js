@@ -37,7 +37,11 @@ Spawn.prototype.init = function() {
 *@public
 */
 Spawn.prototype.clear = function() {
-	
+	this.arrEnemySystems = null;
+
+	this.options = null;
+
+	this.enemySystem = null;
 };
 
 /**

@@ -176,7 +176,31 @@ Level.prototype.update = function(options) {
 *@public
 */
 Level.prototype.clear = function() {
-	
+	var key;
+
+	this.data = null;
+
+	this.waveManager.clear();
+	this.waveManager = null;
+
+	for(key in arrEnemySystems) {
+		this.arrEnemySystems[key].clear();
+		this.arrEnemySystems[key] = null;
+	}
+	this.arrEnemySystems = null;
+
+	for(key in this.arrEnemyProjectileSystems) {
+		this.arrEnemyProjectileSystems[key].clear();
+		this.arrEnemyProjectileSystems[key] = null;
+	}
+	this.arrEnemyProjectileSystems = null;
+
+	for(key in this.arrSceneObjects) {
+		this.arrSceneObjects[key].clear();
+		this.arrSceneObjects[key] = null;
+	}
+	this.arrSceneObjects = null;
+
 };
 
 Level.prototype.removeReticles = function() {

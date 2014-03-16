@@ -45,9 +45,12 @@ SceneObject.prototype.update = function(options) {
 *@public
 */
 SceneObject.prototype.clear = function() {
-	this.shape.getStage().removeChild(this.shape);
-	
+	this.shape.graphics.clear();
 	this.shape = null;
+
+	this.body.DestroyFixture(this.body.GetFixtureList());
+	app.physicsWorld.DestroyBody(this.body);
+	this.body = null;
 };
 
 SceneObject.prototype.kill = function() {

@@ -46,6 +46,8 @@ Wave.prototype.init = function() {
 *@public
 */
 Wave.prototype.clear = function() {
+	var i = 0;
+
 	for(var key in this.arrEnemySystems) {
 		goog.events.unlisten(
 			this.arrEnemySystems[key],
@@ -55,6 +57,17 @@ Wave.prototype.clear = function() {
 			this
 		);
 	}
+	this.arrEnemySystems = null;
+
+	for(var i = 0; i < this.arrSpawns.length; i++) {
+		this.arrSpawns[i].clear();
+		this.arrSpawns[i] = null;
+	}
+	this.arrSpawns = null;
+
+	this.currentSpawn = null;
+
+	this.waveCompleteEvent = null;
 };
 
 Wave.prototype.length = function() {

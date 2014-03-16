@@ -77,6 +77,11 @@ OverdriveMeter.prototype.update = function(options) {
 */
 OverdriveMeter.prototype.clear = function() {
 	this.container.removeAllChildren();
+	this.container = null;
+
+	this.label = null;
+
+	this.meter = null;
 };
 
 /**

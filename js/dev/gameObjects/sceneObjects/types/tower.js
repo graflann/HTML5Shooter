@@ -111,9 +111,24 @@ Tower.prototype.update = function(options) {
 *@public
 */
 Tower.prototype.clear = function() {
-	this.shape.getStage().removeChild(this.shape);
+	var i = 0;
+
+	SceneObject.prototype.clear.call(this);
+
+	this.enemy = null;
 	
-	this.shape = null;
+	for(i = 0; i < this.arrFloors.length; i++) {
+		this.arrFloors[i].graphics.clear();
+		this.arrFloors[i] = null;
+	}
+	this.arrFloors = null;
+
+	for(i = 0; i < this.arrOffsets.length; i++) {
+		this.arrOffsets[i] = null;
+	}
+	this.arrOffsets = null;
+
+	this.offset = null;
 };
 
 /**

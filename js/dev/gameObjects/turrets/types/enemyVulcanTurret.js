@@ -56,6 +56,17 @@ EnemyVulcanTurret.prototype.update = function(options) {
 	}
 };
 
+/**
+*@override
+*@public
+*/
+EnemyVulcanTurret.prototype.clear = function() {
+	Turret.prototype.clear.call(this);
+
+	this.turretAnimUtil.clear();
+	this.turretAnimUtil = null;
+};
+
 EnemyVulcanTurret.prototype.defaultFire = function() {
 	var deg,
 		sin,

@@ -110,8 +110,36 @@ Radar.prototype.update = function(options) {
 /**
 *@public
 */
-Radar.prototype.clear = function(enemy) {
-	//TODO: Clean this up...
+Radar.prototype.clear = function() {
+	var i = 0;
+
+	this.container.removeAllChildren();
+	this.container = null;
+
+	this.externalContainer.removeAllChildren();
+	this.externalContainer = null;
+
+	this.fieldContainer.removeAllChildren();
+	this.fieldContainer = null;
+
+	this.background.graphics.clear();
+	this.background = null;
+
+	this.mask = null;
+
+	this.fieldOffset = null;
+
+	this.fieldBoarder.graphics.clear();
+	this.fieldBoarder = null;
+
+	this.echo.removeAllChildren();
+	this.echo = null;
+
+	for(i = 0; i < this.arrMarkers.length; i++) {
+		this.arrMarkers[i].clear();
+		this.arrMarkers[i] = null;
+	}
+	this.arrMarkers = null;
 };
 
 Radar.prototype.updateEnemyMarkers = function(player, playerMarkerPos, arrEnemySystems) {

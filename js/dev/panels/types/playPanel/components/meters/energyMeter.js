@@ -77,6 +77,11 @@ EnergyMeter.prototype.update = function(options) {
 */
 EnergyMeter.prototype.clear = function() {
 	this.container.removeAllChildren();
+	this.container = null;
+
+	this.label = null;
+
+	this.meter = null;
 };
 
 /**

@@ -66,6 +66,17 @@ EnemyDroneTurret.prototype.update = function(options) {
 	}
 };
 
+/**
+*@override
+*@public
+*/
+EnemyDroneTurret.prototype.clear = function() {
+	Turret.prototype.clear.call(this);
+
+	this.turretAnimUtil.clear();
+	this.turretAnimUtil = null;
+};
+
 EnemyDroneTurret.prototype.defaultFire = function() {
 	var deg,
 		firingPosDeg,

@@ -16,11 +16,6 @@ HomingProjectile = function(colors, categoryBits, maskBits) {
 	this.velocityMod = 12;
 
 	this.arrTrails = new Array(15);
-	this.arrTrailTimeIndices = [
-		0, 1, 2, 3, 4, 
-		5, 6, 7, 8, 9, 10,
-		11, 12, 13, 14
-	];
 
 	this.delayTimer = 0;
 
@@ -44,7 +39,9 @@ HomingProjectile = function(colors, categoryBits, maskBits) {
 	this.init();
 };
 
-goog.inherits(HomingProjectile, Projectile)
+goog.inherits(HomingProjectile, Projectile);
+
+HomingProjectile.ARR_TIME_TRAIL_INDICES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 /**
 *@override
@@ -139,6 +136,18 @@ HomingProjectile.prototype.update = function(options) {
 
 		this.checkBounds();
 	}
+};
+
+HomingProjectile.prototype.clear = function() {
+	Projectile.prototype.clear.call(this);
+
+	this.velocityMod = 12;
+
+	this.arrTrails = null;
+
+	this.homingTargetPosition = null;
+
+	this.arrPrevPositions = null;
 };
 
 HomingProjectile.prototype.kill = function() {
@@ -254,7 +263,7 @@ HomingProjectile.prototype.drawTrails = function(stage, radius) {
 		//Grab per the time index or if prevPosition Array has yet to reach desired capacity,
 		//grab using the highest possible index
 		if(this.isFrameCacheMaxed) {
-			prevPosition = this.arrPrevPositions[this.arrTrailTimeIndices[i]];
+			prevPosition = this.arrPrevPositions[HomingProjectile.ARR_TIME_TRAIL_INDICES[i]];
 		} else {
 			prevPosition = this.arrPrevPositions[this.frameCacheIndex];
 		}

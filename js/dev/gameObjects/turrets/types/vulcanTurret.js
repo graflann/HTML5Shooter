@@ -61,6 +61,16 @@ VulcanTurret.prototype.update = function(options) {
 	this.turretAnimUtil.update();
 };
 
+VulcanTurret.prototype.clear = function() {
+	Turret.prototype.clear.call(this);
+
+	this.stateMachine.clear();
+	this.stateMachine = null;
+
+	this.turretAnimUtil.clear();
+	this.turretAnimUtil = null;
+};
+
 /**
 *@override
 *@public				

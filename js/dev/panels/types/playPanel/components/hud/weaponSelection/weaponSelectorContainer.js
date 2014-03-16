@@ -75,9 +75,17 @@ WeaponSelectorContainer.prototype.init = function() {
 *@public
 */
 WeaponSelectorContainer.prototype.clear = function() {
-	this.background.getStage().removeChild(this.background);
-	
+	this.container.removeAllChildren();
+	this.container = null;	
+
+	this.background.graphics.clear();
 	this.background = null;
+
+	for(var i = 0; i < this.arrWeaponSelectors.length; i++) {
+		this.arrWeaponSelectors[i].clear();
+		this.arrWeaponSelectors[i] = null;
+	}
+	this.arrWeaponSelectors = null;
 };
 
 WeaponSelectorContainer.prototype.setSelection = function(index) {

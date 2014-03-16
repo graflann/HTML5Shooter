@@ -62,7 +62,19 @@ WaveManager.prototype.clear = function() {
 			false, 
 			this
 		);
+
+		this.arrWaves[i].clear();
+		this.arrWaves[i] = null;
 	}
+	this.arrWaves = null;
+
+	this.arrRawWaves = null;
+
+	this.arrEnemySystems = null;
+
+	this.currentWave = null;
+
+	this.levelCompleteEvent = null;
 };
 
 WaveManager.prototype.length = function() {

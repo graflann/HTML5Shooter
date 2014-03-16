@@ -78,9 +78,20 @@ SniperTurret.prototype.update = function(options) {
 };
 
 SniperTurret.prototype.clear = function() {
-	this.shape.removeAllEventListeners();
-
 	Turret.prototype.clear.call(this);
+
+	this.stateMachine.clear();
+	this.stateMachine = null;
+
+	this.turretEnterFireAnimUtil.clear();
+	this.turretEnterFireAnimUtil = null;
+
+	this.laserSight.graphics.clear();
+	this.laserSight = null;
+
+	this.ballEffects.graphics.clear();
+	this.ballEffects = null;
+
 };
 
 /**

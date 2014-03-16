@@ -99,9 +99,16 @@ Turret.prototype.update = function(options) {
 *@public
 */
 Turret.prototype.clear = function() {
-	this.shape.stage.removeChild(this.shape);
+	GameObject.prototype.clear.call(this);
+
+	this.arrProjectileSystems = null;
+
+	this.currentProjectileSystem = null;
 	
+	this.shape.graphics.clear();
 	this.shape = null;
+
+	this.energyChangeEvent = null;
 };
 
 Turret.prototype.manualControl = function(options) {

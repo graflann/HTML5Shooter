@@ -58,6 +58,17 @@ BladeTurret.prototype.update = function(options) {
 
 /**
 *@override
+*@public
+*/
+BladeTurret.prototype.clear = function() {
+	Turret.prototype.clear.call(this);
+
+	this.stateMachine.clear();
+	this.stateMachine = null;
+};
+
+/**
+*@override
 *@public				
 */
 BladeTurret.prototype.enterDefaultFire = function(options) {

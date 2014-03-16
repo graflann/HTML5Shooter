@@ -67,6 +67,8 @@ Projectile.prototype.update = function(options) {
 *@public
 */
 Projectile.prototype.clear = function() {
+	GameObject.prototype.clear.call(this);
+
 	this.categoryBits = null;
 	this.maskBits = null;
 

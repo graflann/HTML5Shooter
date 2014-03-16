@@ -31,6 +31,10 @@ LevelProxy.prototype.init = function() {
 	this.setLevel(1);
 };
 
+LevelProxy.prototype.clear = function() {
+	this.currentLevelData = null;
+};
+
 /**
 *@private
 */

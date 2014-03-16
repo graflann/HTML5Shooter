@@ -173,22 +173,64 @@ PlayPanel.prototype.update = function() {
 *@protected
 */
 PlayPanel.prototype.clear = function() {
-	var i = this.arrEnemies.length;
-	
-	//TODO: Clear out layers
-	// app.layers.getStage(LayerTypes.MAIN).removeChild(this.background);
-	// this.background = null;
-	
-	// app.layers.getStage(LayerTypes.MAIN).removeChild(this.grid);
-	// this.grid = null;
-	
-	// while(i--) {
-	// 	app.layers.getStage(LayerTypes.MAIN).removeChild(this.arrEnemies[i].shape);
-	// 	this.arrEnemies[i].clear();
-	// 	this.arrEnemies[i] = null;
-	// }
+	var i = 0,
+		key;
 
-	this.arrEnemies = null;
+	Panel.prototype.clear.call(this);
+
+	app.scoreManager.reset();
+
+	this.background.graphics.clear();
+	this.background = null;
+	
+	for(key in this.arrPlayerProjectileSystems) {
+		this.arrPlayerProjectileSystems[key].clear();
+		this.arrPlayerProjectileSystems[key] = null;
+	}
+	this.arrPlayerProjectileSystems= null;
+
+	this.player.clear();
+	this.player = null;
+	
+	this.playerProjectileSystem = null;
+
+	for(key in this.arrParticleSystems) {
+		this.arrParticleSystems[key].clear();
+		this.arrParticleSystems[key] = null;
+	}
+	this.arrParticleSystems = null;
+
+	for(key in this.arrItemSystems) {
+		this.arrItemSystems[key].clear();
+		this.arrItemSystems[key] = null;
+	}
+	this.arrItemSystems = [];
+	
+	this.collisionManager.clear();
+	this.collisionManager = null;
+
+	this.camera.clear();
+	this.camera = null;
+
+	this.levelProxy.clear();
+	this.levelProxy = null;
+
+	this.level.clear();
+	this.level = null;
+
+	this.grid.clear();
+	this.grid = null;
+
+	this.hud.clear();
+	this.hud = null;
+
+	this.hto.clear();
+	this.hto = null;
+
+	if(this.enterLevelOverlay) {
+		this.enterLevelOverlay.clear();
+		this.enterLevelOverlay = null;
+	}
 };
 
 /**
