@@ -178,6 +178,8 @@ PlayPanel.prototype.clear = function() {
 
 	Panel.prototype.clear.call(this);
 
+	this.removeEventListeners();
+
 	app.scoreManager.reset();
 
 	this.background.graphics.clear();
@@ -643,6 +645,73 @@ PlayPanel.prototype.setEventListeners = function() {
 		this
 	);
 	/////////////////////////////////////
+};
+
+PlayPanel.prototype.removeEventListeners = function() {
+		goog.events.unlisten(
+		this.player, 
+		EventNames.WEAPON_SELECT, 
+		this.onWeaponSelect, 
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.player, 
+		EventNames.ADD_HOMING_OVERLAY, 
+		this.onAddHomingOverlay, 
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.player, 
+		EventNames.INCREASE_HOMING_OVERLAY, 
+		this.onIncreaseHomingOverlay, 
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.player, 
+		EventNames.REMOVE_HOMING_OVERLAY, 
+		this.onRemoveHomingOverlay, 
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.player, 
+		EventNames.ENERGY_CHANGE, 
+		this.onEnergyChange, 
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.player, 
+		EventNames.OVERDRIVE_CHANGE, 
+		this.onOverdriveChange, 
+		false, 
+		this
+	);
+
+	//SCORE MANAGER
+	goog.events.unlisten(
+		app.scoreManager, 
+		EventNames.UPDATE_SCORE, 
+		this.onUpdateScore, 
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		app.scoreManager, 
+		EventNames.UPDATE_BONUS, 
+		this.onUpdateBonus,
+		false, 
+		this
+	);
 };
 
 //EVENT HANDLERS////////////////////////////////////////////////////
