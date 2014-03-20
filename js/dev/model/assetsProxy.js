@@ -109,9 +109,10 @@ AssetsProxy.prototype.loadSounds = function () {
 		this.soundQueue.addEventListener("progress", 	function(e) { proxy.onProgress(e); });
 		this.soundQueue.addEventListener("fileload", 	function(e) { proxy.onFileLoad(e); });
 		this.soundQueue.addEventListener("error", 		function(e) { proxy.onError(e); });
-		
+
 		//register and load sounds using manifest
 		createjs.Sound.registerManifest(this.arrSoundManifest, AssetsProxy.SOUND_PATH);
+
 		this.soundQueue.loadManifest(this.arrSoundManifest);
 	} else {
 		goog.events.dispatchEvent(this, this.completeEvent);
@@ -128,6 +129,12 @@ AssetsProxy.prototype.setImageManifest = function(arrImageNames) {
 	}
 
 	this.arrImageNames = arrImageNames;
+
+	for(var key in this.arrSpriteSheet) {
+		this.arrSpriteSheet[key] = null;
+	}
+	this.arrSpriteSheet = null;
+	this.arrSpriteSheet = [];
 
 	this.arrImageManifest.length = 0;
 	this.arrSpriteSheetData.length = 0;
@@ -161,10 +168,11 @@ AssetsProxy.prototype.setSoundManifest = function(arrSoundNames) {
 
 	this.arrSoundManifest.length = 0;
 
-	for(var i = 0; i < this.arrSoundInstances.length; i++) {
-		this.arrSoundInstances[i] = null;
+	for(var key in this.arrSoundInstances) {
+		this.arrSoundInstances[key] = null;
 	}
-	this.arrSoundInstances.length = 0;
+	this.arrSoundInstances = null;
+	this.arrSoundInstances = [];
 
 	//reset LoadQueue instance for reuse
 	this.soundQueue.removeAll();
@@ -200,12 +208,9 @@ AssetsProxy.prototype.loadXHR = function() {
 
 		proxy.assetIndex++;
 
-		if(proxy.assetIndex < proxy.arrImageManifest.length){
+		if(proxy.assetIndex < proxy.arrImageManifest.length) {
 			proxy.loadXHR();
 		} else {
-			//remove listeners so the imageQueue is deaf to those for soundQueue
-			proxy.imageQueue.removeAllEventListeners();
-
 			proxy.loadSounds();
 		}
 	})
@@ -255,6 +260,10 @@ AssetsProxy.prototype.playSound = function(id, volume, isLooping) {
 *@private
 */
 AssetsProxy.prototype.onImagesComplete = function(e) { 
+	console.log("Image load complete");
+
+	this.imageQueue.removeAllEventListeners();
+
 	this.loadXHR();
 };
 
@@ -265,6 +274,10 @@ AssetsProxy.prototype.onSoundsComplete = function(e) {
 	for(var i = 0; i < this.arrSoundNames.length; i++) {
 		this.arrSoundInstances[this.arrSoundNames[i]] = createjs.Sound.createInstance(this.arrSoundNames[i]);
 	}
+
+	console.log("Sound load complete");
+
+	this.soundQueue.removeAllEventListeners();
 
 	goog.events.dispatchEvent(this, this.completeEvent);
 };

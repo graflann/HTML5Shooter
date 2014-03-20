@@ -7,6 +7,7 @@ goog.require('Platform');
 goog.require('EnemyCopterShadow');
 goog.require('EnemySnipingState');
 goog.require('EnemySeekingState');
+goog.require('EnemyStrafingState');
 goog.require('RotationUtils');
 
 /**
@@ -56,6 +57,8 @@ EnemyCarrier = function(projectileSystem, enemySystem) {
 	this.currentDoorIndex = 0;
 
 	this.arrPlatforms = [];
+
+	this.spawnTimer = null;
 
 	this.init();
 };
@@ -250,7 +253,7 @@ EnemyCarrier.prototype.setIsAlive = function(value) {
 EnemyCarrier.prototype.enterSeeking = function(options) {
 	var self = this;
 
-	setTimeout(function() {
+	this.spawnTimer = setTimeout(function() {
 		self.spawnEnemy();
 	}, 5000);
 };
@@ -289,6 +292,53 @@ EnemyCarrier.prototype.updateSeeking = function(options) {
 	this.container.y += this.velocity.y;
 
 	this.setPosition(this.container.x, this.container.y);
+};
+
+EnemyCarrier.prototype.enterSniping = function(options) {
+	var self = this;
+
+	clearTimeout(this.spawnTimer);
+
+	setTimeout(function() {
+		self.stateMachine.setState(EnemySeekingState.KEY);
+	}, 2000);
+};
+
+/**
+ *Face player and fire in bursts
+*@public
+*/
+EnemyCarrier.prototype.updateSniping = function(options) {
+	var target = options.target,
+		deg,
+		sin,
+		cos,
+		table = app.trigTable;
+
+	//only calculates facing target on selected frames
+	if(target && createjs.Ticker.getTicks() % EnemyCopter.HOMING_RATE == 0) {
+		this.baseRotationDeg = Math.radToDeg(
+			Math.atan2(
+				target.position.y - this.position.y, 
+				target.position.x - this.position.x
+			)
+		);
+	}
+
+	//check fire
+	this.updateFiring();
+};
+
+EnemyCarrier.prototype.enterStrafing = function(options) {
+	
+};
+
+/**
+ *Faces player, moves in a direction, and fire in bursts
+*@public
+*/
+EnemyCarrier.prototype.updateStrafing = function(options) {
+	
 };
 
 /**
@@ -584,6 +634,12 @@ EnemyCarrier.prototype.setStateMachine = function() {
 		EnemySnipingState.KEY,
 		new EnemySnipingState(this),
 		[ EnemySeekingState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		EnemyStrafingState.KEY,
+		new EnemyStrafingState(this),
+		[ EnemySeekingState.KEY, EnemySnipingState.KEY ]
 	);
 };
 

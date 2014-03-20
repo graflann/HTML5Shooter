@@ -17,8 +17,6 @@ HomingTargetingOverlay = function() {
 
 	this.body = null;
 
-	this.fixDef = null;
-
 	/**
 	*@type {Shape}
 	*/
@@ -94,14 +92,6 @@ HomingTargetingOverlay.prototype.update = function(options) {
 HomingTargetingOverlay.prototype.enterInitialization = function(options) {
 	this.isActive = true;
 
-	// if(this.background.graphics.isEmpty()) {
-	// 	this.background.graphics
-	// 		.ss(2)
-	// 		.s(Constants.LIGHT_BLUE)
-	// 		.f(Constants.BLUE)
-	// 		.dc(0, 0, this.radius);
-	// }
-
 	this.background.alpha = 0;
 	this.container.scaleX = this.container.scaleY = 0;
 
@@ -114,22 +104,7 @@ HomingTargetingOverlay.prototype.enterInitialization = function(options) {
 *@public
 */
 HomingTargetingOverlay.prototype.updateInitialization = function(options) {
-	// var container = this.container,
-	// 	background = this.background;
 
-	// background.alpha += 0.00125;
-
-	// if(background.alpha > 0.125) {
-	// 	background.alpha = 0.125;
-	// }
-
-	// container.scaleX = container.scaleY += 0.0375;
-
-	// if(container.scaleX > 1) {
-	// 	container.scaleX = container.scaleY = 1;
-
-	// 	this.stateMachine.setState(HomingTargetingOverlayOperationState.KEY);
-	// }
 };
 
 /**
@@ -143,38 +118,6 @@ HomingTargetingOverlay.prototype.exitInitialization = function(options) {
 *@public
 */
 HomingTargetingOverlay.prototype.enterOperation = function(options) {
-	//TOP RETICLE
-	// if(this.arrReticles[0].graphics.isEmpty()) {
-	// 	this.arrReticles[0].graphics
-	// 		.ss(4)
-	// 		.s(Constants.LIGHT_BLUE)
-	// 		.dc(0, 0, this.radius)
-	// 		.mt(0, 0)
-	// 		.dc(0, 0, this.radius * 0.5)
-	// 		.mt(0, 0)
-	// 		.lt(this.radius, 0)
-	// 		.mt(0, 0)
-	// 		.lt(0, this.radius);
-	// }
-
-	// //BOTTOM RETICLE
-	// if(this.arrReticles[1].graphics.isEmpty()) {
-	// 	this.arrReticles[1].graphics
-	// 		.ss(4)
-	// 		.s(Constants.DARK_BLUE)
-	// 		.mt(0, 0)
-	// 		.lt(this.radius, 0)
-	// 		.mt(0, 0)
-	// 		.lt(0, this.radius);
-	// }
-
-	// //MIDDLE ANIMATED ELLIPSE
-	// if(this.arrReticles[2].graphics.isEmpty()) {
-	// 	this.arrReticles[2].graphics
-	// 		.ss(4)
-	// 		.s(Constants.BLUE)
-	// 		.dc(0, 0, this.radius);
-	// }
 
 	this.container.addChild(this.arrReticles[1]);
 	this.container.addChild(this.arrReticles[2]);
@@ -317,9 +260,28 @@ HomingTargetingOverlay.prototype.exitRemoval = function(options) {
 *@public
 */
 HomingTargetingOverlay.prototype.clear = function() {
-	this.background.getStage().removeChild(this.background);
-	
+	this.container.removeAllChildren();
+	this.container = null;
+
+	if(this.body) {
+		this.body.DestroyFixture(this.body.GetFixtureList());
+		app.physicsWorld.DestroyBody(this.body);
+		this.body = null;
+	}
+
 	this.background = null;
+
+	for(var i = 0; i < this.arrReticles.length; i++) {
+		this.arrReticles[i] = null;
+	}
+	this.arrReticles = null;
+
+	this.position = null;
+
+	this.physicalPosition = null;
+
+	this.stateMachine.clear();
+	this.stateMachine = null;
 };
 
 /**

@@ -87,7 +87,9 @@ LoadingPanel.prototype.update = function() {
 *@public
 */
 LoadingPanel.prototype.clear = function() {
-	var self = this;
+	stage = app.layers.getStage(LayerTypes.LOADING);
+
+	stage.removeChild(this.container);
 
 	this.background.graphics.clear();
 	this.background = null;
@@ -97,6 +99,8 @@ LoadingPanel.prototype.clear = function() {
 
 	this.loadingText = null;
 	this.reticle = null;
+
+	this.clearCompleteEvent = null;
 
 	app.layers.remove(LayerTypes.LOADING);
 };

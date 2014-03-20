@@ -7,7 +7,9 @@ goog.require('goog.events');
 /**
 *@constructor
 */
-EnterLevelOverlay = function() {
+EnterLevelOverlay = function(panel) {
+	this.panel = panel;
+
 	this.container = null;
 
 	this.background = null;
@@ -77,7 +79,7 @@ EnterLevelOverlay.prototype.init = function() {
 	this.container.addChild(this.designationText);
 };
 
-EnterLevelOverlay.prototype.animate = function () {
+EnterLevelOverlay.prototype.animate = function (callback) {
 	var	self = this,
 		destX = Constants.WIDTH * 0.5;
 
@@ -108,7 +110,12 @@ EnterLevelOverlay.prototype.animate = function () {
     			.to({ x: 0, alpha: 0 }, 2000);
 
     		createjs.Tween.get(self.designationText)
-    			.to({ x: -32, alpha: 0 }, 2000);
+    			.to({ x: -32, alpha: 0 }, 2000)
+    			.call(function() {
+    				if(callback) {
+    					callback();
+    				}
+    			});
     	});
 };
 
@@ -117,9 +124,7 @@ EnterLevelOverlay.prototype.animate = function () {
 *@public
 */
 EnterLevelOverlay.prototype.clear = function() {
-	var stage = this.container.parent;
-
-	stage.removeChild(this.container);
+	this.panel = null;
 
 	this.container.removeAllChildren();
 

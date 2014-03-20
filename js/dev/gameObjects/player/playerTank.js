@@ -13,6 +13,7 @@ goog.require('StateMachine');
 goog.require('PlayerDefaultState');
 goog.require('PlayerBoostState');
 goog.require('PlayerRechargeState');
+goog.require('PlayerDeathState');
 goog.require('RotationUtils');
 
 /**
@@ -104,6 +105,7 @@ PlayerTank = function(arrProjectileSystems, boostSystem) {
 	this.weaponSelectEvent 			= new goog.events.Event(EventNames.WEAPON_SELECT, this);
 	this.addHomingOverlayEvent 		= new goog.events.Event(EventNames.ADD_HOMING_OVERLAY, this);
 	this.removeHomingOverlayEvent 	= new goog.events.Event(EventNames.REMOVE_HOMING_OVERLAY, this);
+	this.gameOverEvent 				= new goog.events.Event(EventNames.GAME_OVER, this);
 
 	this.increaseHomingOverlayEvent = new PayloadEvent(EventNames.INCREASE_HOMING_OVERLAY, this, this.homingInc);
 	this.energyChangeEvent 			= new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energy);
@@ -357,7 +359,43 @@ PlayerTank.prototype.updateRecharge = function(options) {
 */
 PlayerTank.prototype.exitRecharge = function(options) {
 	this.isRecharging = false;
-}
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.enterDeath = function(options) {
+	var self = this,
+		diversionPosition = new app.b2Vec2(this.position.x, this.position.y);
+
+	createjs.Tween
+		.get(this.container)
+		.to({
+				alpha: 0
+			}, 
+			1000)
+		.call(function() { goog.events.dispatchEvent(self, self.gameOverEvent); });
+
+	//ensure enemies are diverted to a new player position / target point with a minimum distance from the point of death
+	while(this.position.DistanceSqrd(diversionPosition) < 4000) {
+		this.position.x = app.arenaWidth * (Math.randomInRange(1, 9) * 0.1);
+		this.position.y = app.arenaHeight * (Math.randomInRange(1, 9) * 0.1);
+	}
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.updateDeath = function(options) {
+	
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.exitDeath = function(options) {
+	this.setIsAlive(true);
+};
 
 /**
 *@public
@@ -653,6 +691,14 @@ PlayerTank.prototype.clear = function() {
 	this.increaseHomingOverlayEvent = null;
 	this.energyChangeEvent 			= null;
 	this.overdriveChangeEvent 		= null;
+	this.gameOverEvent				= null;
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.kill = function() {
+	this.setIsAlive(false);
 };
 
 PlayerTank.prototype.updateEnergy = function() {
@@ -971,7 +1017,7 @@ PlayerTank.prototype.setStateMachine = function() {
 	this.stateMachine.addState(
 		PlayerDefaultState.KEY,
 		new PlayerDefaultState(this),
-		[ PlayerBoostState.KEY, PlayerRechargeState.KEY ]
+		[ PlayerBoostState.KEY, PlayerRechargeState.KEY, PlayerDeathState.KEY ]
 	);
 
 	this.stateMachine.addState(
@@ -983,6 +1029,12 @@ PlayerTank.prototype.setStateMachine = function() {
 	this.stateMachine.addState(
 		PlayerRechargeState.KEY,
 		new PlayerRechargeState(this),
+		[ PlayerDefaultState.KEY, PlayerDeathState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		PlayerDeathState.KEY,
+		new PlayerDeathState(this),
 		[ PlayerDefaultState.KEY ]
 	);
 	
@@ -1079,6 +1131,24 @@ PlayerTank.prototype.onOverdriveChange = function(e) {
 
 		this.changeOverdrive(this.overdrive);
 	}
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.onCollide = function(collisionObject, options) {
+	//if(this.modifyHealth(collisionObject.damage)) {
+		options.explosions.emit(32, {
+			posX: this.position.x,
+			posY: this.position.y,
+			posOffsetX: 16,
+			posOffsetY: 16,
+			velX: 8,
+			velY: 8
+		});
+	//}
+
+	this.stateMachine.setState(PlayerDeathState.KEY);
 };
 
 goog.exportSymbol('PlayerTank', PlayerTank);

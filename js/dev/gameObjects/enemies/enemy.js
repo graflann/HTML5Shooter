@@ -23,6 +23,8 @@ Enemy = function() {
 
 	this.isWaveEnabled = true;
 
+	this.timer = null;
+
 	this.enemyKilledEvent = new goog.events.Event(EventNames.ENEMY_KILLED, this);
 };
 
@@ -53,15 +55,19 @@ Enemy.prototype.clear = function() {
 		this.container = null;
 	}
 
-	this.body.DestroyFixture(this.body.GetFixtureList());
-	app.physicsWorld.DestroyBody(this.body);
-	this.body = null;
+	if(this.body) {
+		this.body.DestroyFixture(this.body.GetFixtureList());
+		app.physicsWorld.DestroyBody(this.body);
+		this.body = null;
+	}
 
 	this.physicalPosition = null;
 
 	this.categoryBits = null;
 
 	this.maskBits = null;
+
+	this.clearTimer();
 
 	this.enemyKilledEvent = null;
 };
@@ -128,6 +134,16 @@ Enemy.prototype.getCategoryBits = function() {
 Enemy.prototype.dispatchKillEvent = function() {
 	if(this.isWaveEnabled) {
 		goog.events.dispatchEvent(this, this.enemyKilledEvent);
+	}
+};
+
+/**
+*@public
+*/
+Enemy.prototype.clearTimer = function() {
+	if(this.timer) {
+		clearTimeout(this.timer);
+		this.timer = null;
 	}
 };
 

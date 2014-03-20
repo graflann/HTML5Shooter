@@ -183,7 +183,7 @@ Level.prototype.clear = function() {
 	this.waveManager.clear();
 	this.waveManager = null;
 
-	for(key in arrEnemySystems) {
+	for(key in this.arrEnemySystems) {
 		this.arrEnemySystems[key].clear();
 		this.arrEnemySystems[key] = null;
 	}
@@ -203,9 +203,14 @@ Level.prototype.clear = function() {
 
 };
 
+Level.prototype.startWaves = function() {
+	this.waveManager.setCurrentWave();
+};
+
 Level.prototype.removeReticles = function() {
-	this.arrEnemySystems[EnemyTypes.TURRET].removeReticles();
-	this.arrEnemySystems[EnemyTypes.COPTER].removeReticles();
+	for(var key in this.arrEnemySystems) {
+		this.arrEnemySystems[key].removeReticles();
+	}
 };
 
 /**
@@ -235,6 +240,17 @@ Level.prototype.updateSceneObjects = function(options) {
 
 	while(++i < length) {
 		this.arrSceneObjects[i].update(options);
+	}
+};
+
+/**
+*@public
+*/
+Level.prototype.kill = function() {
+	this.waveManager.kill();
+
+	for(var key in this.arrEnemySystems) {
+		this.arrEnemySystems[key].kill();
 	}
 };
 

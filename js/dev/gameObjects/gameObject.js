@@ -40,6 +40,8 @@ GameObject.prototype.update = function(options) {
 *@public
 */
 GameObject.prototype.clear = function() {
+	goog.events.removeAll();
+
 	this.position = null;
 	this.velocity = null;
 };

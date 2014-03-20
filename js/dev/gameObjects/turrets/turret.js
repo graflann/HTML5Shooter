@@ -41,8 +41,6 @@ Turret = function(hasAI, arrProjectileSystems) {
 	this.isFiring = false;
 
 	this.energyConsumption = 0;
-
-	this.energyChangeEvent = new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energyConsumption);
 	
 	/**
 	*@type {Shape}
@@ -63,6 +61,8 @@ Turret = function(hasAI, arrProjectileSystems) {
 	this.rotationRate = 5;
 
 	this.baseRotationDeg = 0;
+
+	this.energyChangeEvent = new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energyConsumption);
 };
 
 goog.inherits(Turret, GameObject);
@@ -105,7 +105,9 @@ Turret.prototype.clear = function() {
 
 	this.currentProjectileSystem = null;
 	
-	this.shape.graphics.clear();
+	if(this.shape.graphics) {
+		this.shape.graphics.clear();
+	}
 	this.shape = null;
 
 	this.energyChangeEvent = null;

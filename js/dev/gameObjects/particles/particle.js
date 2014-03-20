@@ -50,7 +50,10 @@ Particle.prototype.update = function(options) {
 Particle.prototype.clear = function() {
 	GameObject.prototype.clear.call(this);
 	
-	this.shape.graphics.clear();
+	if(this.shape.graphics) {
+		this.shape.graphics.clear();
+	}
+
 	this.shape = null;
 };
 

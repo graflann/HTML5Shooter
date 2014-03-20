@@ -40,7 +40,8 @@ Rotor.prototype.update = function(options) {
 *@public
 */
 Rotor.prototype.clear = function() {
-	this.container.removeChildren();
+	this.container.uncache();
+	this.container.removeAllChildren();
 
 	this.shape.graphics.clear();
 	this.shape = null;

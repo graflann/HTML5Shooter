@@ -115,13 +115,13 @@ Game.prototype.setPanel = function(key) {
 Game.prototype.addLoadingPanel = function() {
 	this.loadingPanel = this.factory.getPanel(PanelTypes.LOADING_PANEL);
 
-	goog.events.listen(
-		this.loadingPanel, 
-		EventNames.CLEAR_COMPLETE, 
-		this.onLoadPanelClearComplete, 
-		false, 
-		this
-	);
+	// goog.events.listen(
+	// 	this.loadingPanel, 
+	// 	EventNames.CLEAR_COMPLETE, 
+	// 	this.onLoadPanelClearComplete, 
+	// 	false, 
+	// 	this
+	// );
 };
 
 //EVENT HANDLING////////////////////////////////////////////////////////
@@ -138,7 +138,10 @@ Game.prototype.onPanelChange = function(e) {
 *@private
 */
 Game.prototype.onPanelLoadComplete = function(e) {
-	this.loadingPanel.startClear();
+	//this.loadingPanel.startClear();
+
+	this.loadingPanel.clear();
+	this.loadingPanel = null;
 
 	goog.events.unlisten(
 		this.currentPanel, 

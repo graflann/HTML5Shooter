@@ -10,7 +10,7 @@ goog.require('GamepadCode');
 *@constructor
 *Main GameOptions component in title screen
 */
-GameOptions = function() {	
+GameOptions = function(arrOptions) {	
 	/**
 	*@type {createjs.Container}
 	*/
@@ -18,7 +18,7 @@ GameOptions = function() {
 
 	this.charWidth = 6;
 
-	this.arrOptions = null;
+	this.arrOptions = arrOptions;
 
 	this.currentOptionIndex = 0;
 
@@ -99,10 +99,10 @@ GameOptions.prototype.setOptions = function() {
 		i = 0,
 		center = 0;
 
-	this.arrOptions = [
-		new OptionText("start", PanelTypes.PLAY_PANEL),
-		new OptionText("options", PanelTypes.OPTIONS_PANEL)
-	];
+	// this.arrOptions = [
+	// 	new OptionText("start", PanelTypes.PLAY_PANEL),
+	// 	new OptionText("options", PanelTypes.OPTIONS_PANEL)
+	// ];
 
 	this.width = this.arrOptions[0].width;
 

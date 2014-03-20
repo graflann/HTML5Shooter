@@ -31,7 +31,7 @@ EnemyTrooper = function(projectileSystem) {
 
 	this.intendedRotation = 0;
 
-	this.rotationRate = 5;
+	this.rotationRate = 15;
 
 	this.baseRotationDeg = 0;
 
@@ -275,12 +275,20 @@ EnemyTrooper.prototype.clear = function() {
 	this.walkAnimUtil = null;
 };
 
+EnemyTrooper.prototype.setIsAlive = function(value) {
+	Enemy.prototype.setIsAlive.call(this, value);
+
+	(value) ? this.stateMachine.setState(EnemyRoamingState.KEY) : this.clearTimer();
+};
+
 /**
 *@public
 */
 EnemyTrooper.prototype.kill = function() {
 	if(this.isAlive) {
 		this.setIsAlive(false);
+
+		this.stateMachine.reset();
 
 		this.navigation.reset();
 
@@ -399,7 +407,7 @@ EnemyTrooper.prototype.setStateMachine = function() {
 		[ EnemyRoamingState.KEY, EnemySnipingState.KEY ]
 	);
 	
-	this.stateMachine.setState(EnemyRoamingState.KEY);
+	//this.stateMachine.setState(EnemyRoamingState.KEY);
 };
 
 goog.exportSymbol('EnemyTrooper', EnemyTrooper);

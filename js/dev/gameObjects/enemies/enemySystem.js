@@ -27,6 +27,8 @@ EnemySystem = function(type, max, projectileSystem, enemySystem) {
 
 	this.currentSpawnedQuantity = 0;
 
+	this.timer = null;
+
 	this.spawnCompleteEvent = new goog.events.Event(EventNames.SPAWN_COMPLETE, this);
 	this.enemyKilledEvent = new goog.events.Event(EventNames.ENEMY_KILLED, this);
 
@@ -69,6 +71,14 @@ EnemySystem.prototype.clear = function() {
 	var i = -1;
 
 	while(++i < this.max) {
+		goog.events.unlisten(
+			this.arrEnemies[i], 
+			EventNames.ENEMY_KILLED, 
+			this.onEnemyKilled, 
+			false, 
+			this
+		);
+
 		this.arrEnemies[i].clear();
 		this.arrEnemies[i] = null;
 	}
@@ -83,6 +93,20 @@ EnemySystem.prototype.clear = function() {
 
 	this.spawnCompleteEvent = null;
 	this.enemyKilledEvent = null;
+};
+
+EnemySystem.prototype.kill = function() {
+	var i = -1;
+
+	//clears the spawn timer
+	if(this.timer) {
+		clearTimeout(this.timer);
+		this.timer = null;
+	}
+
+	while(++i < this.max) {
+		this.arrEnemies[i].kill();
+	}
 };
 
 EnemySystem.prototype.generate = function(options) {
@@ -184,7 +208,7 @@ EnemySystem.prototype.generateByTime = function(options) {
 	};
 
 	if (options.targetQuantity <= this.max || options.intervalQuantity <= this.max) {
-		setTimeout(onTimeOut, options.intervalTime);	
+		this.timer = setTimeout(onTimeOut, options.intervalTime);	
 	} else {
 		throw "Target quantity or interval quantity cannot exceed max quantity.";
 	}

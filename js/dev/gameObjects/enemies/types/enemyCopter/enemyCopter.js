@@ -146,7 +146,6 @@ EnemyCopter.prototype.clear = function() {
 
 	this.projectileSystem = null;
 
-	this.shape.graphics.clear();
 	this.shape = null;
 
 	for(var i = 0; i < this.arrRotors.length; i++) {

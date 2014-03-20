@@ -28,6 +28,8 @@ EnemySnipingState.MAX_SNIPE_TIME = 4000;
 *@public
 */
 EnemySnipingState.prototype.enter = function(options) {
+	//console.log("Entering state: Enemy " + EnemySnipingState.KEY);
+
 	var self = this;
 	var maxIndex = EnemySnipingState.NEXT_STATE_MAP.length - 1;
 	var randIndex = Math.randomInRangeWhole(0, maxIndex);
@@ -36,7 +38,9 @@ EnemySnipingState.prototype.enter = function(options) {
 		EnemySnipingState.MAX_SNIPE_TIME
 	);
 
-	setTimeout(function() {
+	this.enemy.clearTimer();
+
+	this.enemy.timer = setTimeout(function() {
 		self.enemy.stateMachine.setState(EnemySnipingState.NEXT_STATE_MAP[randIndex]);
 	}, randRoamTime);
 
@@ -54,7 +58,7 @@ EnemySnipingState.prototype.update = function(options) {
 *@public
 */
 EnemySnipingState.prototype.exit = function(options) {
-
+	
 };
 
 /**

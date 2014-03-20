@@ -46,8 +46,6 @@ WaveManager.prototype.init = function() {
 			this
 		);
 	}
-
-	this.setCurrentWave();
 };
 
 /**
@@ -75,6 +73,31 @@ WaveManager.prototype.clear = function() {
 	this.currentWave = null;
 
 	this.levelCompleteEvent = null;
+};
+
+/**
+*@public
+*/
+WaveManager.prototype.kill = function() {
+	for(var key in this.arrEnemySystems) {
+		goog.events.unlisten(
+			this.arrEnemySystems[key], 
+			EventNames.ENEMY_KILLED, 
+			this.onEnemyKilled, 
+			false, 
+			this
+		);
+	}
+
+	for(var i = 0; i < this.arrWaves.length; i++) {
+		goog.events.unlisten(
+			this.arrWaves[i],
+			EventNames.WAVE_COMPLETE, 
+			this.onWaveComplete, 
+			false, 
+			this
+		);
+	}
 };
 
 WaveManager.prototype.length = function() {

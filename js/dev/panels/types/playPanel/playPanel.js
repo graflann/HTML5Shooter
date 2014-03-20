@@ -27,6 +27,11 @@ goog.require('ItemTypes');
 goog.require('EventNames');
 goog.require('LevelProxy');
 goog.require('EnterLevelOverlay');
+goog.require('GameOverOverlay');
+goog.require('StateMachine');
+goog.require('PanelIntroState');
+goog.require('PanelDefaultState');
+goog.require('PanelGameOverState');
 
 /**
 *@constructor
@@ -65,11 +70,6 @@ PlayPanel = function() {
 	*/
 	this.arrItemSystems = [];
 	
-	/**
-	*@type {Box2D.Dynamics.b2World}
-	*/
-	this.timeStep = 1 / 60;
-	
 	this.collisionManager = null;
 
 	this.camera = null;
@@ -91,11 +91,16 @@ PlayPanel = function() {
 	this.hto = null;
 
 	this.enterLevelOverlay = null;
+	this.gameOverOverlay = null;
+
+	this.stateMachine = null;
 
 	this.load();
 };
 
 goog.inherits(PlayPanel, Panel);
+
+PlayPanel.TIME_STEP = 1 / 60;
 
 /**
 *@override
@@ -129,6 +134,7 @@ PlayPanel.prototype.init = function() {
 	this.setLevel();
 	this.setCollisionManager();
 	this.setCamera();
+	this.setStateMachine();
 	this.setEventListeners();
 };
 
@@ -137,8 +143,7 @@ PlayPanel.prototype.init = function() {
 *@protected
 */
 PlayPanel.prototype.update = function() {
-	var input = app.input,
-		options = {
+	var options = {
 			player: 			this.player,
 			target: 			this.player,
 			arrEnemySystems: 	this.level.arrEnemySystems,
@@ -147,6 +152,54 @@ PlayPanel.prototype.update = function() {
 			homingList: 		this.collisionManager.homingList
 		};
 
+	this.stateMachine.update(options);
+
+	this.updateLayers();
+};
+
+PlayPanel.prototype.enterIntro = function(options) {
+	var self = this,
+    	stage = app.layers.getStage(LayerTypes.HUD);
+
+	this.enterLevelOverlay = new EnterLevelOverlay(this);
+	stage.addChild(this.enterLevelOverlay.container);
+
+	//app.assetsProxy.playSound('Glide', 1, true);
+
+	//some delays set to let the overlay animate correctly
+	setTimeout(function() {
+		self.enterLevelOverlay.animate();
+
+		setTimeout(function() {
+			createjs.Tween.get(self.enterLevelOverlay.container).to({ alpha: 0 }, 1000)
+				.call(function() {
+					stage.removeChild(self.enterLevelOverlay.container);
+					
+					self.enterLevelOverlay.clear();
+					self.enterLevelOverlay = null;
+				});
+
+			createjs.Tween.get(self.hud.container).to({ alpha: 1 }, 1000);
+
+			self.stateMachine.setState(PanelDefaultState.KEY);
+		}, 4500);
+	}, 500);
+};
+
+PlayPanel.prototype.updateIntro = function(options) {
+	this.camera.update();
+};
+
+PlayPanel.prototype.exitIntro = function(options) {};
+
+
+PlayPanel.prototype.enterDefault = function(options) {
+	this.level.startWaves();
+};
+
+PlayPanel.prototype.updateDefault = function(options) {
+	var input = app.input;
+
 	this.updatePlayer(options);
 	this.updateLevel(options);
 	this.updateParticles(options);
@@ -154,7 +207,6 @@ PlayPanel.prototype.update = function() {
 	this.updatePhysics(options);
 	this.camera.update();
 	this.updateHud(options);
-	this.updateLayers();
 
 	//toggles debug draw mode
 	if(input.isKeyPressedOnce(KeyCode.F2)) {
@@ -167,6 +219,44 @@ PlayPanel.prototype.update = function() {
 		KeyCode.F2
 	]);
 };
+
+PlayPanel.prototype.exitDefault = function(options) {};
+
+
+PlayPanel.prototype.enterGameOver = function(options) {
+	var self = this;
+
+	this.hto.remove();
+	this.level.removeReticles();
+
+	this.gameOverOverlay = new GameOverOverlay(this);
+	app.layers.getStage(LayerTypes.HUD).addChild(this.gameOverOverlay.container);
+
+	this.gameOverOverlay.animate(function() { self.level.kill(); });
+
+	createjs.Sound.stop();
+	app.assetsProxy.playSound('intro1');
+};
+
+PlayPanel.prototype.updateGameOver = function(options) {
+	var input = app.input;
+
+	//this.camera.update();
+	this.updateParticles(options);
+
+	this.gameOverOverlay.update(options);
+
+	input.checkPrevButtonDown([
+		GamepadCode.BUTTONS.DPAD_UP,
+		GamepadCode.BUTTONS.DPAD_DOWN,
+		GamepadCode.BUTTONS.DPAD_LEFT,
+		GamepadCode.BUTTONS.DPAD_RIGHT,
+		GamepadCode.BUTTONS.START,
+		GamepadCode.BUTTONS.A
+	]);
+};
+
+PlayPanel.prototype.exitGameOver = function(options) {};
 
 /**
 *@override
@@ -186,8 +276,19 @@ PlayPanel.prototype.clear = function() {
 	this.background = null;
 	
 	for(key in this.arrPlayerProjectileSystems) {
-		this.arrPlayerProjectileSystems[key].clear();
-		this.arrPlayerProjectileSystems[key] = null;
+
+		if(this.arrPlayerProjectileSystems[key] instanceof ProjectileSystem) {
+			this.arrPlayerProjectileSystems[key].clear();
+			this.arrPlayerProjectileSystems[key] = null;
+		} else {
+			for(i = 0; i < this.arrPlayerProjectileSystems[key].length; i++) {
+				this.arrPlayerProjectileSystems[key][i].clear();
+				this.arrPlayerProjectileSystems[key][i] = null;
+			}
+
+			this.arrPlayerProjectileSystems[key] = null;
+		}
+		
 	}
 	this.arrPlayerProjectileSystems= null;
 
@@ -233,6 +334,14 @@ PlayPanel.prototype.clear = function() {
 		this.enterLevelOverlay.clear();
 		this.enterLevelOverlay = null;
 	}
+
+	if(this.gameOverOverlay) {
+		this.gameOverOverlay.clear();
+		this.gameOverOverlay = null;
+	}
+
+	app.physicsWorld.ClearForces();
+	app.physicsWorld = null;
 };
 
 /**
@@ -284,7 +393,7 @@ PlayPanel.prototype.updateItems = function() {
 */
 PlayPanel.prototype.updatePhysics = function(options) {
 	//BOX2D STEP////////////////////////////////
-	app.physicsWorld.Step(this.timeStep, 10, 10);
+	app.physicsWorld.Step(PlayPanel.TIME_STEP, 10, 10);
 	
 	if (app.physicsDebug) {
 		app.physicsWorld.DrawDebugData();
@@ -313,7 +422,9 @@ PlayPanel.prototype.updateLayers = function() {
 };
 
 PlayPanel.prototype.setLayers = function() {
-	app.layers.add(LayerTypes.BACKGROUND);
+	//sets BACKGROUND depth to z-index of -1, beneath MAIN
+	app.layers.add(LayerTypes.BACKGROUND, -1);
+
 	app.layers.add(LayerTypes.FOREGROUND);
 	app.layers.add(LayerTypes.SHADOW);
 	app.layers.add(LayerTypes.PROJECTILE);
@@ -321,9 +432,6 @@ PlayPanel.prototype.setLayers = function() {
 	app.layers.add(LayerTypes.HOMING);
 	app.layers.add(LayerTypes.HUD);
 	app.layers.addDebug();
-
-	//set BACKGROUND to z-index of 0 as MAIN has it by default
-	app.layers.swapLayers(LayerTypes.BACKGROUND, LayerTypes.MAIN);
 
 	this.background = new createjs.Shape();
 	this.background.graphics
@@ -467,6 +575,12 @@ PlayPanel.prototype.setParticles = function() {
 		64
 	);
 
+	this.arrParticleSystems[ParticleSystemNames.PLAYER_EXPLOSION] = new ParticleSystem(
+		ParticleTypes.EXPLOSION,
+		Constants.BLUE,
+		32
+	);
+
 	this.arrParticleSystems[ParticleSystemNames.PLAYER_RETICLE] = new ParticleSystem(
 		ParticleTypes.RETICLE,
 		Constants.LIGHT_BLUE,
@@ -524,7 +638,7 @@ PlayPanel.prototype.setPlayer = function() {
 	
 	this.player.setPosition(
 		new app.b2Vec2(
-			((app.arenaWidth * 0.5) - (this.player.width * 0.5)) / app.physicsScale,
+			((app.arenaWidth * 0.5) - (this.player.width * 0.5) + 10) / app.physicsScale,
 			((app.arenaHeight * 0.5) - (this.player.height * 0.5)) / app.physicsScale
 		)
 	);
@@ -578,6 +692,28 @@ PlayPanel.prototype.setCamera = function() {
 	);
 };
 
+PlayPanel.prototype.setStateMachine = function() {
+	this.stateMachine = new StateMachine();
+
+	this.stateMachine.addState(
+		PanelIntroState.KEY,
+		new PanelIntroState(this),
+		[ PanelDefaultState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		PanelDefaultState.KEY,
+		new PanelDefaultState(this),
+		[ PanelGameOverState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		PanelGameOverState.KEY,
+		new PanelGameOverState(this),
+		[]
+	);
+};
+
 PlayPanel.prototype.setEventListeners = function() {
 	//PLAYER/////////////////////////////////////
 	goog.events.listen(
@@ -628,6 +764,14 @@ PlayPanel.prototype.setEventListeners = function() {
 		this
 	);
 
+	goog.events.listen(
+		this.player, 
+		EventNames.GAME_OVER, 
+		this.onGameOver, 
+		false, 
+		this
+	);
+
 	//SCORE MANAGER
 	goog.events.listen(
 		app.scoreManager, 
@@ -648,7 +792,7 @@ PlayPanel.prototype.setEventListeners = function() {
 };
 
 PlayPanel.prototype.removeEventListeners = function() {
-		goog.events.unlisten(
+	goog.events.unlisten(
 		this.player, 
 		EventNames.WEAPON_SELECT, 
 		this.onWeaponSelect, 
@@ -760,34 +904,12 @@ PlayPanel.prototype.onAssetsLoadComplete = function(e) {
 
     this.init();
 
-    this.isInited = true;
-
-    self = this;
-    stage = app.layers.getStage(LayerTypes.HUD);
+	this.isInited = true;
 
     //once loaded and inited notify the game to remove the loading screen
     goog.events.dispatchEvent(this, new goog.events.Event(EventNames.PANEL_LOAD_COMPLETE, this));
 
-	this.enterLevelOverlay = new EnterLevelOverlay();
-	stage.addChild(this.enterLevelOverlay.container);
-
-	//app.assetsProxy.playSound('Glide', 1, true);
-
-	//some delays set to let the overlay animate correctly
-	setTimeout(function() {
-		self.enterLevelOverlay.animate();
-
-		setTimeout(function() {
-
-			createjs.Tween.get(self.enterLevelOverlay.container).to({ alpha: 0 }, 1000)
-				.call(function() {
-					self.enterLevelOverlay.clear();
-					self.enterLevelOverlay = null;
-				});
-
-			createjs.Tween.get(self.hud.container).to({ alpha: 1 }, 1000);
-		}, 4500);
-	}, 500);
+    this.stateMachine.setState(PanelIntroState.KEY);
 };
 
 /**
@@ -833,6 +955,13 @@ PlayPanel.prototype.onEnergyChange = function(e) {
 */
 PlayPanel.prototype.onOverdriveChange = function(e) {
 	this.hud.changeOverdrive(e.payload);
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.onGameOver = function(e) {	
+	this.stateMachine.setState(PanelGameOverState.KEY);
 };
 
 /**

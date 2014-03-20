@@ -5,6 +5,7 @@ goog.require('Input');
 goog.require('AssetsProxy');
 goog.require('LayerSystem');
 goog.require('ScoreManager');
+goog.require('TimerManager');
 
 /**
 *@preserve
@@ -45,6 +46,8 @@ app.input			= null;
 app.pathFinder      = null;
 app.assetsProxy     = null;
 app.vecZero         = null;
+app.scoreManager    = null;
+app.timerManager    = null;
 app.arenaWidth      = 0;
 app.arenaHeight     = 0;
 app.charWidth       = 6;
@@ -60,9 +63,10 @@ $(function() {
 	app.trigTable 		= TrigonometricTable.getInstance();
     app.layers          = LayerSystem.getInstance();
     app.input           = new Input();
-    app.assetsProxy     = new AssetsProxy()
+    app.assetsProxy     = new AssetsProxy();
     app.vecZero         = new app.b2Vec2();
     app.scoreManager    = ScoreManager.getInstance();
+    app.timerManager    = TimerManager.getInstance();
 
     app.game 			= new Game();
 });

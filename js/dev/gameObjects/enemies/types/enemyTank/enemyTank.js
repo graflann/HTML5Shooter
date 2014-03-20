@@ -223,6 +223,8 @@ EnemyTank.prototype.kill = function() {
 	if(this.isAlive) {
 		this.setIsAlive(false);
 
+		this.stateMachine.reset();
+
 		this.navigation.reset();
 
 		this.container.getStage().removeChild(this.container);
@@ -238,7 +240,12 @@ EnemyTank.prototype.kill = function() {
 EnemyTank.prototype.setIsAlive = function(value) {
 	Enemy.prototype.setIsAlive.call(this, value);
 
-	(this.isAlive) ? this.shape.play() : this.shape.gotoAndStop(0);
+	if(this.isAlive) {
+		this.stateMachine.setState(EnemyRoamingState.KEY);
+	} else {
+		this.clearTimer();
+		this.shape.gotoAndStop(0);
+	} 
 };
 
 /**
@@ -294,7 +301,7 @@ EnemyTank.prototype.setStateMachine = function() {
 		[ EnemyRoamingState.KEY, EnemySnipingState.KEY ]
 	);
 	
-	this.stateMachine.setState(EnemyRoamingState.KEY);
+	//this.stateMachine.setState(EnemyRoamingState.KEY);
 };
 
 goog.exportSymbol('EnemyTank', EnemyTank);

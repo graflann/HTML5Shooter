@@ -28,6 +28,8 @@ EnemyStrafingState.MAX_STRAFE_TIME = 4000;
 *@public
 */
 EnemyStrafingState.prototype.enter = function(options) {
+	//console.log("Entering state: Enemy " + EnemyStrafingState.KEY);
+
 	var self = this;
 	var maxIndex = EnemyStrafingState.NEXT_STATE_MAP.length - 1;
 	var randIndex = Math.randomInRangeWhole(0, maxIndex);
@@ -36,7 +38,9 @@ EnemyStrafingState.prototype.enter = function(options) {
 		EnemyStrafingState.MAX_STRAFE_TIME
 	);
 
-	setTimeout(function() {
+	this.enemy.clearTimer();
+
+	this.enemy.timer = setTimeout(function() {
 		self.enemy.stateMachine.setState(EnemyStrafingState.NEXT_STATE_MAP[randIndex]);
 	}, randRoamTime);
 

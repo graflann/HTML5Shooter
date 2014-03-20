@@ -121,7 +121,7 @@ Camera.prototype.updateStages = function() {
 	}
 
 	//update debug context
-	this.debugContext.translate(this.translation.x, this.translation.y);
+	//this.debugContext.translate(this.translation.x, this.translation.y);
 	//app.layers.getDebugStage().x = this.position.x;
 	//app.layers.getDebugStage().y = this.position.y;
 };

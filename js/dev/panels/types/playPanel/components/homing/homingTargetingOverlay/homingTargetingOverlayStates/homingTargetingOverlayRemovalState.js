@@ -35,6 +35,10 @@ HomingTargetingOverlayRemovalState.prototype.exit = function(options) {
 	this.hto.exitRemoval(options);
 };
 
+HomingTargetingOverlayRemovalState.prototype.clear = function(options) {
+	this.hto = null;
+};
+
 goog.exportSymbol(
 	'HomingTargetingOverlayRemovalState', 
 	HomingTargetingOverlayRemovalState

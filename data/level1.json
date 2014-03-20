@@ -21,6 +21,7 @@
 
 	"sounds": [
 		"Glide",
+		"intro1",
 		"laser_large",
 		"weaponchange1",
 		"weaponchange2",
@@ -59,73 +60,18 @@
 		"enemyCopter": {
 			"max": 16,
 			"projectileSystem": "air"
+		},
+
+		"enemyCarrier": {
+			"max": 16,
+			"projectileSystem": "air"
 		}
 	},
 
 	"waves" : [
 		[
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 24,
-				"positionX": 1920, "positionY": -32, "posOffsetX": 64, "posOffsetY": 32
-			}
-		],
-		[
-			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 24,
-				"positionX": 1920, "positionY": 1472, "posOffsetX": 64, "posOffsetY": 32
-			}
-		],
-		[
-			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
-				"positionX": 1920, "positionY": -32, "posOffsetX": 64, "posOffsetY": 32
-			},
-			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
-				"positionX": 1920, "positionY": 1472, "posOffsetX": 64, "posOffsetY": 32
-			},
-			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
-				"positionX": 1920, "positionY": -32, "posOffsetX": 64, "posOffsetY": 32
-			},
-			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
-				"positionX": 1920, "positionY": 1472, "posOffsetX": 64, "posOffsetY": 32
-			}
-		],
-		[
-			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
-				"positionX": -64, "positionY": -64, "posOffsetX": 64, "posOffsetY": 64
-			},
-			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
-				"positionX": 3904, "positionY": -64, "posOffsetX": 64, "posOffsetY": 64
-			},
-			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
-				"positionX": 3904, "positionY": 1504, "posOffsetX": 64, "posOffsetY": 64
-			},
-			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 16,
-				"positionX": -64, "positionY": 1504, "posOffsetX": 64, "posOffsetY": 64
-			}
-		],
-		[
-			{ 
-				"type": "enemyCentipede", "intervalTime": 1, "intervalQuantity": 1, "targetQuantity": 1,
-				"positionX": 240, "positionY": 320
-			}
-		],
-		[
-			{ 
-				"type": "enemyTank", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 1,
-				"positionX": 0, "positionY": -64, "posOffsetX": 64, "posOffsetY": 64
-			}
-		],
-		[
-			{ 
-				"type": "enemyCopter", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 1,
+				"type": "enemyCarrier", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 1,
 				"positionX": -240, "positionY": 64
 			}
 		]

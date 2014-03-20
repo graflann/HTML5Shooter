@@ -36,7 +36,7 @@ CollisionManager = function(
 
 	this.collisionOptions = {
 		player: {
-    		
+    		explosions:         this.arrParticleSystems[ParticleSystemNames.PLAYER_EXPLOSION],
     	},
 
     	enemy: {
@@ -96,6 +96,7 @@ CollisionManager.prototype.clear = function() {
 
     this.arrItemSystems = null;
 
+    //TODO: Additional contactListener disposal?
     this.contactListener = null;
 
     this.activationList = null;
@@ -139,7 +140,7 @@ CollisionManager.prototype.updateHomingList = function(options) {
 CollisionManager.prototype.updateKills = function() {
     var i = -1;
 
-    //"kill" everything that qualified for removal during collision step
+    //"kills" everything that qualified for removal during collision step
     while(++i < this.killList.length) {
         this.killList[i].kill();
     }
@@ -235,7 +236,7 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
     //PROCESS PROJECTILE
     projectile.onCollide(object, this.collisionOptions.projectile);
 
-	//PROCESS VS. ENEMY
+	//VS. ENEMY
 	if(object instanceof Enemy) {
 		object.onCollide(projectile, this.collisionOptions.enemy);
 
@@ -267,9 +268,9 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
         ) {
             return;
         }
-    //PROCESS VS. SCENE OBJECT
+    //VS. SCENE OBJECT
 	} else if (object instanceof SceneObject) {
-        //certain projectile types go "through" objects during collision,
+        //certain projectile types go "through" or "bounce off" of objects during collision,
         //so opt out of the remaining function code or execute
         if(projectile instanceof SniperProjectile || 
             projectile instanceof BladeProjectile ||
@@ -279,11 +280,16 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
         ) {
             return;
         }
-    }/*else if (object instanceof PlayerTank) { 
-        //TODO: process collision w player
-        
-    }*/
+    //VS. PLAYER - invincible during boost
+    } else if (object instanceof PlayerTank && !object.isBoosting) { 
+        object.onCollide(projectile, this.collisionOptions.player);
 
+        this.killList.push(object);
+
+        app.assetsProxy.playSound("impact1", 0.5);
+    }
+
+    //set projectile up for removal during update
 	this.killList.push(projectile);
 };
 

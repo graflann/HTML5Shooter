@@ -2,6 +2,8 @@ goog.provide('TitlePanel');
 
 goog.require('Panel');
 goog.require('GameOptions');
+goog.require('OptionText');
+goog.require('PanelTypes');
 
 /**
 *@constructor
@@ -49,6 +51,10 @@ TitlePanel.prototype.load = function() {
 TitlePanel.prototype.init = function() {	
     var stage = app.layers.getStage(LayerTypes.MAIN);
 
+    //resets the main stage if it's been translated
+    stage.x = 0;
+    stage.y = 0;
+
     this.container = new createjs.Container();
 
     this.background = new createjs.Shape();
@@ -65,7 +71,12 @@ TitlePanel.prototype.init = function() {
 
 	this.grid.autoScroll = true;
 
-	this.gameOptions = new GameOptions();
+	this.gameOptions = new GameOptions(
+		[
+			new OptionText("start", PanelTypes.PLAY_PANEL),
+			new OptionText("options", PanelTypes.OPTIONS_PANEL)
+		]
+	);
 	this.gameOptions.container.x = (Constants.WIDTH * 0.5) - (this.gameOptions.width * 0.5);
 	this.gameOptions.container.y = Constants.HEIGHT * 0.75;
 	this.gameOptions.container.alpha = 0;
@@ -188,7 +199,7 @@ TitlePanel.prototype.setTitle = function() {
 				.to({ alpha: 1 }, 250);
 		},
 		sequence2 = function(){			
-			app.assetsProxy.playSound('Dark Curiosity');
+			//app.assetsProxy.playSound('Dark Curiosity');
 
 			createjs.Tween.get(self.titleComponent)
 				.to({ 
@@ -236,7 +247,7 @@ TitlePanel.prototype.onLoadComplete = function(e) {
 	this.isInited = true;
 
 	setTimeout(function() {
-			self.setTitle();
+		self.setTitle();
 	}, 1000);
 
 	//once loaded and inited notify the game to remove the loading screen

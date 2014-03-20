@@ -35,5 +35,9 @@ HomingTargetingOverlayInitializationState.prototype.exit = function(options) {
 	this.hto.exitInitialization(options);
 };
 
+HomingTargetingOverlayInitializationState.prototype.clear = function(options) {
+	this.hto = null;
+};
+
 goog.exportSymbol('HomingTargetingOverlayInitializationState', 
 	HomingTargetingOverlayInitializationState);

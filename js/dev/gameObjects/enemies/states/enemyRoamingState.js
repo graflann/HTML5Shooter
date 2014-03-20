@@ -28,6 +28,8 @@ EnemyRoamingState.MAX_ROAM_TIME = 6000;
 *@public
 */
 EnemyRoamingState.prototype.enter = function(options) {
+	//console.log("Entering state: Enemy " + EnemyRoamingState.KEY);
+
 	var self = this;
 	var maxIndex = EnemyRoamingState.NEXT_STATE_MAP.length - 1;
 	var randIndex = Math.randomInRangeWhole(0, maxIndex);
@@ -36,7 +38,9 @@ EnemyRoamingState.prototype.enter = function(options) {
 		EnemyRoamingState.MAX_ROAM_TIME
 	);
 
-	setTimeout(function() {
+	this.enemy.clearTimer();
+
+	this.enemy.timer = setTimeout(function() {
 		self.enemy.stateMachine.setState(EnemyRoamingState.NEXT_STATE_MAP[randIndex]);
 	}, randRoamTime);
 

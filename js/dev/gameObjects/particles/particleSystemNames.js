@@ -5,6 +5,7 @@ goog.provide('ParticleSystemNames');
 */
 ParticleSystemNames = {
     ENEMY_EXPLOSION: 	'enemyExplosion',
+    PLAYER_EXPLOSION: 	'playerExplosion',
     POSITIVE_HIT: 		'positiveHit',
     NEUTRAL_HIT: 		'neutralHit',
     PLAYER_RETICLE: 	'playerReticle',

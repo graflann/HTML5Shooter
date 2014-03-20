@@ -18,6 +18,7 @@ EnemyRetreatingState.KEY = "retreating";
 *@public
 */
 EnemyRetreatingState.prototype.enter = function(options) {
+	console.log("Entering state: Enemy " + EnemyRetreatingState.KEY);
 	this.enemy.enterRetreating(options);
 };
 

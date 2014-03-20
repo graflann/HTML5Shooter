@@ -93,8 +93,10 @@ LayerSystem.prototype.clear = function() {
 /**
 *@public
 */
-LayerSystem.prototype.add = function(id) {
-	this.arrLayers[id] = new Layer(this.container, id, this.length());
+LayerSystem.prototype.add = function(id, zIndex) {
+	var _zIndex = zIndex || this.length();
+
+	this.arrLayers[id] = new Layer(this.container, id, _zIndex);
 
 	return this.arrLayers[id];
 };

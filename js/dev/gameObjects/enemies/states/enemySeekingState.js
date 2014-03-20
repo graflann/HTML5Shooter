@@ -18,6 +18,8 @@ EnemySeekingState.KEY = "seeking";
 *@public
 */
 EnemySeekingState.prototype.enter = function(options) {
+	//console.log("Entering state: Enemy " + EnemySeekingState.KEY);
+	
 	this.enemy.enterSeeking(options);
 };
 

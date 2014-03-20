@@ -65,7 +65,7 @@ StateMachine.prototype.update = function(options) {
 
 StateMachine.prototype.clear = function() {
 	for(var key in this.arrStates) {
-		this.arrStates[key].clear();
+		this.arrStates[key].state.clear();
 		this.arrStates[key] = null;
 	}
 
@@ -74,6 +74,11 @@ StateMachine.prototype.clear = function() {
 
 StateMachine.prototype.getCurrentState = function() {
 	return this.currentKey;
+};
+
+StateMachine.prototype.reset = function() {
+	this.currentKey = "";
+	this.currentState = null;
 };
 
 goog.exportSymbol('StateMachine', StateMachine);
