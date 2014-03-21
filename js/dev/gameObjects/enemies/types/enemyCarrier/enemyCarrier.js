@@ -235,7 +235,7 @@ EnemyCarrier.prototype.kill = function() {
 		//remove the shadow too
 		this.shadow.container.getStage().removeChild(this.shadow.container);
 
-		dispatchKillEvent();
+		this.dispatchKillEvent();
 	}
 };
 
@@ -247,6 +247,13 @@ EnemyCarrier.prototype.setIsAlive = function(value) {
 
 	if(this.isAlive) {
 		this.stateMachine.setState(EnemySeekingState.KEY);
+	} else {
+		this.clearTimer();
+
+		if(this.spawnTimer) {
+			clearTimeout(this.spawnTimer);
+			this.spawnTimer = null;
+		}
 	}
 };
 
@@ -326,11 +333,11 @@ EnemyCarrier.prototype.updateSniping = function(options) {
 	}
 
 	//check fire
-	this.updateFiring();
+	this.updateFiring(options);
 };
 
 EnemyCarrier.prototype.enterStrafing = function(options) {
-	
+	this.stateMachine.setState(EnemySeekingState.KEY);
 };
 
 /**
@@ -483,6 +490,16 @@ EnemyCarrier.prototype.spawnEnemy = function() {
 				if(self.currentDoorIndex > EnemyCarrier.RIGHT_DOOR) {
 					self.currentDoorIndex = 0;
 				}
+
+				if(self.spawnTimer) {
+					self.spawnTimer = null;
+
+					self.spawnTimer = setTimeout(function() {
+						self.spawnEnemy();
+					}, 5000);
+				}
+
+
 			}, 2000);
 		};
 
@@ -654,6 +671,23 @@ EnemyCarrier.prototype.onHoming = function(homingObject, options) {
 		});
 
 		this.reticle = options.reticles.getLastAlive();
+	}
+};
+
+/**
+*@public
+*/
+EnemyCarrier.prototype.onCollide = function(collisionObject, options) {
+
+	if(this.modifyHealth(collisionObject.damage) === 0) {
+		options.explosions.emit(16, {
+			posX: this.position.x,
+			posY: this.position.y,
+			posOffsetX: 16,
+			posOffsetY: 16,
+			velX: 6,
+			velY: 6
+		});
 	}
 };
 

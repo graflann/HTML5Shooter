@@ -114,10 +114,12 @@ Enemy.prototype.modifyHealth = function(value) {
 	if(this.health <= 0) {
 		this.health = 0;
 
-		return true;
+		//return true;
 	}
 
-	return false;
+	//return false;
+
+	return this.health;
 };
 
 
@@ -152,14 +154,14 @@ Enemy.prototype.clearTimer = function() {
 */
 Enemy.prototype.onCollide = function(collisionObject, options) {
 
-	if(this.modifyHealth(collisionObject.damage)) {
-		options.explosions.emit(4, {
+	if(this.modifyHealth(collisionObject.damage) === 0) {
+		options.explosions.emit(12, {
 			posX: this.position.x,
 			posY: this.position.y,
 			posOffsetX: 16,
 			posOffsetY: 16,
-			velX: 2,
-			velY: 2
+			velX: 4,
+			velY: 4
 		});
 	}
 };

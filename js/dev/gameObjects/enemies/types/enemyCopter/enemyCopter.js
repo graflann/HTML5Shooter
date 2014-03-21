@@ -166,6 +166,19 @@ EnemyCopter.prototype.clear = function() {
 /**
 *@public
 */
+EnemyCopter.prototype.setIsAlive = function(value) {
+	Enemy.prototype.setIsAlive.call(this, value);
+
+	if(this.isAlive) {
+		this.stateMachine.setState(EnemySeekingState.KEY);
+	} else {
+		this.clearTimer();
+	}
+};
+
+/**
+*@public
+*/
 EnemyCopter.prototype.kill = function() {
 	if(this.isAlive) {
 		this.setIsAlive(false);
@@ -396,7 +409,7 @@ EnemyCopter.prototype.setStateMachine = function() {
 		[ EnemySeekingState.KEY, EnemySnipingState.KEY ]
 	);
 	
-	this.stateMachine.setState(EnemySeekingState.KEY);
+	//this.stateMachine.setState(EnemySeekingState.KEY);
 };
 
 /**
