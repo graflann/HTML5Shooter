@@ -7,7 +7,7 @@ goog.require('ProjectileClasses');
 *@constructor
 *System managing projectiles
 */
-ProjectileSystem = function(type, color, max, categoryBits, maskBits) {
+ProjectileSystem = function(type, color, max, categoryBits, maskBits, secondaryProjectileSystem) {
 	this.type = type;
 
 	this.color = color;
@@ -17,6 +17,8 @@ ProjectileSystem = function(type, color, max, categoryBits, maskBits) {
 	this.categoryBits = categoryBits || CollisionCategories.PLAYER_PROJECTILE;
 
 	this.maskBits = maskBits || CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT;
+
+	this.secondaryProjectileSystem = secondaryProjectileSystem || null;
 
 	this.isActive = true;
 
@@ -32,7 +34,11 @@ ProjectileSystem.prototype.init = function() {
 		i = -1;
 
 	while(++i < this.max) {
-		this.arrProjectiles[i] = new ProjectileClass(this.color, this.categoryBits, this.maskBits);
+		if(this.secondaryProjectileSystem) {
+			this.arrProjectiles[i] = new ProjectileClass(this.color, this.categoryBits, this.maskBits, this.secondaryProjectileSystem);
+		} else {
+			this.arrProjectiles[i] = new ProjectileClass(this.color, this.categoryBits, this.maskBits);
+		}
 	}
 };
 

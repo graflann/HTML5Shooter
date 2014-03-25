@@ -90,8 +90,7 @@ PlayPanel = function() {
 	*/
 	this.hto = null;
 
-	this.enterLevelOverlay = null;
-	this.gameOverOverlay = null;
+	this.overlay = null;
 
 	this.stateMachine = null;
 
@@ -161,22 +160,22 @@ PlayPanel.prototype.enterIntro = function(options) {
 	var self = this,
     	stage = app.layers.getStage(LayerTypes.HUD);
 
-	this.enterLevelOverlay = new EnterLevelOverlay(this);
-	stage.addChild(this.enterLevelOverlay.container);
+	this.overlay = new EnterLevelOverlay(this);
+	stage.addChild(this.overlay.container);
 
-	//app.assetsProxy.playSound('Glide', 1, true);
+	app.assetsProxy.playSound('Glide', 1, true);
 
 	//some delays set to let the overlay animate correctly
 	setTimeout(function() {
-		self.enterLevelOverlay.animate();
+		self.overlay.animate();
 
 		setTimeout(function() {
-			createjs.Tween.get(self.enterLevelOverlay.container).to({ alpha: 0 }, 1000)
+			createjs.Tween.get(self.overlay.container).to({ alpha: 0 }, 1000)
 				.call(function() {
-					stage.removeChild(self.enterLevelOverlay.container);
+					stage.removeChild(self.overlay.container);
 					
-					self.enterLevelOverlay.clear();
-					self.enterLevelOverlay = null;
+					self.overlay.clear();
+					self.overlay = null;
 				});
 
 			createjs.Tween.get(self.hud.container).to({ alpha: 1 }, 1000);
@@ -229,10 +228,10 @@ PlayPanel.prototype.enterGameOver = function(options) {
 	this.hto.remove();
 	this.level.removeReticles();
 
-	this.gameOverOverlay = new GameOverOverlay(this);
-	app.layers.getStage(LayerTypes.HUD).addChild(this.gameOverOverlay.container);
+	this.overlay = new GameOverOverlay(this);
+	app.layers.getStage(LayerTypes.HUD).addChild(this.overlay.container);
 
-	this.gameOverOverlay.animate(function() { self.level.kill(); });
+	this.overlay.animate(function() { self.level.kill(); });
 
 	createjs.Sound.stop();
 	app.assetsProxy.playSound('intro1');
@@ -244,7 +243,7 @@ PlayPanel.prototype.updateGameOver = function(options) {
 	//this.camera.update();
 	this.updateParticles(options);
 
-	this.gameOverOverlay.update(options);
+	this.overlay.update(options);
 
 	input.checkPrevButtonDown([
 		GamepadCode.BUTTONS.DPAD_UP,
@@ -330,14 +329,9 @@ PlayPanel.prototype.clear = function() {
 	this.hto.clear();
 	this.hto = null;
 
-	if(this.enterLevelOverlay) {
-		this.enterLevelOverlay.clear();
-		this.enterLevelOverlay = null;
-	}
-
-	if(this.gameOverOverlay) {
-		this.gameOverOverlay.clear();
-		this.gameOverOverlay = null;
+	if(this.overlay) {
+		this.overlay.clear();
+		this.overlay = null;
 	}
 
 	app.physicsWorld.ClearForces();
@@ -550,6 +544,7 @@ PlayPanel.prototype.setProjectiles = function() {
 		CollisionCategories.HOMING_PROJECTILE,
 		CollisionCategories.AIR_ENEMY
 	);
+
 	///////////////////////////////////////////////////////////////////////////////
 };
 

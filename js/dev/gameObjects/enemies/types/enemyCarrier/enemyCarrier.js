@@ -7,7 +7,6 @@ goog.require('Platform');
 goog.require('EnemyCopterShadow');
 goog.require('EnemySnipingState');
 goog.require('EnemySeekingState');
-goog.require('EnemyStrafingState');
 goog.require('RotationUtils');
 
 /**
@@ -38,7 +37,7 @@ EnemyCarrier = function(projectileSystem, enemySystem) {
 
 	this.fireCounter = 0;
 
-	this.minDistance = Math.pow(160, 2);
+	this.minDistance = Math.pow(400, 2);
 
 	this.shadow = null;
 
@@ -60,6 +59,8 @@ EnemyCarrier = function(projectileSystem, enemySystem) {
 
 	this.spawnTimer = null;
 
+	this.health = 10;
+
 	this.init();
 };
 
@@ -68,9 +69,9 @@ goog.inherits(EnemyCarrier, Enemy);
 //CONSTANTS///////////////////////////////////////
 EnemyCarrier.HOMING_RATE = 5;
 
-EnemyCarrier.FIRE_OFFSETS = [-10, 10];
+EnemyCarrier.FIRE_OFFSETS = [-30, 30];
 
-EnemyCarrier.AMMO_DISTANCE = 60 / app.physicsScale;
+EnemyCarrier.AMMO_DISTANCE = 180 / app.physicsScale;
 
 EnemyCarrier.ROTOR_RADIUS = 30;
 
@@ -118,7 +119,7 @@ EnemyCarrier.prototype.init = function() {
 
 	this.velocityMod = 1.5;
 
-	this.fireThreshold = 30;
+	this.fireThreshold = 120;
 
 	this.shape = new createjs.BitmapAnimation(carrierSpriteSheet);
 	this.shape.regX = this.width * 0.5;
@@ -249,16 +250,14 @@ EnemyCarrier.prototype.setIsAlive = function(value) {
 		this.stateMachine.setState(EnemySeekingState.KEY);
 	} else {
 		this.clearTimer();
-
-		if(this.spawnTimer) {
-			clearTimeout(this.spawnTimer);
-			this.spawnTimer = null;
-		}
+		this.clearSpawnTimer();
 	}
 };
 
 EnemyCarrier.prototype.enterSeeking = function(options) {
 	var self = this;
+
+	this.clearSpawnTimer();
 
 	this.spawnTimer = setTimeout(function() {
 		self.spawnEnemy();
@@ -302,13 +301,14 @@ EnemyCarrier.prototype.updateSeeking = function(options) {
 };
 
 EnemyCarrier.prototype.enterSniping = function(options) {
-	var self = this;
+	var self = this,
+		randomInRange = Math.randomInRange(2000, 3500);
 
-	clearTimeout(this.spawnTimer);
+	this.clearTimer();
 
-	setTimeout(function() {
+	this.timer = setTimeout(function() {
 		self.stateMachine.setState(EnemySeekingState.KEY);
-	}, 2000);
+	}, randomInRange);
 };
 
 /**
@@ -334,18 +334,6 @@ EnemyCarrier.prototype.updateSniping = function(options) {
 
 	//check fire
 	this.updateFiring(options);
-};
-
-EnemyCarrier.prototype.enterStrafing = function(options) {
-	this.stateMachine.setState(EnemySeekingState.KEY);
-};
-
-/**
- *Faces player, moves in a direction, and fire in bursts
-*@public
-*/
-EnemyCarrier.prototype.updateStrafing = function(options) {
-	
 };
 
 /**
@@ -492,7 +480,7 @@ EnemyCarrier.prototype.spawnEnemy = function() {
 				}
 
 				if(self.spawnTimer) {
-					self.spawnTimer = null;
+					self.clearSpawnTimer();
 
 					self.spawnTimer = setTimeout(function() {
 						self.spawnEnemy();
@@ -652,12 +640,13 @@ EnemyCarrier.prototype.setStateMachine = function() {
 		new EnemySnipingState(this),
 		[ EnemySeekingState.KEY ]
 	);
+};
 
-	this.stateMachine.addState(
-		EnemyStrafingState.KEY,
-		new EnemyStrafingState(this),
-		[ EnemySeekingState.KEY, EnemySnipingState.KEY ]
-	);
+EnemyCarrier.prototype.clearSpawnTimer = function () {
+	if(this.spawnTimer) {
+		clearTimeout(this.spawnTimer);
+		this.spawnTimer = null;
+	}
 };
 
 /**

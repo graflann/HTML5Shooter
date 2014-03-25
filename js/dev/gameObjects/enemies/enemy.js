@@ -155,13 +155,13 @@ Enemy.prototype.clearTimer = function() {
 Enemy.prototype.onCollide = function(collisionObject, options) {
 
 	if(this.modifyHealth(collisionObject.damage) === 0) {
-		options.explosions.emit(12, {
+		options.explosions.emit(4, {
 			posX: this.position.x,
 			posY: this.position.y,
 			posOffsetX: 16,
 			posOffsetY: 16,
-			velX: 4,
-			velY: 4
+			velX: 2,
+			velY: 2
 		});
 	}
 };

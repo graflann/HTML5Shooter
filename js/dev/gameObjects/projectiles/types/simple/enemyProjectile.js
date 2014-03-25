@@ -4,7 +4,7 @@ goog.require('Projectile');
 
 /**
 *@constructor
-*Ammo for Turret instances
+*Ammo for Enemy instances
 */
 EnemyProjectile = function(colors, categoryBits, maskBits) {
 	Projectile.call(this, colors, categoryBits, maskBits);

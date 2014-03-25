@@ -275,6 +275,16 @@ Level.prototype.setProjectiles = function() {
 		CollisionCategories.AIR_ENEMY_PROJECTILE,
 		CollisionCategories.PLAYER
 	);
+
+	//Mine pool
+	this.arrEnemyProjectileSystems[ProjectileTypes.MINE] = new ProjectileSystem(
+		ProjectileTypes.MINE, 
+		[Constants.YELLOW, Constants.RED],
+		16,
+		CollisionCategories.GROUND_ENEMY_PROJECTILE,
+		CollisionCategories.PLAYER,
+		this.arrEnemyProjectileSystems["ground"]
+	);
 };
 
 /**

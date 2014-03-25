@@ -10,6 +10,7 @@ goog.require('SniperProjectile');
 goog.require('LaserProjectile');
 goog.require('HomingProjectile');
 goog.require('EnemyProjectile');
+goog.require('Mine');
 
 /**
  * Exposes available Projectile classes by String
@@ -25,7 +26,8 @@ ProjectileClasses = {
 	sniper: SniperProjectile,
 	laser: LaserProjectile,
 	homing: HomingProjectile,
-	enemy: EnemyProjectile
+	enemy: EnemyProjectile,
+	mine: Mine
 };
 
 goog.exportSymbol('ProjectileClasses', ProjectileClasses);

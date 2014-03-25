@@ -63,8 +63,8 @@
 		},
 
 		"enemyCarrier": {
-			"max": 16,
-			"projectileSystem": "air"
+			"max": 1,
+			"projectileSystem": "mine"
 		}
 	},
 

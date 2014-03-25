@@ -52,6 +52,15 @@ EnemyTrooper.AMMO_DISTANCE = 16 / app.physicsScale;
 
 EnemyTrooper.FIRE_OFFSET = -20;
 
+EnemyTrooper.MIN_STRAFE_TIME = 2000;
+EnemyTrooper.MAX_STRAFE_TIME = 4000;
+
+EnemyTrooper.MIN_ROAM_TIME = 4000;
+EnemyTrooper.MAX_ROAM_TIME = 6000;
+
+EnemyTrooper.MIN_SNIPE_TIME = 2000;
+EnemyTrooper.MAX_SNIPE_TIME = 4000;
+
 /**
 *@override
 *@public
@@ -98,8 +107,22 @@ EnemyTrooper.prototype.update = function(options) {
 *@public
 */
 EnemyTrooper.prototype.enterRoaming = function(options) {
+	var self = this,
+		maxIndex = EnemyRoamingState.NEXT_STATE_MAP.length - 1,
+		randIndex = Math.randomInRangeWhole(0, maxIndex),
+		randRoamTime = Math.randomInRangeWhole(
+			EnemyTrooper.MIN_ROAM_TIME, 
+			EnemyTrooper.MAX_ROAM_TIME
+		);
+
 	this.walkAnimUtil.play();
 	this.walkAnimUtil.loop(true);
+
+	this.clearTimer();
+
+	this.timer = setTimeout(function() {
+		self.stateMachine.setState(EnemyRoamingState.NEXT_STATE_MAP[randIndex]);
+	}, randRoamTime);
 };
 
 /**
@@ -155,10 +178,24 @@ EnemyTrooper.prototype.updateRoaming = function(options) {
 *@public
 */
 EnemyTrooper.prototype.enterSniping = function(options) {
+	var self = this,
+		maxIndex = EnemySnipingState.NEXT_STATE_MAP.length - 1,
+		randIndex = Math.randomInRangeWhole(0, maxIndex),
+		randRoamTime = Math.randomInRangeWhole(
+			EnemyTrooper.MIN_SNIPE_TIME, 
+			EnemyTrooper.MAX_SNIPE_TIME
+		);
+
 	this.walkAnimUtil.stop();
 
 	this.fireCounter = 0;
 	this.fireThreshold = 30;
+
+	this.clearTimer();
+
+	this.timer = setTimeout(function() {
+		self.stateMachine.setState(EnemySnipingState.NEXT_STATE_MAP[randIndex]);
+	}, randRoamTime);
 };
 
 /**
@@ -189,11 +226,25 @@ EnemyTrooper.prototype.updateSniping = function(options) {
 *@public
 */
 EnemyTrooper.prototype.enterStrafing = function(options) {
+	var self = this;
+	var maxIndex = EnemyStrafingState.NEXT_STATE_MAP.length - 1;
+	var randIndex = Math.randomInRangeWhole(0, maxIndex);
+	var randRoamTime = Math.randomInRangeWhole(
+		EnemyTrooper.MIN_STRAFE_TIME, 
+		EnemyTrooper.MAX_STRAFE_TIME
+	);
+
 	this.walkAnimUtil.play();
 	this.walkAnimUtil.loop(true);
 
 	this.fireCounter = 0;
 	this.fireThreshold = 60;
+
+	this.clearTimer();
+
+	this.timer = setTimeout(function() {
+		self.stateMachine.setState(EnemyStrafingState.NEXT_STATE_MAP[randIndex]);
+	}, randRoamTime);
 };
 
 /**

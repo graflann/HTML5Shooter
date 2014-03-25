@@ -21,28 +21,11 @@ EnemyStrafingState.NEXT_STATE_MAP = [
 	"sniping"
 ];
 
-EnemyStrafingState.MIN_STRAFE_TIME = 2000;
-EnemyStrafingState.MAX_STRAFE_TIME = 4000;
-
 /**
 *@public
 */
 EnemyStrafingState.prototype.enter = function(options) {
 	//console.log("Entering state: Enemy " + EnemyStrafingState.KEY);
-
-	var self = this;
-	var maxIndex = EnemyStrafingState.NEXT_STATE_MAP.length - 1;
-	var randIndex = Math.randomInRangeWhole(0, maxIndex);
-	var randRoamTime = Math.randomInRangeWhole(
-		EnemyStrafingState.MIN_STRAFE_TIME, 
-		EnemyStrafingState.MAX_STRAFE_TIME
-	);
-
-	this.enemy.clearTimer();
-
-	this.enemy.timer = setTimeout(function() {
-		self.enemy.stateMachine.setState(EnemyStrafingState.NEXT_STATE_MAP[randIndex]);
-	}, randRoamTime);
 
 	this.enemy.enterStrafing(options);
 };

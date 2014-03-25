@@ -48,6 +48,15 @@ goog.inherits(EnemyTank, Enemy);
 
 EnemyTank.HOMING_RATE = 15;
 
+EnemyTank.MIN_STRAFE_TIME = 2000;
+EnemyTank.MAX_STRAFE_TIME = 4000;
+
+EnemyTank.MIN_ROAM_TIME = 4000;
+EnemyTank.MAX_ROAM_TIME = 6000;
+
+EnemyTank.MIN_SNIPE_TIME = 2000;
+EnemyTank.MAX_SNIPE_TIME = 4000;
+
 /**
 *@override
 *@public
@@ -151,7 +160,21 @@ EnemyTank.prototype.updateTurretToBase = function(options) {
 *@public
 */
 EnemyTank.prototype.enterRoaming = function(options) {
+	var self = this,
+		maxIndex = EnemyRoamingState.NEXT_STATE_MAP.length - 1,
+		randIndex = Math.randomInRangeWhole(0, maxIndex),
+		randRoamTime = Math.randomInRangeWhole(
+			EnemyTank.MIN_ROAM_TIME, 
+			EnemyTank.MAX_ROAM_TIME
+		);
+
 	this.shape.play();
+
+	this.clearTimer();
+
+	this.timer = setTimeout(function() {
+		self.stateMachine.setState(EnemyRoamingState.NEXT_STATE_MAP[randIndex]);
+	}, randRoamTime);
 };
 
 /**
@@ -166,9 +189,23 @@ EnemyTank.prototype.updateRoaming = function(options) {
 *@public
 */
 EnemyTank.prototype.enterSniping = function(options) {
+	var self = this,
+		maxIndex = EnemySnipingState.NEXT_STATE_MAP.length - 1,
+		randIndex = Math.randomInRangeWhole(0, maxIndex),
+		randRoamTime = Math.randomInRangeWhole(
+			EnemyTank.MIN_SNIPE_TIME, 
+			EnemyTank.MAX_SNIPE_TIME
+		);
+
 	this.shape.gotoAndStop(0);
 	this.turret.fireCounter = 0;
 	this.turret.fireThreshold = 30;
+
+	this.clearTimer();
+
+	this.timer = setTimeout(function() {
+		self.stateMachine.setState(EnemySnipingState.NEXT_STATE_MAP[randIndex]);
+	}, randRoamTime);
 };
 
 /**
@@ -182,9 +219,23 @@ EnemyTank.prototype.updateSniping = function(options) {
 *@public
 */
 EnemyTank.prototype.enterStrafing = function(options) {
+	var self = this;
+	var maxIndex = EnemyStrafingState.NEXT_STATE_MAP.length - 1;
+	var randIndex = Math.randomInRangeWhole(0, maxIndex);
+	var randRoamTime = Math.randomInRangeWhole(
+		EnemyTank.MIN_STRAFE_TIME, 
+		EnemyTank.MAX_STRAFE_TIME
+	);
+
 	this.shape.play();
 	this.turret.fireCounter = 0;
 	this.turret.fireThreshold = 45;
+
+	this.clearTimer();
+
+	this.timer = setTimeout(function() {
+		self.stateMachine.setState(EnemyStrafingState.NEXT_STATE_MAP[randIndex]);
+	}, randRoamTime);
 };
 
 /**

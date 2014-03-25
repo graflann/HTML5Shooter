@@ -33,11 +33,19 @@ EnemyCopter = function(projectileSystem) {
 
 	this.fireCounter = 0;
 
-	this.minDistance = Math.pow(160, 2);
+	this.minSeekDistance = Math.pow(160, 2);
+
+	this.minStrafeDistance = Math.pow(9, 2);
 
 	this.shadow = null;
 
 	this.stateMachine = null;
+
+	this.strafeMovingPosition = new app.b2Vec2();
+
+	this.strafeDistance = 0;
+
+	this.strafeAngleOffset = 0;
 
 	this.intendedRotation = 0;
 
@@ -66,6 +74,9 @@ EnemyCopter.ROTOR_OFFSETS = [
 EnemyCopter.SHADOW_OFFSET = new app.b2Vec2(48, 48);
 
 EnemyCopter.SHADOW_SCALE = 0.6;
+
+EnemyCopter.MIN_STAFE_DISTANCE = 200;
+EnemyCopter.MAX_STAFE_DISTANCE = 350;
 
 /**
 *@override
@@ -193,7 +204,7 @@ EnemyCopter.prototype.kill = function() {
 };
 
 EnemyCopter.prototype.enterSeeking = function(options) {
-
+	this.velocityMod = 3;
 };
 
 /**
@@ -221,7 +232,7 @@ EnemyCopter.prototype.updateSeeking = function(options) {
 
 		distance = this.position.DistanceSqrd(target.position);
 
-		if(distance < this.minDistance) {
+		if(distance < this.minSeekDistance) {
 			this.stateMachine.setState(EnemySnipingState.KEY);
 		}
 	}
@@ -233,11 +244,14 @@ EnemyCopter.prototype.updateSeeking = function(options) {
 };
 
 EnemyCopter.prototype.enterSniping = function(options) {
-	var self = this;
+	var self = this,
+		randomInRange = Math.randomInRange(2000, 3500);
 
-	setTimeout(function() {
-		self.stateMachine.setState(EnemySeekingState.KEY);
-	}, 2000);
+	this.clearTimer();
+
+	this.timer = setTimeout(function() {
+		self.stateMachine.setState(EnemyStrafingState.KEY);
+	}, randomInRange);
 };
 
 /**
@@ -266,7 +280,21 @@ EnemyCopter.prototype.updateSniping = function(options) {
 };
 
 EnemyCopter.prototype.enterStrafing = function(options) {
-	
+	var rand = Math.random();
+
+	this.velocityMod = 6;
+
+	this.strafeDistance = Math.randomInRange(
+		EnemyCopter.MIN_STAFE_DISTANCE, 
+		EnemyCopter.MAX_STAFE_DISTANCE
+	);
+
+	if(rand < 0.5) {
+		this.strafeAngleOffset = Math.randomInRangeWhole(-90, -45);
+	} else {
+		this.strafeAngleOffset = Math.randomInRangeWhole(45, 90);
+	}
+
 };
 
 /**
@@ -274,7 +302,58 @@ EnemyCopter.prototype.enterStrafing = function(options) {
 *@public
 */
 EnemyCopter.prototype.updateStrafing = function(options) {
-	
+	var target = options.target,
+		deg,
+		sin,
+		cos,
+		table = app.trigTable,
+		distance,
+		targetRotation;
+
+	//rotate the main container to face the target
+	this.container.rotation = (Math.radToDeg(
+		Math.atan2(
+			target.position.y - this.position.y, 
+			target.position.x - this.position.x
+		)
+	)) + 90;
+
+	//only calculates homing to target on selected frames
+	if(target && createjs.Ticker.getTicks() % EnemyCopter.HOMING_RATE == 0) {
+
+		//determine a point to strafe to based on the target's rotation and a provide strafe offset
+		targetRotation = target.baseContainer.rotation + this.strafeAngleOffset;
+
+		cos = table.cos(targetRotation);
+		sin = table.sin(targetRotation);
+
+		this.strafeMovingPosition.x = (cos * this.strafeDistance) + target.position.x;
+		this.strafeMovingPosition.y = (sin * this.strafeDistance) + target.position.y;
+
+		this.baseRotationDeg = Math.radToDeg(
+			Math.atan2(
+				this.strafeMovingPosition.y - this.position.y, 
+				this.strafeMovingPosition.x - this.position.x
+			)
+		);
+
+		this.velocity.x = (table.cos(this.baseRotationDeg) * this.velocityMod);
+		this.velocity.y = (table.sin(this.baseRotationDeg) * this.velocityMod);
+
+		distance = this.position.DistanceSqrd(this.strafeMovingPosition);
+
+		if(distance < this.minStrafeDistance) {
+			this.stateMachine.setState(EnemySeekingState.KEY);
+		}
+	}
+
+	this.container.x += this.velocity.x;
+	this.container.y += this.velocity.y;
+
+	this.setPosition(this.container.x, this.container.y);
+
+	//check fire
+	this.updateFire();
 };
 
 /**
