@@ -47,7 +47,7 @@ GameOverOverlay.prototype.init = function() {
 		Constants.BLUE
 	);
 	this.gameText.x = Constants.WIDTH * 0.5 - 44;
-	this.gameText.y = Constants.HEIGHT * 0.5;
+	this.gameText.y = Constants.HEIGHT * 0.33;
 	this.gameText.scaleX = this.gameText.scaleY = 1.5;
 	this.gameText.alpha = 0;
 
@@ -57,7 +57,7 @@ GameOverOverlay.prototype.init = function() {
 		Constants.LIGHT_BLUE
 	);
 	this.overText.x = this.gameText.x;
-	this.overText.y = Constants.HEIGHT * 0.5;
+	this.overText.y = this.gameText.y;
 	this.overText.scaleX = this.overText.scaleY = 1.5;
 	this.overText.alpha = 0;
 

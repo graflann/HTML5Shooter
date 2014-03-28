@@ -28,6 +28,7 @@ goog.require('EventNames');
 goog.require('LevelProxy');
 goog.require('EnterLevelOverlay');
 goog.require('GameOverOverlay');
+goog.require('WarningOverlay');
 goog.require('StateMachine');
 goog.require('PanelIntroState');
 goog.require('PanelDefaultState');
@@ -163,7 +164,7 @@ PlayPanel.prototype.enterIntro = function(options) {
 	this.overlay = new EnterLevelOverlay(this);
 	stage.addChild(this.overlay.container);
 
-	app.assetsProxy.playSound('Glide', 1, true);
+	//app.assetsProxy.playSound('Glide', 1, true);
 
 	//some delays set to let the overlay animate correctly
 	setTimeout(function() {
