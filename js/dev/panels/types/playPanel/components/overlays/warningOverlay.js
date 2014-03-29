@@ -27,6 +27,10 @@ WarningOverlay = function(panel) {
 
 	this.enemyApproachingText = null;
 
+	this.timer = null;
+
+	this.endWarningEvent = new goog.events.Event(EventNames.END_WARNING, this);
+
 	this.init();
 };
 
@@ -51,8 +55,7 @@ WarningOverlay.prototype.init = function() {
 
 	this.container.addChild(this.background);
 	this.container.addChild(this.textContainer);
-
-	//this.container.alpha = 0;
+	this.container.alpha = 0;
 };
 
 /**
@@ -64,7 +67,31 @@ WarningOverlay.prototype.update = function() {
 };
 
 WarningOverlay.prototype.animate = function (callback) {
-	
+	var self = this;
+
+	this.timer = setTimeout(
+		function() {
+			createjs.Tween
+				.get(self.container)
+				.to({ 
+					alpha: 0
+				}, 500)
+				.callback(
+					function() {
+						goog.events.dispatchEvent(this, self.endWarningEvent);
+						self.clearTimeout(self.timer);
+					}
+				);
+		}, 
+		5000
+	);
+
+	createjs.Tween
+		.get(this.container)
+		.to({ 
+			alpha: 1
+		}, 500);
+
 	createjs.Tween
 		.get(this.strobeContainer, { loop:true })
 		.to({ 
@@ -90,6 +117,8 @@ WarningOverlay.prototype.clear = function() {
 	this.panel = null;
 
 	createjs.Tween.removeAllTweens();
+
+	this.timer = null;
 
 	this.strobeContainer.uncache();
 	this.strobeContainer.filters = null;
@@ -118,9 +147,8 @@ WarningOverlay.prototype.setTextContainer = function() {
 		strobeOffset = 4,
 		textWidth = 656,
 		textHeight = 100,
+		blurFilter = new createjs.BoxBlurFilter(4, 4, 1),
 		bounds = null;
-
-	var blurFilter = new createjs.BoxBlurFilter(4, 4, 1);
 
 	this.textContainerBackground = new createjs.Shape();
 	this.textContainerBackground.graphics

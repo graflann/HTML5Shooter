@@ -61,6 +61,14 @@ WaveManager.prototype.clear = function() {
 			this
 		);
 
+		goog.events.unlisten(
+			this.arrWaves[i], 
+			EventNames.INIT_WARNING, 
+			this.onInitWarning, 
+			false, 
+			this
+		);
+
 		this.arrWaves[i].clear();
 		this.arrWaves[i] = null;
 	}
@@ -119,6 +127,14 @@ WaveManager.prototype.setCurrentWave = function() {
 		this
 	);
 
+	goog.events.listen(
+		this.currentWave, 
+		EventNames.INIT_WARNING, 
+		this.onInitWarning, 
+		false, 
+		this
+	);
+
 	this.currentWave.setCurrentSpawn();
 };
 
@@ -130,6 +146,14 @@ WaveManager.prototype.onWaveComplete = function(e) {
 		this.currentWave,
 		EventNames.WAVE_COMPLETE, 
 		this.onWaveComplete, 
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.currentWave, 
+		EventNames.INIT_WARNING, 
+		this.onInitWarning, 
 		false, 
 		this
 	);
@@ -161,4 +185,9 @@ WaveManager.prototype.onEnemyKilled = function(e) {
 			this.setCurrentWave();
 		}
 	}
+};
+
+WaveManager.prototype.onInitWarning = function(e) {
+	//bubble the event from the current Wave isntance up
+	goog.events.dispatchEvent(this, e);
 };

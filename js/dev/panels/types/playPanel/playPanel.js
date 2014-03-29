@@ -220,7 +220,9 @@ PlayPanel.prototype.updateDefault = function(options) {
 	]);
 };
 
-PlayPanel.prototype.exitDefault = function(options) {};
+PlayPanel.prototype.exitDefault = function(options) {
+
+};
 
 
 PlayPanel.prototype.enterGameOver = function(options) {
@@ -784,6 +786,15 @@ PlayPanel.prototype.setEventListeners = function() {
 		false, 
 		this
 	);
+
+	//LEVEL
+	goog.events.listen(
+		this.level, 
+		EventNames.INIT_WARNING, 
+		this.onInitWarning,
+		false, 
+		this
+	);
 	/////////////////////////////////////
 };
 
@@ -849,6 +860,15 @@ PlayPanel.prototype.removeEventListeners = function() {
 		app.scoreManager, 
 		EventNames.UPDATE_BONUS, 
 		this.onUpdateBonus,
+		false, 
+		this
+	);
+
+	//LEVEL
+	goog.events.unlisten(
+		this.level, 
+		EventNames.INIT_WARNING, 
+		this.onInitWarning,
 		false, 
 		this
 	);
@@ -972,4 +992,43 @@ PlayPanel.prototype.onUpdateScore = function(e) {
 */
 PlayPanel.prototype.onUpdateBonus = function(e) {
 	this.hud.updateBonus(e.payload);
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.onInitWarning = function(e) {
+	var stage = app.layers.getStage(LayerTypes.HUD);
+
+	this.overlay = new WarningOverlay(this);
+	stage.addChild(this.overlay.container);
+
+	goog.events.listen(
+		this.overlay, 
+		EventNames.END_WARNING, 
+		this.onEndWarning,
+		false, 
+		this
+	);
+
+	this.overlay.animate();
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.onEndWarning = function(e) {
+	var stage = app.layers.getStage(LayerTypes.HUD);
+
+	goog.events.unlisten(
+		this.overlay, 
+		EventNames.END_WARNING, 
+		this.onEndWarning,
+		false, 
+		this
+	);
+
+	stage.removeChild(this.overlay.container);
+	this.overlay.clear();
+	this.overlay = null;
 };

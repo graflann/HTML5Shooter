@@ -87,6 +87,16 @@ Wave.prototype.setCurrentSpawn = function() {
 		this
 	);
 
+	if(this.currentSpawn.hasWarning()) {
+		goog.events.listen(
+			this.currentSpawn, 
+			EventNames.INIT_WARNING, 
+			this.onInitWarning, 
+			false, 
+			this
+		);
+	}
+
 	this.currentSpawn.generate();
 };
 
@@ -102,8 +112,23 @@ Wave.prototype.onSpawnComplete = function(e) {
 			this
 		);
 
+		if(this.currentSpawn.hasWarning()) {
+			goog.events.unlisten(
+				this.currentSpawn, 
+				EventNames.INIT_WARNING, 
+				this.onInitWarning, 
+				false, 
+				this
+			);
+		}
+
 		goog.events.dispatchEvent(this, this.waveCompleteEvent);
 	} else {
 		this.setCurrentSpawn();
 	}
+};
+
+Wave.prototype.onInitWarning = function(e) {
+	//bubble the event from the spawn object up
+	goog.events.dispatchEvent(this, e);
 };

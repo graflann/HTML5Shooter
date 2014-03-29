@@ -23,6 +23,8 @@ EventNames = {
     OVERDRIVE_CHANGE:           'overdriveChange',
     UPDATE_SCORE:               'updateScore',
     UPDATE_BONUS:               'updateBonus',
+    INIT_WARNING:               'initWarning',
+    END_WARNING:                'endWarning',
     GAME_OVER: 	                'gameOver',
     NEXT:               	    'next',
     PREVIOUS:           	    'previous',

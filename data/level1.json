@@ -71,8 +71,14 @@
 	"waves" : [
 		[
 			{ 
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 16,
+				"positionX": 1920, "positionY": -32, "posOffsetX": 64, "posOffsetY": 32
+			}
+		],
+		[
+			{ 
 				"type": "enemyCarrier", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 1,
-				"positionX": -240, "positionY": 64
+				"positionX": -240, "positionY": 64, "hasWarning": true
 			}
 		]
 	],

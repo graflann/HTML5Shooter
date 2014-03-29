@@ -161,6 +161,14 @@ Level.prototype.init = function() {
 		false, 
 		this
 	);
+
+	goog.events.listen(
+		this.waveManager, 
+		EventNames.INIT_WARNING, 
+		this.onInitWarning, 
+		false, 
+		this
+	);
 };
 
 /**
@@ -179,6 +187,22 @@ Level.prototype.clear = function() {
 	var key;
 
 	this.data = null;
+
+	goog.events.unlisten(
+		this.waveManager, 
+		EventNames.LEVEL_COMPLETE, 
+		this.onLevelComplete, 
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.waveManager, 
+		EventNames.INIT_WARNING, 
+		this.onInitWarning, 
+		false, 
+		this
+	);
 
 	this.waveManager.clear();
 	this.waveManager = null;
@@ -369,4 +393,9 @@ Level.prototype.setGraph = function() {
 */
 Level.prototype.onLevelComplete = function(e) {
 	console.log("Level end...");
+};
+
+Level.prototype.onInitWarning = function(e) {
+	//bubble the event from the WaveManager instance up
+	goog.events.dispatchEvent(this, e);
 };
