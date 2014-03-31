@@ -1,7 +1,6 @@
 goog.provide('BladeTurret');
 
 goog.require('Turret');
-goog.require('PlayerTank');
 
 /**
 *@constructor

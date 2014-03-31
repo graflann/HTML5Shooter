@@ -1,7 +1,6 @@
 goog.provide('SpreadTurret');
 
 goog.require('Turret');
-goog.require('PlayerTank');
 
 /**
 *@constructor

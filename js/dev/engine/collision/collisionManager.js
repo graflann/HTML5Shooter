@@ -36,7 +36,7 @@ CollisionManager = function(
 
 	this.collisionOptions = {
 		player: {
-    		explosions:         this.arrParticleSystems[ParticleSystemNames.PLAYER_EXPLOSION],
+    		explosions:         this.arrParticleSystems[ParticleSystemNames.PLAYER_EXPLOSION]
     	},
 
     	enemy: {

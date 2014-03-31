@@ -1,8 +1,6 @@
 goog.provide('EnemySnipingState');
 
 goog.require('State');
-goog.require('EnemyRoamingState');
-goog.require('EnemyStrafingState');
 
 /**
 *@constructor

@@ -2,7 +2,6 @@ goog.provide('SniperTurret');
 
 goog.require('Turret');
 goog.require('AnimationUtility');
-goog.require('PlayerTank');
 
 /**
 *@constructor
