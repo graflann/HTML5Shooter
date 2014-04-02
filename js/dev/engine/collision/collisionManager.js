@@ -118,6 +118,7 @@ CollisionManager.prototype.updateHomingList = function(options) {
         var player = options.player,
             homingLength = this.homingList.length,
             killLength = this.killList.length,
+            homingEntity = null,
             i = -1,
             j = -1;
 
@@ -126,11 +127,25 @@ CollisionManager.prototype.updateHomingList = function(options) {
         while(++i < homingLength) {
             j = -1;
 
-            while(++j < killLength) {
-                if(this.homingList[i] === this.killList[j]) {
-                    //remove enemy from the homing list if it is set to die
-                    this.homingList.splice(i, 1);
-                    i--;
+            homingEntity = this.homingList[i];
+
+            if(homingEntity instanceof Enemy) {
+                while(++j < killLength) {
+                    //ensure the homingList element references an Enemy instance and is on the killList
+                    if(homingEntity === this.killList[j]) {
+                        //remove enemy from the homing list if it is set to die
+                        this.homingList.splice(i, 1);
+                        i--;
+                    }
+                }
+            } else {
+                while(++j < killLength) {
+                    //ensure the homingList element references an Enemy instance and is on the killList
+                    if(homingEntity.GetUserData() === this.killList[j]) {
+                        //remove enemy from the homing list if it is set to die
+                        this.homingList.splice(i, 1);
+                        i--;
+                    }
                 }
             }
         }
@@ -165,8 +180,10 @@ CollisionManager.prototype.updateActivation = function() {
 };
 
 CollisionManager.prototype.beginContact = function(contact) {
-	var dataA = contact.GetFixtureA().GetBody().GetUserData(),
-    	dataB = contact.GetFixtureB().GetBody().GetUserData();
+	var bodyA = contact.GetFixtureA().GetBody(),
+        bodyB = contact.GetFixtureB().GetBody(),
+        dataA = bodyA.GetUserData(),
+    	dataB = bodyB.GetUserData();
 
     //PROJECTILE VS OBJECT////////////////////////////////////////////
     if(dataA instanceof Projectile) {
@@ -180,10 +197,10 @@ CollisionManager.prototype.beginContact = function(contact) {
     
     //HOMING TARGETING OVERLAY (HTO) VS ENEMY/////////////////////////
     if(dataA instanceof HomingTargetingOverlay) {
-    	this.htoVsEnemy(dataA, dataB);
+    	this.htoVsEnemy(dataA, dataB, bodyB);
     	return;
     } else if(dataB instanceof HomingTargetingOverlay) {
-    	this.htoVsEnemy(dataB, dataA);
+    	this.htoVsEnemy(dataB, dataA, bodyA);
     	return;
     }
     //////////////////////////////////////////////////////////////////
@@ -293,24 +310,42 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object) {
 	this.killList.push(projectile);
 };
 
-CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
+CollisionManager.prototype.htoVsEnemy = function(hto, enemy, enemyBody) {
     var homingLength = this.homingList.length,
         i = -1;
 
     if(homingLength < this.arrPlayerProjectileSystems[ProjectileTypes.HOMING].length()) {
         //PROCESS ENEMY
-        //exits if enemy is already in homing list
-        while(++i < homingLength) {
-            if(this.homingList[i] == enemy) {
-                return;
+
+        //EnemyCarrier is a special case that can reference mulitple reticles
+        //due to multiple lock-on sensors
+        if(enemy instanceof EnemyCarrier) {
+            //exits if enemy is already in homing list
+            while(++i < homingLength) {
+                if(this.homingList[i] === enemyBody) {
+                    return;
+                }
             }
+
+            //add homing reticle
+            enemy.onHoming(hto, this.collisionOptions.enemy, enemyBody);
+
+            //push onto the homing list if not already present
+            this.homingList.push(enemyBody);
+        } else {
+            //exits if enemy is already in homing list
+            while(++i < homingLength) {
+                if(this.homingList[i] == enemy) {
+                    return;
+                }
+            }
+
+            //add homing reticle
+            enemy.onHoming(hto, this.collisionOptions.enemy);
+
+            //push onto the homing list if not already present
+            this.homingList.push(enemy);
         }
-
-        //add homing reticle
-        enemy.onHoming(hto, this.collisionOptions.enemy);
-
-        //push onto the homing list if not already present
-        this.homingList.push(enemy);
 
         app.assetsProxy.playSound("menuFX2", 0.5);
     }

@@ -80,5 +80,4 @@ ReticleParticle.prototype.create = function(options) {
 */
 ReticleParticle.prototype.kill = function() {
 	Particle.prototype.kill.call(this);
-
 };

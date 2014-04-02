@@ -30,12 +30,12 @@ SniperProjectile.prototype.init = function() {
 
 	this.shape.graphics
 		.ss(8, "round")
-		.ls([this.arrColors[0], this.arrColors[1]], [0.5, 1], 0, 0, 0, 96)
+		.ls([this.arrColors[0], this.arrColors[1]], [0.5, 1], 0, 0, 0, 192)
 		.mt(0, 0)
-		.lt(0, 96);
+		.lt(0, 192);
 	this.shape.alpha = 0;
 	this.shape.snapToPixel = true;
-	this.shape.cache(-4, 0, 8, 96);
+	this.shape.cache(-4, 0, 8, 192);
 
 	this.damage = 4;
 	

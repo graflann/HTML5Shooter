@@ -48,6 +48,8 @@ SceneObject.prototype.clear = function() {
 	this.shape.graphics.clear();
 	this.shape = null;
 
+	this.body.SetAwake(false);
+	this.body.SetUserData(null);
 	this.body.DestroyFixture(this.body.GetFixtureList());
 	app.physicsWorld.DestroyBody(this.body);
 	this.body = null;

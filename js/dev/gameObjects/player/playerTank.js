@@ -645,10 +645,14 @@ PlayerTank.prototype.clear = function() {
 	
 	this.physicalPosition = null;
 
+	this.body.SetAwake(false);
+	this.body.SetUserData(null);
 	this.body.DestroyFixture(this.body.GetFixtureList());
 	app.physicsWorld.DestroyBody(this.body);
 	this.body = null;
 
+	this.turretBody.SetAwake(false);
+	this.turretBody.SetUserData(null);
 	this.turretBody.DestroyFixture(this.turretBody.GetFixtureList());
 	app.physicsWorld.DestroyBody(this.turretBody);
 	this.turretBody = null;

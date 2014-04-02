@@ -65,6 +65,7 @@ $(function() {
     app.input           = new Input();
     app.assetsProxy     = new AssetsProxy();
     app.vecZero         = new app.b2Vec2();
+    app.physicsWorld    = new app.b2World(app.vecZero, false);
     app.scoreManager    = ScoreManager.getInstance();
     app.timerManager    = TimerManager.getInstance();
 

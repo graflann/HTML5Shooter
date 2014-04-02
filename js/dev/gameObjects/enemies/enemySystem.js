@@ -240,9 +240,15 @@ EnemySystem.prototype.removeReticles = function() {
 	while (++i < this.max) {
 		enemy = this.arrEnemies[i];
 
-		if (enemy.isAlive && enemy.reticle) {
-			enemy.reticle.kill();
-			enemy.reticle = null;
+		if (enemy.isAlive) {
+			if(enemy instanceof EnemyCarrier) {
+				enemy.removeReticles();
+			} else {
+				if(enemy.reticle) {
+					enemy.reticle.kill();
+					enemy.reticle = null;
+				}
+			}			
 		}
 	}
 };

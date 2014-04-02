@@ -190,7 +190,9 @@ HomingProjectile.prototype.checkBounds = function() {
 };
 
 HomingProjectile.prototype.setHomingTarget = function(homingList) {
-	var homingLength = homingList.length,
+	var table = app.trigTable,
+		homingLength = homingList.length,
+		homingEntity = null,
 		enemyPosition = null,
 	    prevDistance = Number.MAX_VALUE,
 	    distance = 0,
@@ -200,7 +202,18 @@ HomingProjectile.prototype.setHomingTarget = function(homingList) {
     //that becomes the homing target
     if(homingLength > 0) {
         while(++i < homingLength) {
-            enemyPosition = homingList[i].position;
+        	homingEntity = homingList[i];
+
+        	if(homingEntity instanceof Enemy) {
+        		enemyPosition = homingEntity.position;
+        	} else {
+        		var bodyPosition = homingEntity.GetPosition();
+
+        		enemyPosition = new app.b2Vec2(
+        			bodyPosition.x * app.physicsScale,
+        			bodyPosition.y * app.physicsScale
+        		);
+        	}
 
             //care only of magnitude, not actual value
             distance = this.position.DistanceSqrd(enemyPosition);
@@ -213,9 +226,9 @@ HomingProjectile.prototype.setHomingTarget = function(homingList) {
         }
     } else {      
         //if homing projectiles are alive but there's no targets,
-        //an artificial position is determined based on it's current movement angle
-        this.homingTargetPosition.x = app.trigTable.cos(this.deg) * Number.MAX_VALUE;
-        this.homingTargetPosition.y = app.trigTable.sin(this.deg) * Number.MAX_VALUE;
+        //an artificial position is determined based on its current movement angle
+        this.homingTargetPosition.x = table.cos(this.deg) * Number.MAX_VALUE;
+        this.homingTargetPosition.y = table.sin(this.deg) * Number.MAX_VALUE;
     }
 };
 

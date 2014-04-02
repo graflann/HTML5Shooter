@@ -31,7 +31,7 @@ EnemyCarrier = function(projectileSystem, enemySystem) {
 
 	this.shape = null;
 
-	this.reticle = null;
+	//this.reticle = null;
 
 	this.fireThreshold = 0;
 
@@ -169,19 +169,34 @@ EnemyCarrier.prototype.update = function(options) {
 		this.shadow.update(options);
 
 		//updates applicable homing reticle
-		if(this.reticle) {
-			this.reticle.shape.x = this.position.x;
-			this.reticle.shape.y = this.position.y;
-		}
+		if(this.body.reticle) {
+			this.body.reticle.shape.x = this.position.x;
+			this.body.reticle.shape.y = this.position.y;
+		}	
 	}
 };
 
 EnemyCarrier.prototype.updateRotors = function() {
 	var i = -1,
+		rotorBody = null,
+		originalRotorBodyPosition = null,
+		rotorBodyPosition = new app.b2Vec2(),
 		length = this.arrRotors.length;
 
 	while(++i < length) {
 		this.arrRotors[i].update();
+
+		//update any rotor body reticles as well
+		rotorBody = this.arrRotorBodies[i];
+
+		if(rotorBody.reticle) {
+			originalRotorBodyPosition = rotorBody.GetPosition();
+			rotorBodyPosition.x = originalRotorBodyPosition.x * app.physicsScale;
+			rotorBodyPosition.y = originalRotorBodyPosition.y * app.physicsScale;
+
+			rotorBody.reticle.shape.x = rotorBodyPosition.x;
+			rotorBody.reticle.shape.y = rotorBodyPosition.y;
+		}	
 	}
 };
 
@@ -192,7 +207,10 @@ EnemyCarrier.prototype.updateRotors = function() {
 EnemyCarrier.prototype.clear = function() {
 	var i = 0;
 
+	this.body.reticle = null;
 	Enemy.prototype.clear.call(this);
+
+	this.clearSpawnTimer();
 
 	this.projectileSystem = null;
 
@@ -203,7 +221,7 @@ EnemyCarrier.prototype.clear = function() {
 
 	this.shape = null;
 
-	this.reticle = null;
+	//this.reticle = null;
 
 	this.shadow.clear();
 	this.shadow = null;
@@ -215,12 +233,27 @@ EnemyCarrier.prototype.clear = function() {
 		this.arrRotors[i].clear();
 		this.arrRotors[i] = null;
 
+		this.arrRotorBodies[i].reticle = null;
+		this.arrRotorBodies[i].SetAwake(false);
+		this.arrRotorBodies[i].SetUserData(null);
 		this.arrRotorBodies[i].DestroyFixture(this.arrRotorBodies[i].GetFixtureList());
 		app.physicsWorld.DestroyBody(this.arrRotorBodies[i]);
 		this.arrRotorBodies[i] = null;
+
+		this.arrRotorDistances[i] = null;
+		this.arrRotorAngleOffsets[i] = null;
 	}
+	this.arrRotors.length = 0;
 	this.arrRotors = null;
+
+	this.arrRotorBodies.length = 0;
 	this.arrRotorBodies = null;
+
+	this.arrRotorDistances.length = 0;
+	this.arrRotorDistances = null;
+
+	this.arrRotorAngleOffsets.length = 0;
+	this.arrRotorAngleOffsets = null;
 
 	for(i = 0; i < this.arrDoors.length; i++) {
 		this.arrDoors[i].clear();
@@ -240,7 +273,17 @@ EnemyCarrier.prototype.clear = function() {
 */
 EnemyCarrier.prototype.kill = function() {
 	if(this.isAlive) {
+		var length = this.arrRotorBodies.length,
+			rotorBody = null,
+			i = -1;
+
 		this.setIsAlive(false);
+
+		while(++i < length) {
+			rotorBody = this.arrRotorBodies[i];
+			rotorBody.SetActive(false);
+			rotorBody.SetAwake(false);
+		}
 
 		this.container.getStage().removeChild(this.container);
 
@@ -254,8 +297,39 @@ EnemyCarrier.prototype.kill = function() {
 /**
 *@public
 */
+EnemyCarrier.prototype.removeReticles = function() {
+	var rotorBody = null;
+
+	for(var i = 0; i < this.arrRotorBodies.length; i++) {
+		rotorBody = this.arrRotorBodies[i];
+
+		if(rotorBody.reticle) {
+			rotorBody.reticle.kill();
+			rotorBody.reticle = null;
+		}
+	}
+
+	if(this.reticle) {
+		this.reticle.kill();
+		this.reticle = null;
+	}
+};
+
+/**
+*@public
+*/
 EnemyCarrier.prototype.setIsAlive = function(value) {
+	var length = this.arrRotorBodies.length,
+		rotorBody = null,
+		i = -1;
+
 	Enemy.prototype.setIsAlive.call(this, value);
+
+	while(++i < length) {
+		rotorBody = this.arrRotorBodies[i];
+		rotorBody.SetActive(value);
+		rotorBody.SetAwake(value);
+	}
 
 	if(this.isAlive) {
 		this.stateMachine.setState(EnemySeekingState.KEY);
@@ -345,6 +419,8 @@ EnemyCarrier.prototype.updateSniping = function(options) {
 
 	//check fire
 	this.updateFiring(options);
+
+	this.setPosition(this.container.x, this.container.y);
 };
 
 /**
@@ -397,7 +473,7 @@ EnemyCarrier.prototype.fire = function() {
 	sin = trigTable.sin(deg);
 	cos = trigTable.cos(deg);
 
-	//fires 2 parallel shots simultaneously
+	//fires 2 parallel mine shots simultaneously
 	while(++i < length) {
 		projectile = this.projectileSystem.getProjectile();
 
@@ -517,6 +593,7 @@ EnemyCarrier.prototype.spawnEnemy = function() {
 EnemyCarrier.prototype.setPosition = function(x, y) {
 	var i = -1,
 		length = this.arrRotorBodies.length,
+		rotorBody = null,
 		rotorBodyPosition = new app.b2Vec2(),
 		rotorOffset = null,
 		rotorDistance = 0,
@@ -531,6 +608,7 @@ EnemyCarrier.prototype.setPosition = function(x, y) {
 	
 	this.body.SetPosition(this.physicalPosition);
 
+	//update each rotor sensor position based on center hub position
 	while(++i < length) {
 		rotorOffset = EnemyCarrier.ROTOR_OFFSETS[i];
 		rotorAngleOffset = this.container.rotation + this.arrRotorAngleOffsets[i];
@@ -656,32 +734,30 @@ EnemyCarrier.prototype.setPhysics = function() {
 	this.body = app.physicsWorld.CreateBody(bodyDef);
 	this.body.CreateFixture(fixDef);
 	this.body.SetUserData(this);
-	this.body.SetAwake(true);
+	this.body.SetAwake(false);
 
 	//set the rotor bodies, b2_dynamicBody sensors, one for each rotor
 	for(var i = 0; i < this.arrRotors.length; i++) {
-		//set a fixture and body sensor per rotor for hto targeting
-		fixDef.density = 1.0;
-		fixDef.friction = 0;
-		fixDef.restitution = 1.0;
-		fixDef.filter.categoryBits = this.categoryBits;
-		fixDef.filter.maskBits = this.maskBits;
-		fixDef.isSensor = true;
-		fixDef.shape = new app.b2CircleShape(1);
-		
-		bodyDef.type = app.b2Body.b2_dynamicBody;
+		//set a new body sensor per rotor using existing fixture definition for hto targeting
 		body = app.physicsWorld.CreateBody(bodyDef);
+
+		body.reticle = null;
+
 		body.CreateFixture(fixDef);
 		body.SetUserData(this);
 		body.SetAwake(true);
 		this.arrRotorBodies.push(body);
 
 		//cache the angle of each rotor sensor from the center body sensor
-		rotorOffset = EnemyCarrier.ROTOR_OFFSETS[i];
+		rotorOffset = new app.b2Vec2(
+			EnemyCarrier.ROTOR_OFFSETS[i].x,
+			EnemyCarrier.ROTOR_OFFSETS[i].y
+		);
+
 		rotorAngleOffset = Math.radToDeg(Math.atan2(-rotorOffset.y, -rotorOffset.x));
 		this.arrRotorAngleOffsets.push(rotorAngleOffset);
 
-		//adjust rendered positon to physics position
+		//adjust each rendered rotor positon physics world scale to its sensor physics position
 		rotorOffset.x /= app.physicsScale;
 		rotorOffset.y /= app.physicsScale;
 
@@ -716,14 +792,24 @@ EnemyCarrier.prototype.clearSpawnTimer = function () {
 /**
 *@public
 */
-EnemyCarrier.prototype.onHoming = function(homingObject, options) {
-	if(!this.reticle) {
+EnemyCarrier.prototype.onHoming = function(homingObject, options, enemyBody) {
+	if(!enemyBody.reticle) {
+		var length = this.arrRotorBodies.length,
+			offset = null,
+			i = -1;
+
+		while(++i < length) {
+			if(enemyBody == this.arrRotorBodies[i]) break;
+		}
+
+		offset = EnemyCarrier.ROTOR_OFFSETS[i];
+
 		options.reticles.emit(1, {
-			posX: this.container.x + this.offset,
-			posY: this.container.y + this.offset
+			posX: this.container.x + offset.x,
+			posY: this.container.y + offset.y
 		});
 
-		this.reticle = options.reticles.getLastAlive();
+		enemyBody.reticle = options.reticles.getLastAlive();
 	}
 };
 

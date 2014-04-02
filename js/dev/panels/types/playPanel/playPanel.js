@@ -338,7 +338,7 @@ PlayPanel.prototype.clear = function() {
 	}
 
 	app.physicsWorld.ClearForces();
-	app.physicsWorld = null;
+	//app.physicsWorld = null;
 };
 
 /**
@@ -469,9 +469,9 @@ PlayPanel.prototype.setPhysics = function() {
 	fixDef.friction = 0;
 	fixDef.restitution = 1;
 		
-	if(app.physicsWorld == null || app.physicsWorld == undefined) {
-		app.physicsWorld = new app.b2World(new app.b2Vec2(), false);
-	}
+	// if(app.physicsWorld == null || app.physicsWorld == undefined) {
+	// 	app.physicsWorld = new app.b2World(new app.b2Vec2(), false);
+	// }
 
 	/*
 	//creates static, rigid body borders to enclose the action within the field of play
