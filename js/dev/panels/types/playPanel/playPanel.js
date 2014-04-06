@@ -795,6 +795,14 @@ PlayPanel.prototype.setEventListeners = function() {
 		false, 
 		this
 	);
+
+	goog.events.listen(
+		this.level, 
+		EventNames.FORCED_KILL, 
+		this.onForcedKill,
+		false, 
+		this
+	);
 	/////////////////////////////////////
 };
 
@@ -869,6 +877,14 @@ PlayPanel.prototype.removeEventListeners = function() {
 		this.level, 
 		EventNames.INIT_WARNING, 
 		this.onInitWarning,
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.level, 
+		EventNames.FORCED_KILL, 
+		this.onForcedKill,
 		false, 
 		this
 	);
@@ -1031,4 +1047,12 @@ PlayPanel.prototype.onEndWarning = function(e) {
 	stage.removeChild(this.overlay.container);
 	this.overlay.clear();
 	this.overlay = null;
+};
+
+/**
+*Handles a notification to force a GameObject onto the kill list
+*/
+PlayPanel.prototype.onForcedKill = function(e) {
+	//the event payload is the enemy requesting to be killed
+	this.collisionManager.killList.push(e.payload);
 };

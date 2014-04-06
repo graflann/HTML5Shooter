@@ -26,6 +26,7 @@ Enemy = function() {
 	this.timer = null;
 
 	this.enemyKilledEvent = new goog.events.Event(EventNames.ENEMY_KILLED, this);
+	this.forcedKillEvent = new PayloadEvent(EventNames.FORCED_KILL, this, null);
 };
 
 goog.inherits(Enemy, GameObject);
@@ -115,21 +116,23 @@ Enemy.prototype.modifyHealth = function(value) {
 
 	if(this.health <= 0) {
 		this.health = 0;
-
-		//return true;
 	}
-
-	//return false;
 
 	return this.health;
 };
-
 
 /**
 *@public
 */
 Enemy.prototype.getCategoryBits = function() {
 	return this.categoryBits;
+};
+
+/**
+*@public
+*/
+Enemy.prototype.getMaskBits = function() {
+	return this.maskBits;
 };
 
 /**

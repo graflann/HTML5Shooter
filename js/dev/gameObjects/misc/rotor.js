@@ -1,9 +1,13 @@
 goog.provide('Rotor');
 
+goog.require('GameObject');
+
 /**
 *@constructor
 */
 Rotor = function(color, radius, thickness) {
+	GameObject.call(this);
+	
 	this.color = color;
 
 	this.radius = radius;
@@ -16,6 +20,8 @@ Rotor = function(color, radius, thickness) {
 	
 	this.init();
 };
+
+goog.inherits(Rotor, GameObject);
 
 Rotor.ROTATION_RATE = -25;
 
@@ -40,6 +46,8 @@ Rotor.prototype.update = function(options) {
 *@public
 */
 Rotor.prototype.clear = function() {
+	GameObject.prototype.clear.call(this);
+
 	this.container.uncache();
 	this.container.removeAllChildren();
 

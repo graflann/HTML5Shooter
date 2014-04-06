@@ -56,7 +56,7 @@ app.charWidth       = 6;
 
 //POINT OF ENTRY//////////////////////////////////////////////////
 $(function() {
-    //disallow any jQuery ajax caching
+    //disallow any GET file caching
     $.ajaxSetup ({ cache: false }); 
 
 	app.browserUtils 	= BrowserUtils.getInstance();

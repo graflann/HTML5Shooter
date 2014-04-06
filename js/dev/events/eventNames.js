@@ -13,6 +13,8 @@ EventNames = {
     WAVE_COMPLETE:  		    'waveComplete',
     LEVEL_COMPLETE:  		    'levelComplete',
     ENEMY_KILLED:               'enemyKilled',
+    FORCED_KILL:                'forcedKill',
+    COMPONENT_DESTROYED:        'componentDestroyed',
     COLLISION:                  'collision', 
     WEAPON_SELECT: 			    'weaponSelect',
     OPTION_SELECT:              'optionSelect', 

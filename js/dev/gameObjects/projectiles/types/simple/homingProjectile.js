@@ -204,16 +204,7 @@ HomingProjectile.prototype.setHomingTarget = function(homingList) {
         while(++i < homingLength) {
         	homingEntity = homingList[i];
 
-        	if(homingEntity instanceof Enemy) {
-        		enemyPosition = homingEntity.position;
-        	} else {
-        		var bodyPosition = homingEntity.GetPosition();
-
-        		enemyPosition = new app.b2Vec2(
-        			bodyPosition.x * app.physicsScale,
-        			bodyPosition.y * app.physicsScale
-        		);
-        	}
+        	enemyPosition = homingEntity.position;
 
             //care only of magnitude, not actual value
             distance = this.position.DistanceSqrd(enemyPosition);

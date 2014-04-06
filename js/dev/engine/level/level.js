@@ -3,6 +3,7 @@ goog.provide('Level');
 goog.require('goog.events.EventTarget');
 goog.require('goog.events.Event');
 goog.require('goog.events');
+goog.require('PayloadEvent');
 goog.require('EventNames');
 goog.require('WaveManager');
 goog.require('ProjectileSystem');
@@ -208,6 +209,14 @@ Level.prototype.clear = function() {
 	this.waveManager = null;
 
 	for(key in this.arrEnemySystems) {
+		goog.events.unlisten(
+			this.arrEnemySystems[key], 
+			EventNames.FORCED_KILL, 
+			this.onForcedKill, 
+			false, 
+			this
+		);
+
 		this.arrEnemySystems[key].clear();
 		this.arrEnemySystems[key] = null;
 	}
@@ -336,6 +345,14 @@ Level.prototype.setEnemies = function() {
 				this.arrEnemyProjectileSystems[rawEnemy.projectileSystem] 
 			);
 		}
+
+		goog.events.listen(
+			this.arrEnemySystems[key], 
+			EventNames.FORCED_KILL, 
+			this.onForcedKill, 
+			false, 
+			this
+		);
 	}
 };
 
@@ -397,5 +414,10 @@ Level.prototype.onLevelComplete = function(e) {
 
 Level.prototype.onInitWarning = function(e) {
 	//bubble the event from the WaveManager instance up
+	goog.events.dispatchEvent(this, e);
+};
+
+Level.prototype.onForcedKill = function(e) {
+	//bubble the event from the EnemySystem instance up
 	goog.events.dispatchEvent(this, e);
 };

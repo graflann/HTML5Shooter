@@ -56,6 +56,14 @@ EnemySystem.prototype.init = function() {
 			false, 
 			this
 		);
+
+		goog.events.listen(
+			this.arrEnemies[i], 
+			EventNames.FORCED_KILL, 
+			this.onForcedKill, 
+			false, 
+			this
+		);
 	}
 };
 
@@ -75,6 +83,14 @@ EnemySystem.prototype.clear = function() {
 			this.arrEnemies[i], 
 			EventNames.ENEMY_KILLED, 
 			this.onEnemyKilled, 
+			false, 
+			this
+		);
+
+		goog.events.unlisten(
+			this.arrEnemies[i], 
+			EventNames.FORCED_KILL, 
+			this.onForcedKill, 
 			false, 
 			this
 		);
@@ -255,4 +271,8 @@ EnemySystem.prototype.removeReticles = function() {
 
 EnemySystem.prototype.onEnemyKilled = function(e) {
 	goog.events.dispatchEvent(this, this.enemyKilledEvent);
+};
+
+EnemySystem.prototype.onForcedKill = function(e) {
+	goog.events.dispatchEvent(this, e);
 };
