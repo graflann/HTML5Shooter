@@ -252,7 +252,8 @@ SniperTurret.prototype.updateEffects = function() {
 		this.ballEffects.alpha = Math.randomInRange(0.25, 0.75);
 
 		this.ballEffects.graphics
-			.f(Constants.BLUE)
+			//.f(Constants.BLUE)
+			.rf([Constants.BLUE, Constants.DARK_BLUE], [0, 1], 0, 0, randRadius * 0.5, 0, 0, randRadius)
 			.dc(0, 0, randRadius)
 			.ss(Math.randomInRange(1, 2))
 			.s(Constants.LIGHT_BLUE)

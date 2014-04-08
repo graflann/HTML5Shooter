@@ -129,28 +129,14 @@ CollisionManager.prototype.updateHomingList = function(options) {
 
             homingEntity = this.homingList[i];
 
-            //if(homingEntity instanceof Enemy) {
-                while(++j < killLength) {
-                    //ensure the homingList element references an Enemy instance and is on the killList
-                    if(homingEntity == this.killList[j]) {
-                        //remove enemy from the homing list if it is set to die
-                        this.homingList.splice(i, 1);
-                        i--;
-                    }
+            while(++j < killLength) {
+                //ensure the homingList element references an Enemy instance and is on the killList
+                if(homingEntity == this.killList[j]) {
+                    //remove enemy from the homing list if it is set to die
+                    this.homingList.splice(i, 1);
+                    i--;
                 }
-            // } else if (homingEntity instanceof ){
-            //     userData = homingEntity.GetUserData();
-
-            //     while(++j < killLength) {
-
-            //         //ensure the homingList element references an Enemy instance and is on the killList
-            //         if(userData && userData === this.killList[j]) {
-            //             //remove enemy from the homing list if it is set to die
-            //             this.homingList.splice(i, 1);
-            //             i--;
-            //         }
-            //     }
-            // }
+            }
         }
     }
 };
@@ -320,35 +306,17 @@ CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
     if(homingLength < this.arrPlayerProjectileSystems[ProjectileTypes.HOMING].length()) {
         //PROCESS ENEMY
 
-        //EnemyCarrier is a special case that can reference mulitple reticles
-        //due to multiple lock-on sensors
-        // if(enemy instanceof RotorEngine) {
-        //     //exits if enemy is already in homing list
-        //     while(++i < homingLength) {
-        //         if(this.homingList[i] === enemyBody) {
-        //             return;
-        //         }
-        //     }
-
-        //     //add homing reticle
-        //     enemy.onHoming(hto, this.collisionOptions.enemy, enemyBody);
-
-        //     //push onto the homing list if not already present
-        //     this.homingList.push(enemyBody);
-        // } else {
-            //exits if enemy is already in homing list
-            while(++i < homingLength) {
-                if(this.homingList[i] === enemy) {
-                    return;
-                }
+        while(++i < homingLength) {
+            if(this.homingList[i] === enemy) {
+                return;
             }
+        }
 
-            //add homing reticle
-            enemy.onHoming(hto, this.collisionOptions.enemy);
+        //add homing reticle
+        enemy.onHoming(hto, this.collisionOptions.enemy);
 
-            //push onto the homing list if not already present
-            this.homingList.push(enemy);
-        //}
+        //push onto the homing list if not already present
+        this.homingList.push(enemy);
 
         app.assetsProxy.playSound("menuFX2", 0.5);
     }
@@ -396,6 +364,11 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
             posX: player.position.x,
             posY: player.position.y
         });
+
+        // this.arrParticleSystems[ParticleSystemNames.SPAWN_GENERATOR].emit(1, {
+        //     posX: player.position.x,
+        //     posY: player.position.y
+        // });
 
         this.killList.push(object);
 

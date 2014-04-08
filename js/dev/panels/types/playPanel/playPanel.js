@@ -600,7 +600,13 @@ PlayPanel.prototype.setParticles = function() {
 	this.arrParticleSystems[ParticleSystemNames.BOOST] = new ParticleSystem(
 		ParticleTypes.BOOST,
 		null,
-		2
+		1
+	);
+
+	this.arrParticleSystems[ParticleSystemNames.SPAWN_GENERATOR] = new ParticleSystem(
+		ParticleTypes.SPAWN_GENERATOR,
+		null,
+		4
 	);
 };
 

@@ -7,12 +7,14 @@ goog.require('ParticleClasses');
 *@constructor
 *Ammo for Turret instaces
 */
-ParticleSystem = function(type, color, max) {
+ParticleSystem = function(type, color, max, altColor) {
 	this.type = type;
 
 	this.color = color;
 
 	this.max = max || 8;
+
+	this.altColor = altColor || null;
 
 	this.arrParticles = new Array(this.max);
 
@@ -26,10 +28,8 @@ ParticleSystem.prototype.init = function() {
 		i = -1;
 
 	while(++i < this.max){
-		this.arrParticles[i] = new ParticleClass(this.color);
+		this.arrParticles[i] = new ParticleClass(this.color, this.altColor);
 	}
-
-	//TODO: Resolve width and height?
 };
 
 ParticleSystem.prototype.update = function(options) {
