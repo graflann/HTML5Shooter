@@ -170,6 +170,22 @@ Level.prototype.init = function() {
 		false, 
 		this
 	);
+
+	goog.events.listen(
+		this.waveManager, 
+		EventNames.INIT_SPAWN_PARTICLE, 
+		this.onInitSpawnParticle, 
+		false, 
+		this
+	);
+
+	goog.events.listen(
+		this.waveManager, 
+		EventNames.REMOVE_SPAWN_PARTICLE, 
+		this.onRemoveSpawnParticle, 
+		false, 
+		this
+	);
 };
 
 /**
@@ -201,6 +217,22 @@ Level.prototype.clear = function() {
 		this.waveManager, 
 		EventNames.INIT_WARNING, 
 		this.onInitWarning, 
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.waveManager, 
+		EventNames.INIT_SPAWN_PARTICLE, 
+		this.onInitSpawnParticle, 
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.waveManager, 
+		EventNames.REMOVE_SPAWN_PARTICLE, 
+		this.onRemoveSpawnParticle, 
 		false, 
 		this
 	);
@@ -414,6 +446,16 @@ Level.prototype.onLevelComplete = function(e) {
 
 Level.prototype.onInitWarning = function(e) {
 	//bubble the event from the WaveManager instance up
+	goog.events.dispatchEvent(this, e);
+};
+
+Level.prototype.onInitSpawnParticle = function(e) {
+	//bubble the event from the WaveManager instance up
+	goog.events.dispatchEvent(this, e);
+};
+
+Level.prototype.onRemoveSpawnParticle = function(e) {
+	//bubble the event from the current Wave isntance up
 	goog.events.dispatchEvent(this, e);
 };
 

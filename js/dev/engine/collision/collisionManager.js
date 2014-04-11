@@ -365,11 +365,6 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
             posY: player.position.y
         });
 
-        // this.arrParticleSystems[ParticleSystemNames.SPAWN_GENERATOR].emit(1, {
-        //     posX: player.position.x,
-        //     posY: player.position.y
-        // });
-
         this.killList.push(object);
 
         app.assetsProxy.playSound("menuFX1", 0.5);

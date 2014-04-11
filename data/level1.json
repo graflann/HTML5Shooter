@@ -71,6 +71,12 @@
 	"waves" : [
 		[
 			{ 
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 4,
+				"positionX": 1920, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			}
+		],
+		[
+			{ 
 				"type": "enemyCarrier", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 1,
 				"positionX": -240, "positionY": 64, "hasWarning": true
 			}

@@ -76,10 +76,10 @@ WarningOverlay.prototype.animate = function (callback) {
 				.to({ 
 					alpha: 0
 				}, 500)
-				.callback(
+				.call(
 					function() {
-						goog.events.dispatchEvent(this, self.endWarningEvent);
-						self.clearTimeout(self.timer);
+						goog.events.dispatchEvent(self, self.endWarningEvent);
+						clearTimeout(self.timer);
 					}
 				);
 		}, 

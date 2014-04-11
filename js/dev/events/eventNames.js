@@ -27,6 +27,8 @@ EventNames = {
     UPDATE_BONUS:               'updateBonus',
     INIT_WARNING:               'initWarning',
     END_WARNING:                'endWarning',
+    INIT_SPAWN_PARTICLE:        'initSpawnParticle',
+    REMOVE_SPAWN_PARTICLE:      'removeSpawnParticle',
     GAME_OVER: 	                'gameOver',
     NEXT:               	    'next',
     PREVIOUS:           	    'previous',

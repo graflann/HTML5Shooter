@@ -18,12 +18,18 @@ SpawnGeneratorParticle = function(color, altColor) {
 
 	this.maxRadius = 0;
 
+	this.alpha = 0;
+
+	this.scaleInc = 0;
+
 	this.stateMachine = null;
 	
 	this.init();
 };
 
-goog.inherits(SpawnGeneratorParticle, Particle)
+goog.inherits(SpawnGeneratorParticle, Particle);
+
+SpawnGeneratorParticle.ALPHA_INC = 1 / 120;
 
 /**
 *@override
@@ -31,11 +37,13 @@ goog.inherits(SpawnGeneratorParticle, Particle)
 */
 SpawnGeneratorParticle.prototype.init = function() {
 	this.shape = new createjs.Shape();
+	this.shape.alpha = 0;
 
 	Particle.prototype.init.call(this);
 
-	this.radius = 64;
-	this.maxRadius = 64;
+	this.radius = 0;
+	this.setMaxRadius(64);
+	this.alpha = 0;
 
 	this.setStateMachine();
 };
@@ -46,32 +54,122 @@ SpawnGeneratorParticle.prototype.init = function() {
 */
 SpawnGeneratorParticle.prototype.update = function(options) {
 	if (this.isAlive) {
-		//redraw ball for dynamic fx
-		if(createjs.Ticker.getTicks() % 5 == 0) {
-			var randRadius = Math.randomInRange(0.85, 1) * this.radius,
-				randOrigin = Math.randomInRange(0.1, 0.5) * this.radius;
+		this.stateMachine.update(options);
 
-			this.shape.graphics.clear();
-
-			this.shape.alpha = Math.randomInRange(0.25, 0.5);
-
-			this.shape.graphics
-				.rf([Constants.RED, Constants.DARK_RED], [0, 1], 0, 0, this.radius * 0.5, 0, 0, this.radius)
-				.dc(0, 0, randRadius)
-				.ss(Math.randomInRange(1, 3))
-				.s(Constants.YELLOW)
-				.mt(randOrigin, randOrigin)
-				.lt(0, randRadius)
-				.mt(-randOrigin, -randOrigin)
-				.lt(randRadius, 0)
-				.mt(randOrigin, randOrigin)
-				.lt(0, -randRadius)
-				.mt(-randOrigin, -randOrigin)
-				.lt(-randRadius, 0);
-		}
-
-		this.shape.rotation += Math.randomInRange(-90, 90);
+		this.updateFX(options);
 	}
+};
+
+SpawnGeneratorParticle.prototype.updateFX = function(options) {
+	//redraw ball for dynamic fx
+	if(createjs.Ticker.getTicks() % 5 == 0) {
+		var randRadius = Math.randomInRange(0.85, 1) * this.radius,
+			randOrigin = Math.randomInRange(0.1, 0.5) * this.radius;
+
+		this.shape.graphics.clear();
+
+		this.shape.alpha = Math.randomInRange(this.alpha * 0.5, this.alpha);
+
+		this.shape.graphics
+			.rf([Constants.RED, Constants.DARK_RED], [0, 1], 0, 0, this.radius * 0.5, 0, 0, this.radius)
+			.dc(0, 0, randRadius)
+			.ss(Math.randomInRange(1, 3))
+			.s(Constants.YELLOW)
+			.mt(randOrigin, randOrigin)
+			.lt(0, randRadius)
+			.mt(-randOrigin, -randOrigin)
+			.lt(randRadius, 0)
+			.mt(randOrigin, randOrigin)
+			.lt(0, -randRadius)
+			.mt(-randOrigin, -randOrigin)
+			.lt(-randRadius, 0);
+	}
+
+	this.shape.rotation += Math.randomInRange(-90, 90);
+};
+
+
+SpawnGeneratorParticle.prototype.enterInitialization = function(options) {};
+
+SpawnGeneratorParticle.prototype.updateInitialization = function(options) {
+	this.radius += this.scaleInc;
+	this.alpha += SpawnGeneratorParticle.ALPHA_INC;
+
+	if(this.radius >= this.maxRadius) {
+		this.radius = this.maxRadius;
+
+		this.stateMachine.setState(ParticleOperationState.KEY);
+	}
+};
+
+SpawnGeneratorParticle.prototype.exitInitialization = function(options) {};
+
+
+SpawnGeneratorParticle.prototype.enterOperation = function(options) {};
+
+SpawnGeneratorParticle.prototype.updateOperation = function(options) {};
+
+SpawnGeneratorParticle.prototype.exitOperation = function(options) {};
+
+
+SpawnGeneratorParticle.prototype.enterRemoval = function(options) {};
+
+SpawnGeneratorParticle.prototype.updateRemoval = function(options) {
+	this.radius -= this.scaleInc;
+	this.alpha -= SpawnGeneratorParticle.ALPHA_INC;
+
+	if(this.radius <= 0) {
+		this.stateMachine.setState(State.KEY);
+	}
+};
+
+SpawnGeneratorParticle.prototype.exitRemoval  = function(options) {
+	this.kill();
+};
+
+SpawnGeneratorParticle.prototype.onRemove = function(e) {
+	var wave = e.target;
+
+	console.log("Spawn particle initing removal...");
+
+	goog.events.unlisten(
+		wave, 
+		EventNames.REMOVE_SPAWN_PARTICLE, 
+		this.onRemove,
+		false, 
+		this
+	);
+
+	this.stateMachine.setState(ParticleRemovalState.KEY);
+};
+
+/**
+*@override
+*@public
+*/
+SpawnGeneratorParticle.prototype.create = function(options) {
+	this.shape.x = Math.randomInRange(
+		options.posX - options.posOffsetX, 
+		options.posX + options.posOffsetX
+	);
+	this.shape.y = Math.randomInRange(
+		options.posY - options.posOffsetY, 
+		options.posY + options.posOffsetY
+	);
+	
+	this.velocity.x = Math.randomInRange(-options.velX, options.velX);
+	this.velocity.y = Math.randomInRange(-options.velY, options.velY);
+
+	if(options.isRotated) {
+		this.shape.rotation = Math.randomInRange(0, 360);
+	}
+	
+	this.isAlive = true;
+	
+	//enemy bodies need to rended on MAIN, the layer below this one so it looks right
+	app.layers.getStage(LayerTypes.FOREGROUND).addChild(this.shape);
+
+	this.stateMachine.setState(ParticleInitializationState.KEY);
 };
 
 /**
@@ -79,11 +177,16 @@ SpawnGeneratorParticle.prototype.update = function(options) {
 *@public
 */
 SpawnGeneratorParticle.prototype.kill = function() {
-	Particle.prototype.kill.call(this);
+	if(this.isAlive) {
+		this.shape.getStage().removeChild(this.shape);
+		this.isAlive = false;
 
-	this.shape.alpha = 0;
+		this.shape.alpha = 0;
+		this.radius = 0;
+		this.alpha = 0;
 
-	this.isAlive = false;
+		this.stateMachine.setState(State.KEY);
+	}
 };
 
 /**
@@ -91,6 +194,8 @@ SpawnGeneratorParticle.prototype.kill = function() {
 */
 SpawnGeneratorParticle.prototype.setMaxRadius = function(value) {
 	this.maxRadius = value;
+
+	this.scaleInc = this.maxRadius / createjs.Ticker.getFPS();
 };
 
 /**

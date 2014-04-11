@@ -19,10 +19,9 @@ Spawn = function(arrEnemySystems, options) {
 	this.options.positionX 			= options.positionX || 0;
 	this.options.positionY			= options.positionY || 0;
 	this.options.hasWarning			= (options.hasWarning === true) ? true : false;
+	this.options.hasSpawnParticle	= (options.hasSpawnParticle === true) ? true : false;
 
 	this.enemySystem = null;
-
-	this.warningEvent = new goog.events.Event(EventNames.INIT_WARNING, this);
 
 	this.init();
 };
@@ -59,13 +58,13 @@ Spawn.prototype.generate = function() {
 		this.enemySystem.generate(this.options);
 		goog.events.dispatchEvent(this.enemySystem, this.enemySystem.spawnCompleteEvent);
 	}
+};
 
-	console.log("Options warning is: " + this.options.hasWarning.toString());
-
-	//listener(s) render visual warning of impending enemy at spawn
-	if(this.options.hasWarning) {
-		goog.events.dispatchEvent(this, this.warningEvent);
-	}
+/**
+*@public
+*/
+Spawn.prototype.getOptions = function() {
+	return this.options;
 };
 
 /**
@@ -73,4 +72,11 @@ Spawn.prototype.generate = function() {
 */
 Spawn.prototype.hasWarning = function() {
 	return this.options.hasWarning;
+};
+
+/**
+*@public
+*/
+Spawn.prototype.hasSpawnParticle = function() {
+	return this.options.hasSpawnParticle;
 };

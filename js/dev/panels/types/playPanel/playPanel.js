@@ -804,6 +804,14 @@ PlayPanel.prototype.setEventListeners = function() {
 
 	goog.events.listen(
 		this.level, 
+		EventNames.INIT_SPAWN_PARTICLE, 
+		this.onInitSpawnParticle,
+		false, 
+		this
+	);
+
+	goog.events.listen(
+		this.level, 
 		EventNames.FORCED_KILL, 
 		this.onForcedKill,
 		false, 
@@ -883,6 +891,14 @@ PlayPanel.prototype.removeEventListeners = function() {
 		this.level, 
 		EventNames.INIT_WARNING, 
 		this.onInitWarning,
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.level, 
+		EventNames.INIT_SPAWN_PARTICLE, 
+		this.onInitSpawnParticle,
 		false, 
 		this
 	);
@@ -1054,6 +1070,58 @@ PlayPanel.prototype.onEndWarning = function(e) {
 	this.overlay.clear();
 	this.overlay = null;
 };
+
+/**
+*@private
+*/
+PlayPanel.prototype.onInitSpawnParticle = function(e) {
+	var wave = e.target,
+		options = wave.getCurrentSpawn().getOptions(),
+		spawnParticleSystem = this.arrParticleSystems[ParticleSystemNames.SPAWN_GENERATOR],
+		spawnParticle = null;
+
+	goog.events.unlisten(
+		this.level, 
+		EventNames.INIT_SPAWN_PARTICLE, 
+		this.onInitSpawnParticle,
+		false, 
+		this
+	);
+
+	spawnParticleSystem.emit(1, {
+        posX: options.positionX,
+        posY: options.positionY
+    });
+
+	//grab a reference to the just emitted particle
+	spawnParticle = spawnParticleSystem.getLastAlive();
+
+	//the particle is wired to listen to and handle the Wave particle removal notification
+    goog.events.listen(
+		wave, 
+		EventNames.REMOVE_SPAWN_PARTICLE, 
+		spawnParticle.onRemove,
+		false, 
+		spawnParticle
+	);
+};
+
+// /**
+// *@private
+// */
+// PlayPanel.prototype.onRemoveSpawnParticle = function(e) {
+// 	var wave = e.target;
+
+// 	goog.events.unlisten(
+// 		wave,
+// 		EventNames.REMOVE_SPAWN_PARTICLE, 
+// 		this.onRemoveSpawnParticle,
+// 		false, 
+// 		this
+// 	);
+
+// 	//TODO:Remove oldest spawn particle
+// };
 
 /**
 *Handles a notification to force a GameObject onto the kill list

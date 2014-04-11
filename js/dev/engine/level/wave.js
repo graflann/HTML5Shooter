@@ -4,6 +4,7 @@ goog.require('goog.events.EventTarget');
 goog.require('goog.events.Event');
 goog.require('goog.events');
 goog.require('EventNames');
+goog.require('PayloadEvent');
 goog.require('Spawn');
 
 /**
@@ -23,6 +24,9 @@ Wave = function(arrRawSpawns, arrEnemySystems) {
 	this.index = 0;
 
 	this.waveCompleteEvent = new goog.events.Event(EventNames.WAVE_COMPLETE, this);
+	this.warningEvent = new goog.events.Event(EventNames.INIT_WARNING, this);
+	this.initSpawnParticleEvent = new goog.events.Event(EventNames.INIT_SPAWN_PARTICLE, this);
+	this.removeSpawnParticleEvent = new goog.events.Event(EventNames.REMOVE_SPAWN_PARTICLE, this);
 
 	this.init();
 };
@@ -68,10 +72,17 @@ Wave.prototype.clear = function() {
 	this.currentSpawn = null;
 
 	this.waveCompleteEvent = null;
+	this.warningEvent = null;
+	this.initSpawnParticleEvent = null;
+	this.removeSpawnParticleEvent = null;
 };
 
 Wave.prototype.length = function() {
 	return this.arrSpawns.length;
+};
+
+Wave.prototype.getCurrentSpawn = function() {
+	return this.currentSpawn;
 };
 
 Wave.prototype.setCurrentSpawn = function() {
@@ -87,14 +98,14 @@ Wave.prototype.setCurrentSpawn = function() {
 		this
 	);
 
+	//listener(s) render visual warning of impending enemy at spawn
 	if(this.currentSpawn.hasWarning()) {
-		goog.events.listen(
-			this.currentSpawn, 
-			EventNames.INIT_WARNING, 
-			this.onInitWarning, 
-			false, 
-			this
-		);
+		goog.events.dispatchEvent(this, this.warningEvent);
+	}
+
+	//render visual FX for impending enemy spawn location
+	if(this.currentSpawn.hasSpawnParticle()) {
+		goog.events.dispatchEvent(this, this.initSpawnParticleEvent);
 	}
 
 	this.currentSpawn.generate();
@@ -112,23 +123,13 @@ Wave.prototype.onSpawnComplete = function(e) {
 			this
 		);
 
-		if(this.currentSpawn.hasWarning()) {
-			goog.events.unlisten(
-				this.currentSpawn, 
-				EventNames.INIT_WARNING, 
-				this.onInitWarning, 
-				false, 
-				this
-			);
+		if(this.currentSpawn.hasSpawnParticle()) {
+			console.log("Wave requesting spawn particle removal");
+			goog.events.dispatchEvent(this, this.removeSpawnParticleEvent);
 		}
 
 		goog.events.dispatchEvent(this, this.waveCompleteEvent);
 	} else {
 		this.setCurrentSpawn();
 	}
-};
-
-Wave.prototype.onInitWarning = function(e) {
-	//bubble the event from the spawn object up
-	goog.events.dispatchEvent(this, e);
 };
