@@ -10,6 +10,8 @@ goog.require('PayloadEvent');
 RotorEngine = function(color, radius, thickness, parentGameObject) {
 	this.parentGameObject = parentGameObject;
 
+	this.isAlive = null;
+
 	this.body = null;
 
 	this.health = 0;
@@ -38,18 +40,22 @@ RotorEngine.prototype.init = function() {
 	Rotor.prototype.init.call(this);
 
 	this.setPhysics();
+
+	this.isAlive = true;
 };
 
 /**
 *@public
 */
 RotorEngine.prototype.update = function(options) {
-	Rotor.prototype.update.call(this, options);
+	if(this.isAlive) {
+		Rotor.prototype.update.call(this, options);
 
-	if(this.reticle) {
-		this.reticle.shape.x = this.position.x;
-		this.reticle.shape.y = this.position.y;
-	}	
+		if(this.reticle) {
+			this.reticle.shape.x = this.position.x;
+			this.reticle.shape.y = this.position.y;
+		}	
+	}
 };
 
 /**
@@ -76,9 +82,18 @@ RotorEngine.prototype.clear = function() {
 	this.componentDestroyedEvent = null;
 };
 
+RotorEngine.prototype.setIsAlive = function(value) {
+	this.isAlive = value;
+
+	this.body.SetActive(value);
+	this.body.SetAwake(value);
+};
+
+
 RotorEngine.prototype.kill = function() {
-	this.body.SetActive(false);
-	this.body.SetAwake(false);
+	if(this.isAlive) {
+		this.setIsAlive(false);
+	}
 };
 
 RotorEngine.prototype.setPositionAndAngle = function(position, angle) {

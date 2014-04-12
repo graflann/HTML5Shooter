@@ -237,10 +237,6 @@ EnemyCarrier.prototype.kill = function() {
 
 		this.setIsAlive(false);
 
-		while(++i < length) {
-			this.arrRotors[i].kill();
-		}
-
 		this.container.getStage().removeChild(this.container);
 
 		//remove the shadow too
@@ -271,15 +267,12 @@ EnemyCarrier.prototype.removeReticles = function() {
 */
 EnemyCarrier.prototype.setIsAlive = function(value) {
 	var length = this.arrRotors.length,
-		rotor = null,
 		i = -1;
 
 	Enemy.prototype.setIsAlive.call(this, value);
 
 	while(++i < length) {
-		rotor = this.arrRotors[i];
-		rotor.body.SetActive(value);
-		rotor.body.SetAwake(value);
+		this.arrRotors[i].setIsAlive(value);
 	}
 
 	if(this.isAlive) {
@@ -561,7 +554,7 @@ EnemyCarrier.prototype.setRotors = function() {
 	var rotor,
 		offset;
 
-	for(var i = 0; i < EnemyCarrier.ROTOR_OFFSETS.length; i++) {
+	for(var i = 0; i < 2/*EnemyCarrier.ROTOR_OFFSETS.length*/; i++) {
 		rotor = new RotorEngine(
 			Constants.YELLOW, 
 			EnemyCarrier.ROTOR_RADIUS,
@@ -576,7 +569,7 @@ EnemyCarrier.prototype.setRotors = function() {
 		rotor.container.x = offset.x;
 		rotor.container.y = offset.y;
 
-		rotor.angleOffset = Math.radToDeg(Math.atan2(-offset.y, -offset.x));
+		rotor.angleOffset = Math.radToDeg(Math.atan2(offset.y, offset.x));
 
 		rotor.physicalOffset.x = offset.x / app.physicsScale;
 		rotor.physicalOffset.y = offset.y / app.physicsScale;
