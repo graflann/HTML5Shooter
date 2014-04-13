@@ -424,7 +424,7 @@ PlayerTank.prototype.checkMovement = function(options) {
 
 	//check vertical movement
 	if(input.isKeyDown(KeyCode.W) || 
-		input.isButtonDown(GamepadCode.BUTTONS.DPAD_UP) || vert < -input.MOVE_THRESHOLD) {
+		input.isButtonDown(GamepadCode.BUTTONS.DPAD_UP) || vert < -Input.MOVE_THRESHOLD) {
 
 		this.force.x = 0;
 		this.force.y = -this.velocity.y;
@@ -434,7 +434,7 @@ PlayerTank.prototype.checkMovement = function(options) {
 
 		this.isMoving = isUp = true;
 	} else if (input.isKeyDown(KeyCode.S) || 
-		input.isButtonDown(GamepadCode.BUTTONS.DPAD_DOWN) || vert > input.MOVE_THRESHOLD) {
+		input.isButtonDown(GamepadCode.BUTTONS.DPAD_DOWN) || vert > Input.MOVE_THRESHOLD) {
 
 		this.force.x = 0;
 		this.force.y = this.velocity.y;
@@ -447,7 +447,7 @@ PlayerTank.prototype.checkMovement = function(options) {
 
 	//check horizontal movement
 	if(input.isKeyDown(KeyCode.A) || 
-		input.isButtonDown(GamepadCode.BUTTONS.DPAD_LEFT) || hori < -input.MOVE_THRESHOLD) {
+		input.isButtonDown(GamepadCode.BUTTONS.DPAD_LEFT) || hori < -Input.MOVE_THRESHOLD) {
 
 		this.force.x = -this.velocity.x;
 		this.force.y = 0;
@@ -459,7 +459,7 @@ PlayerTank.prototype.checkMovement = function(options) {
 
 		this.isMoving = true;
 	} else if (input.isKeyDown(KeyCode.D) || 
-		input.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT) || hori > input.MOVE_THRESHOLD) {
+		input.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT) || hori > Input.MOVE_THRESHOLD) {
 
 		this.force.x = this.velocity.x;
 		this.force.y = 0;

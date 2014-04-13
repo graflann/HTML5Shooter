@@ -153,8 +153,8 @@ Turret.prototype.manualControl = function(options) {
 		} 
 		//maps right-stick to turret rotation for firing control in twin-stick preference
 		else if ( 
-			vert < -input.SHOOT_THRESHOLD || vert > input.SHOOT_THRESHOLD ||
-			hori < -input.SHOOT_THRESHOLD || hori > input.SHOOT_THRESHOLD
+			vert < -Input.SHOOT_THRESHOLD || vert > Input.SHOOT_THRESHOLD ||
+			hori < -Input.SHOOT_THRESHOLD || hori > Input.SHOOT_THRESHOLD
 		) {
 			var deg = Math.radToDeg(Math.atan2(vert, hori));
 
