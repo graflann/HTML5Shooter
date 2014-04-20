@@ -15,7 +15,8 @@ LayerTypes = {
     SHADOW:			"shadow",
     AIR:			"air",
     DEBUG: 			"debug",
-    LOADING:        "loading" 
+    LOADING:        "loading",
+    MODAL:          "modal"
 };
 
 goog.exportSymbol('LayerTypes', LayerTypes);

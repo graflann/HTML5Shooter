@@ -17,17 +17,13 @@ goog.inherits(Panel, goog.events.EventTarget);
 /**
 *@protected
 */
-Panel.prototype.init = function() {
-	
-};
+Panel.prototype.init = function() { };
 
 /**
 *Updates the panel according to game frame rate
 *@protected
 */
-Panel.prototype.update = function() {
-	app.layers.update();
-};
+Panel.prototype.update = function() { };
 
 /**
 *Roasts the panel

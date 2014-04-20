@@ -14,6 +14,7 @@ goog.require('GamepadCode');
 goog.require('StateMachine');
 goog.require('GameDefaultState');
 goog.require('GamePadStatusState');
+goog.require('MessageModal');
 
 /**
 *@constructor
@@ -28,9 +29,9 @@ Game = function() {
 	this.loadingPanel = null;
 
 	/**
-	* Updates the user of gamepad status
+	* Updates the user of gamepad status and other messages
 	*/
-	this.gamepadModal = null;
+	this.modal = null;
 	
 	/**
 	*@type {PanelFactory}
@@ -44,6 +45,10 @@ Game = function() {
 };
 
 goog.inherits(Game, goog.events.EventTarget);
+
+Game.GAMEPAD_MESSAGE = "Thank you for trying Strike, \nbut it currently requires a compatible gamepad." +
+	"\n\nPlease plug one into an available USB port." +
+	"\n\nIf you are seeing this message and a compatible pad is plugged in, \npress any button on the gamepad to continue.";
 
 /**
 *@private
@@ -67,6 +72,14 @@ Game.prototype.init = function() {
 		this
 	);
 
+	goog.events.listen(
+		input, 
+		EventNames.GAMEPAD_STATUS_CHANGED, 
+		this.onGamepadStatusChanged,
+		false, 
+		this
+	);
+
 	this.setStateMachine();
 
 	//Need to validate polling of a well-formed gamepad instance per Chrome,
@@ -74,9 +87,9 @@ Game.prototype.init = function() {
 	//the user is forced to enter a button to init native polling of gamepad
 	if(input.validateGamepad()) {
 		//Chrome has previously resolved a raw gamepad reference so init with default gaming state
-		this.addLoadingPanel();
+		//this.addLoadingPanel();
 
-		this.setPanel(PanelTypes.TITLE_PANEL);
+		//this.setPanel(PanelTypes.TITLE_PANEL);
 		//this.setPanel(PanelTypes.OPTIONS_PANEL);
 		//this.setPanel(PanelTypes.PLAY_PANEL);
 		//this.setPanel(PanelTypes.PATH_FINDING_PANEL);
@@ -95,17 +108,17 @@ Game.prototype.init = function() {
 *@private
 */
 Game.prototype.update = function() {
+	app.layers.update();
+
 	this.stateMachine.update();
 };
 
 Game.prototype.enterGame = function() {
-	goog.events.listen(
-		input, 
-		EventNames.GAMEPAD_STATUS_CHANGED, 
-		this.onGamepadStatusChanged,
-		false, 
-		this
-	);
+	if(!this.currentPanel) {
+		this.addLoadingPanel();
+
+		this.setPanel(PanelTypes.TITLE_PANEL);
+	}
 };
 
 Game.prototype.updateGame = function() {
@@ -121,17 +134,20 @@ Game.prototype.updateGame = function() {
 };
 
 Game.prototype.exitGame = function() {
-	goog.events.unlisten(
-		input, 
-		EventNames.GAMEPAD_STATUS_CHANGED, 
-		this.onGamepadStatusChanged,
-		false, 
-		this
-	);
+	
 };
 
 Game.prototype.enterGamepadStatus = function() {
+	var message = "";
 
+	message = Game.GAMEPAD_MESSAGE;
+
+	this.modal = new MessageModal(message);
+
+	app.layers.add(LayerTypes.MODAL, 10000);
+	app.layers.getStage(LayerTypes.MODAL).addChild(this.modal.container);
+
+	this.modal.animate();
 };
 
 Game.prototype.updateGamepadStatus = function() {
@@ -139,7 +155,12 @@ Game.prototype.updateGamepadStatus = function() {
 };
 
 Game.prototype.exitGamepadStatus = function() {
+	app.layers.getStage(LayerTypes.MODAL).removeChild(this.modal.container);
 
+	this.modal.clear();
+	this.modal = null;
+
+	app.layers.remove(LayerTypes.MODAL);
 };
 
 /**
@@ -198,7 +219,7 @@ Game.prototype.setStateMachine = function() {
 	this.stateMachine.addState(
 		GameDefaultState.KEY,
 		new GameDefaultState(this),
-		[ PlayerRechargeState.KEY ]
+		[ GamePadStatusState.KEY ]
 	);
 
 	this.stateMachine.addState(
@@ -258,4 +279,19 @@ Game.prototype.onGamePadSupportUnavailable = function(e) {
 
 Game.prototype.onGamepadStatusChanged = function(e) {
 	console.log("Gamepad status changed: " + e.payload.toString());
+
+	//toggle the state 
+	switch(this.stateMachine.getCurrentState()) 
+	{
+	case GamePadStatusState.KEY:
+		var self = this;
+
+		this.modal.remove(function() {
+			self.stateMachine.setState(GameDefaultState.KEY);
+		})
+		break;
+	case GameDefaultState.KEY:
+		this.stateMachine.setState(GamePadStatusState.KEY);
+		break;
+	}
 };

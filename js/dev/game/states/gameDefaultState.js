@@ -18,7 +18,7 @@ GameDefaultState.KEY = "default";
 *@public
 */
 GameDefaultState.prototype.enter = function() {
-	
+	this.game.enterGame();
 };
 
 /**
@@ -32,7 +32,7 @@ GameDefaultState.prototype.update = function() {
 *@public
 */
 GameDefaultState.prototype.exit = function() {
-	
+	this.game.exitGame();
 };
 
 GameDefaultState.prototype.clear = function() {

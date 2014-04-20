@@ -192,7 +192,7 @@ Input.prototype.pollGamepads = function() {
 			gamepad = rawGamepads[i];
 
 			//ensure a defined and well-formed gamepad instance (sometimes unexpected devices qualify in rawGamepads) 
-			//by inspecting the button Array; it will have button elements if valid
+			//by inspecting the button Array, a qualifying gamepad device can be validated
 			if(gamepad && gamepad.buttons.length > 0) {
 				this.arrGamepads.push(gamepad);
 			}
