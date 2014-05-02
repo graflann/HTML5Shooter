@@ -135,6 +135,6 @@ VulcanTurret.prototype.baseFire = function() {
 		
 		stage.addChild(projectile.shape);
 
-		app.assetsProxy.playSound("shot1", 0.5);
+		app.assetsProxy.playSound("vulcan", 0.5);
 	}
 };

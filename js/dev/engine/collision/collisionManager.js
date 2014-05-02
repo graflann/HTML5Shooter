@@ -288,11 +288,11 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object, obj
         }
     //VS. PLAYER - invincible during boost
     } else if (object instanceof PlayerTank && !object.isBoosting) { 
-        // object.onCollide(projectile, this.collisionOptions.player);
+        //object.onCollide(projectile, this.collisionOptions.player);
 
-        // this.killList.push(object);
+        //this.killList.push(object);
 
-        // app.assetsProxy.playSound("impact1", 0.5);
+        //app.assetsProxy.playSound("explosion1");
     }
 
     //set projectile up for removal during update

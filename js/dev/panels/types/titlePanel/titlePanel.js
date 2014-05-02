@@ -199,7 +199,7 @@ TitlePanel.prototype.setTitle = function() {
 				.to({ alpha: 1 }, 250);
 		},
 		sequence2 = function(){			
-			//app.assetsProxy.playSound('Dark Curiosity');
+			app.assetsProxy.playSound('Dark Curiosity');
 
 			createjs.Tween.get(self.titleComponent)
 				.to({ 

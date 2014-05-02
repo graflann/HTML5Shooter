@@ -368,19 +368,22 @@ PlayerTank.prototype.enterDeath = function(options) {
 	var self = this,
 		diversionPosition = new app.b2Vec2(this.position.x, this.position.y);
 
+	setTimeout(function() {
+		//ensure enemies are diverted to a new player position / target point with a minimum distance from the point of death
+		while(self.position.DistanceSqrd(diversionPosition) < 4000) {
+			self.position.x = app.arenaWidth * (Math.randomInRange(1, 9) * 0.1);
+			self.position.y = app.arenaHeight * (Math.randomInRange(1, 9) * 0.1);
+		}
+
+		goog.events.dispatchEvent(self, self.gameOverEvent);
+	}, 3000);
+
 	createjs.Tween
 		.get(this.container)
 		.to({
 				alpha: 0
 			}, 
-			1000)
-		.call(function() { goog.events.dispatchEvent(self, self.gameOverEvent); });
-
-	//ensure enemies are diverted to a new player position / target point with a minimum distance from the point of death
-	while(this.position.DistanceSqrd(diversionPosition) < 4000) {
-		this.position.x = app.arenaWidth * (Math.randomInRange(1, 9) * 0.1);
-		this.position.y = app.arenaHeight * (Math.randomInRange(1, 9) * 0.1);
-	}
+			1500);
 };
 
 /**
@@ -759,9 +762,24 @@ PlayerTank.prototype.turnWheels = function(deg) {
 };
 
 PlayerTank.prototype.setPosition = function(pos) {
-	var scale = app.physicsScale;
+	var scale = app.physicsScale,
+		maxBoundsX = app.arenaWidth / scale,
+		maxBoundsY = app.arenaHeight / scale;
 
 	this.physicalPosition = pos;
+
+	//check bounds and reset position to opposite side
+	if(this.physicalPosition.x < 0) {
+		this.physicalPosition.x = maxBoundsX;
+	} else if(this.physicalPosition.x > maxBoundsX) {
+		this.physicalPosition.x = 0;
+	}
+
+	if(this.physicalPosition.y < 0) {
+		this.physicalPosition.y = maxBoundsY;
+	} else if(this.physicalPosition.y > maxBoundsY) {
+		this.physicalPosition.y = 0;
+	}
 
 	this.container.x = (this.physicalPosition.x * scale) - this.turret.shape.x;
 	this.container.y = (this.physicalPosition.y * scale) - this.turret.shape.y;
@@ -770,7 +788,7 @@ PlayerTank.prototype.setPosition = function(pos) {
 	this.position.y = this.container.y + this.turret.shape.y;
 
 	//SET TANK AND TURRET BODY POSITIONS
-	this.body.SetPositionAndAngle(pos, Math.degToRad(this.baseContainer.rotation));
+	this.body.SetPositionAndAngle(this.physicalPosition, Math.degToRad(this.baseContainer.rotation));
 	this.turretBody.SetPosition(this.physicalPosition);
 };
 
@@ -795,7 +813,7 @@ PlayerTank.prototype.fireHoming = function() {
 	var deg,
 		sin,
 		cos,
-		scale = app.physcialScale,
+		scale = app.physicsScale,
 		trigTable = app.trigTable,
 		stage = this.container.getStage(),
 		projectile = null,
@@ -1142,14 +1160,19 @@ PlayerTank.prototype.onOverdriveChange = function(e) {
 */
 PlayerTank.prototype.onCollide = function(collisionObject, options) {
 	//if(this.modifyHealth(collisionObject.damage)) {
-		options.explosions.emit(32, {
-			posX: this.position.x,
-			posY: this.position.y,
-			posOffsetX: 16,
-			posOffsetY: 16,
-			velX: 8,
-			velY: 8
-		});
+		var self = this;
+
+		//delay to coincide with sound fx
+		setTimeout(function() {
+			options.explosions.emit(32, {
+				posX: self.position.x,
+				posY: self.position.y,
+				posOffsetX: 16,
+				posOffsetY: 16,
+				velX: 8,
+				velY: 8
+			});
+		}, 1000);
 	//}
 
 	this.stateMachine.setState(PlayerDeathState.KEY);

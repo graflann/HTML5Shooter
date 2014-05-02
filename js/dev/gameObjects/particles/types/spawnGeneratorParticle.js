@@ -119,18 +119,19 @@ SpawnGeneratorParticle.prototype.updateRemoval = function(options) {
 	this.alpha -= SpawnGeneratorParticle.ALPHA_INC;
 
 	if(this.radius <= 0) {
-		this.stateMachine.setState(State.KEY);
+		//this.stateMachine.setState(State.KEY);
+		this.kill();
 	}
 };
 
 SpawnGeneratorParticle.prototype.exitRemoval  = function(options) {
-	this.kill();
+	//this.kill();
 };
 
 SpawnGeneratorParticle.prototype.onRemove = function(e) {
 	var wave = e.target;
 
-	console.log("Spawn particle initing removal...");
+	console.log("Spawn particle initing removal: " + this.stateMachine.getCurrentState());
 
 	goog.events.unlisten(
 		wave, 
@@ -207,7 +208,7 @@ SpawnGeneratorParticle.prototype.setStateMachine = function() {
 	this.stateMachine.addState(
 		State.KEY,
 		new State(),
-		[ ParticleInitializationState.KEY ]
+		[ ParticleInitializationState.KEY, ParticleRemovalState.KEY ]
 	);
 
 	this.stateMachine.addState(

@@ -18,6 +18,8 @@ ParticleSystem = function(type, color, max, altColor) {
 
 	this.arrParticles = new Array(this.max);
 
+	this.indexOfLastActivated = -1;
+
 	this.init();
 };
 
@@ -81,6 +83,9 @@ ParticleSystem.prototype.emit = function(quantity, options) {
 			particle.create(options);
 		}
 	}
+
+	//returns reference to last emitted particle
+	return particle;
 };
 
 ParticleSystem.prototype.getParticle = function() {
@@ -91,6 +96,8 @@ ParticleSystem.prototype.getParticle = function() {
 		particle = this.arrParticles[i];
 
 		if (!particle.isAlive) {
+			this.indexOfLastActivated = i;
+
 			return particle;
 		}
 	}
@@ -101,13 +108,11 @@ ParticleSystem.prototype.getParticle = function() {
 ParticleSystem.prototype.getLastAlive = function() {
 	var i = this.max,
 		particle;
-			
-	while (--i > -1) {
-		particle = this.arrParticles[i];
 
-		if (particle.isAlive) {
-			return particle;
-		}
+	particle = this.arrParticles[this.indexOfLastActivated];
+
+	if (particle.isAlive) {
+		return particle;
 	}
 	
 	return null;

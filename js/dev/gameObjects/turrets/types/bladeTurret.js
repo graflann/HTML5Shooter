@@ -131,6 +131,8 @@ BladeTurret.prototype.defaultFire = function() {
 		
 		projectile.shape.rotation = this.shape.rotation;
 		stage.addChild(projectile.shape);
+
+		app.assetsProxy.playSound("blade", 0.5);
 	}
 };
 
@@ -170,6 +172,8 @@ BladeTurret.prototype.altFire = function() {
 			
 			projectile.shape.rotation = deg + 90;
 			stage.addChild(projectile.shape);
+
+			app.assetsProxy.playSound("blade", 0.5);
 		}
 	}
 };

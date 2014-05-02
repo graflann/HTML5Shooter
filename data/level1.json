@@ -21,15 +21,20 @@
 
 	"sounds": [
 		"Glide",
+		"Dark Curiosity",
 		"intro1",
 		"laser_large",
 		"weaponchange1",
 		"weaponchange2",
 		"swoosh1",
-		"shot1",
 		"menuFX1",
 		"menuFX2",
-		"impact1"
+		"impact1",
+		"explosion1",
+		"blade",
+		"vulcan",
+		"sniper",
+		"spread"
 	],
 
 	"dimensions": { 
@@ -71,8 +76,76 @@
 	"waves" : [
 		[
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 4,
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 8,
+				"positionX": 1680, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			},
+			{ 
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 2, "targetQuantity": 8,
 				"positionX": 1920, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			},
+			{ 
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 8,
+				"positionX": 2160, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			}
+		],
+		[
+			{ 
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 4,
+				"positionX": 960, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			}
+		],
+		[
+			{ 
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 4,
+				"positionX": 2880, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			}
+		],
+		[
+			{ 
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 8,
+				"positionX": 1920, "positionY": 240, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			},
+			{ 
+				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 1, "targetQuantity": 8,
+				"positionX": 1920, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			}
+		],
+		[
+			{ 
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 16,
+				"positionX": 1680, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			},
+			{ 
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 2, "targetQuantity": 32,
+				"positionX": 1920, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			},
+			{ 
+				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 16,
+				"positionX": 2160, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			}
+		],
+		[
+			{ 
+				"type": "enemyTank", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 4,
+				"positionX": 1920, "positionY": 240, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			}
+		],
+		[
+			{ 
+				"type": "enemyCopter", "intervalTime": 3000, "intervalQuantity": 1, "targetQuantity": 2,
+				"positionX": 1920, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			}
+		],
+		[
+			{ 
+				"type": "enemyCopter", "intervalTime": 3000, "intervalQuantity": 1, "targetQuantity": 2,
+				"positionX": 1920, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			}
+		],
+		[
+			{ 
+				"type": "enemyCentipede", "intervalTime": 3000, "intervalQuantity": 1, "targetQuantity": 2,
+				"positionX": 1920, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			}
 		],
 		[

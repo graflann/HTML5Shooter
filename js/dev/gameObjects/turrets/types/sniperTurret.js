@@ -195,6 +195,8 @@ SniperTurret.prototype.defaultFire = function() {
 		createjs.Tween.get(this.laserSight).to({alpha: 0, scaleX: 0, scaleY: 0}, 250).call(function(){
 			createjs.Tween.get(self.laserSight).to({alpha: 0.5, scaleX: 1, scaleY: 1}, 300);
 		});
+
+		app.assetsProxy.playSound("sniper", 0.5);
 	}
 };
 
@@ -234,6 +236,8 @@ SniperTurret.prototype.altFire = function() {
 		projectile.body.ApplyForce(vector2D, projectile.body.GetWorldCenter());
 		
 		stage.addChild(projectile.shape);
+
+		app.assetsProxy.playSound("sniper", 0.5);
 	}
 };
 

@@ -554,7 +554,7 @@ EnemyCarrier.prototype.setRotors = function() {
 	var rotor,
 		offset;
 
-	for(var i = 0; i < 2/*EnemyCarrier.ROTOR_OFFSETS.length*/; i++) {
+	for(var i = 0; i < EnemyCarrier.ROTOR_OFFSETS.length; i++) {
 		rotor = new RotorEngine(
 			Constants.YELLOW, 
 			EnemyCarrier.ROTOR_RADIUS,

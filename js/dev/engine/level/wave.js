@@ -113,6 +113,11 @@ Wave.prototype.setCurrentSpawn = function() {
 
 //EVENT HANDLERS
 Wave.prototype.onSpawnComplete = function(e) {
+	if(this.currentSpawn.hasSpawnParticle()) {
+		console.log("Wave requesting spawn particle removal");
+		goog.events.dispatchEvent(this, this.removeSpawnParticleEvent);
+	}
+	
 	if(++this.index >= this.length()) {
 		//clean up listeners and prompt end of spawn
 		goog.events.unlisten(
@@ -123,13 +128,10 @@ Wave.prototype.onSpawnComplete = function(e) {
 			this
 		);
 
-		if(this.currentSpawn.hasSpawnParticle()) {
-			console.log("Wave requesting spawn particle removal");
-			goog.events.dispatchEvent(this, this.removeSpawnParticleEvent);
-		}
-
 		goog.events.dispatchEvent(this, this.waveCompleteEvent);
 	} else {
+
+
 		this.setCurrentSpawn();
 	}
 };

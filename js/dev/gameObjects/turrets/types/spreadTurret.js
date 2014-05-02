@@ -124,7 +124,7 @@ SpreadTurret.prototype.defaultFire = function() {
 	}
 
 	if(projectile) {
-		app.assetsProxy.playSound("shot1", 0.5);
+		app.assetsProxy.playSound("spread", 0.5);
 	}
 };
 
@@ -172,6 +172,6 @@ SpreadTurret.prototype.altFire = function() {
 	}
 
 	if(projectile) {
-		app.assetsProxy.playSound("shot1", 0.5);
+		app.assetsProxy.playSound("spread", 0.5);
 	}
 };

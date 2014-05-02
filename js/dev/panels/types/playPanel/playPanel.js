@@ -164,7 +164,7 @@ PlayPanel.prototype.enterIntro = function(options) {
 	this.overlay = new EnterLevelOverlay(this);
 	stage.addChild(this.overlay.container);
 
-	//app.assetsProxy.playSound('Glide', 1, true);
+	app.assetsProxy.playSound('Glide', 1, true);
 
 	//some delays set to let the overlay animate correctly
 	setTimeout(function() {
@@ -606,7 +606,7 @@ PlayPanel.prototype.setParticles = function() {
 	this.arrParticleSystems[ParticleSystemNames.SPAWN_GENERATOR] = new ParticleSystem(
 		ParticleTypes.SPAWN_GENERATOR,
 		null,
-		4
+		8
 	);
 };
 
@@ -1080,48 +1080,24 @@ PlayPanel.prototype.onInitSpawnParticle = function(e) {
 		spawnParticleSystem = this.arrParticleSystems[ParticleSystemNames.SPAWN_GENERATOR],
 		spawnParticle = null;
 
-	goog.events.unlisten(
-		this.level, 
-		EventNames.INIT_SPAWN_PARTICLE, 
-		this.onInitSpawnParticle,
-		false, 
-		this
-	);
-
-	spawnParticleSystem.emit(1, {
+	//grab a reference to the just emitted particle
+	spawnParticle = spawnParticleSystem.emit(1, {
         posX: options.positionX,
         posY: options.positionY
     });
 
-	//grab a reference to the just emitted particle
-	spawnParticle = spawnParticleSystem.getLastAlive();
-
-	//the particle is wired to listen to and handle the Wave particle removal notification
-    goog.events.listen(
-		wave, 
-		EventNames.REMOVE_SPAWN_PARTICLE, 
-		spawnParticle.onRemove,
-		false, 
-		spawnParticle
-	);
+	//if a particle is available, it is wired to listen to and handle the Wave particle removal notification
+	//so it knows to remove itself at the appearance of the last enemy in a spawn
+ 	if(spawnParticle) {
+	    goog.events.listen(
+			wave, 
+			EventNames.REMOVE_SPAWN_PARTICLE, 
+			spawnParticle.onRemove,
+			false, 
+			spawnParticle
+		);
+	}
 };
-
-// /**
-// *@private
-// */
-// PlayPanel.prototype.onRemoveSpawnParticle = function(e) {
-// 	var wave = e.target;
-
-// 	goog.events.unlisten(
-// 		wave,
-// 		EventNames.REMOVE_SPAWN_PARTICLE, 
-// 		this.onRemoveSpawnParticle,
-// 		false, 
-// 		this
-// 	);
-
-// 	//TODO:Remove oldest spawn particle
-// };
 
 /**
 *Handles a notification to force a GameObject onto the kill list
