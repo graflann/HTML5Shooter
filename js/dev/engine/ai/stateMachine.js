@@ -76,6 +76,10 @@ StateMachine.prototype.getCurrentState = function() {
 	return this.currentKey;
 };
 
+StateMachine.prototype.getPreviousState = function() {
+	return this.previousKey;
+};
+
 StateMachine.prototype.reset = function() {
 	this.currentKey = "";
 	this.currentState = null;

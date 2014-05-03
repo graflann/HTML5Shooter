@@ -11,7 +11,7 @@ OverdriveItem = function(categoryBits) {
 
 	this.label = null;
 
-	this.value = 1;
+	this.value = 10;
 
 	this.secondsAlive = 16;
 

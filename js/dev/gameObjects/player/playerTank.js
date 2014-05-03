@@ -14,6 +14,7 @@ goog.require('PlayerDefaultState');
 goog.require('PlayerBoostState');
 goog.require('PlayerRechargeState');
 goog.require('PlayerDeathState');
+goog.require('PlayerOverdriveState');
 goog.require('RotationUtils');
 
 /**
@@ -97,6 +98,8 @@ PlayerTank = function(arrProjectileSystems, boostSystem) {
 
 	this.overdrive = 0;
 
+	this.overdriveTimer = PlayerOverdriveState.DURATION;
+
 	this.damage = 0;
 
 	this.stateMachine = null;
@@ -122,8 +125,6 @@ PlayerTank.HOMING_OFFSETS = [-150, 150, -120, 120];
 
 PlayerTank.MAX_ENERGY 		= 100;
 PlayerTank.MAX_OVERDRIVE 	= 100;
-
-PlayerTank.OVERDRIVE_DURATION = 20000;
 
 PlayerTank.BOOST_SCALE_X = 0.9;
 PlayerTank.BOOST_SCALE_Y = 1.1;
@@ -297,7 +298,11 @@ PlayerTank.prototype.enterBoost = function(options) {
 		if(self.energy === 0) {
 			self.stateMachine.setState(PlayerRechargeState.KEY);
 		} else {
-			self.stateMachine.setState(PlayerDefaultState.KEY);
+			if(self.isOverdrive) {
+				self.stateMachine.setState(PlayerOverdriveState.KEY);
+			} else {
+				self.stateMachine.setState(PlayerDefaultState.KEY);
+			}
 		}
 	}, PlayerBoostState.DURATION);
 };
@@ -311,6 +316,10 @@ PlayerTank.prototype.updateBoost = function(options) {
 	this.animateWheels();
 
 	this.updateTurret();
+
+	if(this.isOverdrive) {
+		this.tickDownOverdrive();
+	}
 };
 
 PlayerTank.prototype.exitBoost = function(options) {
@@ -1039,19 +1048,25 @@ PlayerTank.prototype.setStateMachine = function() {
 	this.stateMachine.addState(
 		PlayerDefaultState.KEY,
 		new PlayerDefaultState(this),
-		[ PlayerBoostState.KEY, PlayerRechargeState.KEY, PlayerDeathState.KEY ]
+		[ PlayerBoostState.KEY, PlayerRechargeState.KEY, PlayerOverdriveState.KEY, PlayerDeathState.KEY ]
 	);
 
 	this.stateMachine.addState(
 		PlayerBoostState.KEY,
 		new PlayerBoostState(this),
-		[ PlayerDefaultState.KEY, PlayerRechargeState.KEY ]
+		[ PlayerDefaultState.KEY, PlayerRechargeState.KEY, PlayerOverdriveState.KEY ]
 	);
 
 	this.stateMachine.addState(
 		PlayerRechargeState.KEY,
 		new PlayerRechargeState(this),
-		[ PlayerDefaultState.KEY, PlayerDeathState.KEY ]
+		[ PlayerDefaultState.KEY, PlayerOverdriveState.KEY, PlayerDeathState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		PlayerOverdriveState.KEY,
+		new PlayerOverdriveState(this),
+		[ PlayerDefaultState.KEY, PlayerBoostState.KEY, PlayerDeathState.KEY ]
 	);
 
 	this.stateMachine.addState(
@@ -1086,60 +1101,87 @@ PlayerTank.prototype.changeEnergy = function(value) {
 
 PlayerTank.prototype.changeOverdrive = function(value) {
 	if(!this.isOverdrive) {
+		//cap this.overdrive value when necessary
 		if(value < 0) {
 			value = 0;
 		} else if(value > PlayerTank.MAX_OVERDRIVE) {
 			value = PlayerTank.MAX_OVERDRIVE;
 		}
 
+		//notify UI or other observers of overdrive change
 		this.overdriveChangeEvent.payload = this.overdrive = value;
 		goog.events.dispatchEvent(this, this.overdriveChangeEvent);
 
+		//activate the overdrive state when enough is acquired		
 		if(this.overdrive === PlayerTank.MAX_OVERDRIVE) {
-			var self = this;
-
-			this.isOverdrive = true;
-
-			//force end of recharge state to auto set full energy
-			if(this.stateMachine.getCurrentState() === PlayerRechargeState.KEY) {
-				this.stateMachine.setState(PlayerDefaultState.KEY);
-			}
-
 			//max energy going into overdrive
 			this.energyChangeEvent.payload = this.energy = PlayerTank.MAX_ENERGY;
 			goog.events.dispatchEvent(this, this.energyChangeEvent);
 
-			//set all turrets to overdrive firing
-			for(var key in this.arrTurrets) {
-				this.arrTurrets[key].setFiringState(Turret.FIRE_TYPES.ALT);
-			}
-
-			//remove old projectiles and update PlayerTank proj system reference to most recent proj system
-			this.currentProjectileSystem.kill();
-			this.currentProjectileSystem = this.turret.currentProjectileSystem;
-
-			setTimeout(function() {
-				//set all turrets to default firing
-				for(var key in self.arrTurrets) {
-					self.arrTurrets[key].setFiringState(Turret.FIRE_TYPES.DEFAULT);
-				}
-
-				//remove old projectiles and update PlayerTank proj system reference to most recent proj system
-				self.currentProjectileSystem.kill();
-				self.currentProjectileSystem = self.turret.currentProjectileSystem;
-
-				//cease overdrive status
-				self.isOverdrive = false;
-			}, PlayerTank.OVERDRIVE_DURATION);
+			this.stateMachine.setState(PlayerOverdriveState.KEY);
 		}
+	}
+};
+
+PlayerTank.prototype.enterOverdrive = function(options) {
+
+	if(this.overdrive === PlayerTank.MAX_OVERDRIVE) {
+		//set all turrets to overdrive firing
+		for(var key in this.arrTurrets) {
+			this.arrTurrets[key].setFiringState(Turret.FIRE_TYPES.ALT);
+		}
+
+		//remove old projectiles and update PlayerTank proj system reference to most recent proj system
+		this.currentProjectileSystem.kill();
+		this.currentProjectileSystem = this.turret.currentProjectileSystem;
+
+		this.overdriveTimer = PlayerOverdriveState.DURATION;
+
+		this.isOverdrive = true;
+	}
+};
+
+PlayerTank.prototype.updateOverdrive = function(options) {
+	this.updateDefault(options);
+
+	this.tickDownOverdrive();
+};
+
+PlayerTank.prototype.exitOverdrive = function(options) {
+
+	if(this.overdrive === 0) {
+		//set all turrets to default firing
+		for(var key in this.arrTurrets) {
+			this.arrTurrets[key].setFiringState(Turret.FIRE_TYPES.DEFAULT);
+		}
+
+		//remove old projectiles and update PlayerTank proj system reference to most recent proj system
+		this.currentProjectileSystem.kill();
+		this.currentProjectileSystem = this.turret.currentProjectileSystem;
+
+		//reset overdrive to zero
+		this.changeOverdrive(0);
+
+		//cease overdrive status
+		this.isOverdrive = false;
+	}
+};
+
+PlayerTank.prototype.tickDownOverdrive = function() {
+	this.overdriveTimer--;
+
+	this.overdriveChangeEvent.payload = this.overdrive = 100 * (this.overdriveTimer / PlayerOverdriveState.DURATION);
+	goog.events.dispatchEvent(this, this.overdriveChangeEvent);
+
+	if(this.overdriveTimer === 0)
+	{
+		this.stateMachine.setState(PlayerDefaultState.KEY);
 	}
 };
 
 PlayerTank.prototype.onEnergyChange = function(e) {
 	if(!this.isOverdrive) {
 		this.energy += e.payload;
-
-		//console.log("Energy qty: " + this.energy);
 
 		this.changeEnergy(this.energy);
 	}
@@ -1148,8 +1190,6 @@ PlayerTank.prototype.onEnergyChange = function(e) {
 PlayerTank.prototype.onOverdriveChange = function(e) {
 	if(!this.isOverdrive) {
 		this.overdrive += e.payload;
-
-		console.log("Overdrive qty: " + this.overdrive);
 
 		this.changeOverdrive(this.overdrive);
 	}
