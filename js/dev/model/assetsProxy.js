@@ -196,7 +196,7 @@ AssetsProxy.prototype.loadXHR = function() {
 	var proxy = this;
 
 	$.get(proxy.arrSpriteSheetData[proxy.assetIndex], function(data) {
-		data = JSON.parse(data);
+		//data = JSON.parse(data);
 
 		console.log(data);
 
@@ -239,7 +239,7 @@ AssetsProxy.prototype.getSpriteSheet = function(id) {
 *@public
 */
 AssetsProxy.prototype.playSound = function(id, volume, isLooping) {
-	var sound = this.arrSoundInstances[id],
+	var sound = createjs.Sound.play(id, createjs.Sound.INTERRUPT_ANY);//this.arrSoundInstances[id],
 		qualifiedVolume = volume || 1;
 
 	if(isLooping != undefined && isLooping == true) {
@@ -247,12 +247,14 @@ AssetsProxy.prototype.playSound = function(id, volume, isLooping) {
 		sound.addEventListener("complete", onComplete);
 
 		function onComplete() {
+			//sound.stop();
 		    sound.play();
 		}
 	}
 
 	sound.volume = qualifiedVolume;
-	sound.play();
+	//sound.stop();
+	//sound.play();
 };
 
 //EVENT HANDLERS////////////////////////////////////

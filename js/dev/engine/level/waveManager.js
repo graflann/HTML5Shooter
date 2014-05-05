@@ -168,6 +168,7 @@ WaveManager.prototype.setCurrentWave = function() {
 	);
 
 	this.currentWave.setCurrentSpawn();
+	//this.currentWave.setCurrentSpawns();
 };
 
 //EVENT HANDLERS
@@ -236,16 +237,16 @@ WaveManager.prototype.onEnemyKilled = function(e) {
 };
 
 WaveManager.prototype.onInitWarning = function(e) {
-	//bubble the event from the current Wave isntance up
+	//bubble the event from the current Wave instance up
 	goog.events.dispatchEvent(this, e);
 };
 
 WaveManager.prototype.onInitSpawnParticle = function(e) {
-	//bubble the event from the current Wave isntance up
+	//bubble the event from the current Wave instance up
 	goog.events.dispatchEvent(this, e);
 };
 
 WaveManager.prototype.onRemoveSpawnParticle = function(e) {
-	//bubble the event from the current Wave isntance up
+	//bubble the event from the current Wave instance up
 	goog.events.dispatchEvent(this, e);
 };

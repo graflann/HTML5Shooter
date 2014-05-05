@@ -238,6 +238,15 @@ EnemyCentipede.prototype.setIsAlive = function(value) {
 	while(++i < this.arrSegments.length) {
 		this.arrSegments[i].setIsAlive(value);
 	}
+
+	if(this.isAlive) {
+		i = -1;
+
+		this.head.health = 24;
+		while(++i < this.arrSegments.length) {
+			this.arrSegments[i].health = 8;
+		}
+	}
 };
 
 /**

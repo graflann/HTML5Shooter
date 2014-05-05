@@ -62,16 +62,16 @@ EnemyCopter.HOMING_RATE = 5;
 
 EnemyCopter.FIRE_OFFSETS = [-10, 10];
 
-EnemyCopter.AMMO_DISTANCE = 60 / app.physicsScale;
+EnemyCopter.AMMO_DISTANCE = 60 / Constants.PHYSICS_SCALE;
 
 EnemyCopter.ROTOR_RADIUS = 16;
 
 EnemyCopter.ROTOR_OFFSETS = [
-	new app.b2Vec2(22, 51),
-	new app.b2Vec2(66, 51)
+	new Box2D.Common.Math.b2Vec2(22, 51),
+	new Box2D.Common.Math.b2Vec2(66, 51)
 ];
 
-EnemyCopter.SHADOW_OFFSET = new app.b2Vec2(48, 48);
+EnemyCopter.SHADOW_OFFSET = new Box2D.Common.Math.b2Vec2(48, 48);
 
 EnemyCopter.SHADOW_SCALE = 0.6;
 
@@ -181,6 +181,7 @@ EnemyCopter.prototype.setIsAlive = function(value) {
 	Enemy.prototype.setIsAlive.call(this, value);
 
 	if(this.isAlive) {
+		this.health = 2;
 		this.stateMachine.setState(EnemySeekingState.KEY);
 	} else {
 		this.clearTimer();

@@ -288,11 +288,11 @@ CollisionManager.prototype.projectileVsObject = function(projectile, object, obj
         }
     //VS. PLAYER - invincible during boost
     } else if (object instanceof PlayerTank && !object.isBoosting) { 
-        //object.onCollide(projectile, this.collisionOptions.player);
+        object.onCollide(projectile, this.collisionOptions.player);
 
-        //this.killList.push(object);
+        this.killList.push(object);
 
-        //app.assetsProxy.playSound("explosion1");
+        app.assetsProxy.playSound("explosion1");
     }
 
     //set projectile up for removal during update
@@ -324,10 +324,8 @@ CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
 
 CollisionManager.prototype.playerVsObject = function(player, object) {
     if(object instanceof Enemy) {
-        object.onCollide(player, this.collisionOptions.enemy);
-
-        //then push onto the kill list
-        if(object.health <= 0) {
+        //player boost kills any ground enemy on contact
+        if(player.isBoosting) {
             this.killList.push(object);
             this.activationList.push(
                 {
@@ -340,9 +338,39 @@ CollisionManager.prototype.playerVsObject = function(player, object) {
                     isRotated: true
                 }
             );
-        }
 
-        app.assetsProxy.playSound("impact1", 0.5);
+            app.assetsProxy.playSound("impact1", 0.5);
+
+            object.onCollide(player, this.collisionOptions.enemy);
+        } else {
+            //run standard troopers over by default
+            if(object instanceof EnemyTrooper) {
+                this.killList.push(object);
+                this.activationList.push(
+                    {
+                        system: this.arrItemSystems[ItemTypes.OVERDRIVE],
+                        qty: 1,
+                        posX: object.container.x, 
+                        posY: object.container.y,
+                        velX: 64,
+                        velY: 64,
+                        isRotated: true
+                    }
+                );
+
+                app.assetsProxy.playSound("impact1", 0.5);
+
+                object.onCollide(player, this.collisionOptions.enemy);
+
+            //EnemyTanks and EnemyCentipede crush player when player is not boosting
+            } else if(object instanceof EnemyTank || object instanceof CentipedeHead || object instanceof CentipedeSegment) {
+                player.onCollide(object, this.collisionOptions.player);
+
+                this.killList.push(player);
+
+                app.assetsProxy.playSound("explosion1");
+            }
+        }
         return;
     }
 

@@ -27,12 +27,14 @@ goog.require('ItemTypes');
 goog.require('EventNames');
 goog.require('LevelProxy');
 goog.require('EnterLevelOverlay');
+goog.require('LevelCompleteOverlay');
 goog.require('GameOverOverlay');
 goog.require('WarningOverlay');
 goog.require('StateMachine');
 goog.require('PanelIntroState');
 goog.require('PanelDefaultState');
 goog.require('PanelGameOverState');
+goog.require('PanelLevelCompleteState');
 
 /**
 *@constructor
@@ -165,6 +167,7 @@ PlayPanel.prototype.enterIntro = function(options) {
 	stage.addChild(this.overlay.container);
 
 	app.assetsProxy.playSound('Glide', 1, true);
+	//app.assetsProxy.playSound('Going Somewhere', 1, true);
 
 	//some delays set to let the overlay animate correctly
 	setTimeout(function() {
@@ -228,7 +231,7 @@ PlayPanel.prototype.exitDefault = function(options) {
 PlayPanel.prototype.enterGameOver = function(options) {
 	var self = this;
 
-	this.hto.remove();
+	this.hto.forceRemove();
 	this.level.removeReticles();
 
 	this.overlay = new GameOverOverlay(this);
@@ -259,6 +262,40 @@ PlayPanel.prototype.updateGameOver = function(options) {
 };
 
 PlayPanel.prototype.exitGameOver = function(options) {};
+
+PlayPanel.prototype.enterLevelComplete = function(options) {
+	var self = this;
+
+	this.hto.forceRemove();
+	this.level.removeReticles();
+
+	this.overlay = new LevelCompleteOverlay(this);
+	app.layers.getStage(LayerTypes.HUD).addChild(this.overlay.container);
+
+	this.overlay.animate(function() { self.level.kill(); });
+
+	createjs.Sound.stop();
+	app.assetsProxy.playSound('menuFX4');
+};
+
+PlayPanel.prototype.updateLevelComplete = function(options) {
+	var input = app.input;
+
+	this.updateParticles(options);
+
+	this.overlay.update(options);
+
+	input.checkPrevButtonDown([
+		GamepadCode.BUTTONS.DPAD_UP,
+		GamepadCode.BUTTONS.DPAD_DOWN,
+		GamepadCode.BUTTONS.DPAD_LEFT,
+		GamepadCode.BUTTONS.DPAD_RIGHT,
+		GamepadCode.BUTTONS.START,
+		GamepadCode.BUTTONS.A
+	]);
+};
+
+PlayPanel.prototype.exitLevelComplete = function(options) {};
 
 /**
 *@override
@@ -708,12 +745,18 @@ PlayPanel.prototype.setStateMachine = function() {
 	this.stateMachine.addState(
 		PanelDefaultState.KEY,
 		new PanelDefaultState(this),
-		[ PanelGameOverState.KEY ]
+		[ PanelGameOverState.KEY, PanelLevelCompleteState.KEY ]
 	);
 
 	this.stateMachine.addState(
 		PanelGameOverState.KEY,
 		new PanelGameOverState(this),
+		[]
+	);
+
+	this.stateMachine.addState(
+		PanelLevelCompleteState.KEY,
+		new PanelLevelCompleteState(this),
 		[]
 	);
 };
@@ -794,6 +837,14 @@ PlayPanel.prototype.setEventListeners = function() {
 	);
 
 	//LEVEL
+	goog.events.listen(
+		this.level, 
+		EventNames.LEVEL_COMPLETE, 
+		this.onLevelComplete, 
+		false, 
+		this
+	);
+
 	goog.events.listen(
 		this.level, 
 		EventNames.INIT_WARNING, 
@@ -1030,6 +1081,15 @@ PlayPanel.prototype.onUpdateScore = function(e) {
 */
 PlayPanel.prototype.onUpdateBonus = function(e) {
 	this.hud.updateBonus(e.payload);
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.onLevelComplete = function(e) {
+	var self = this;
+
+	setTimeout(function() { self.stateMachine.setState(PanelLevelCompleteState.KEY); }, 2000)
 };
 
 /**

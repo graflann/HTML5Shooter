@@ -1114,6 +1114,8 @@ PlayerTank.prototype.changeOverdrive = function(value) {
 
 		//activate the overdrive state when enough is acquired		
 		if(this.overdrive === PlayerTank.MAX_OVERDRIVE) {
+			app.assetsProxy.playSound('powerup1');
+
 			//max energy going into overdrive
 			this.energyChangeEvent.payload = this.energy = PlayerTank.MAX_ENERGY;
 			goog.events.dispatchEvent(this, this.energyChangeEvent);

@@ -1,13 +1,11 @@
-goog.provide('OptionsPanel');
+goog.provide('CreditsPanel');
 
 goog.require('Panel');
-goog.require('InputOptions');
 
 /**
 *@constructor
-*Game options manipulated here
 */
-OptionsPanel = function() {
+CreditsPanel = function() {
 	Panel.call(this);
 
 	this.container = null;
@@ -16,20 +14,22 @@ OptionsPanel = function() {
 
 	this.grid = null;
 
-	this.exitText = null;
+	this.creditsTitleText = null;
 
-	this.inputOptions = null;
+	this.creditsText = null;
+
+	this.exitText = null;
 
 	this.init();
 };
 
-goog.inherits(OptionsPanel, Panel);
+goog.inherits(CreditsPanel, Panel);
 
 /**
 *@override
-*@protected
+*@public
 */
-OptionsPanel.prototype.init = function() {
+CreditsPanel.prototype.init = function() {
 	var self = this,
 		stage = app.layers.getStage(LayerTypes.MAIN),
 		exitLabel = "press b to exit";
@@ -41,7 +41,7 @@ OptionsPanel.prototype.init = function() {
 	this.background.graphics
 		.lf([Constants.DARK_BLUE, Constants.BLACK], [0, 0.75], 0, 0, 0, Constants.HEIGHT)
 		.dr(0, 0, Constants.WIDTH, Constants.HEIGHT);
-	
+
 	this.grid = new Grid(
 		Constants.WIDTH + Constants.UNIT, 
 		Constants.HEIGHT, 
@@ -49,9 +49,27 @@ OptionsPanel.prototype.init = function() {
 		Constants.WHITE
 	);
 
-	this.inputOptions = new InputOptions();
-	this.inputOptions.container.x = Constants.WIDTH * 0.125;
-	this.inputOptions.container.y = 64;
+	this.creditsTitleText = new createjs.Text(
+		"Credits", 
+		"16px AXI_Fixed_Caps_5x5", 
+		Constants.BLUE
+	);
+	this.creditsTitleText.textAlign = "center";
+	this.creditsTitleText.x = Constants.WIDTH * 0.5;
+	this.creditsTitleText.y = Constants.UNIT * 3;
+	this.creditsTitleText.scaleX = this.creditsTitleText.scaleY = 1.5;
+
+	this.creditsText = new createjs.Text(
+		"Grant Flannery: Programming and Design\n\n" + 
+		"Mark Statkus @ Cybercussion Interactive: Music and Sound FX\n" +
+		"http://www.cybercussion.com\n\n" +
+		"Additional sound FX: http://www.freesfx.co.uk\n\n" + 
+		"STRIKE (C) 2014 GRANT FLANNERY",
+		"16px AXI_Fixed_Caps_5x5",
+		Constants.LIGHT_BLUE
+	);
+	this.creditsText.x = Constants.UNIT * 4;
+	this.creditsText.y = this.creditsTitleText.y + 64;
 
 	this.exitText = new createjs.Text(
 		exitLabel, 
@@ -59,17 +77,18 @@ OptionsPanel.prototype.init = function() {
 		Constants.RED
 	);
 	this.exitText.textAlign = "center";
-	this.exitText.x = Constants.WIDTH * 0.5;
+	this.exitText.x = this.creditsTitleText.x;
 	this.exitText.y = Constants.HEIGHT * 0.5;
 
-	this.container.addChild(this.grid.shape);
-	this.container.addChild(this.inputOptions.container);
+    this.container.addChild(this.grid.shape);
+	this.container.addChild(this.creditsTitleText);
+	this.container.addChild(this.creditsText);
 	this.container.addChild(this.exitText);
 
 	stage.addChild(this.background);
     stage.addChild(this.container);
 
- //    createjs.Tween.get(this.container).to({alpha: 1}, 1000).call(function() {
+ //    createjs.Tween.get(this.container).to({alpha: 1}, 2000).call(function() {
  //    		self.isInited = true;
 
 	// 		//once loaded and inited notify the game to remove the loading screen
@@ -88,56 +107,42 @@ OptionsPanel.prototype.init = function() {
 *@override
 *@protected
 */
-OptionsPanel.prototype.update = function() {
+CreditsPanel.prototype.update = function() {
 	var input = app.input;
 
 	Panel.prototype.update.call(this);
 
 	this.grid.update();
 
-	this.inputOptions.update();
-
 	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.B)) {
 		this.onExit();
 	}
-
-	// app.input.checkPrevKeyDown([
-	// 	KeyCode.UP,
-	// 	KeyCode.DOWN,
-	// 	KeyCode.LEFT,
-	// 	KeyCode.RIGHT
-	// ]);
-
-	app.input.checkPrevButtonDown([
-		GamepadCode.BUTTONS.DPAD_UP,
-		GamepadCode.BUTTONS.DPAD_DOWN,
-		GamepadCode.BUTTONS.DPAD_LEFT,
-		GamepadCode.BUTTONS.DPAD_RIGHT
-	]);
 };
 
 /**
 *@override
-*@protected
+*@public
 */
-OptionsPanel.prototype.clear = function() {
-	Panel.prototype.clear.call(this);
+CreditsPanel.prototype.clear = function() {
+	this.panel = null;
+
+	this.container.removeAllChildren();
 
 	this.background.graphics.clear();
-	this.grid.clear();
-	this.inputOptions.clear();
-
-	this.exitText = null;
 	this.background = null;
-	this.grid = null;
-	this.inputOptions = null;
+
+	this.creditsTitleText = null;
+	this.creditsText = null;
+	this.exitText = null;
+
+	this.container = null;
 };
 
 /**
 *@override
 *@protected
 */
-OptionsPanel.prototype.onExit = function() {
+CreditsPanel.prototype.onExit = function() {
 	var self = this;
 
 	createjs.Tween.get(this.container)

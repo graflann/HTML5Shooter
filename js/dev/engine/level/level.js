@@ -441,7 +441,8 @@ Level.prototype.setGraph = function() {
 *@private
 */
 Level.prototype.onLevelComplete = function(e) {
-	console.log("Level end...");
+	console.log("All enemies killed; level ends...");
+	goog.events.dispatchEvent(this, e);
 };
 
 Level.prototype.onInitWarning = function(e) {

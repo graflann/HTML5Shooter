@@ -19,7 +19,7 @@ ParticleClasses = {
 	grenade: 		GrenadeParticle,
 	pickUp: 		PickUpParticle,
 	boost: 			BoostParticle,
-	spawnGenerator: SpawnGeneratorParticle,
+	spawnGenerator: SpawnGeneratorParticle
 };
 
 goog.exportSymbol('ParticleClasses', ParticleClasses);

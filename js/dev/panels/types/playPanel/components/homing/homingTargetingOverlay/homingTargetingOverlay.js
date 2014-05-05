@@ -315,6 +315,12 @@ HomingTargetingOverlay.prototype.remove = function() {
 	this.stateMachine.setState(HomingTargetingOverlayRemovalState.KEY);
 };
 
+HomingTargetingOverlay.prototype.forceRemove = function() {
+	if(this.container.parent) {
+		this.container.parent.removeChild(this.container);
+	}
+};
+
 /**
 *@public
 */

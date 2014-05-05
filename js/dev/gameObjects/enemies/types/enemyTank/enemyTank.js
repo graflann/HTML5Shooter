@@ -31,8 +31,6 @@ EnemyTank = function(projectileSystem) {
 
 	this.navigation = null;
 
-	this.health = 1;
-
 	this.intendedRotation = 0;
 
 	this.rotationRate = 5;
@@ -51,8 +49,8 @@ EnemyTank.HOMING_RATE = 15;
 EnemyTank.MIN_STRAFE_TIME = 2000;
 EnemyTank.MAX_STRAFE_TIME = 4000;
 
-EnemyTank.MIN_ROAM_TIME = 4000;
-EnemyTank.MAX_ROAM_TIME = 6000;
+EnemyTank.MIN_ROAM_TIME = 500;
+EnemyTank.MAX_ROAM_TIME = 5000;
 
 EnemyTank.MIN_SNIPE_TIME = 2000;
 EnemyTank.MAX_SNIPE_TIME = 4000;
@@ -292,6 +290,7 @@ EnemyTank.prototype.setIsAlive = function(value) {
 	Enemy.prototype.setIsAlive.call(this, value);
 
 	if(this.isAlive) {
+		this.health = 6;
 		this.stateMachine.setState(EnemyRoamingState.KEY);
 	} else {
 		this.clearTimer();

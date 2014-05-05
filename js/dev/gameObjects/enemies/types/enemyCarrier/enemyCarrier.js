@@ -69,30 +69,30 @@ EnemyCarrier.HOMING_RATE = 5;
 
 EnemyCarrier.FIRE_OFFSETS = [-30, 30];
 
-EnemyCarrier.AMMO_DISTANCE = 180 / app.physicsScale;
+EnemyCarrier.AMMO_DISTANCE = 180 / Constants.PHYSICS_SCALE;
 
 EnemyCarrier.ROTOR_RADIUS = 30;
 
 EnemyCarrier.ROTOR_THICKNESS = 3;
 
 EnemyCarrier.ROTOR_OFFSETS = [
-	new app.b2Vec2(95, -107),
-	new app.b2Vec2(-95, -107),
-	new app.b2Vec2(177, 0),
-	new app.b2Vec2(-177, 0),
-	new app.b2Vec2(95, 107),
-	new app.b2Vec2(-95, 107)
+	new Box2D.Common.Math.b2Vec2(95, -107),
+	new Box2D.Common.Math.b2Vec2(-95, -107),
+	new Box2D.Common.Math.b2Vec2(177, 0),
+	new Box2D.Common.Math.b2Vec2(-177, 0),
+	new Box2D.Common.Math.b2Vec2(95, 107),
+	new Box2D.Common.Math.b2Vec2(-95, 107)
 ];
 
-EnemyCarrier.SHADOW_OFFSET = new app.b2Vec2(128, 128);
+EnemyCarrier.SHADOW_OFFSET = new Box2D.Common.Math.b2Vec2(128, 128);
 
 EnemyCarrier.SHADOW_SCALE = 0.75;
 
-EnemyCarrier.DOOR_DIMENSIONS = new app.b2Vec2(91, 109);
+EnemyCarrier.DOOR_DIMENSIONS = new Box2D.Common.Math.b2Vec2(91, 109);
 
 EnemyCarrier.DOOR_OFFSETS = [
-	new app.b2Vec2(24, -54),
-	new app.b2Vec2(-115, -54)
+	new Box2D.Common.Math.b2Vec2(24, -54),
+	new Box2D.Common.Math.b2Vec2(-115, -54)
 ];
 
 EnemyCarrier.DOOR_ALPHA = 0.75;
@@ -120,6 +120,8 @@ EnemyCarrier.prototype.init = function() {
 	this.velocityMod = 1.5;
 
 	this.fireThreshold = 120;
+
+	this.transparencyDistance = Math.pow(this.width * 0.5, 2);
 
 	this.shape = new createjs.BitmapAnimation(carrierSpriteSheet);
 	this.shape.regX = this.width * 0.5;
@@ -161,6 +163,9 @@ EnemyCarrier.prototype.update = function(options) {
 
 		//update the shadow
 		this.shadow.update(options);
+
+		//check toggling transparency
+		this.updateTransparency(options);
 	}
 };
 
@@ -201,7 +206,7 @@ EnemyCarrier.prototype.clear = function() {
 
 	for(i = 0; i < this.arrRotors.length; i++) {
 		goog.events.unlisten(
-			arrRotors[i], 
+			this.arrRotors[i], 
 			EventNames.COMPONENT_DESTROYED, 
 			this.onRotorEngineDestroyed, 
 			false, 
@@ -273,9 +278,15 @@ EnemyCarrier.prototype.setIsAlive = function(value) {
 
 	while(++i < length) {
 		this.arrRotors[i].setIsAlive(value);
+		this.arrRotors[i].health = EnemyCarrier.ROTOR_MAX_HEALTH;
 	}
 
 	if(this.isAlive) {
+		i = -1;
+		while(++i < length) {
+			this.arrRotors[i].health = EnemyCarrier.ROTOR_MAX_HEALTH;
+		}
+
 		this.stateMachine.setState(EnemySeekingState.KEY);
 	} else {
 		this.clearTimer();
@@ -327,6 +338,17 @@ EnemyCarrier.prototype.updateSeeking = function(options) {
 	this.container.y += this.velocity.y;
 
 	this.setPosition(this.container.x, this.container.y);
+};
+
+EnemyCarrier.prototype.updateTransparency = function(options) {
+	var target = options.target,
+		distance = this.position.DistanceSqrd(target.position);
+
+	if(distance < this.transparencyDistance) {
+		if(this.container.alpha != 0.25) this.container.alpha = 0.25;
+	} else {
+		if(this.container.alpha != 1) this.container.alpha = 1;
+	}
 };
 
 EnemyCarrier.prototype.enterSniping = function(options) {

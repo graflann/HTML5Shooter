@@ -43,7 +43,7 @@ goog.inherits(CentipedeSegment, Enemy);
 
 CentipedeSegment.ARR_FIRE_OFFSETS = [-16, 16];
 
-CentipedeSegment.AMMO_DISTANCE = -(80 / app.physicsScale);
+CentipedeSegment.AMMO_DISTANCE = -(80 / Constants.PHYSICS_SCALE);
 
 /**
 *Ratio translating head physics velocity to pixels per tick

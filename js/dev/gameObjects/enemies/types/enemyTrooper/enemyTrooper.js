@@ -23,8 +23,6 @@ EnemyTrooper = function(projectileSystem) {
 
 	this.navigation = null;
 
-	this.health = 1;
-
 	this.fireThreshold = 0;
 
 	this.fireCounter = 0;
@@ -48,15 +46,15 @@ goog.inherits(EnemyTrooper, Enemy);
 
 EnemyTrooper.HOMING_RATE = 15;
 
-EnemyTrooper.AMMO_DISTANCE = 16 / app.physicsScale;
+EnemyTrooper.AMMO_DISTANCE = 16 / Constants.PHYSICS_SCALE;
 
 EnemyTrooper.FIRE_OFFSET = -20;
 
 EnemyTrooper.MIN_STRAFE_TIME = 2000;
 EnemyTrooper.MAX_STRAFE_TIME = 4000;
 
-EnemyTrooper.MIN_ROAM_TIME = 4000;
-EnemyTrooper.MAX_ROAM_TIME = 6000;
+EnemyTrooper.MIN_ROAM_TIME = 500;
+EnemyTrooper.MAX_ROAM_TIME = 5000;
 
 EnemyTrooper.MIN_SNIPE_TIME = 2000;
 EnemyTrooper.MAX_SNIPE_TIME = 4000;
@@ -329,7 +327,12 @@ EnemyTrooper.prototype.clear = function() {
 EnemyTrooper.prototype.setIsAlive = function(value) {
 	Enemy.prototype.setIsAlive.call(this, value);
 
-	(value) ? this.stateMachine.setState(EnemyRoamingState.KEY) : this.clearTimer();
+	if(this.isAlive) {
+		this.health = 1;
+		this.stateMachine.setState(EnemyRoamingState.KEY);
+	} else {
+		this.clearTimer();
+	}
 };
 
 /**

@@ -10,6 +10,7 @@ Constants = {
     CENTER_X:           480, 
     CENTER_Y:           360, 
 	UNIT:				32,
+    PHYSICS_SCALE:      20, 
     GREEN:              '#00FF00',
     BRIGHT_RED:         '#FF0000',
     ORANGE:             '#FE9C00',

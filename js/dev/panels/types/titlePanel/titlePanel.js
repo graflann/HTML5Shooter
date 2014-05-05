@@ -74,7 +74,8 @@ TitlePanel.prototype.init = function() {
 	this.gameOptions = new GameOptions(
 		[
 			new OptionText("start", PanelTypes.PLAY_PANEL),
-			new OptionText("options", PanelTypes.OPTIONS_PANEL)
+			new OptionText("options", PanelTypes.OPTIONS_PANEL),
+			new OptionText("credits", PanelTypes.CREDITS_PANEL)
 		]
 	);
 	this.gameOptions.container.x = (Constants.WIDTH * 0.5) - (this.gameOptions.width * 0.5);

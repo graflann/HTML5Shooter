@@ -51,7 +51,8 @@ LevelProxy.prototype.loadXHR = function() {
 	var proxy = this;
 
 	$.get(this.currentPath, function(data) {
-		proxy.currentLevelData = JSON.parse(data);
+		//proxy.currentLevelData = JSON.parse(data);
+		proxy.currentLevelData = data;
 
 		goog.events.dispatchEvent(proxy, new goog.events.Event(EventNames.LOAD_COMPLETE, proxy));
 	})

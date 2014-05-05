@@ -41,7 +41,8 @@ Radar = function() {
 	this.init();
 };
 
-Radar.SCALE = new app.b2Vec2(Constants.WIDTH / 64, Constants.HEIGHT / 64);
+Radar.SCALE_X = Constants.WIDTH / 64;
+Radar.SCALE_Y = Constants.HEIGHT / 64;
 
 Radar.OVERLAP = Constants.UNIT * 0.5;
 
@@ -90,14 +91,14 @@ Radar.prototype.update = function(options) {
 		playerMarker = this.arrMarkers[PlayerTank.KEY],
 		camera = options.camera,
 		player = options.player,
-		playerMarkerPos = new app.b2Vec2(player.position.x / Radar.SCALE.x, player.position.y / Radar.SCALE.y);
+		playerMarkerPos = new app.b2Vec2(player.position.x / Radar.SCALE_X, player.position.y / Radar.SCALE_Y);
 
 	//update radar echo effect
 	this.echo.rotation -= 2;
 
 	//update field container postion to that of camera
-	this.fieldContainer.x = (camera.position.x / Radar.SCALE.x) + this.fieldOffset.x;
-	this.fieldContainer.y = (camera.position.y / Radar.SCALE.y) + this.fieldOffset.y;
+	this.fieldContainer.x = (camera.position.x / Radar.SCALE_X) + this.fieldOffset.x;
+	this.fieldContainer.y = (camera.position.y / Radar.SCALE_Y) + this.fieldOffset.y;
 
 	//update player marker
 	playerMarker.shape.x = playerMarkerPos.x;
@@ -162,8 +163,8 @@ Radar.prototype.updateEnemyMarkers = function(player, playerMarkerPos, arrEnemyS
 
 			//Enemy instance is within scope and depicted within radar
 			if(enemy.isAlive) {
-				enemyMarkerPos.x = enemy.position.x / Radar.SCALE.x;
-				enemyMarkerPos.y = enemy.position.y / Radar.SCALE.y;
+				enemyMarkerPos.x = enemy.position.x / Radar.SCALE_X;
+				enemyMarkerPos.y = enemy.position.y / Radar.SCALE_Y;
 
 				if(this.isEnemyInRadarScope(playerMarkerPos, enemyMarkerPos)) {
 					this.updateMarkerWithinScope(enemyMarkerPos, marker);
@@ -226,11 +227,11 @@ Radar.prototype.setField = function(w, h, player, arrEnemySystems) {
 	var arrEnemies = null;
 
 	//set field-related dimensions
-	this.fieldWidth = w / Radar.SCALE.x;
-	this.fieldHeight = h / Radar.SCALE.y;
+	this.fieldWidth = w / Radar.SCALE_X;
+	this.fieldHeight = h / Radar.SCALE_Y;
 
-	this.fieldOffset.x = ((Constants.WIDTH / Radar.SCALE.x) * 0.5) + Radar.OVERLAP;
-	this.fieldOffset.y = ((Constants.HEIGHT / Radar.SCALE.y) * 0.5) + Radar.OVERLAP;
+	this.fieldOffset.x = ((Constants.WIDTH / Radar.SCALE_X) * 0.5) + Radar.OVERLAP;
+	this.fieldOffset.y = ((Constants.HEIGHT / Radar.SCALE_Y) * 0.5) + Radar.OVERLAP;
 
 	//create border
 	this.fieldBoarder = new createjs.Shape();
