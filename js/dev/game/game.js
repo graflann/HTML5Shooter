@@ -40,7 +40,6 @@ Game = function() {
 
 	this.stateMachine = null;
 	
-	//this.load();
 	this.init();
 };
 
@@ -50,12 +49,14 @@ Game.GAMEPAD_MESSAGE = "Thank you for trying Strike, \nbut it currently requires
 	"\n\nPlease plug one into an available USB port." +
 	"\n\nIf you are seeing this message and a compatible pad is plugged in, \npress any button on the gamepad to continue.";
 
+Game.GAMEPAD_SUPPORT_UNAVAILABLE_MESSAGE = "Thank you for trying Strike, \nbut it currently requires the Chrome web browser" +
+	"\nand the use of a compatible gamepad.";
+
 /**
 *@private
 */
 Game.prototype.init = function() {
-	var self = this,
-		input = app.input;
+	var self = this;
 
 	this.factory = new PanelFactory();
 
@@ -64,43 +65,10 @@ Game.prototype.init = function() {
 	createjs.Ticker.useRAF = true; 
 	createjs.Ticker.setFPS(60);
 
-	goog.events.listen(
-		input, 
-		EventNames.GAMEPAD_SUPPORT_UNAVAILABLE, 
-		this.onGamePadSupportUnavailable,
-		false, 
-		this
-	);
-
-	goog.events.listen(
-		input, 
-		EventNames.GAMEPAD_STATUS_CHANGED, 
-		this.onGamepadStatusChanged,
-		false, 
-		this
-	);
-
 	this.setStateMachine();
 
-	//Need to validate polling of a well-formed gamepad instance per Chrome,
-	//If Chrome does not has a native gamepad reference cached, 
-	//the user is forced to enter a button to init native polling of gamepad
-	if(input.validateGamepad()) {
-		//Chrome has previously resolved a raw gamepad reference so init with default gaming state
-		//this.addLoadingPanel();
+	this.checkGamepad();
 
-		//this.setPanel(PanelTypes.TITLE_PANEL);
-		//this.setPanel(PanelTypes.OPTIONS_PANEL);
-		//this.setPanel(PanelTypes.PLAY_PANEL);
-		//this.setPanel(PanelTypes.PATH_FINDING_PANEL);
-		//this.setPanel(PanelTypes.LOADING_PANEL);
-
-		this.stateMachine.setState(GameDefaultState.KEY);
-	} else {
-		//The polling test found no gamepad, so fire a modal to let user know to plug in / press button on pad to resolve its status
-		this.stateMachine.setState(GamePadStatusState.KEY);
-	}
-		
 	createjs.Ticker.addEventListener("tick", function() { self.update(); } );
 };
 
@@ -216,6 +184,13 @@ Game.prototype.addLoadingPanel = function() {
 Game.prototype.setStateMachine = function() {
 	this.stateMachine = new StateMachine();
 
+	//a default "void" state
+	this.stateMachine.addState(
+		State.KEY,
+		new State(),
+		[ GamePadStatusState.KEY, GameDefaultState.KEY ]
+	);
+
 	this.stateMachine.addState(
 		GameDefaultState.KEY,
 		new GameDefaultState(this),
@@ -227,8 +202,53 @@ Game.prototype.setStateMachine = function() {
 		new GamePadStatusState(this),
 		[ GameDefaultState.KEY ]
 	);
+
+	this.stateMachine.setState(State.KEY);
 };
 
+Game.prototype.checkGamepad = function() {
+	var input = app.input;
+
+	//Currently supports Chrome only
+	if(input.gamepadSupportAvailable)
+	{
+		goog.events.listen(
+			input, 
+			EventNames.GAMEPAD_STATUS_CHANGED, 
+			this.onGamepadStatusChanged,
+			false, 
+			this
+		);
+
+		//Need to validate polling of a well-formed gamepad instance per Chrome,
+		//If Chrome does not has a native gamepad reference cached, 
+		//the user is forced to enter a button to init native polling of gamepad
+		if(input.validateGamepad()) {
+			//Chrome has previously resolved a raw gamepad reference so init with default gaming state
+			//this.addLoadingPanel();
+
+			//this.setPanel(PanelTypes.TITLE_PANEL);
+			//this.setPanel(PanelTypes.OPTIONS_PANEL);
+			//this.setPanel(PanelTypes.PLAY_PANEL);
+			//this.setPanel(PanelTypes.PATH_FINDING_PANEL);
+			//this.setPanel(PanelTypes.LOADING_PANEL);
+
+			this.stateMachine.setState(GameDefaultState.KEY);
+		} else {
+			//The polling test found no gamepad, so fire a modal to let user know to plug in / press button on pad to resolve its status
+			this.stateMachine.setState(GamePadStatusState.KEY);
+		}
+	}
+	else //let the user know to get Chrome and a gamepad...
+	{
+		this.modal = new MessageModal(Game.GAMEPAD_SUPPORT_UNAVAILABLE_MESSAGE);
+
+		app.layers.add(LayerTypes.MODAL, 10000);
+		app.layers.getStage(LayerTypes.MODAL).addChild(this.modal.container);
+
+		this.modal.animate();
+	}
+};
 //EVENT HANDLING////////////////////////////////////////////////////////
 /**
 *@private

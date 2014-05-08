@@ -50,6 +50,8 @@ Input = function() {
 	// analyzing the polled data if nothing changed (timestamp is the same as last time).
 	this.prevTimestamps = [];
 
+	this.gamepadSupportAvailable = false;
+
 	this.gamePadSupportUnavailableEvent = new goog.events.Event(EventNames.GAMEPAD_SUPPORT_UNAVAILABLE, this);
 	this.gamePadStatusChangedEvent = new goog.events.Event(EventNames.GAMEPAD_STATUS_CHANGED, this);
 	
@@ -120,8 +122,11 @@ Input.prototype.setGamepad = function() {
 	// As of writing, it seems impossible to detect Gamepad API support
 	// in Firefox, hence we need to hardcode it in the third clause. 
 	// (The preceding two clauses are for Chrome.)
-	var i = Input.TYPICAL_BUTTON_COUNT,
-		gamepadSupportAvailable = navigator.webkitGetGamepads || navigator.webkitGamepads;
+	var i = Input.TYPICAL_BUTTON_COUNT;
+
+	this.gamepadSupportAvailable = !!navigator.webkitGetGamepads || !!navigator.webkitGamepads;
+
+	console.log("Is gamepad support available? " + this.gamepadSupportAvailable.toString());
 
 	this.arrPrevButtonDown = new Array(length);
 
@@ -129,10 +134,7 @@ Input.prototype.setGamepad = function() {
 		this.arrPrevButtonDown[i] = false;
 	}
 
-	if (!gamepadSupportAvailable) {
-		//Modal message / notification alerting non-Chrome user to use Chrome for gamepad / overall game support
-		goog.events.dispatchEvent(this, this.gamePadSupportUnavailableEvent);
-	} else {
+	if (this.gamepadSupportAvailable) {
 		this.startPolling();
 	}
 };

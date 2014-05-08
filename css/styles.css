@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
+html { display: block;}
+
 body {
 	font-family: 'AXI_Fixed_Caps_5x5';
 	color: #6FC3DF;
