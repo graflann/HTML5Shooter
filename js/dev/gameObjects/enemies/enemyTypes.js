@@ -6,6 +6,8 @@ goog.provide('EnemyTypes');
  */
 EnemyTypes = {
 	TROOPER: 	'enemyTrooper',
+	RANGER: 	'enemyRanger',
+	FENCER: 	'enemyFencer',
 	TANK: 		'enemyTank',
 	TURRET: 	'enemyTurret',
 	COPTER: 	'enemyCopter',

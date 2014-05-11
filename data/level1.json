@@ -15,6 +15,7 @@
 		"centipedeSegment",
 		"centipedeTail",
 		"enemyTrooper",
+		"enemyFencer",
 		"enemyCarrier",
 		"boost"
 	],
@@ -50,7 +51,12 @@
 			"projectileSystem": "ground"
 		},
 
-		"enemyTrooper": {
+		"enemyRanger": {
+			"max": 64,
+			"projectileSystem": "ground"
+		},
+
+		"enemyFencer": {
 			"max": 64,
 			"projectileSystem": "ground"
 		},
@@ -78,19 +84,23 @@
 	"waves" : [
 		[
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 4,
+				"type": "enemyFencer", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 4,
 				"positionX": 1920, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "ordinal": 1, "hasSpawnParticle": true
+			},
+			{ 
+				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 4,
+				"positionX": 2160, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			}
 		],
 		[
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 8,
+				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 8,
 				"positionX": 960, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			}
 		],
 		[
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 8,
+				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 8,
 				"positionX": 2880, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			}
 		],
@@ -130,7 +140,7 @@
 				"positionX": 1920, "positionY": 160, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 2, "targetQuantity": 16,
+				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 2, "targetQuantity": 16,
 				"positionX": 1920, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 
@@ -140,7 +150,7 @@
 		],
 		[
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 2, "targetQuantity": 16,
+				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 2, "targetQuantity": 16,
 				"positionX": 1680, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 
@@ -154,7 +164,7 @@
 		],
 		[
 			{ 
-				"type": "enemyTrooper", "intervalTime": 2000, "intervalQuantity": 8, "targetQuantity": 16,
+				"type": "enemyRanger", "intervalTime": 2000, "intervalQuantity": 8, "targetQuantity": 16,
 				"positionX": 1920, "positionY": 240, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 
@@ -188,7 +198,7 @@
 		],
 		[
 			{ 
-				"type": "enemyTrooper", "intervalTime": 500, "intervalQuantity": 2, "targetQuantity": 32,
+				"type": "enemyRanger", "intervalTime": 500, "intervalQuantity": 2, "targetQuantity": 32,
 				"positionX": 200, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 
@@ -216,7 +226,7 @@
 		],
 		[	
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 16, "targetQuantity": 16,
+				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 16, "targetQuantity": 16,
 				"positionX": 1920, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 
@@ -224,7 +234,7 @@
 				"positionX": 200, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 16, "targetQuantity": 16,
+				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 16, "targetQuantity": 16,
 				"positionX": 1920, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 
@@ -232,7 +242,7 @@
 				"positionX": 3640, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 16, "targetQuantity": 16,
+				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 16, "targetQuantity": 16,
 				"positionX": 1920, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 
@@ -240,7 +250,7 @@
 				"positionX": 1920, "positionY": 200, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 
-				"type": "enemyTrooper", "intervalTime": 1000, "intervalQuantity": 16, "targetQuantity": 16,
+				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 16, "targetQuantity": 16,
 				"positionX": 1920, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
 			},
 			{ 

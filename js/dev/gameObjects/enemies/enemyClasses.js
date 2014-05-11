@@ -2,6 +2,8 @@ goog.provide('EnemyClasses');
 
 goog.require('EnemyTank');
 goog.require('EnemyTrooper');
+goog.require('EnemyRanger');
+goog.require('EnemyFencer');
 goog.require('EnemyTurret');
 goog.require('EnemyCopter');
 goog.require('EnemyCentipede');
@@ -14,6 +16,8 @@ goog.require('EnemyCarrier');
 EnemyClasses = {
 	enemyTank: 		EnemyTank,
 	enemyTrooper: 	EnemyTrooper,
+	enemyRanger: 	EnemyRanger,
+	enemyFencer: 	EnemyFencer,
 	enemyTurret: 	EnemyTurret,
 	enemyCopter: 	EnemyCopter,
 	enemyCentipede: EnemyCentipede,
