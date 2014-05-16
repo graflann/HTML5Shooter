@@ -36,6 +36,9 @@ GrenadeParticle.prototype.init = function() {
 	this.setPhysics();
 
 	this.setIsAlive(false);
+
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = ParticleTypes.GRENADE;
 };
 
 /**
@@ -95,8 +98,8 @@ GrenadeParticle.prototype.kill = function() {
 };
 
 GrenadeParticle.prototype.setIsAlive = function(value) {
-	this.body.SetAwake(value);
-	this.body.SetActive(value);
+	//this.body.SetAwake(value);
+	//this.body.SetActive(value);
 	this.isAlive = value;
 };
 
@@ -120,4 +123,6 @@ GrenadeParticle.prototype.setPhysics = function() {
 	this.body.CreateFixture(fixDef);
 	this.body.SetUserData(this);
 	this.body.SetPosition(this.physicalPosition);
+	this.body.SetAwake(false);
+	this.body.SetActive(false);
 };

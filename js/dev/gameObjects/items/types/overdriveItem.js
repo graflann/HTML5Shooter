@@ -58,6 +58,9 @@ OverdriveItem.prototype.init = function() {
 	this.container.addChild(this.label);
 	this.container.cache(-14, -14, 28, 28);
 
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = ItemTypes.OVERDRIVE;
+
 	Item.prototype.init.call(this);
 };
 

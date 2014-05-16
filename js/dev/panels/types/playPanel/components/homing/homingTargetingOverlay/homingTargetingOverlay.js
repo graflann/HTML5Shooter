@@ -38,6 +38,8 @@ HomingTargetingOverlay = function() {
 	this.isActive = false;
 
 	this.stateMachine = null;
+
+	this.collisionRoutingObject = null;
 	
 	this.init();
 };
@@ -67,6 +69,9 @@ HomingTargetingOverlay.prototype.init = function() {
 	this.container.scaleX = this.container.scaleY = 0;
 	this.container.addChild(this.background);
 
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = "hto";
+
 	this.setPhysics();
 
 	this.setStateMachine();
@@ -84,6 +89,13 @@ HomingTargetingOverlay.prototype.update = function(options) {
 
 		this.stateMachine.update();
 	}
+};
+
+/**
+*@public
+*/
+HomingTargetingOverlay.prototype.getCollisionRoutingObject = function() {
+	return this.collisionRoutingObject;
 };
 
 /**

@@ -189,6 +189,9 @@ PlayerTank.prototype.init = function() {
 	this.physicalPosition = new app.b2Vec2();
 	this.force = new app.b2Vec2();
 
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = "player";
+
 	this.setPhysics();
 
 	this.setStateMachine();

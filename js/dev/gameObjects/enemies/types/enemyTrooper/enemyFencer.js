@@ -44,6 +44,9 @@ EnemyFencer.prototype.init = function() {
 
 	this.walkAnimUtil = new AnimationUtility("walk", this.shape, 4);
 
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = EnemyTypes.FENCER;
+
 	EnemyTrooper.prototype.init.call(this);
 };
 

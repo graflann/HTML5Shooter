@@ -76,6 +76,8 @@ Wall.prototype.init = function() {
 		this.arrFloors[i] = floor;
 		this.arrOffsets[i] = 0.025 + (i * 0.025);
 	}
+
+	SceneObject.prototype.init.call(this);
 };
 
 /**

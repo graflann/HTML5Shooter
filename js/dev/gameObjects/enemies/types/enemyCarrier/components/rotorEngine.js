@@ -26,6 +26,8 @@ RotorEngine = function(color, radius, thickness, parentGameObject) {
 
 	this.angleOffset = 0;
 
+	this.collisionRoutingObject = null;
+
 	this.componentDestroyedEvent = new PayloadEvent(EventNames.COMPONENT_DESTROYED, null);
 
 	Rotor.call(this, color, radius, thickness);
@@ -40,6 +42,9 @@ RotorEngine.prototype.init = function() {
 	Rotor.prototype.init.call(this);
 
 	this.setPhysics();
+
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = "rotorEngine";
 
 	this.isAlive = true;
 };
@@ -124,6 +129,13 @@ RotorEngine.prototype.modifyHealth = function(value) {
 
 RotorEngine.prototype.getParentGameObject = function () {
 	return this.parentGameObject;
+};
+
+/**
+*@public
+*/
+RotorEngine.prototype.getCollisionRoutingObject = function() {
+	return this.collisionRoutingObject;
 };
 
 /**

@@ -57,6 +57,9 @@ EnemyTurret.prototype.init = function() {
 	this.container.addChild(this.shape);
 	this.container.addChild(this.turret.shape);
 
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = EnemyTypes.TURRET;
+
 	this.setPhysics();
 	
 	this.setIsAlive(false);

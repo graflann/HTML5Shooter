@@ -57,6 +57,9 @@ EnemyRanger.prototype.init = function() {
 
 	this.walkAnimUtil = new AnimationUtility("walk", this.shape, 4);
 
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = EnemyTypes.RANGER;
+
 	EnemyTrooper.prototype.init.call(this);
 };
 
@@ -408,8 +411,6 @@ EnemyRanger.prototype.setStateMachine = function() {
 		new EnemyStrafingState(this),
 		[ EnemyRoamingState.KEY, EnemySnipingState.KEY ]
 	);
-	
-	//this.stateMachine.setState(EnemyRoamingState.KEY);
 };
 
 goog.exportSymbol('EnemyRanger', EnemyRanger);

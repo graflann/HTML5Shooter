@@ -29,7 +29,8 @@ goog.inherits(SceneObject, GameObject)
 *@public
 */
 SceneObject.prototype.init = function() {
-
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = "sceneObject";
 };
 
 /**

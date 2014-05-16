@@ -65,6 +65,9 @@ CentipedeHead.prototype.init = function() {
 	
 	this.container.addChild(this.shape);
 
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = EnemyTypes.CENTIPEDE;
+
 	this.setPhysics();
 
 	this.setIsAlive(false);

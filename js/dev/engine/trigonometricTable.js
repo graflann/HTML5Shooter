@@ -3,7 +3,7 @@ goog.provide('TrigonometricTable');
 /**
 *@constructor
 */
-TrigonometricTable = function(){
+TrigonometricTable = function() {
 	var i = -1;
 
 	this.arrTable = [];
@@ -38,7 +38,7 @@ TrigonometricTable.getInstance = function() {
 *@public
 *@ return {Number}
 */
-TrigonometricTable.prototype.sin = function(deg){
+TrigonometricTable.prototype.sin = function(deg) {
 	return this.arrTable[this.normalizeDegrees(deg)].sin;
 };
 
@@ -46,7 +46,7 @@ TrigonometricTable.prototype.sin = function(deg){
 *@public
 *@ return {Number}
 */
-TrigonometricTable.prototype.cos = function(deg){
+TrigonometricTable.prototype.cos = function(deg) {
 	return this.arrTable[this.normalizeDegrees(deg)].cos;
 };
 
@@ -54,7 +54,7 @@ TrigonometricTable.prototype.cos = function(deg){
 *@public
 *@ return {Number}
 */
-TrigonometricTable.prototype.normalizeDegrees = function(deg){
+TrigonometricTable.prototype.normalizeDegrees = function(deg) {
 	deg = Math.round(deg % 360);
 
 	if(deg < 0) {

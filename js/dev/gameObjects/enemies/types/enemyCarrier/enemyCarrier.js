@@ -138,6 +138,9 @@ EnemyCarrier.prototype.init = function() {
 
 	this.shadow = new EnemyCopterShadow(this, EnemyCarrier.SHADOW_OFFSET, EnemyCarrier.SHADOW_SCALE);
 
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = EnemyTypes.CARRIER;
+
 	this.setPhysics();
 
 	this.setStateMachine();

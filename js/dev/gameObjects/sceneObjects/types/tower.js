@@ -74,6 +74,8 @@ Tower.prototype.init = function() {
 		this.enemy.setIsAlive(true);
 		this.enemy.isWaveEnabled = false; //tower turret kills do not count towards wave completion
 	}
+
+	SceneObject.prototype.init.call(this);
 };
 
 /**

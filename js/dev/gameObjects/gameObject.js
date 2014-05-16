@@ -3,6 +3,7 @@ goog.provide('GameObject');
 goog.require('goog.events.EventTarget');
 goog.require('goog.events.Event');
 goog.require('goog.events');
+goog.require('CollisionRoutingObject');
 
 /**
 *@constructor
@@ -18,6 +19,8 @@ GameObject = function() {
 	this.position = new app.b2Vec2();
 
 	this.isAlive = false;
+
+	this.collisionRoutingObject = null;
 };
 
 goog.inherits(GameObject, goog.events.EventTarget);
@@ -44,6 +47,7 @@ GameObject.prototype.clear = function() {
 
 	this.position = null;
 	this.velocity = null;
+	this.collisionRoutingObject = null;
 };
 
 /**
@@ -51,6 +55,13 @@ GameObject.prototype.clear = function() {
 */
 GameObject.prototype.kill = function() {
 	
+};
+
+/**
+*@public
+*/
+GameObject.prototype.getCollisionRoutingObject = function() {
+	return this.collisionRoutingObject;
 };
 
 goog.exportSymbol('GameObject', GameObject);

@@ -48,6 +48,9 @@ goog.inherits(Projectile, GameObject)
 *@public
 */
 Projectile.prototype.init = function() {
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = "projectile";
+	
 	this.setIsAlive(false);
 };
 

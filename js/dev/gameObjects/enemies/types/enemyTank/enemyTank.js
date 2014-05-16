@@ -80,11 +80,17 @@ EnemyTank.prototype.init = function() {
 	this.turret.fireThreshold = 30;
 	this.container.addChild(this.turret.shape);
 
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = EnemyTypes.TANK;
+
 	this.setPhysics();
 
 	this.navigation = new Navigation();
 
 	this.setStateMachine();
+
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = EnemyTypes.TANK;
 
 	this.setIsAlive(false);
 };

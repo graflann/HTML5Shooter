@@ -105,6 +105,9 @@ EnemyCopter.prototype.init = function() {
 
 	this.shadow = new EnemyCopterShadow(this, EnemyCopter.SHADOW_OFFSET, EnemyCopter.SHADOW_SCALE);
 
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = EnemyTypes.COPTER;
+
 	this.setPhysics();
 
 	this.setStateMachine();

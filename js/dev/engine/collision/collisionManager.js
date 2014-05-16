@@ -172,57 +172,12 @@ CollisionManager.prototype.beginContact = function(contact) {
 	var bodyA = contact.GetFixtureA().GetBody(),
         bodyB = contact.GetFixtureB().GetBody(),
         dataA = bodyA.GetUserData(),
-    	dataB = bodyB.GetUserData();
+    	dataB = bodyB.GetUserData(),
+        router = CollisionManager.ROUTER,
+        key = dataA.getCollisionRoutingObject().type + dataB.getCollisionRoutingObject().type;
 
-    //PROJECTILE VS OBJECT////////////////////////////////////////////
-    if(dataA instanceof Projectile) {
-    	this.projectileVsObject(dataA, dataB);
-    	return;
-    } else if(dataB instanceof Projectile) {
-    	this.projectileVsObject(dataB, dataA);
-    	return;
-    }
-    //////////////////////////////////////////////////////////////////
-    
-    //HOMING TARGETING OVERLAY (HTO) VS ENEMY/////////////////////////
-    if(dataA instanceof HomingTargetingOverlay) {
-    	this.htoVsEnemy(dataA, dataB);
-    	return;
-    } else if(dataB instanceof HomingTargetingOverlay) {
-    	this.htoVsEnemy(dataB, dataA);
-    	return;
-    }
-    //////////////////////////////////////////////////////////////////
-    
-    //PLAYER VS ENEMY BODY, SCENEOBJECT, or ITEM//////////////////////
-    if(dataA instanceof PlayerTank) {
-        this.playerVsObject(dataA, dataB);
-        return;
-    } else if(dataB instanceof PlayerTank) {
-        this.playerVsObject(dataB, dataA);
-        return;
-    }
-    //////////////////////////////////////////////////////////////////
-    
-    //ENEMY VS SCENEOBJECT////////////////////////////////////////////
-    if(dataA instanceof Enemy) {
-        this.enemyVsObject(dataA, dataB);
-        return;
-    } else if(dataB instanceof Enemy) {
-        this.enemyVsObject(dataB, dataA);
-        return;
-    }
-    //////////////////////////////////////////////////////////////////
-
-    //ITEM VS SCENEOBJECT////////////////////////////////////////////
-    if(dataA instanceof Item) {
-        this.itemVsObject(dataA, dataB);
-        return;
-    } else if(dataB instanceof Item) {
-        this.itemVsObject(dataB, dataA);
-        return;
-    }
-    //////////////////////////////////////////////////////////////////
+    //uses composite key to route to a "versus" method that handles the result of the collision
+    this[router[key]](dataA, dataB);
 };
 
 CollisionManager.prototype.endContact = function(contact) {
@@ -237,75 +192,246 @@ CollisionManager.prototype.preSolve = function(contact, oldManifold) {
 
 };
 
-//VERSUS/////////////////////////////////////////////////////////////////////
-CollisionManager.prototype.projectileVsObject = function(projectile, object, objectBody) {
+CollisionManager.ROUTER = {
+    ////////////////////////////////////////////////////
+    projectileenemyCentipede:   "projectileVsEnemy",
+    enemyCentipedeprojectile:   "enemyVsProjectile",
+
+    projectileenemyCopter:      "projectileVsEnemy",
+    enemyCopterprojectile:      "enemyVsProjectile",
+
+    projectileenemyTank:        "projectileVsEnemy",
+    enemyTankprojectile:        "enemyVsProjectile",
+
+    projectileenemyRanger:      "projectileVsEnemy",
+    enemyRangerprojectile:      "enemyVsProjectile",
+
+    projectileenemyFencer:      "projectileVsEnemy",
+    enemyFencerprojectile:      "enemyVsProjectile",
+
+    projectileenemyTurret:      "projectileVsEnemy",
+    enemyTurretprojectile:      "enemyVsProjectile",
+
+    projectilerotorEngine:      "projectileVsEnemy",
+    rotorEngineprojectile:      "enemyVsProjectile",
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
+    projectileplayer:           "projectileVsPlayer",
+    playerprojectile:           "playerVsProjectile",
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
+    projectilesceneObject:      "projectileVsSceneObject",
+    sceneObjectprojectile:      "sceneObjectVsProjectile",
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
+    htoenemyCopter:             "htoVsEnemy",
+    enemyCopterhto:             "enemyVsHto",
+
+    htorotorEngine:             "htoVsEnemy",
+    rotorEnginehto:             "enemyVsHto",
+
+    htoenemyTurret:             "htoVsEnemy",
+    enemyTurrethto:             "enemyVsHto",
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
+    playerenemyTank:            "playerVsEnemy",
+    enemyTankPlayer:            "enemyVsPlayer",
+
+    playerenemyCentipede:       "playerVsEnemy",
+    enemyCentipedePlayer:       "enemyVsPlayer",
+
+    playerenemyRanger:          "playerVsEnemyTrooper",
+    enemyRangerPlayer:          "enemyTrooperVsPlayer",
+
+    playerenemyFencer:          "playerVsEnemyTrooper",
+    enemyFencerPlayer:          "enemyTrooperVsPlayer",
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
+    playersceneObject:          "playerVsSceneObject",
+    sceneObjectplayer:          "sceneObjectVsPlayer",
+
+    playeroverdrive:            "playerVsOverdrive",
+    overdriveplayer:            "overdriveVsPlayer",
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
+    enemyCentipedesceneObject:  "enemyVsSceneObject",
+    sceneObjectenemyCentipede:  "sceneObjectVsEnemy",
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
+    overdrivesceneObject:       "itemVsSceneObject",
+    sceneObjectoverdrive:       "sceneObjectVsItem"
+    ////////////////////////////////////////////////////
+};
+
+//ROUTER MAPPING TO VERSUS///////////////////////////////////////////////////
+
+//projectileVsEnemy/enemyVsProjectile////////////////////////////////////////
+CollisionManager.prototype.projectileVsEnemy = function(projectile, enemy) {
     //PROCESS PROJECTILE
-    projectile.onCollide(object, this.collisionOptions.projectile);
+    projectile.onCollide(enemy, this.collisionOptions.projectile);
 
-	//VS. ENEMY
-	if(object instanceof Enemy || object instanceof RotorEngine) {
-        object.onCollide(projectile, this.collisionOptions.enemy);
+    enemy.onCollide(projectile, this.collisionOptions.enemy);
 
-        //TODO: Some processing on a enemy health variable to determine "death"
-        //then push onto the kill list
-        if(object.health <= 0) {
-            this.killList.push(object);
-            this.activationList.push(
-                {
-                    system: this.arrItemSystems[ItemTypes.OVERDRIVE],
-                    qty: 1,
-                    posX: object.container.x, 
-                    posY: object.container.y,
-                    velX: 64,
-                    velY: 64,
-                    isRotated: true
-                }
-            );
+    if(enemy.health <= 0) {
+        this.killList.push(enemy);
+        this.activationList.push(
+            {
+                system: this.arrItemSystems[ItemTypes.OVERDRIVE],
+                qty: 1,
+                posX: enemy.container.x, 
+                posY: enemy.container.y,
+                velX: 64,
+                velY: 64,
+                isRotated: true
+            }
+        );
 
-            app.assetsProxy.playSound("impact1", 0.5);
-        }
+        app.assetsProxy.playSound("impact1", 0.5);
+    }
 
-        //certain projectile types go "through" objects during collision,
-        //so opt out of the remaining function code or execute
-        if(projectile instanceof SniperProjectile || 
-            projectile instanceof BladeProjectile ||
-            projectile instanceof LaserProjectile ||
-            projectile instanceof RotarySawProjectile
-        ) {
-            return;
-        }
-    //VS. SCENE OBJECT
-	} else if (object instanceof SceneObject) {
-        //certain projectile types go "through" or "bounce off" of objects during collision,
-        //so opt out of the remaining function code or execute
-        if(projectile instanceof SniperProjectile || 
-            projectile instanceof BladeProjectile ||
-            projectile instanceof ReflectProjectile || //"bounces" off of SceneObjects but not Enemy instances
-            projectile instanceof LaserProjectile ||
-            projectile instanceof RotarySawProjectile
-        ) {
-            return;
-        }
-    //VS. PLAYER - invincible during boost
-    } else if (object instanceof PlayerTank && !object.isBoosting) { 
-        object.onCollide(projectile, this.collisionOptions.player);
-
-        this.killList.push(object);
-
-        app.assetsProxy.playSound("explosion1");
+    //certain projectile types go "through" objects during collision,
+    //so opt out of the remaining function code or execute
+    if(projectile instanceof SniperProjectile || 
+        projectile instanceof BladeProjectile ||
+        projectile instanceof LaserProjectile ||
+        projectile instanceof RotarySawProjectile
+    ) {
+        return;
     }
 
     //set projectile up for removal during update
-	this.killList.push(projectile);
+    this.killList.push(projectile);
 };
 
+CollisionManager.prototype.enemyVsProjectile = function(enemy, projectile) {
+    this.projectileVsEnemy(projectile, enemy);
+};
+/////////////////////////////////////////////////////////////////////
+
+
+//projectileVsPlayer/playerVsProjectile////////////////////////////////////////
+CollisionManager.prototype.projectileVsPlayer = function(projectile, player) {
+    //PROCESS PROJECTILE
+    projectile.onCollide(player, this.collisionOptions.projectile);
+
+    player.onCollide(projectile, this.collisionOptions.player);
+
+    app.assetsProxy.playSound("explosion1");
+
+    this.killList.push(player);
+
+    //set projectile up for removal during update
+    this.killList.push(projectile);
+};
+
+CollisionManager.prototype.playerVsProjectile = function(player, projectile) {
+    this.projectileVsPlayerTank(projectile, player);
+};
+/////////////////////////////////////////////////////////////////////
+
+
+//playerVsEnemy/enemyVsPlayer////////////////////////////////////////
+CollisionManager.prototype.playerVsEnemy = function(player, enemy) {
+    //player boost kills any ground enemy on contact
+    if(player.isBoosting) {
+        this.killList.push(enemy);
+        this.activationList.push(
+            {
+                system: this.arrItemSystems[ItemTypes.OVERDRIVE],
+                qty: 1,
+                posX: enemy.container.x, 
+                posY: enemy.container.y,
+                velX: 64,
+                velY: 64,
+                isRotated: true
+            }
+        );
+
+        app.assetsProxy.playSound("impact1", 0.5);
+
+        enemy.onCollide(player, this.collisionOptions.enemy);
+    } else {
+        player.onCollide(enemy, this.collisionOptions.player);
+
+        this.killList.push(player);
+
+        app.assetsProxy.playSound("explosion1");
+    }
+};
+
+CollisionManager.prototype.enemyVsPlayer = function(enemy, player) {
+    this.playerVsEnemy(player, enemy);
+};
+/////////////////////////////////////////////////////////////////////
+
+
+//playerVsEnemyTrooper/enemyTrooperVsPlayer////////////////////////////////////////
+CollisionManager.prototype.playerVsEnemyTrooper = function(player, enemy) {
+    this.killList.push(enemy);
+
+    this.activationList.push(
+        {
+            system: this.arrItemSystems[ItemTypes.OVERDRIVE],
+            qty: 1,
+            posX: enemy.container.x, 
+            posY: enemy.container.y,
+            velX: 64,
+            velY: 64,
+            isRotated: true
+        }
+    );
+
+    app.assetsProxy.playSound("impact1", 0.5);
+
+    enemy.onCollide(player, this.collisionOptions.enemy);
+};
+
+CollisionManager.prototype.enemyTrooperVsPlayer = function(enemy, player) {
+    this.playerVsEnemy(player, enemy);
+};
+/////////////////////////////////////////////////////////////////////
+
+
+//projectileVsSceneObject/sceneObjectVsProjectile////////////////////////////////////////
+CollisionManager.prototype.projectileVsSceneObject = function(projectile, sceneObject) {
+    //PROCESS PROJECTILE
+    projectile.onCollide(sceneObject, this.collisionOptions.projectile);
+
+    //certain projectile types go "through" or "bounce off" of objects during collision,
+    //so opt out of the remaining function code or execute
+    if(projectile instanceof SniperProjectile || 
+        projectile instanceof BladeProjectile ||
+        projectile instanceof ReflectProjectile || //"bounces" off of SceneObjects but not Enemy instances
+        projectile instanceof LaserProjectile ||
+        projectile instanceof RotarySawProjectile
+    ) {
+        return;
+    }
+
+    //set projectile up for removal during update
+    this.killList.push(projectile);
+};
+
+CollisionManager.prototype.sceneObjectVsProjectile = function(sceneObject, projectile) {
+    this.projectileVsSceneObject(projectile, sceneObject);
+};
+/////////////////////////////////////////////////////////////////////
+
+
+//htoVsEnemy/enemyVsHto////////////////////////////////////////
 CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
     var homingLength = this.homingList.length,
         i = -1;
 
     if(homingLength < this.arrPlayerProjectileSystems[ProjectileTypes.HOMING].length()) {
         //PROCESS ENEMY
-
         while(++i < homingLength) {
             if(this.homingList[i] === enemy) {
                 return;
@@ -322,100 +448,70 @@ CollisionManager.prototype.htoVsEnemy = function(hto, enemy) {
     }
 };
 
-CollisionManager.prototype.playerVsObject = function(player, object) {
-    if(object instanceof Enemy) {
-        //player boost kills any ground enemy on contact
-        if(player.isBoosting) {
-            this.killList.push(object);
-            this.activationList.push(
-                {
-                    system: this.arrItemSystems[ItemTypes.OVERDRIVE],
-                    qty: 1,
-                    posX: object.container.x, 
-                    posY: object.container.y,
-                    velX: 64,
-                    velY: 64,
-                    isRotated: true
-                }
-            );
+CollisionManager.prototype.enemyVsHto = function(enemy, hto) {
+    this.htoVsEnemy(hto, enemy);
+};
+/////////////////////////////////////////////////////////////////////
 
-            app.assetsProxy.playSound("impact1", 0.5);
 
-            object.onCollide(player, this.collisionOptions.enemy);
-        } else {
-            //run standard troopers over by default
-            if(object instanceof EnemyTrooper) {
-                this.killList.push(object);
-                this.activationList.push(
-                    {
-                        system: this.arrItemSystems[ItemTypes.OVERDRIVE],
-                        qty: 1,
-                        posX: object.container.x, 
-                        posY: object.container.y,
-                        velX: 64,
-                        velY: 64,
-                        isRotated: true
-                    }
-                );
-
-                app.assetsProxy.playSound("impact1", 0.5);
-
-                object.onCollide(player, this.collisionOptions.enemy);
-
-            //EnemyTanks and EnemyCentipede crush player when player is not boosting
-            } else if(object instanceof EnemyTank || object instanceof CentipedeHead || object instanceof CentipedeSegment) {
-                player.onCollide(object, this.collisionOptions.player);
-
-                this.killList.push(player);
-
-                app.assetsProxy.playSound("explosion1");
-            }
-        }
-        return;
-    }
-
-    if(object instanceof EnergyItem) {
-        player.energy += object.value;
-
-        player.changeEnergy(player.energy);
-
-        this.killList.push(object);
-        return;
-    }
-
-    if(object instanceof OverdriveItem) {
-        player.overdrive += object.value;
-
-        player.changeOverdrive(player.overdrive);
-
-        this.arrParticleSystems[ParticleSystemNames.OVERDRIVE_PICK_UP].emit(1, {
-            posX: player.position.x,
-            posY: player.position.y
-        });
-
-        this.killList.push(object);
-
-        app.assetsProxy.playSound("menuFX1", 0.5);
-
-        app.scoreManager.updateBonusMultiplier(0.1);
-        return;
-    }
-
-    //SceneObject (Projectile would be resolved prior to this)
-    if(object instanceof SceneObject) {
-        if(player.isBoosting) {
-            player.forceBoostExit();
-        }
+//playerVsSceneObject/sceneObjectVsPlayer////////////////////////////////////////
+CollisionManager.prototype.playerVsSceneObject = function(player, sceneObject) {
+    if(player.isBoosting) {
+        player.forceBoostExit();
     }
 };
 
-CollisionManager.prototype.enemyVsObject = function(enemy, object) {
-    enemy.onCollide(object, this.collisionOptions.enemy);
+CollisionManager.prototype.sceneObjectVsPlayer = function(sceneObject, player) {
+    this.projectileVsPlayerTank(player, sceneObject);
+};
+/////////////////////////////////////////////////////////////////////
+
+
+//playerVsOverdrive/overdriveVsPlayer////////////////////////////////////////
+CollisionManager.prototype.playerVsOverdrive = function(player, overdriveItem) {
+    player.overdrive += overdriveItem.value;
+
+    player.changeOverdrive(player.overdrive);
+
+    this.arrParticleSystems[ParticleSystemNames.OVERDRIVE_PICK_UP].emit(1, {
+        posX: player.position.x,
+        posY: player.position.y
+    });
+
+    this.killList.push(overdriveItem);
+
+    app.assetsProxy.playSound("menuFX1", 0.5);
+
+    app.scoreManager.updateBonusMultiplier(0.1);
 };
 
-CollisionManager.prototype.itemVsObject = function(item, object) {
-    console.log("Item colliding");
+CollisionManager.prototype.overdriveVsPlayer = function(overdriveItem, player) {
+    this.projectileVsPlayerTank(player, overdriveItem);
 };
+/////////////////////////////////////////////////////////////////////
+
+
+//enemyVsSceneObject/sceneObjectVsEnemy////////////////////////////////////////
+CollisionManager.prototype.enemyVsSceneObject = function(enemy, sceneObject) {
+    enemy.onCollide(sceneObject, this.collisionOptions.enemy);
+};
+
+CollisionManager.prototype.sceneObjectVsEnemy = function(sceneObject, enemy) {
+    this.enemyVsObject(enemy, sceneObject);
+};
+/////////////////////////////////////////////////////////////////////////////
+
+
+//itemVsSceneObject/sceneObjectVsItem////////////////////////////////////////
+CollisionManager.prototype.itemVsSceneObject = function(item, sceneObject) {
+    
+};
+
+CollisionManager.prototype.sceneObjectVsItem = function(sceneObject, item) {
+    this.itemVsSceneObject(item, sceneObject);
+};
+/////////////////////////////////////////////////////////////////////////////
+
 /////////////////////////////////////////////////////////////////////////////
 
 goog.exportSymbol('CollisionManager', CollisionManager);

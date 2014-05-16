@@ -81,6 +81,9 @@ CentipedeSegment.prototype.init = function() {
 
 	this.segmentAnchorDistance = this.height * 0.375;
 
+	this.collisionRoutingObject = new CollisionRoutingObject();
+	this.collisionRoutingObject.type = EnemyTypes.CENTIPEDE;
+
 	this.setPhysics();
 
 	this.setIsAlive(false);
