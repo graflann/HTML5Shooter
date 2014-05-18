@@ -174,7 +174,7 @@ CollisionManager.prototype.beginContact = function(contact) {
         dataA = bodyA.GetUserData(),
     	dataB = bodyB.GetUserData(),
         router = CollisionManager.ROUTER,
-        key = dataA.getCollisionRoutingObject().type + dataB.getCollisionRoutingObject().type;
+        key = [dataA.getCollisionRoutingObject().type, dataB.getCollisionRoutingObject().type].join("");
 
     //uses composite key to route to a "versus" method that handles the result of the collision
     this[router[key]](dataA, dataB);
@@ -243,7 +243,9 @@ CollisionManager.ROUTER = {
 
     playerenemyCentipede:       "playerVsEnemy",
     enemyCentipedePlayer:       "enemyVsPlayer",
+    ////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////
     playerenemyRanger:          "playerVsEnemyTrooper",
     enemyRangerPlayer:          "enemyTrooperVsPlayer",
 
@@ -254,7 +256,9 @@ CollisionManager.ROUTER = {
     ////////////////////////////////////////////////////
     playersceneObject:          "playerVsSceneObject",
     sceneObjectplayer:          "sceneObjectVsPlayer",
+    ////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////
     playeroverdrive:            "playerVsOverdrive",
     overdriveplayer:            "overdriveVsPlayer",
     ////////////////////////////////////////////////////
@@ -321,11 +325,13 @@ CollisionManager.prototype.projectileVsPlayer = function(projectile, player) {
     //PROCESS PROJECTILE
     projectile.onCollide(player, this.collisionOptions.projectile);
 
-    player.onCollide(projectile, this.collisionOptions.player);
+    if(!player.isBoosting) {
+        player.onCollide(projectile, this.collisionOptions.player);
 
-    app.assetsProxy.playSound("explosion1");
+        app.assetsProxy.playSound("explosion1");
 
-    this.killList.push(player);
+        this.killList.push(player);
+    }
 
     //set projectile up for removal during update
     this.killList.push(projectile);
@@ -341,22 +347,7 @@ CollisionManager.prototype.playerVsProjectile = function(player, projectile) {
 CollisionManager.prototype.playerVsEnemy = function(player, enemy) {
     //player boost kills any ground enemy on contact
     if(player.isBoosting) {
-        this.killList.push(enemy);
-        this.activationList.push(
-            {
-                system: this.arrItemSystems[ItemTypes.OVERDRIVE],
-                qty: 1,
-                posX: enemy.container.x, 
-                posY: enemy.container.y,
-                velX: 64,
-                velY: 64,
-                isRotated: true
-            }
-        );
-
-        app.assetsProxy.playSound("impact1", 0.5);
-
-        enemy.onCollide(player, this.collisionOptions.enemy);
+        this.playerVsEnemyTrooper(player, enemy);
     } else {
         player.onCollide(enemy, this.collisionOptions.player);
 
