@@ -338,7 +338,7 @@ CollisionManager.prototype.projectileVsPlayer = function(projectile, player) {
 };
 
 CollisionManager.prototype.playerVsProjectile = function(player, projectile) {
-    this.projectileVsPlayerTank(projectile, player);
+    this.projectileVsPlayer(projectile, player);
 };
 /////////////////////////////////////////////////////////////////////
 

@@ -167,8 +167,8 @@ WaveManager.prototype.setCurrentWave = function() {
 		this
 	);
 
-	this.currentWave.setCurrentSpawn();
-	//this.currentWave.setCurrentSpawns();
+	//this.currentWave.setCurrentSpawn();
+	this.currentWave.setCurrentSpawns();
 };
 
 //EVENT HANDLERS

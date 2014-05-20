@@ -48,28 +48,12 @@ Spawn.prototype.init = function() {
 	this.enemySystem = this.arrEnemySystems[this.options.type];
 
 	this.position = new app.b2Vec2();
-
-	goog.events.listen(
-		this.enemySystem,
-		EventNames.SPAWN_COMPLETE, 
-		this.onSpawnComplete, 
-		false, 
-		this
-	);
 };
 
 /**
 *@public
 */
 Spawn.prototype.clear = function() {
-	goog.events.unlisten(
-		this.enemySystem,
-		EventNames.SPAWN_COMPLETE, 
-		this.onSpawnComplete, 
-		false, 
-		this
-	);
-
 	this.arrEnemySystems = null;
 
 	this.position = null;
@@ -92,7 +76,7 @@ Spawn.prototype.generate = function() {
 		this.generateEnemyByTime(this.options);
 	} else {
 		this.generateEnemy(this.options);
-		goog.events.dispatchEvent(this.enemySystem, this.enemySystem.spawnCompleteEvent);
+		goog.events.dispatchEvent(this, this.spawnCompleteEvent);
 	}
 };
 
@@ -115,7 +99,6 @@ Spawn.prototype.generateEnemy = function(options) {
 		enemy = this.enemySystem.getEnemy();
 		
 		if (enemy) {
-
 			//set enemy position; varies by type
 			if(enemy instanceof EnemyCentipede) {
 				enemy.add();
@@ -189,12 +172,22 @@ Spawn.prototype.generateEnemyByTime = function(options) {
 
 			self.generateEnemyByTime(options);
 		} else {
+			if(self.timer) {
+				clearTimeout(self.timer);
+				self.timer = null;
+			}
+
 			self.currentSpawnedQuantity = 0;
-			goog.events.dispatchEvent(self.enemySystem, self.enemySystem.spawnCompleteEvent);
+			goog.events.dispatchEvent(self, self.spawnCompleteEvent);
 		}
 	};
 
 	if (options.targetQuantity <= this.enemySystem.max || options.intervalQuantity <= this.enemySystem.smax) {
+		if(this.timer) {
+			clearTimeout(this.timer);
+			this.timer = null;
+		}
+
 		this.timer = setTimeout(onTimeOut, options.intervalTime);	
 	} else {
 		throw "Target quantity or interval quantity cannot exceed max quantity.";
@@ -228,16 +221,3 @@ Spawn.prototype.hasSpawnParticle = function() {
 Spawn.prototype.ordinal = function() {
 	return this.options.ordinal;
 };
-
-//EVENT HANDLERS
-Spawn.prototype.onSpawnComplete = function(e) {
-	goog.events.unlisten(
-		this.enemySystem,
-		EventNames.SPAWN_COMPLETE, 
-		this.onSpawnComplete, 
-		false, 
-		this
-	);
-
-	goog.events.dispatchEvent(this, this.spawnCompleteEvent);
-}
