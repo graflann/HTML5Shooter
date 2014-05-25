@@ -217,6 +217,11 @@ CollisionManager.ROUTER = {
     ////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////
+    projectileshield:           "projectileVsShield",
+    shieldprojectile:           "shieldVsProjectile",
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
     projectileplayer:           "projectileVsPlayer",
     playerprojectile:           "playerVsProjectile",
     ////////////////////////////////////////////////////
@@ -319,6 +324,19 @@ CollisionManager.prototype.enemyVsProjectile = function(enemy, projectile) {
 };
 /////////////////////////////////////////////////////////////////////
 
+//projectileVsSceneObject/sceneObjectVsProjectile////////////////////////////////////////
+CollisionManager.prototype.projectileVsShield = function(projectile, shield) {
+    //PROCESS PROJECTILE
+    projectile.onCollide(shield, this.collisionOptions.projectile);
+
+    //set projectile up for removal during update
+    this.killList.push(projectile);
+};
+
+CollisionManager.prototype.shieldVsProjectile = function(shield, projectile) {
+    this.projectileVsSceneObject(projectile, shield);
+};
+/////////////////////////////////////////////////////////////////////
 
 //projectileVsPlayer/playerVsProjectile////////////////////////////////////////
 CollisionManager.prototype.projectileVsPlayer = function(projectile, player) {

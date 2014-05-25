@@ -47,6 +47,8 @@ HitParticle.prototype.update = function(options) {
 
 		this.shape.alpha -= 0.075;
 
+		this.shape.scaleX = this.shape.scaleY += 0.075;
+
 		if(this.shape.alpha < 0) {
 			this.kill();
 		}
@@ -87,4 +89,5 @@ HitParticle.prototype.kill = function() {
 	Particle.prototype.kill.call(this);
 
 	this.shape.alpha = 1;
+	this.shape.scaleX = this.shape.scaleY = 1;
 };

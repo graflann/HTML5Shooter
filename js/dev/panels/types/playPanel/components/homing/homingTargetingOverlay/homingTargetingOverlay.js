@@ -154,7 +154,8 @@ HomingTargetingOverlay.prototype.updateOperation = function(options) {
 	this.background.graphics
 		.ss(2)
 		.s(Constants.LIGHT_BLUE)
-		.f(Constants.BLUE)
+		.rf([Constants.LIGHT_BLUE, Constants.DARK_BLUE], [0, 1], 
+			0, 0, HomingTargetingOverlay.MAX_RADIUS * 0.75, 0, 0, HomingTargetingOverlay.MAX_RADIUS)
 		.dc(0, 0, HomingTargetingOverlay.MAX_RADIUS);
 
 	this.arrReticles[0].graphics

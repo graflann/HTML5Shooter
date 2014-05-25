@@ -1,9 +1,12 @@
 goog.provide('EnemyFencer');
 
 goog.require('EnemyTrooper');
+goog.require('Shield');
 
 EnemyFencer = function() {
 	EnemyTrooper.call(this);
+
+	this.shield = null;
 
 	this.init();
 };
@@ -40,14 +43,33 @@ EnemyFencer.prototype.init = function() {
 	//this.shape.cache(0, 0, this.width, this.height);
 	this.shape.regX = this.width * 0.5;
 	this.shape.regY = this.height * 0.5;
+
 	this.container.addChild(this.shape);
 
 	this.walkAnimUtil = new AnimationUtility("walk", this.shape, 4);
+
+	this.shield = new Shield([Constants.YELLOW, Constants.DARK_RED, Constants.RED], 18, 1);
 
 	this.collisionRoutingObject = new CollisionRoutingObject();
 	this.collisionRoutingObject.type = EnemyTypes.FENCER;
 
 	EnemyTrooper.prototype.init.call(this);
+};
+
+EnemyFencer.prototype.addShield = function() {
+	if(!this.shield.isAlive) {
+		app.layers.getStage(LayerTypes.MAIN).addChild(this.shield.container);
+
+		this.shield.setIsAlive(true);
+	}
+};
+
+EnemyFencer.prototype.removeShield = function() {
+	if(this.shield.isAlive) {
+		app.layers.getStage(LayerTypes.MAIN).removeChild(this.shield.container);
+
+		this.shield.setIsAlive(false);
+	}
 };
 
 /**
@@ -70,6 +92,8 @@ EnemyFencer.prototype.enterRoaming = function(options) {
 	this.timer = setTimeout(function() {
 		self.stateMachine.setState(EnemyRoamingState.NEXT_STATE_MAP[randIndex]);
 	}, randRoamTime);
+
+	this.addShield();
 };
 
 /**
@@ -77,13 +101,12 @@ EnemyFencer.prototype.enterRoaming = function(options) {
 */
 EnemyFencer.prototype.updateRoaming = function(options) {
 	var target = options.target,
-			sin,
-			cos,
-			table = app.trigTable;
+		sin,
+		cos,
+		table = app.trigTable;
 
 	//only calculates homing to target on selected frames
 	if(target && createjs.Ticker.getTicks() % EnemyFencer.HOMING_RATE === 0) {
-
 		//out of the arena
 		if(this.position.x < 0 || this.position.y < 0 ||
 			this.position.x > app.arenaWidth || this.position.y > app.arenaHeight)
@@ -141,6 +164,9 @@ EnemyFencer.prototype.updateAttack = function(options) {
 */
 EnemyFencer.prototype.clear = function() {
 	EnemyTrooper.prototype.clear.call(this);
+
+	this.shield.clear();
+	this.shield = null;
 };
 
 EnemyFencer.prototype.setIsAlive = function(value) {
@@ -151,6 +177,7 @@ EnemyFencer.prototype.setIsAlive = function(value) {
 		this.stateMachine.setState(EnemyRoamingState.KEY);
 	} else {
 		this.clearTimer();
+		this.removeShield();
 	}
 };
 
@@ -165,6 +192,8 @@ EnemyFencer.prototype.setPosition = function(x, y) {
 	this.physicalPosition.y = this.position.y / app.physicsScale;
 	
 	this.body.SetPosition(this.physicalPosition);
+
+	this.shield.update({ target:this });
 };
 
 EnemyFencer.prototype.setPhysics = function() {
@@ -192,9 +221,8 @@ EnemyFencer.prototype.setStateMachine = function() {
 	this.stateMachine.addState(
 		EnemyRoamingState.KEY,
 		new EnemyRoamingState(this),
-		[ ]
+		[]
 	);
-	
 };
 
 goog.exportSymbol('EnemyFencer', EnemyFencer);

@@ -551,19 +551,37 @@ PlayPanel.prototype.setProjectiles = function() {
 
 	//TURRET
 	this.arrPlayerProjectileSystems[ProjectileTypes.VULCAN] = [
-		new ProjectileSystem(ProjectileTypes.VULCAN, [Constants.LIGHT_BLUE, Constants.DARK_BLUE]),
+		new ProjectileSystem(
+			ProjectileTypes.VULCAN, 
+			[Constants.LIGHT_BLUE, Constants.DARK_BLUE],
+			16,
+			CollisionCategories.PLAYER_PROJECTILE,
+			CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
+		),
 		new ProjectileSystem(
 			ProjectileTypes.GRENADE, 
 			[Constants.YELLOW, Constants.RED],
 			32,
 			CollisionCategories.PLAYER_PROJECTILE,
-			CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT
+			CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
 		)
 	];
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.SPREAD] = [
-		new ProjectileSystem(ProjectileTypes.SPREAD, [Constants.LIGHT_BLUE, Constants.DARK_BLUE], 30),
-		new ProjectileSystem(ProjectileTypes.REFLECT, [Constants.YELLOW, Constants.DARK_BLUE], 32)
+		new ProjectileSystem(
+			ProjectileTypes.SPREAD, 
+			[Constants.LIGHT_BLUE, Constants.DARK_BLUE],
+			30,
+			CollisionCategories.PLAYER_PROJECTILE,
+			CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
+		),
+		new ProjectileSystem(
+			ProjectileTypes.REFLECT, 
+			[Constants.YELLOW, Constants.DARK_BLUE], 
+			32,
+			CollisionCategories.PLAYER_PROJECTILE,
+			CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
+		)
 	];
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.BLADE] = [
