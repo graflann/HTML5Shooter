@@ -328,8 +328,10 @@ Level.prototype.setProjectiles = function() {
 		ProjectileTypes.ENEMY, 
 		[Constants.RED],
 		32,
-		CollisionCategories.GROUND_ENEMY_PROJECTILE,
-		CollisionCategories.PLAYER | CollisionCategories.SCENE_OBJECT
+		{
+			categoryBits: CollisionCategories.GROUND_ENEMY_PROJECTILE,
+			maskBits: CollisionCategories.PLAYER | CollisionCategories.SCENE_OBJECT
+		}
 	);
 
 	//Air enemy pool
@@ -337,18 +339,35 @@ Level.prototype.setProjectiles = function() {
 		ProjectileTypes.ENEMY, 
 		[Constants.YELLOW],
 		32,
-		CollisionCategories.AIR_ENEMY_PROJECTILE,
-		CollisionCategories.PLAYER
+		{
+			categoryBits: CollisionCategories.AIR_ENEMY_PROJECTILE,
+			maskBits: CollisionCategories.PLAYER
+		}
 	);
 
 	//Mine pool
 	this.arrEnemyProjectileSystems[ProjectileTypes.MINE] = new ProjectileSystem(
 		ProjectileTypes.MINE, 
 		[Constants.YELLOW, Constants.RED],
-		16,
-		CollisionCategories.GROUND_ENEMY_PROJECTILE,
-		CollisionCategories.PLAYER,
-		this.arrEnemyProjectileSystems["ground"]
+		8,
+		{
+			categoryBits: CollisionCategories.GROUND_ENEMY_PROJECTILE,
+			maskBits: CollisionCategories.PLAYER,
+			secondaryProjectileSystem: this.arrEnemyProjectileSystems["ground"]
+		}
+	);
+
+	//Blade pool for "melee" attacks
+	this.arrEnemyProjectileSystems[ProjectileTypes.BLADE] = new ProjectileSystem(
+		ProjectileTypes.BLADE, 
+		[Constants.RED, Constants.RED], 
+		128,
+		{
+			categoryBits: CollisionCategories.GROUND_ENEMY_PROJECTILE,
+			maskBits: CollisionCategories.PLAYER,
+			dimension: 12,
+			secondsAlive: 0.06
+		}
 	);
 };
 

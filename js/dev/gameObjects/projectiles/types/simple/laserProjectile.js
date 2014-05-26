@@ -6,8 +6,8 @@ goog.require('Projectile');
 *@constructor
 *Ammo for Turret instaces
 */
-LaserProjectile = function(colors, categoryBits, maskBits) {
-	Projectile.call(this, colors, categoryBits, maskBits);
+LaserProjectile = function(arrColors, options) {
+	Projectile.call(this, arrColors, options);
 
 	/**
 	*physical body added to Box2D physicsWorld

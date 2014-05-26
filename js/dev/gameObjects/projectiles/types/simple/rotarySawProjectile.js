@@ -6,8 +6,10 @@ goog.require('Projectile');
 *@constructor
 *Ammo for Turret instaces
 */
-RotarySawProjectile = function(colors, categoryBits, maskBits) {
-	Projectile.call(this, colors, categoryBits, maskBits);
+RotarySawProjectile = function(arrColors, options) {
+	Projectile.call(this, arrColors, options);
+
+	this.dimension = options.dimension || 32;
 
 	/**
 	*physical body added to Box2D physicsWorld
@@ -31,17 +33,21 @@ goog.inherits(RotarySawProjectile, Projectile)
 *@public
 */
 RotarySawProjectile.prototype.init = function() {
+	var mt1 = new app.b2Vec2(-(this.dimension * 0.25), this.dimension * 0.5),
+		lt1 = new app.b2Vec2(0, -this.dimension),
+		lt2 = new app.b2Vec2(this.dimension * 0.25, this.dimension * 0.5);
+
 	this.shape = new createjs.Shape();
 	this.shape.graphics
 		.ss(3, "butt")
 		.s(this.arrColors[0])
-		.mt(-8, 16)
-		.lt(0, -32)
-		.lt(8, 16);
+		.mt(mt1.x, mt1.y)
+		.lt(lt1.x, lt1.y)
+		.lt(lt2.x, lt2.y);
 	this.shape.alpha = 0;
-	this.shape.regY = -16;
+	this.shape.regY = -(this.dimension * 0.5);
 	this.shape.snapToPixel = true;
-	this.shape.cache(-8, -32, 16, 48);
+	this.shape.cache(mt1.x, lt1.y, mt1.y, (this.dimension + mt1.y));
 
 	this.timer = 0;
 	

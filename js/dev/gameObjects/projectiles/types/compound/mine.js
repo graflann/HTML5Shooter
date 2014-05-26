@@ -6,10 +6,10 @@ goog.require('Projectile');
 *@constructor
 *Ammo for Turret instances
 */
-Mine = function(colors, categoryBits, maskBits, projectileSystem) {
-	Projectile.call(this, colors, categoryBits, maskBits);
+Mine = function(arrColors, options) {
+	Projectile.call(this, arrColors, options);
 
-	this.projectileSystem = projectileSystem;
+	this.projectileSystem = options.secondaryProjectileSystem;
 
 	this.velocityMod = 256;
 

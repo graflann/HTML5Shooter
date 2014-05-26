@@ -141,7 +141,7 @@ EnemyRanger.prototype.enterSniping = function(options) {
 	var self = this,
 		maxIndex = EnemySnipingState.NEXT_STATE_MAP.length - 1,
 		randIndex = Math.randomInRangeWhole(0, maxIndex),
-		randRoamTime = Math.randomInRangeWhole(
+		randSnipeTime = Math.randomInRangeWhole(
 			EnemyRanger.MIN_SNIPE_TIME, 
 			EnemyRanger.MAX_SNIPE_TIME
 		);
@@ -155,7 +155,7 @@ EnemyRanger.prototype.enterSniping = function(options) {
 
 	this.timer = setTimeout(function() {
 		self.stateMachine.setState(EnemySnipingState.NEXT_STATE_MAP[randIndex]);
-	}, randRoamTime);
+	}, randSnipeTime);
 };
 
 /**
@@ -189,7 +189,7 @@ EnemyRanger.prototype.enterStrafing = function(options) {
 	var self = this;
 	var maxIndex = EnemyStrafingState.NEXT_STATE_MAP.length - 1;
 	var randIndex = Math.randomInRangeWhole(0, maxIndex);
-	var randRoamTime = Math.randomInRangeWhole(
+	var randStrafeTime = Math.randomInRangeWhole(
 		EnemyRanger.MIN_STRAFE_TIME, 
 		EnemyRanger.MAX_STRAFE_TIME
 	);
@@ -204,7 +204,7 @@ EnemyRanger.prototype.enterStrafing = function(options) {
 
 	this.timer = setTimeout(function() {
 		self.stateMachine.setState(EnemyStrafingState.NEXT_STATE_MAP[randIndex]);
-	}, randRoamTime);
+	}, randStrafeTime);
 };
 
 /**

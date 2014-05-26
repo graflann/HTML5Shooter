@@ -555,38 +555,54 @@ PlayPanel.prototype.setProjectiles = function() {
 			ProjectileTypes.VULCAN, 
 			[Constants.LIGHT_BLUE, Constants.DARK_BLUE],
 			16,
-			CollisionCategories.PLAYER_PROJECTILE,
-			CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
+			{
+				categoryBits: CollisionCategories.PLAYER_PROJECTILE,
+				maskBits: CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
+			}
 		),
 		new ProjectileSystem(
 			ProjectileTypes.GRENADE, 
 			[Constants.YELLOW, Constants.RED],
 			32,
-			CollisionCategories.PLAYER_PROJECTILE,
-			CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
+			{
+				categoryBits: CollisionCategories.PLAYER_PROJECTILE,
+				maskBits: CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
+			}
 		)
 	];
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.SPREAD] = [
 		new ProjectileSystem(
 			ProjectileTypes.SPREAD, 
-			[Constants.LIGHT_BLUE, Constants.DARK_BLUE],
+			[Constants.LIGHT_BLUE, Constants.DARK_BLUE, Constants.BLUE],
 			30,
-			CollisionCategories.PLAYER_PROJECTILE,
-			CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
+			{
+				categoryBits: CollisionCategories.PLAYER_PROJECTILE,
+				maskBits: CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
+			}
 		),
 		new ProjectileSystem(
 			ProjectileTypes.REFLECT, 
-			[Constants.YELLOW, Constants.DARK_BLUE], 
+			[Constants.YELLOW, Constants.DARK_RED, Constants.RED], 
 			32,
-			CollisionCategories.PLAYER_PROJECTILE,
-			CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
+			{
+				categoryBits: CollisionCategories.PLAYER_PROJECTILE,
+				maskBits: CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT | CollisionCategories.SHIELD
+			}
 		)
 	];
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.BLADE] = [
-		new ProjectileSystem(ProjectileTypes.BLADE, [Constants.LIGHT_BLUE, Constants.DARK_BLUE], 32),
-		new ProjectileSystem(ProjectileTypes.ROTARY_SAW, [Constants.YELLOW, Constants.RED], 128)
+		new ProjectileSystem(
+			ProjectileTypes.BLADE, 
+			[Constants.LIGHT_BLUE, Constants.DARK_BLUE], 
+			32
+		),
+		new ProjectileSystem(
+			ProjectileTypes.ROTARY_SAW, 
+			[Constants.YELLOW, Constants.RED], 
+			128
+		)
 	];
 
 	this.arrPlayerProjectileSystems[ProjectileTypes.SNIPER] = [
@@ -599,10 +615,11 @@ PlayPanel.prototype.setProjectiles = function() {
 		ProjectileTypes.HOMING, 
 		[Constants.LIGHT_BLUE, Constants.DARK_BLUE],
 		4,
-		CollisionCategories.HOMING_PROJECTILE,
-		CollisionCategories.AIR_ENEMY
+		{
+			categoryBits: CollisionCategories.HOMING_PROJECTILE,
+			maskBits: CollisionCategories.AIR_ENEMY
+		}
 	);
-
 	///////////////////////////////////////////////////////////////////////////////
 };
 

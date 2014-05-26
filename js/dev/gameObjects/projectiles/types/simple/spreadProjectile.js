@@ -6,9 +6,9 @@ goog.require('Projectile');
 *@constructor
 *Ammo for Turret instaces
 */
-SpreadProjectile = function(colors, categoryBits, maskBits)
+SpreadProjectile = function(arrColors, options)
 {
-	Projectile.call(this, colors, categoryBits, maskBits);
+	Projectile.call(this, arrColors, options);
 
 	/**
 	*physical body added to Box2D physicsWorld
@@ -38,7 +38,14 @@ goog.inherits(SpreadProjectile, Projectile)
 SpreadProjectile.prototype.init = function(options)
 {
 	this.shape = new createjs.Shape();
-	this.shape.graphics.ss(3).s(this.arrColors[0]).f(this.arrColors[1]).dc(0, 0, 6);
+	this.shape.graphics
+		.ss(1)
+		.s(this.arrColors[2])
+		//.f(this.arrColors[1])
+		//.dc(0, 0, 6);
+		.rf([this.arrColors[1], this.arrColors[0]], [0, 1], 0, 0, 2, 0, 0, 6)
+		.dc(0, 0, 6);
+
 	this.shape.snapToPixel = true;
 	this.shape.cache(-9, -9, 18, 18);
 

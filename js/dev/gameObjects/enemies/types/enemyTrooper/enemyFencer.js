@@ -3,8 +3,17 @@ goog.provide('EnemyFencer');
 goog.require('EnemyTrooper');
 goog.require('Shield');
 
-EnemyFencer = function() {
+EnemyFencer = function(projectileSystem) {
 	EnemyTrooper.call(this);
+
+	/**
+	 * @type {Array}
+	 */
+	this.projectileSystem = projectileSystem;
+
+	this.fireThreshold = 0;
+
+	this.fireCounter = 0;
 
 	this.shield = null;
 
@@ -15,14 +24,17 @@ goog.inherits(EnemyFencer, EnemyTrooper);
 
 EnemyFencer.HOMING_RATE = 15;
 
-EnemyFencer.MIN_STRAFE_TIME = 2000;
-EnemyFencer.MAX_STRAFE_TIME = 4000;
+EnemyFencer.AMMO_DISTANCE = 16 / Constants.PHYSICS_SCALE;
+
+EnemyFencer.FIRE_OFFSET = -20;
 
 EnemyFencer.MIN_ROAM_TIME = 500;
 EnemyFencer.MAX_ROAM_TIME = 5000;
 
-EnemyFencer.MIN_SNIPE_TIME = 2000;
-EnemyFencer.MAX_SNIPE_TIME = 4000;
+EnemyFencer.MIN_SNIPE_TIME = 1000;
+EnemyFencer.MAX_SNIPE_TIME = 1000;
+
+EnemyFencer.ATTACK_DISTANCE = Math.pow(65, 2);
 
 /**
 *@override
@@ -48,7 +60,7 @@ EnemyFencer.prototype.init = function() {
 
 	this.walkAnimUtil = new AnimationUtility("walk", this.shape, 4);
 
-	this.shield = new Shield([Constants.YELLOW, Constants.DARK_RED, Constants.RED], 18, 1);
+	this.shield = new Shield([Constants.YELLOW, Constants.DARK_RED, Constants.RED], 20, 1);
 
 	this.collisionRoutingObject = new CollisionRoutingObject();
 	this.collisionRoutingObject.type = EnemyTypes.FENCER;
@@ -76,22 +88,22 @@ EnemyFencer.prototype.removeShield = function() {
 *@public
 */
 EnemyFencer.prototype.enterRoaming = function(options) {
-	var self = this,
-		maxIndex = EnemyRoamingState.NEXT_STATE_MAP.length - 1,
-		randIndex = Math.randomInRangeWhole(0, maxIndex),
-		randRoamTime = Math.randomInRangeWhole(
-			EnemyFencer.MIN_ROAM_TIME, 
-			EnemyFencer.MAX_ROAM_TIME
-		);
+	// var self = this,
+	// 	maxIndex = EnemyRoamingState.NEXT_STATE_MAP.length - 1,
+	// 	randIndex = Math.randomInRangeWhole(0, maxIndex),
+	// 	randRoamTime = Math.randomInRangeWhole(
+	// 		EnemyFencer.MIN_ROAM_TIME, 
+	// 		EnemyFencer.MAX_ROAM_TIME
+	// 	);
 
 	this.walkAnimUtil.play();
 	this.walkAnimUtil.loop(true);
 
-	this.clearTimer();
+	// this.clearTimer();
 
-	this.timer = setTimeout(function() {
-		self.stateMachine.setState(EnemyRoamingState.NEXT_STATE_MAP[randIndex]);
-	}, randRoamTime);
+	// this.timer = setTimeout(function() {
+	// 	self.stateMachine.setState(EnemyRoamingState.NEXT_STATE_MAP[randIndex]);
+	// }, randRoamTime);
 
 	this.addShield();
 };
@@ -142,20 +154,63 @@ EnemyFencer.prototype.updateRoaming = function(options) {
 	RotationUtils.updateRotation(this, this.container, 90);
 
 	this.walkAnimUtil.update();
+
+	if(this.position.DistanceSqrd(target.position) < EnemyFencer.ATTACK_DISTANCE) {
+		this.stateMachine.setState(EnemySnipingState.KEY, options);
+	}
 };
 
 /**
 *@public
 */
-EnemyFencer.prototype.enterAttack = function(options) {
-	
+EnemyFencer.prototype.enterSniping = function(options) {
+	var self = this,
+		target = options.target,
+		maxIndex = EnemySnipingState.NEXT_STATE_MAP.length - 1,
+		randIndex = Math.randomInRangeWhole(0, maxIndex),
+		randSnipeTime = Math.randomInRangeWhole(
+			EnemyFencer.MIN_SNIPE_TIME, 
+			EnemyFencer.MAX_SNIPE_TIME
+		);
+
+	this.walkAnimUtil.stop();
+
+	this.fireCounter = 0;
+	this.fireThreshold = 2;
+
+	this.navigation.update(this.position, target.position);
+
+	this.removeShield();
+
+	this.clearTimer();
+
+	this.timer = setTimeout(function() {
+		self.stateMachine.setState(EnemyRoamingState.KEY);
+	}, randSnipeTime);
 };
 
 /**
 *@public
 */
-EnemyFencer.prototype.updateAttack = function(options) {
-	
+EnemyFencer.prototype.updateSniping = function(options) {
+	var target = options.target,
+		sin,
+		cos,
+		table = app.trigTable;
+
+	//only calculates homing to target on selected frames
+	if(target && createjs.Ticker.getTicks() % EnemyFencer.HOMING_RATE === 0) {
+		this.degToTarget = this.baseRotationDeg = Math.radToDeg(
+			Math.atan2(
+				target.position.y - this.position.y, 
+				target.position.x - this.position.x
+			)
+		);
+	}
+
+	RotationUtils.updateRotation(this, this.container, 90);
+
+	this.updateFiring();
 };
 
 /**
@@ -178,6 +233,62 @@ EnemyFencer.prototype.setIsAlive = function(value) {
 	} else {
 		this.clearTimer();
 		this.removeShield();
+	}
+};
+
+/**
+ *Face player and fires
+*@public
+*/
+EnemyFencer.prototype.updateFiring = function(options) {
+	//check fire
+	if(this.fireCounter++ > this.fireThreshold) {
+		this.fire();
+		this.fireCounter = 0;
+	}
+};
+
+/**
+*@private
+*/
+EnemyFencer.prototype.fire = function() {
+	var deg,
+		sin,
+		cos,
+		firingPosDeg,
+		firingPosSin,
+		firingPosCos,
+		vector2D = new app.b2Vec2(),
+		trigTable = app.trigTable,
+		stage = this.container.getStage(),
+		projectile = null
+
+	sin = trigTable.sin(this.baseRotationDeg);
+	cos = trigTable.cos(this.baseRotationDeg);
+
+	//acquire values to determine firing position
+	firingPosDeg = this.baseRotationDeg + EnemyFencer.FIRE_OFFSET;
+	firingPosSin = trigTable.sin(firingPosDeg);
+	firingPosCos = trigTable.cos(firingPosDeg);
+
+	projectile = this.projectileSystem.getProjectile();
+
+	if(projectile) {			
+		//zero out existing linear velocity
+		projectile.body.SetLinearVelocity(app.vecZero);
+		
+		vector2D.x = (this.position.x / app.physicsScale) + (firingPosCos * EnemyFencer.AMMO_DISTANCE);
+		vector2D.y = (this.position.y / app.physicsScale) + (firingPosSin * EnemyFencer.AMMO_DISTANCE);				
+		projectile.body.SetPosition(vector2D);
+		
+		vector2D.x = cos * projectile.velocityMod;
+		vector2D.y = sin * projectile.velocityMod;		
+		projectile.body.ApplyForce(vector2D, projectile.body.GetWorldCenter());
+
+		projectile.setIsAlive(true);
+		
+		projectile.shape.rotation = this.container.rotation;
+		stage.addChild(projectile.shape);
 	}
 };
 
@@ -221,7 +332,13 @@ EnemyFencer.prototype.setStateMachine = function() {
 	this.stateMachine.addState(
 		EnemyRoamingState.KEY,
 		new EnemyRoamingState(this),
-		[]
+		[ EnemySnipingState.KEY ]
+	);
+
+	this.stateMachine.addState(
+		EnemySnipingState.KEY,
+		new EnemySnipingState(this),
+		[ EnemyRoamingState.KEY ]
 	);
 };
 

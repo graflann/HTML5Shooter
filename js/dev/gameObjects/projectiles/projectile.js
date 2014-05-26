@@ -7,17 +7,17 @@ goog.require('CollisionCategories');
 *@constructor
 *Ammo for Turret instaces
 */
-Projectile = function(colors, categoryBits, maskBits) {
+Projectile = function(arrColors, options) {
 	GameObject.call(this);
 
 	/**
 	*@type  {String}
 	*/
-	this.arrColors = colors;
+	this.arrColors = arrColors;
 
-	this.categoryBits = categoryBits;
+	this.categoryBits = options.categoryBits;
 	
-	this.maskBits = maskBits;
+	this.maskBits = options.maskBits;
 	
 	/**
 	*@type {DisplayObject}

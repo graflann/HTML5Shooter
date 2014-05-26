@@ -4,10 +4,10 @@ goog.require('Projectile');
 
 /**
 *@constructor
-*Ammo for Turret instaces
+*Ammo for Turret instances
 */
-VulcanProjectile = function(colors, categoryBits, maskBits) {
-	Projectile.call(this, colors, categoryBits, maskBits);
+VulcanProjectile = function(arrColors, options) {
+	Projectile.call(this, arrColors, options);
 
 	/**
 	*physical body added to Box2D physicsWorld

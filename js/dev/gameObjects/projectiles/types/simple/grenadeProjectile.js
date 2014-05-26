@@ -6,16 +6,15 @@ goog.require('Projectile');
 *@constructor
 *Ammo for Turret instaces
 */
-GrenadeProjectile = function(colors, categoryBits, maskBits)
+GrenadeProjectile = function(arrColors, options)
 {
-	Projectile.call(this, colors, categoryBits, maskBits);
+	Projectile.call(this, arrColors, options);
 
 	/**
 	*physical body added to Box2D physicsWorld
 	*@type {}
 	*/
 	this.velocityMod = 192;
-	
 	
 	this.init();
 };

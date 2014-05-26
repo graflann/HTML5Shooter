@@ -6,9 +6,8 @@ goog.require('Projectile');
 *@constructor
 *Ammo for Turret instaces
 */
-ReflectProjectile = function(colors, categoryBits, maskBits)
-{
-	Projectile.call(this, colors, categoryBits, maskBits);
+ReflectProjectile = function(arrColors, options) {
+	Projectile.call(this, arrColors, options);
 
 	/**
 	*physical body added to Box2D physicsWorld
@@ -35,10 +34,14 @@ goog.inherits(ReflectProjectile, Projectile)
 *@override
 *@public
 */
-ReflectProjectile.prototype.init = function(options)
-{
+ReflectProjectile.prototype.init = function(options) {
 	this.shape = new createjs.Shape();
-	this.shape.graphics.ss(3).s(this.arrColors[0]).f(this.arrColors[1]).dc(0, 0, 6);
+	this.shape.graphics
+		.ss(1)
+		.s(this.arrColors[2])
+		.rf([this.arrColors[1], this.arrColors[0]], [0, 1], 0, 0, 2, 0, 0, 6)
+		.dc(0, 0, 6);
+
 	this.shape.snapToPixel = true;
 
 	this.alphaTimer = 0;
@@ -52,8 +55,7 @@ ReflectProjectile.prototype.init = function(options)
 *@override
 *@public
 */
-ReflectProjectile.prototype.update = function()
-{
+ReflectProjectile.prototype.update = function() {
 	if(this.isAlive) {
 		var scale = app.physicsScale;
 

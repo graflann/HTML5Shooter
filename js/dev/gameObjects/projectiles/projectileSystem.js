@@ -7,18 +7,25 @@ goog.require('ProjectileClasses');
 *@constructor
 *System managing projectiles
 */
-ProjectileSystem = function(type, color, max, categoryBits, maskBits, secondaryProjectileSystem) {
+ProjectileSystem = function(type, arrColors, max, options) {
 	this.type = type;
 
-	this.color = color;
+	this.arrColors = arrColors;
 
 	this.max = max || 8;
 
-	this.categoryBits = categoryBits || CollisionCategories.PLAYER_PROJECTILE;
+	this.options = options || {
+		categoryBits: CollisionCategories.PLAYER_PROJECTILE,
+		maskBits: CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT,
+		secondaryProjectileSystem: null,
+		dimension: null
+	};
 
-	this.maskBits = maskBits || CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT;
+	//this.categoryBits = categoryBits || CollisionCategories.PLAYER_PROJECTILE;
 
-	this.secondaryProjectileSystem = secondaryProjectileSystem || null;
+	//this.maskBits = maskBits || CollisionCategories.GROUND_ENEMY | CollisionCategories.SCENE_OBJECT;
+
+	//this.secondaryProjectileSystem = secondaryProjectileSystem || null;
 
 	this.isActive = true;
 
@@ -34,11 +41,11 @@ ProjectileSystem.prototype.init = function() {
 		i = -1;
 
 	while(++i < this.max) {
-		if(this.secondaryProjectileSystem) {
-			this.arrProjectiles[i] = new ProjectileClass(this.color, this.categoryBits, this.maskBits, this.secondaryProjectileSystem);
-		} else {
-			this.arrProjectiles[i] = new ProjectileClass(this.color, this.categoryBits, this.maskBits);
-		}
+		//if(this.options.secondaryProjectileSystem) {
+			this.arrProjectiles[i] = new ProjectileClass(this.arrColors, this.options);
+		//} else {
+			//this.arrProjectiles[i] = new ProjectileClass(this.arrColors, this.categoryBits, this.maskBits);
+		//}
 	}
 };
 

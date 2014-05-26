@@ -58,7 +58,7 @@
 
 		"enemyFencer": {
 			"max": 64,
-			"projectileSystem": "ground"
+			"projectileSystem": "blade"
 		},
 
 		"enemyCentipede": {
