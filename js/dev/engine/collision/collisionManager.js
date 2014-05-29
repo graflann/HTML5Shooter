@@ -506,7 +506,7 @@ CollisionManager.prototype.enemyVsSceneObject = function(enemy, sceneObject) {
 };
 
 CollisionManager.prototype.sceneObjectVsEnemy = function(sceneObject, enemy) {
-    this.enemyVsObject(enemy, sceneObject);
+    this.enemyVsSceneObject(enemy, sceneObject);
 };
 /////////////////////////////////////////////////////////////////////////////
 

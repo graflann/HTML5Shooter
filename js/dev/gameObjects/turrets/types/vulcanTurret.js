@@ -12,7 +12,8 @@ VulcanTurret = function(hasAI, arrProjectileSystems) {
 
 	this.stateMachine = null;
 
-	this.turretAnimUtil = null;
+	this.defaultAnimUtil = null;
+	this.altAnimUtil = null;
 
 	this.fireOffset = 0.0625;
 	
@@ -20,6 +21,10 @@ VulcanTurret = function(hasAI, arrProjectileSystems) {
 };
 
 goog.inherits(VulcanTurret, Turret);
+
+VulcanTurret.FIRE_OFFSETS = {
+	ALT: [-10, 10]
+};
 
 /**
 *@override
@@ -38,8 +43,13 @@ VulcanTurret.prototype.init = function() {
 	this.shape.regY = 44;
 	this.shape.gotoAndStop("vulcanTurret");
 
-	this.turretAnimUtil = new AnimationUtility("vulcanTurret", this.shape, 2);
-	this.turretAnimUtil.loop(true);
+	this.defaultAnimUtil = new AnimationUtility("vulcanTurret", this.shape, 2);
+	this.defaultAnimUtil.loop(true);
+
+	this.altAnimUtil = new AnimationUtility("dualVulcanTurret", this.shape, 2);
+	this.altAnimUtil.loop(true);
+
+	this.offsetLength = VulcanTurret.FIRE_OFFSETS.ALT.length;
 
 	this.setStateMachine();
 	this.setFiringState(Turret.FIRE_TYPES.DEFAULT);
@@ -55,9 +65,6 @@ VulcanTurret.prototype.update = function(options) {
 	Turret.prototype.update.call(this, options);
 
 	this.stateMachine.update(options);
-
-	(this.isFiring) ? this.turretAnimUtil.play() : this.turretAnimUtil.stop();
-	this.turretAnimUtil.update();
 };
 
 VulcanTurret.prototype.clear = function() {
@@ -66,8 +73,11 @@ VulcanTurret.prototype.clear = function() {
 	this.stateMachine.clear();
 	this.stateMachine = null;
 
-	this.turretAnimUtil.clear();
-	this.turretAnimUtil = null;
+	this.defaultAnimUtil.clear();
+	this.defaultAnimUtil = null;
+
+	this.altAnimUtil.clear();
+	this.altAnimUtil = null;
 };
 
 /**
@@ -80,7 +90,17 @@ VulcanTurret.prototype.enterDefaultFire = function(options) {
 	this.fireThreshold = 4;
 	this.fireCounter = this.fireThreshold - 1;
 
+	this.altAnimUtil.stop();
+
 	//this.energyConsumption = -7;
+};
+
+/**
+*@public				
+*/
+VulcanTurret.prototype.updateDefaultFire = function(options) {	
+	(this.isFiring) ? this.defaultAnimUtil.play() : this.defaultAnimUtil.stop();
+	this.defaultAnimUtil.update();
 };
 
 /**
@@ -92,17 +112,19 @@ VulcanTurret.prototype.enterAltFire = function(options) {
 
 	this.fireThreshold = 3;
 	this.fireCounter = this.fireThreshold - 1;
+
+	this.defaultAnimUtil.stop();
+};
+
+/**
+*@public				
+*/
+VulcanTurret.prototype.updateAltFire = function(options) {	
+	(this.isFiring) ? this.altAnimUtil.play() : this.altAnimUtil.stop(2);
+	this.altAnimUtil.update();
 };
 
 VulcanTurret.prototype.defaultFire = function() {
-	this.baseFire();
-};
-
-VulcanTurret.prototype.altFire = function() {
-	this.baseFire();
-};
-
-VulcanTurret.prototype.baseFire = function() {
 	var deg,
 		sin,
 		cos,
@@ -136,5 +158,56 @@ VulcanTurret.prototype.baseFire = function() {
 		stage.addChild(projectile.shape);
 
 		app.assetsProxy.playSound("vulcan", 0.5);
+	}
+};
+
+VulcanTurret.prototype.altFire = function() {
+	var deg,
+		sin,
+		cos,
+		firingPosDeg,
+		firingPosSin,
+		firingPosCos,
+		vector2D,
+		trigTable = app.trigTable,
+		stage = this.shape.getStage(),
+		projectile = null,
+		offset = Math.randomInRange(-this.fireOffset, this.fireOffset),
+		i = -1;
+
+	while(++i < this.offsetLength) {
+		projectile = this.currentProjectileSystem.getProjectile();
+
+		if(projectile) {
+			vector2D = new app.b2Vec2();
+			
+			//zero out existing linear velocity
+			projectile.body.SetLinearVelocity(vector2D);
+			
+			//acquire rotation of Turret instance in degrees and add ammo at table-referenced distance			
+			deg = this.shape.rotation - 90;
+			sin = app.trigTable.sin(deg);
+			cos = app.trigTable.cos(deg);
+
+			//acquire values to determine firing position
+			firingPosDeg = deg + VulcanTurret.FIRE_OFFSETS.ALT[i];
+			firingPosSin = trigTable.sin(firingPosDeg);
+			firingPosCos = trigTable.cos(firingPosDeg);
+			
+			vector2D.x = ((this.shape.parent.x + this.shape.x) / app.physicsScale) + (firingPosCos * this.ammoDistance);
+			vector2D.y = ((this.shape.parent.y + this.shape.y) / app.physicsScale) + (firingPosSin * this.ammoDistance);				
+			projectile.body.SetPosition(vector2D);
+			projectile.shape.rotation = this.shape.rotation;
+
+			projectile.setIsAlive(true);
+
+			vector2D.x = (cos + offset) * projectile.velocityMod;
+			vector2D.y = (sin + offset) * projectile.velocityMod;				
+			projectile.body.ApplyForce(vector2D, projectile.body.GetWorldCenter());
+			
+			stage.addChild(projectile.shape);
+
+			app.assetsProxy.playSound("vulcan", 0.5);
+		}
 	}
 };

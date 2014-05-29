@@ -88,22 +88,8 @@ EnemyFencer.prototype.removeShield = function() {
 *@public
 */
 EnemyFencer.prototype.enterRoaming = function(options) {
-	// var self = this,
-	// 	maxIndex = EnemyRoamingState.NEXT_STATE_MAP.length - 1,
-	// 	randIndex = Math.randomInRangeWhole(0, maxIndex),
-	// 	randRoamTime = Math.randomInRangeWhole(
-	// 		EnemyFencer.MIN_ROAM_TIME, 
-	// 		EnemyFencer.MAX_ROAM_TIME
-	// 	);
-
 	this.walkAnimUtil.play();
 	this.walkAnimUtil.loop(true);
-
-	// this.clearTimer();
-
-	// this.timer = setTimeout(function() {
-	// 	self.stateMachine.setState(EnemyRoamingState.NEXT_STATE_MAP[randIndex]);
-	// }, randRoamTime);
 
 	this.addShield();
 };
