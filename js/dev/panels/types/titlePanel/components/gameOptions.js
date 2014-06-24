@@ -47,15 +47,17 @@ GameOptions.prototype.init = function() {
 GameOptions.prototype.update = function(options) {
 	var input = app.input;
 
-	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_UP)) {
+	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_UP) || input.isLeftVertUpOnce()) {
 		this.targetOptionIndex--;
 		this.setSelection(this.targetOptionIndex);
-	} else if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_DOWN)) {
+	} else if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_DOWN) || input.isLeftVertDownOnce()) {
 		this.targetOptionIndex++;
 		this.setSelection(this.targetOptionIndex);
 	}
 
 	this.arrOptions[this.currentOptionIndex].update();
+	
+	app.input.checkPrevAxesValues();
 };
 
 /**

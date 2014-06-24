@@ -26,13 +26,17 @@ Input = function() {
 
 	/**
 	 * [arrPrevButtonDown description]
-	 * @type {[type]}
+	 * @type {Array.<Boolean>}
 	 */
 	this.arrPrevButtonDown = null;
 
 	/**
-	 * [gamepad description]
-	 * @type {[type]}
+	 * @type {Array.<Boolean>}
+	 */
+	this.arrPrevAxesValues = null;
+
+	/**
+	 * 
 	 */
 	this.gamepad = null;
 
@@ -129,9 +133,14 @@ Input.prototype.setGamepad = function() {
 	console.log("Is gamepad support available? " + this.gamepadSupportAvailable.toString());
 
 	this.arrPrevButtonDown = new Array(length);
-
 	while(i--) {
 		this.arrPrevButtonDown[i] = false;
+	}
+
+	this.arrPrevAxesValues = [];
+	for(var key in GamepadCode.AXES) {
+		this.arrPrevAxesValues[GamepadCode.AXES[key]] = 0;
+		console.log("axis key: " + key + ", value: " + this.arrPrevAxesValues[GamepadCode.AXES[key]]);
 	}
 
 	if (this.gamepadSupportAvailable) {
@@ -283,7 +292,7 @@ Input.prototype.isPrevButtonDown = function(gamepadCode) {
 
 /**
  * @public
- * @param	arrKeyCodes
+ * @param	Array
  */
 Input.prototype.checkPrevButtonDown = function(arrGamepadCodes) {
 	var i = arrGamepadCodes.length,
@@ -297,7 +306,8 @@ Input.prototype.checkPrevButtonDown = function(arrGamepadCodes) {
 
 /**
  * @public
- * @param	arrKeyCodes
+ * @param	Number
+ * @returns Boolean
  */
 Input.prototype.isButtonPressedOnce = function(gamepadCode) {
 	return this.isButtonDown(gamepadCode) && !this.isPrevButtonDown(gamepadCode);
@@ -370,3 +380,61 @@ Input.prototype.onKeyDown = function(e) {
 Input.prototype.onKeyUp = function(e) {
 	this.arrKeyDown[e.keyCode] = false;
 };
+
+/**
+*@private
+*@param 	e
+*@returns 	Boolean
+*/
+Input.prototype.isLeftVertUpOnce = function() {
+	var vert = this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT),
+		prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_VERT];
+
+	return (vert < -Input.MOVE_THRESHOLD && prevVert != Math.round(vert));
+};
+
+/**
+*@private
+*@param 	e
+*@returns 	Boolean
+*/
+Input.prototype.isLeftVertDownOnce = function() {
+	var vert = this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT),
+		prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_VERT];
+
+	return (vert > Input.MOVE_THRESHOLD && prevVert != Math.round(vert));
+};
+
+/**
+*@private
+*@param 	e
+*@returns 	Boolean
+*/
+Input.prototype.isLeftHoriLeftOnce = function() {
+	var vert = this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR),
+		prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_HOR];
+
+	return (vert < -Input.MOVE_THRESHOLD && prevVert != Math.round(vert));
+};
+
+/**
+*@private
+*@param 	e
+*@returns 	Boolean
+*/
+Input.prototype.isLeftHoriRightOnce = function() {
+	var vert = this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR),
+		prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_HOR];
+
+	return (vert > Input.MOVE_THRESHOLD && prevVert != Math.round(vert));
+};
+
+/**
+ * @public
+ * @param	arrKeyCodes
+ */
+Input.prototype.checkPrevAxesValues = function() {
+	for(var key in GamepadCode.AXES) {
+		this.arrPrevAxesValues[GamepadCode.AXES[key]] = Math.round(this.getAxis(GamepadCode.AXES[key]));
+	}
+}

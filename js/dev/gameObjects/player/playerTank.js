@@ -267,6 +267,7 @@ PlayerTank.prototype.enterBoost = function(options) {
 	this.force.y = boostVelY * app.trigTable.sin(rotation);
 
 	this.body.ApplyForce(this.force, this.body.GetWorldCenter());
+	this.transformBodySensor(true);
 
 	this.isBoosting = true;
 
@@ -328,6 +329,8 @@ PlayerTank.prototype.updateBoost = function(options) {
 PlayerTank.prototype.exitBoost = function(options) {
 	this.isBoosting = false;
 	this.damage = 0;
+
+	this.transformBodySensor(false);
 
 	this.baseContainer.scaleX = 1;
 	this.baseContainer.scaleY = 1;
@@ -993,6 +996,32 @@ PlayerTank.prototype.removeTurret = function(prevTurret) {
 	}
 };
 
+/**
+*@public
+*/
+PlayerTank.prototype.transformBodySensor = function(value) {
+	var fixDef = new app.b2FixtureDef(),
+		oldFixDef = this.body.GetFixtureList(),
+		scale = app.physicsScale * 2,
+		center = new app.b2Vec2();
+
+	fixDef.density = 1;
+	fixDef.friction = (value) ? 100 : 0;
+	fixDef.restitution = 0;
+	fixDef.filter.categoryBits = CollisionCategories.PLAYER_BASE;
+	fixDef.filter.maskBits = CollisionCategories.SCENE_OBJECT | CollisionCategories.GROUND_ENEMY | CollisionCategories.ITEM;
+	fixDef.isSensor = value;
+	fixDef.shape = new app.b2PolygonShape();
+	fixDef.shape.SetAsOrientedBox(this.width / scale, this.height / scale, center);
+
+	
+	if(oldFixDef) {
+		this.body.DestroyFixture(oldFixDef);
+	}
+	
+	this.body.CreateFixture(fixDef);
+};
+
 PlayerTank.prototype.setPhysics = function() {
 	this.setTurretBody();
 	this.setBaseBody();
@@ -1007,12 +1036,11 @@ PlayerTank.prototype.setBaseBody = function() {
 			0
 		);
 	
-	fixDef.density = 1.0;
-	fixDef.friction = 100.0;
+	fixDef.density = 1;
+	fixDef.friction = 100;
 	fixDef.restitution = 0;
 	fixDef.filter.categoryBits = CollisionCategories.PLAYER_BASE;
-	fixDef.filter.maskBits = 
-		CollisionCategories.SCENE_OBJECT | CollisionCategories.GROUND_ENEMY | CollisionCategories.ITEM;
+	fixDef.filter.maskBits = CollisionCategories.SCENE_OBJECT | CollisionCategories.GROUND_ENEMY | CollisionCategories.ITEM;
 	fixDef.shape = new app.b2PolygonShape();
 	fixDef.shape.SetAsOrientedBox(this.width / scale, this.height / scale, center);
 	
