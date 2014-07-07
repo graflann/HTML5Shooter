@@ -101,7 +101,7 @@ Input.prototype.setConfig = function() {
  */
 Input.prototype.setKeyboard = function() {
 	var self = this,
-		stageSelector = app.layers.getSelector(LayerTypes.MAIN),
+		stageSelector = app.layers.getSelector(LayerTypes.INPUT),
 		length = 256,
 		i = length;
 	
@@ -411,10 +411,10 @@ Input.prototype.isLeftVertDownOnce = function() {
 *@returns 	Boolean
 */
 Input.prototype.isLeftHoriLeftOnce = function() {
-	var vert = this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR),
+	var hori = this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR),
 		prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_HOR];
 
-	return (vert < -Input.MOVE_THRESHOLD && prevVert != Math.round(vert));
+	return (hori < -Input.MOVE_THRESHOLD && prevHori != Math.round(hori));
 };
 
 /**
@@ -423,10 +423,10 @@ Input.prototype.isLeftHoriLeftOnce = function() {
 *@returns 	Boolean
 */
 Input.prototype.isLeftHoriRightOnce = function() {
-	var vert = this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR),
-		prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_HOR];
+	var hori = this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR),
+		prevHori = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_HOR];
 
-	return (vert > Input.MOVE_THRESHOLD && prevVert != Math.round(vert));
+	return (hori > Input.MOVE_THRESHOLD && prevHori != Math.round(hori));
 };
 
 /**
@@ -434,7 +434,97 @@ Input.prototype.isLeftHoriRightOnce = function() {
  * @param	arrKeyCodes
  */
 Input.prototype.checkPrevAxesValues = function() {
+	var axisValue = null;
+
 	for(var key in GamepadCode.AXES) {
-		this.arrPrevAxesValues[GamepadCode.AXES[key]] = Math.round(this.getAxis(GamepadCode.AXES[key]));
+		axisValue = GamepadCode.AXES[key];
+
+		this.arrPrevAxesValues[axisValue] = Math.round(this.getAxis(axisValue));
 	}
+}
+
+Input.prototype.isConfirming = function() {
+	return (
+		this.isButtonPressedOnce(GamepadCode.BUTTONS.START) ||
+		this.isButtonPressedOnce(GamepadCode.BUTTONS.A) ||
+		this.isKeyPressedOnce(KeyCode.SPACE) ||
+		this.isKeyPressedOnce(KeyCode.ENTER)
+	);
+}
+
+Input.prototype.isExiting = function() {
+	return (
+		this.isButtonPressedOnce(GamepadCode.BUTTONS.BACK) ||
+		this.isButtonPressedOnce(GamepadCode.BUTTONS.B) ||
+		this.isKeyPressedOnce(KeyCode.ESCAPE) ||
+		this.isKeyPressedOnce(KeyCode.BACKSPACE)
+	);
+}
+
+Input.prototype.isUp = function() {
+	return (
+		this.isButtonDown(GamepadCode.BUTTONS.DPAD_UP) || 
+		this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT) < -Input.MOVE_THRESHOLD ||
+		this.isKeyDown(KeyCode.W) || 
+		this.isKeyDown(KeyCode.UP) 
+	);
+}
+
+Input.prototype.isDown = function() {
+	return (
+		this.isButtonDown(GamepadCode.BUTTONS.DPAD_DOWN) || 
+		this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT) > Input.MOVE_THRESHOLD ||
+		this.isKeyDown(KeyCode.S) ||
+		this.isKeyDown(KeyCode.DOWN)
+	);
+}
+
+Input.prototype.isLeft = function() {
+	return (
+		this.isButtonDown(GamepadCode.BUTTONS.DPAD_LEFT) || 
+		this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR) < -Input.MOVE_THRESHOLD ||
+		this.isKeyDown(KeyCode.A) || 
+		this.isKeyDown(KeyCode.LEFT)
+	);
+}
+
+Input.prototype.isRight = function() {
+	return (
+		this.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT) || 
+		this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR) > Input.MOVE_THRESHOLD ||
+		this.isKeyDown(KeyCode.D) ||
+		this.isKeyDown(KeyCode.RIGHT)
+	);
+}
+
+Input.prototype.isUpOnce = function() {
+	return (
+		this.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_UP) ||
+		this.isLeftVertUpOnce() ||
+		this.isKeyPressedOnce(KeyCode.UP)
+	);
+}
+
+Input.prototype.isDownOnce = function() {
+	return (
+		this.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_DOWN) ||
+		this.isLeftVertDownOnce() ||
+		this.isKeyPressedOnce(KeyCode.DOWN)
+	);
+}
+
+Input.prototype.isLeftOnce = function() {
+	return (
+		this.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_LEFT) ||
+		this.isLeftHoriLeftOnce() ||
+		this.isKeyPressedOnce(KeyCode.LEFT)
+	);
+}
+
+Input.prototype.isRightOnce = function() {
+	return (
+		this.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_RIGHT) ||
+		this.isLeftHoriRightOnce() ||
+		this.isKeyPressedOnce(KeyCode.RIGHT)
+	);
 }

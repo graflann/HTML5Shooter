@@ -114,7 +114,7 @@ CreditsPanel.prototype.update = function() {
 
 	this.grid.update();
 
-	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.B)) {
+	if(input.isExiting()) {
 		this.onExit();
 	}
 };

@@ -91,8 +91,6 @@ VulcanTurret.prototype.enterDefaultFire = function(options) {
 	this.fireCounter = this.fireThreshold - 1;
 
 	this.altAnimUtil.stop();
-
-	//this.energyConsumption = -7;
 };
 
 /**

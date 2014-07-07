@@ -107,10 +107,10 @@ OptionConfigurationRow.prototype.init = function() {
 OptionConfigurationRow.prototype.update = function() {
 	var input = app.input;
 
-	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_LEFT)) {
+	if(input.isLeftOnce()) {
 		this.optionIndex--;
 		this.selectOption(this.optionIndex, true);
-	} else if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_RIGHT)) {
+	} else if(input.isRightOnce()) {
 		this.optionIndex++;
 		this.selectOption(this.optionIndex, true);
 	}

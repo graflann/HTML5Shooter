@@ -47,8 +47,7 @@ OptionText.prototype.init = function() {
 OptionText.prototype.update = function() {
 	var input = app.input;
 
-	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.START) || 
-		input.isButtonPressedOnce(GamepadCode.BUTTONS.A)) {
+	if(input.isConfirming()) {
 		goog.events.dispatchEvent(this, this.optionSelectedEvent);
 	}
 };

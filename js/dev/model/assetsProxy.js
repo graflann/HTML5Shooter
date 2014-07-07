@@ -254,8 +254,8 @@ AssetsProxy.prototype.playSound = function(id, volume, isLooping) {
 	}
 
 	sound.volume = qualifiedVolume;
-	//sound.stop();
-	//sound.play();
+	sound.stop();
+	sound.play();
 	*/
 };
 

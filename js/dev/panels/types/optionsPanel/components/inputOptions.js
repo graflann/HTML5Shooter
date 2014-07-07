@@ -38,7 +38,7 @@ goog.inherits(InputOptions, goog.events.EventTarget);
 */
 InputOptions.prototype.init = function() {
 	this.container = new createjs.Container();
-
+	
 	this.setOptions();
 };
 
@@ -48,10 +48,10 @@ InputOptions.prototype.init = function() {
 InputOptions.prototype.update = function(options) {
 	var input = app.input;
 
-	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_UP)) {
+	if(input.isUpOnce()) {
 		this.targetRowIndex--;
 		this.setSelection(this.targetRowIndex);
-	} else if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_DOWN)) {
+	} else if(input.isDownOnce()) {
 		this.targetRowIndex++;
 		this.setSelection(this.targetRowIndex);
 	}
@@ -171,7 +171,7 @@ InputOptions.prototype.setSelection = function(index) {
 	//cap selectable index
 	if(index > maxIndex) {
 		index = 0;
-	} else if(index < 0){
+	} else if(index < 0) {
 		index = maxIndex;
 	}
 

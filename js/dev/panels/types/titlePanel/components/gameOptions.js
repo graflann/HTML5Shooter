@@ -47,10 +47,10 @@ GameOptions.prototype.init = function() {
 GameOptions.prototype.update = function(options) {
 	var input = app.input;
 
-	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_UP) || input.isLeftVertUpOnce()) {
+	if(input.isUpOnce()) {
 		this.targetOptionIndex--;
 		this.setSelection(this.targetOptionIndex);
-	} else if(input.isButtonPressedOnce(GamepadCode.BUTTONS.DPAD_DOWN) || input.isLeftVertDownOnce()) {
+	} else if(input.isDownOnce()) {
 		this.targetOptionIndex++;
 		this.setSelection(this.targetOptionIndex);
 	}

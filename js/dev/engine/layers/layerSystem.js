@@ -17,6 +17,8 @@ LayerSystem = function() {
 
 	this.debugLayer = null;
 
+	this.inputLayer = null;
+
 	this.index = 0;
 
 	this.init();
@@ -46,9 +48,15 @@ LayerSystem.getInstance = function() {
 LayerSystem.prototype.init = function() {
 	this.container = $("#gameContainer");
 
+	//"main" rendering layer that is always present through the course of the app
 	this.add(LayerTypes.MAIN);
-	this.getLayer(LayerTypes.MAIN).setTabIndex("1");
-	this.getSelector(LayerTypes.MAIN).focus();
+
+	//layer handles all input; always on top of the display list, rendering nothing
+	this.add(LayerTypes.INPUT);
+	this.getLayer(LayerTypes.INPUT).setTabIndex("0");
+	this.getLayer(LayerTypes.INPUT).setZindex(100000);
+	this.getStage(LayerTypes.INPUT).mouseEnabled = true;
+	this.getSelector(LayerTypes.INPUT).focus();
 };
 
 LayerSystem.prototype.update = function() {
@@ -57,7 +65,9 @@ LayerSystem.prototype.update = function() {
 
 	//update all createjs.Stage instances
 	for(key in layers) {
-		this.getStage(key).update();
+		if(key != LayerTypes.INPUT) {
+			this.getStage(key).update();
+		}
 	}
 
 	//this.getDebugStage().update();
@@ -77,7 +87,7 @@ LayerSystem.prototype.clear = function() {
 			this.getStage(LayerTypes.MAIN).removeAllEventListeners();
 
 		//a LoadingPanel instance handle this Layer in house; force other Panel clean-up to ignore
-		} else if (key === LayerTypes.LOADING){
+		} else if (key === LayerTypes.LOADING || key === LayerTypes.INPUT) {
 			continue;
 		} else {
 			this.remove(key);
@@ -97,6 +107,8 @@ LayerSystem.prototype.add = function(id, zIndex) {
 	var _zIndex = zIndex || this.length();
 
 	this.arrLayers[id] = new Layer(this.container, id, _zIndex);
+	this.arrLayers[id].getStage().mouseEnabled = false;
+	this.arrLayers[id].getStage().mouseChildren = false;
 
 	return this.arrLayers[id];
 };

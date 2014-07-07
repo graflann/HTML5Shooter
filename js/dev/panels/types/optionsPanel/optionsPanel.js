@@ -97,22 +97,26 @@ OptionsPanel.prototype.update = function() {
 
 	this.inputOptions.update();
 
-	if(input.isButtonPressedOnce(GamepadCode.BUTTONS.B)) {
+	if(input.isExiting()) {
 		this.onExit();
 	}
-
-	// app.input.checkPrevKeyDown([
-	// 	KeyCode.UP,
-	// 	KeyCode.DOWN,
-	// 	KeyCode.LEFT,
-	// 	KeyCode.RIGHT
-	// ]);
 
 	app.input.checkPrevButtonDown([
 		GamepadCode.BUTTONS.DPAD_UP,
 		GamepadCode.BUTTONS.DPAD_DOWN,
 		GamepadCode.BUTTONS.DPAD_LEFT,
-		GamepadCode.BUTTONS.DPAD_RIGHT
+		GamepadCode.BUTTONS.DPAD_RIGHT,
+		GamepadCode.BUTTONS.B,
+		GamepadCode.BUTTONS.BACK
+	]);
+
+	app.input.checkPrevKeyDown([
+		KeyCode.UP,
+		KeyCode.DOWN,
+		KeyCode.LEFT,
+		KeyCode.RIGHT,
+		KeyCode.BACKSPACE,
+		KeyCode.ESCAPE
 	]);
 };
 

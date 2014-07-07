@@ -122,6 +122,13 @@ TitlePanel.prototype.update = function() {
 		GamepadCode.BUTTONS.START,
 		GamepadCode.BUTTONS.A
 	]);
+
+	app.input.checkPrevKeyDown([
+		KeyCode.SPACE,
+		KeyCode.ENTER,
+		KeyCode.UP,
+		KeyCode.DOWN
+	]);
 };
 
 /**

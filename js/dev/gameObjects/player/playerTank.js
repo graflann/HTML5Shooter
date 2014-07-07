@@ -205,20 +205,21 @@ PlayerTank.prototype.init = function() {
 */
 PlayerTank.prototype.update = function(options) {
 	if(this.isAlive) {
+		var input = app.input;
 
 		//update current state
 		this.stateMachine.update(options);
 
-		app.input.checkPrevKeyDown([
-			KeyCode.Z//,
-			//KeyCode.X
+		input.checkPrevKeyDown([
+			KeyCode.Z, 		//switch
+			KeyCode.X,		//boost
+			KeyCode.SPACE	//reload
 		]);
 
-		app.input.checkPrevButtonDown([
-			GamepadCode.BUTTONS.LT,
-			GamepadCode.BUTTONS.RT,
-			GamepadCode.BUTTONS.X//,
-			//GamepadCode.BUTTONS.Y
+		input.checkPrevButtonDown([
+			input.config[InputConfig.BUTTONS.SWITCH],
+			input.config[InputConfig.BUTTONS.BOOST],
+			input.config[InputConfig.BUTTONS.RELOAD]
 		]);
 	}
 };
@@ -246,7 +247,7 @@ PlayerTank.prototype.updateDefault = function(options) {
 
 	this.checkTurretTransition();
 
-	this.updateTurret();
+	this.updateTurret(options);
 
 	this.checkReload();
 
@@ -319,7 +320,7 @@ PlayerTank.prototype.updateBoost = function(options) {
 
 	this.animateWheels();
 
-	this.updateTurret();
+	this.updateTurret(options);
 
 	if(this.isOverdrive) {
 		this.tickDownOverdrive();
@@ -364,7 +365,7 @@ PlayerTank.prototype.updateRecharge = function(options) {
 
 	this.checkTurretTransition();
 
-	this.updateTurret();
+	this.updateTurret(options);
 
 	this.updateEnergy();
 };
@@ -431,18 +432,14 @@ PlayerTank.prototype.forceBoostExit = function() {
 */
 PlayerTank.prototype.checkMovement = function(options) {
 	var input = app.input,
-		gamepad = input.gamepad,
 		worldCenter = this.body.GetWorldCenter(),
 		isUp = false,
-		isDown = false,
-		vert = input.getAxis(GamepadCode.AXES.LEFT_STICK_VERT),
-		hori = input.getAxis(GamepadCode.AXES.LEFT_STICK_HOR);
+		isDown = false;
 
 	this.isMoving = false;
 
 	//check vertical movement
-	if(input.isKeyDown(KeyCode.W) || 
-		input.isButtonDown(GamepadCode.BUTTONS.DPAD_UP) || vert < -Input.MOVE_THRESHOLD) {
+	if(input.isUp()) {
 
 		this.force.x = 0;
 		this.force.y = -this.velocity.y;
@@ -451,9 +448,7 @@ PlayerTank.prototype.checkMovement = function(options) {
 		this.intendedRotation = 0;
 
 		this.isMoving = isUp = true;
-	} else if (input.isKeyDown(KeyCode.S) || 
-		input.isButtonDown(GamepadCode.BUTTONS.DPAD_DOWN) || vert > Input.MOVE_THRESHOLD) {
-
+	} else if (input.isDown()) {
 		this.force.x = 0;
 		this.force.y = this.velocity.y;
 		this.body.ApplyForce(this.force, worldCenter);
@@ -464,8 +459,7 @@ PlayerTank.prototype.checkMovement = function(options) {
 	}
 
 	//check horizontal movement
-	if(input.isKeyDown(KeyCode.A) || 
-		input.isButtonDown(GamepadCode.BUTTONS.DPAD_LEFT) || hori < -Input.MOVE_THRESHOLD) {
+	if(input.isLeft()) {
 
 		this.force.x = -this.velocity.x;
 		this.force.y = 0;
@@ -476,8 +470,7 @@ PlayerTank.prototype.checkMovement = function(options) {
 		else 			this.intendedRotation = 270;
 
 		this.isMoving = true;
-	} else if (input.isKeyDown(KeyCode.D) || 
-		input.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT) || hori > Input.MOVE_THRESHOLD) {
+	} else if (input.isRight()) {
 
 		this.force.x = this.velocity.x;
 		this.force.y = 0;
@@ -499,7 +492,7 @@ PlayerTank.prototype.checkTurretTransition = function(options) {
 
 	//WEAPON SELECT
 	if(!this.isTransitioning) {
-		if(input.isKeyPressedOnce(KeyCode.X) || 
+		if(input.isKeyPressedOnce(KeyCode.Z) || 
 			input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.SWITCH])) {
 				
 			app.assetsProxy.playSound("weaponchange1", 0.5);
@@ -551,7 +544,8 @@ PlayerTank.prototype.updateHoming = function(options) {
 	//HOMING
 	//hold to init homing target overlay
 	if(this.energy > 0 && !this.isHoming &&
-		input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
+		(input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) || input.isKeyDown(KeyCode.C))
+	) {
 		this.isHoming = true;
 
 		//reset the total homing value; it will increment on HTO increase
@@ -563,7 +557,7 @@ PlayerTank.prototype.updateHoming = function(options) {
 
 	//release to fire if hto is operational
 	if(this.isHoming) {
-		if(!input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING])) {
+		if((!input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && !input.isKeyDown(KeyCode.C))) {
 			this.isHoming = false;
 
 			//hto is operational so firing may commence
@@ -582,7 +576,7 @@ PlayerTank.prototype.updateHoming = function(options) {
 			if(this.energy > 0 && this.totalHomingValue <= PlayerTank.MAX_ENERGY) {
 				this.homingInc = this.energy - 1;
 
-				if(this.isOverdrive){
+				if(this.isOverdrive) {
 					this.increaseHomingOverlayEvent.payload = PlayerTank.HOMING_INCREMENT * 2;
 				} else {
 					this.increaseHomingOverlayEvent.payload = PlayerTank.HOMING_INCREMENT;
@@ -610,7 +604,8 @@ PlayerTank.prototype.updateTurret = function(options) {
 
 	this.turret.update({ 
 		energy: 		this.energy,
-		firingIsReady: 	firingIsReady
+		firingIsReady: 	firingIsReady,
+		camera: 		options.camera 
 	});
 
 	this.turretTransition.rotation = this.turret.shape.rotation;
@@ -622,7 +617,9 @@ PlayerTank.prototype.checkBoost = function() {
 	var input = app.input;
 
 	if(this.energy >= PlayerTank.REQUIRED_FOR_BOOST && 
-		input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.BOOST])) {
+		(input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.BOOST]) || 
+		input.isKeyPressedOnce(KeyCode.X))
+	) {
 		this.stateMachine.setState(PlayerBoostState.KEY);
 
 		app.assetsProxy.playSound("swoosh1");
@@ -632,7 +629,9 @@ PlayerTank.prototype.checkBoost = function() {
 PlayerTank.prototype.checkReload = function() {
 	var input = app.input;
 
-	if(!this.isHoming && input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.RELOAD])) {
+	if(!this.isHoming && 
+		(input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.RELOAD]) || input.isKeyPressedOnce(KeyCode.SPACE))
+	) {
 		this.reload();
 	}
 };
@@ -906,7 +905,7 @@ PlayerTank.prototype.setTurret = function(turretType, projectileType) {
 		this.changeTurret(turretType, prevTurret);
 	} else { 
 		this.addTurret(turretType);
-	}	
+	}
 };
 
 PlayerTank.prototype.changeTurret = function(turretType, prevTurret) {
@@ -976,10 +975,27 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 	this.turretTransitionRemoveAnimUtil.play();
 
 	createjs.Tween.get(this.turret.shape).to({ scaleY: 1 }, this.turretTransitionRate).call(function() {
+		var stage = app.layers.getStage(LayerTypes.INPUT);
+
 		self.turretTransitionRemoveAnimUtil.stop();
 		self.container.removeChild(self.turretTransition);
 
 		self.isTransitioning = false;
+		
+		//set the stage to handle mouse aiming and firing for the new turret
+		stage.removeAllEventListeners();
+
+		stage.addEventListener("stagemousedown", function(e) {
+			console.log("MOUSE DOWN");
+
+			self.turret.mouseFire = true;
+		});
+
+		stage.addEventListener("stagemouseup", function(e) {
+			console.log("MOUSE UP");
+
+		    self.turret.mouseFire = false;
+		});
 	});
 };
 

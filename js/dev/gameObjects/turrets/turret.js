@@ -62,6 +62,8 @@ Turret = function(hasAI, arrProjectileSystems) {
 
 	this.baseRotationDeg = 0;
 
+	this.mouseFire = false;
+
 	this.energyChangeEvent = new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energyConsumption);
 };
 
@@ -123,24 +125,22 @@ Turret.prototype.manualControl = function(options) {
 	this.fireCounter++;
 
 	//rotate counter clock-wise
-	if(input.isKeyDown(KeyCode.LEFT) || 
-		input.isButtonDown(input.config[InputConfig.BUTTONS.ROTATE_LEFT])) /*||
-		input.isButtonDown(GamepadCode.BUTTONS.X))*/ {
+	if(input.isButtonDown(input.config[InputConfig.BUTTONS.ROTATE_LEFT])) {
 		this.shape.rotation -= Turret.ROTATION_RATE;
 	}
 	
 	//rotate clock-wise
-	if(input.isKeyDown(KeyCode.RIGHT) || 
-		input.isButtonDown(input.config[InputConfig.BUTTONS.ROTATE_RIGHT])) /*||
-		input.isButtonDown(GamepadCode.BUTTONS.B))*/ {
+	if(input.isButtonDown(input.config[InputConfig.BUTTONS.ROTATE_RIGHT])) {
 		this.shape.rotation += Turret.ROTATION_RATE;
 	}
+
+	//aim with mouse
+	//this.pointToMouse(options.camera);
 	
 	//fire if PlayerTank is not transitioning Turret instances
 	if(options.firingIsReady && options.energy !== 0) {
 		//Keyboard or Button fire
-		if(input.isKeyDown(KeyCode.SPACE) || 
-			input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT])) {
+		if(input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT]) || this.mouseFire) {
 			if(this.fireCounter > this.fireThreshold) {
 				this.fire();
 				this.fireCounter = 0;
@@ -174,23 +174,24 @@ Turret.prototype.manualControl = function(options) {
 			this.isFiring = false;
 		}
 	}
+};
 
-	//needed for press once
-	// input.checkPrevKeyDown([
-	// 	KeyCode.SPACE
-	// ]);
+Turret.prototype.pointToMouse = function(camera) {
+	var stage = app.layers.getStage(LayerTypes.INPUT),
+		deg = Math.radToDeg(Math.atan2(
+			stage.mouseY - (camera.position.y + (this.shape.parent.y + this.shape.y)), 
+			stage.mouseX - (camera.position.x + (this.shape.parent.x  + this.shape.x))
+		));
 
-	// input.checkPrevButtonDown([
-	// 	GamepadCode.BUTTONS.A,
-	// 	GamepadCode.BUTTONS.RT
-	// ]);
+	//offset rotation
+	this.shape.rotation = deg + 90;
 };
 
 Turret.prototype.aiControl = function(options) {
 	var target = options.target,
 		rad = Math.atan2(
-			target.y - (this.shape.parent.y + this.shape.x), 
-			target.x - (this.shape.parent.x  + this.shape.y)
+			target.y - (this.shape.parent.y + this.shape.y), 
+			target.x - (this.shape.parent.x  + this.shape.x)
 		);
 
 	this.baseRotationDeg = Math.radToDeg(rad);
