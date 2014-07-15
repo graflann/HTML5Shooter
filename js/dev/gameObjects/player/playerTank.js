@@ -975,26 +975,24 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 	this.turretTransitionRemoveAnimUtil.play();
 
 	createjs.Tween.get(this.turret.shape).to({ scaleY: 1 }, this.turretTransitionRate).call(function() {
-		var stage = app.layers.getStage(LayerTypes.INPUT);
+		var layer = app.layers.getLayer(LayerTypes.INPUT);
 
 		self.turretTransitionRemoveAnimUtil.stop();
 		self.container.removeChild(self.turretTransition);
 
 		self.isTransitioning = false;
-		
-		//set the stage to handle mouse aiming and firing for the new turret
-		stage.removeAllEventListeners();
 
-		stage.addEventListener("stagemousedown", function(e) {
+		//assign mouse event handling to the input layer to control current turret fire
+		layer.setListener(EventNames.STAGE_MOUSE_DOWN, function(e) {
 			console.log("MOUSE DOWN");
 
 			self.turret.mouseFire = true;
 		});
 
-		stage.addEventListener("stagemouseup", function(e) {
+		layer.setListener(EventNames.STAGE_MOUSE_UP, function(e) {
 			console.log("MOUSE UP");
 
-		    self.turret.mouseFire = false;
+			self.turret.mouseFire = false;
 		});
 	});
 };

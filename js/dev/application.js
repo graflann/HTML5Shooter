@@ -10,8 +10,13 @@ goog.require('ScoreManager');
 
 Application = function() {
 	//disallow any GET file caching
-    //$.ajaxSetup ({ cache: false, dataType: 'json' });
-    $.ajaxSetup ({ cache: true, dataType: 'json' });
+    $.ajaxSetup ({ cache: false, dataType: 'json' });
+    //$.ajaxSetup ({ cache: true, dataType: 'json' });
+
+    //true uses updated requestAnimationFrame instead of less optimized setTimeout
+    //updates @ 60fps (this may change pending performance)
+    createjs.Ticker.useRAF = true; 
+    createjs.Ticker.setFPS(60);
 
 	app.browserUtils 	= BrowserUtils.getInstance();
 	app.trigTable 		= TrigonometricTable.getInstance();

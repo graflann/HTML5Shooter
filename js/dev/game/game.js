@@ -60,11 +60,6 @@ Game.prototype.init = function() {
 
 	this.factory = new PanelFactory();
 
-	//true uses updated requestAnimationFrame instead of less optimized setTimeout
-	//updates @ 60fps (this may change pending performance)
-	createjs.Ticker.useRAF = true; 
-	createjs.Ticker.setFPS(60);
-
 	this.setStateMachine();
 
 	this.checkGamepad();

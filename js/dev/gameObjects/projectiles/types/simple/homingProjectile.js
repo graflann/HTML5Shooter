@@ -13,7 +13,7 @@ HomingProjectile = function(arrColors, options) {
 	*physical body added to Box2D physicsWorld
 	*@type {}
 	*/
-	this.velocityMod = 12;
+	this.velocityMod = 16;
 
 	this.arrTrails = new Array(15);
 

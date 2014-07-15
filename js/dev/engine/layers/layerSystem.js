@@ -4,6 +4,7 @@ goog.require('goog.events.EventTarget');
 goog.require('goog.events.Event');
 goog.require('goog.events');
 goog.require('Layer');
+goog.require('InputLayer');
 goog.require('LayerTypes');
 
 /**
@@ -51,12 +52,8 @@ LayerSystem.prototype.init = function() {
 	//"main" rendering layer that is always present through the course of the app
 	this.add(LayerTypes.MAIN);
 
-	//layer handles all input; always on top of the display list, rendering nothing
+	//layer handles all input; always on top of the display list, rendering cursors, etc.
 	this.add(LayerTypes.INPUT);
-	this.getLayer(LayerTypes.INPUT).setTabIndex("0");
-	this.getLayer(LayerTypes.INPUT).setZindex(100000);
-	this.getStage(LayerTypes.INPUT).mouseEnabled = true;
-	this.getSelector(LayerTypes.INPUT).focus();
 };
 
 LayerSystem.prototype.update = function() {
@@ -65,10 +62,10 @@ LayerSystem.prototype.update = function() {
 
 	//update all createjs.Stage instances
 	for(key in layers) {
-		if(key != LayerTypes.INPUT) {
-			this.getStage(key).update();
-		}
+		this.getStage(key).update();
 	}
+
+	this.getLayer(LayerTypes.INPUT).update();
 
 	//this.getDebugStage().update();
 };
@@ -106,7 +103,12 @@ LayerSystem.prototype.clear = function() {
 LayerSystem.prototype.add = function(id, zIndex) {
 	var _zIndex = zIndex || this.length();
 
-	this.arrLayers[id] = new Layer(this.container, id, _zIndex);
+	if(id == LayerTypes.INPUT) {
+		this.arrLayers[id] = new InputLayer(this.container, id, _zIndex);
+	} else {
+		this.arrLayers[id] = new Layer(this.container, id, _zIndex);
+	}
+	
 	this.arrLayers[id].getStage().mouseEnabled = false;
 	this.arrLayers[id].getStage().mouseChildren = false;
 

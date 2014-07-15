@@ -135,7 +135,7 @@ Turret.prototype.manualControl = function(options) {
 	}
 
 	//aim with mouse
-	//this.pointToMouse(options.camera);
+	this.pointToMouse(options.camera);
 	
 	//fire if PlayerTank is not transitioning Turret instances
 	if(options.firingIsReady && options.energy !== 0) {

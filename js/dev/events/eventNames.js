@@ -36,7 +36,11 @@ EventNames = {
     NEXT:               	    'next',
     PREVIOUS:           	    'previous',
     PLAY:               	    'play',
-    PAUSE:              	    'pause'
+    PAUSE:              	    'pause',
+
+    //CreateJS stage mouse events
+    STAGE_MOUSE_UP:             'stagemouseup',
+    STAGE_MOUSE_DOWN:           'stagemousedown'
 };
 
 goog.exportSymbol('EventNames', EventNames);
