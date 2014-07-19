@@ -5,7 +5,6 @@ goog.require('StateMachine');
 goog.require('TargetCursorDefaultState');
 goog.require('TargetCursorContractState');
 goog.require('TargetCursorFocusState');
-goog.require('TargetCursorExpandState');
 
 /**
 *@constructor
@@ -42,7 +41,6 @@ TargetCursor.prototype.init = function() {
 TargetCursor.ROTATION_RATE = 4;
 TargetCursor.MIN_SCALE = 0.33;
 
-
 /**
 *@override
 *@public
@@ -67,7 +65,7 @@ TargetCursor.prototype.updateDefault = function(options) {
 	this.innerReticle.rotation += TargetCursor.ROTATION_RATE;
 	this.outerReticle.rotation -= TargetCursor.ROTATION_RATE;
 
-	if(this.layer.getIsMouseDown()) {
+	if(app.input.isMouseButtonDown(MouseCode.BUTTONS.LEFT)) {
 		this.stateMachine.setState(TargetCursorContractState.KEY);
 	}
 };
@@ -99,7 +97,7 @@ TargetCursor.prototype.updateContract = function(options) {
 	this.innerReticle.rotation += TargetCursor.ROTATION_RATE;
 	this.outerReticle.rotation += TargetCursor.ROTATION_RATE;
 
-	if(this.layer.getIsMouseDown()) {
+	if(app.input.isMouseButtonDown(MouseCode.BUTTONS.LEFT)) {
 		if(this.outerReticleFrame.scaleX > TargetCursor.MIN_SCALE) {
 			this.outerReticleFrame.scaleX = this.outerReticleFrame.scaleY -= this.scaleRate;
 		} else {
@@ -140,7 +138,7 @@ TargetCursor.prototype.updateFocus = function(options) {
 	this.innerReticle.rotation += TargetCursor.ROTATION_RATE;
 	this.outerReticle.rotation += TargetCursor.ROTATION_RATE;
 
-	if(!this.layer.getIsMouseDown()) {
+	if(!app.input.isMouseButtonDown(MouseCode.BUTTONS.LEFT)) {
 		this.stateMachine.setState(TargetCursorContractState.KEY);
 	}
 };
@@ -152,31 +150,6 @@ TargetCursor.prototype.updateFocus = function(options) {
 TargetCursor.prototype.exitFocus = function(options) {
 	
 };
-
-/**
-*@override
-*@public
-*/
-TargetCursor.prototype.enterExpand = function(options) {
-	
-};
-
-/**
-*@override
-*@public
-*/
-TargetCursor.prototype.updateExpand = function(options) {
-	
-};
-
-/**
-*@override
-*@public
-*/
-TargetCursor.prototype.exitExpand = function(options) {
-	
-};
-
 
 /**
 *@override
@@ -271,15 +244,6 @@ TargetCursor.prototype.setStateMachine = function() {
 		new TargetCursorFocusState(this), 	
 		[ TargetCursorContractState.KEY ]
 	);
-
-	// this.stateMachine.addState(
-	// 	TargetCursorExpandState.KEY, 	
-	// 	new TargetCursorExpandState(this), 	
-	// 	[
-	// 		TargetCursorContractState.KEY,
-	// 		TargetCursorDefaultState.KEY
-	// 	]
-	// );
 	
 	this.stateMachine.setState(TargetCursorDefaultState.KEY);
 };

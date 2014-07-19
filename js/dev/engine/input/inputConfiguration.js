@@ -7,9 +7,6 @@ goog.require('GamepadCode');
 *Map pad and key input to custom config; this is default
 */
 InputConfig = {
-	TYPES: {
-
-	},
 	BUTTONS: {
 		SHOOT: 			"shoot",
 		SWITCH: 		"switch weapon",

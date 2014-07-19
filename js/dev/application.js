@@ -20,8 +20,8 @@ Application = function() {
 
 	app.browserUtils 	= BrowserUtils.getInstance();
 	app.trigTable 		= TrigonometricTable.getInstance();
-    app.layers          = LayerSystem.getInstance();
     app.input           = new Input();
+    app.layers          = LayerSystem.getInstance();
     app.assetsProxy     = new AssetsProxy();
     app.vecZero         = new app.b2Vec2();
     app.physicsWorld    = new app.b2World(app.vecZero, false);

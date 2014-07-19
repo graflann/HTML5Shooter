@@ -41,8 +41,6 @@ SpreadProjectile.prototype.init = function(options)
 	this.shape.graphics
 		.ss(1)
 		.s(this.arrColors[2])
-		//.f(this.arrColors[1])
-		//.dc(0, 0, 6);
 		.rf([this.arrColors[1], this.arrColors[0]], [0, 1], 0, 0, 2, 0, 0, 6)
 		.dc(0, 0, 6);
 

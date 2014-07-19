@@ -6,6 +6,7 @@ goog.require('TurretClasses');
 goog.require('TurretTypes');
 goog.require('KeyCode');
 goog.require('GamepadCode');
+goog.require('MouseCode');
 goog.require('InputConfig');
 goog.require('WeaponMap');
 goog.require('EventNames');
@@ -544,7 +545,11 @@ PlayerTank.prototype.updateHoming = function(options) {
 	//HOMING
 	//hold to init homing target overlay
 	if(this.energy > 0 && !this.isHoming &&
-		(input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) || input.isKeyDown(KeyCode.C))
+		(
+			input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) || 
+			input.isKeyDown(KeyCode.C) ||
+			input.isMouseButtonDown(MouseCode.BUTTONS.RIGHT)
+		)
 	) {
 		this.isHoming = true;
 
@@ -557,7 +562,11 @@ PlayerTank.prototype.updateHoming = function(options) {
 
 	//release to fire if hto is operational
 	if(this.isHoming) {
-		if((!input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && !input.isKeyDown(KeyCode.C))) {
+		if(
+			!input.isButtonDown(input.config[InputConfig.BUTTONS.HOMING]) && 
+			!input.isKeyDown(KeyCode.C) &&
+			!input.isMouseButtonDown(MouseCode.BUTTONS.RIGHT)
+		) {
 			this.isHoming = false;
 
 			//hto is operational so firing may commence
@@ -572,7 +581,6 @@ PlayerTank.prototype.updateHoming = function(options) {
 			//starts removal of homing overlay
 			goog.events.dispatchEvent(this, this.removeHomingOverlayEvent);
 		} else {
-
 			if(this.energy > 0 && this.totalHomingValue <= PlayerTank.MAX_ENERGY) {
 				this.homingInc = this.energy - 1;
 
@@ -586,7 +594,7 @@ PlayerTank.prototype.updateHoming = function(options) {
 
 				//cache the total homing value based on payload; 
 				//determines the total qty of homing missles fired
-				this.totalHomingValue += this.increaseHomingOverlayEvent.payload
+				this.totalHomingValue += this.increaseHomingOverlayEvent.payload;
 
 				//gradually increases the size of the HTO while the homing button is pressed down
 				goog.events.dispatchEvent(this, this.increaseHomingOverlayEvent);
@@ -617,8 +625,10 @@ PlayerTank.prototype.checkBoost = function() {
 	var input = app.input;
 
 	if(this.energy >= PlayerTank.REQUIRED_FOR_BOOST && 
-		(input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.BOOST]) || 
-		input.isKeyPressedOnce(KeyCode.X))
+		(
+			input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.BOOST]) || 
+			input.isKeyPressedOnce(KeyCode.SPACE)
+		)
 	) {
 		this.stateMachine.setState(PlayerBoostState.KEY);
 
@@ -630,7 +640,10 @@ PlayerTank.prototype.checkReload = function() {
 	var input = app.input;
 
 	if(!this.isHoming && 
-		(input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.RELOAD]) || input.isKeyPressedOnce(KeyCode.SPACE))
+		(
+			input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.RELOAD]) || 
+			input.isKeyPressedOnce(KeyCode.X)
+		)
 	) {
 		this.reload();
 	}
@@ -975,25 +988,10 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 	this.turretTransitionRemoveAnimUtil.play();
 
 	createjs.Tween.get(this.turret.shape).to({ scaleY: 1 }, this.turretTransitionRate).call(function() {
-		var layer = app.layers.getLayer(LayerTypes.INPUT);
-
 		self.turretTransitionRemoveAnimUtil.stop();
 		self.container.removeChild(self.turretTransition);
 
 		self.isTransitioning = false;
-
-		//assign mouse event handling to the input layer to control current turret fire
-		layer.setListener(EventNames.STAGE_MOUSE_DOWN, function(e) {
-			console.log("MOUSE DOWN");
-
-			self.turret.mouseFire = true;
-		});
-
-		layer.setListener(EventNames.STAGE_MOUSE_UP, function(e) {
-			console.log("MOUSE UP");
-
-			self.turret.mouseFire = false;
-		});
 	});
 };
 

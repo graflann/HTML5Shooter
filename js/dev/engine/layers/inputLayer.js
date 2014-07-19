@@ -2,6 +2,7 @@ goog.provide('InputLayer');
 
 goog.require('Layer');
 goog.require('TargetCursor');
+goog.require('MouseCode');
 
 /**
 *@constructor
@@ -12,7 +13,7 @@ InputLayer = function(parent, id, zIndex) {
 
 	this.arrCallbacks = [];
 
-	this.isMouseDown = false;
+	this.prevMousePosition = new app.b2Vec2();
 
 	Layer.call(this, parent, id, zIndex);
 };
@@ -30,7 +31,8 @@ InputLayer.prototype.init = function(options) {
 	this.setTabIndex("0");
 	this.setZindex(100000);
 	this.getStage().mouseEnabled = true;
-	this.getSelector().focus();
+
+	this.setKeyboardAndMouse();
 
 	this.cursor = new TargetCursor(this);
 };
@@ -42,16 +44,34 @@ InputLayer.prototype.update = function(options) {
 	var stage = this.getStage(),
 		selector = this.getSelector();
 
+	//checks for mouse movement
+	if(this.prevMousePosition.x != stage.mouseX || this.prevMousePosition.y != stage.mouseY) {
+		app.input.setState(Input.STATES.KEYBOARD_AND_MOUSE);
+	}
+
 	if(stage.mouseInBounds)
 	{
+		var cursorIndex = stage.getChildIndex(this.cursor.container);
+		
+		//ensure the default cursor doesn't render over stage
 		if(selector.css('cursor') == 'auto') {
 			selector.css('cursor', 'none');
-			this.cursor.add();
 		}
 
-		this.cursor.container.x = stage.mouseX;
-		this.cursor.container.y = stage.mouseY;
-		this.cursor.update();
+		//if(selector.css('cursor') == 'none') {
+
+			if(app.input.getState() == Input.STATES.KEYBOARD_AND_MOUSE) {
+				if(cursorIndex < 0) {
+					this.cursor.add();
+				}
+
+				this.cursor.container.x = stage.mouseX;
+				this.cursor.container.y = stage.mouseY;
+				this.cursor.update();
+			} else if (app.input.getState() == Input.STATES.GAMEPAD && cursorIndex > -1) {
+				this.cursor.remove();
+			}
+		//}
 	}
 	else
 	{
@@ -60,6 +80,9 @@ InputLayer.prototype.update = function(options) {
 			this.cursor.remove();
 		}
 	}
+
+	this.prevMousePosition.x = stage.mouseX;
+	this.prevMousePosition.y = stage.mouseY;
 };
 
 InputLayer.prototype.clear = function() {
@@ -76,7 +99,26 @@ InputLayer.prototype.clear = function() {
 	Layer.prototype.clear(this);
 };
 
-InputLayer.prototype.setListener = function(eventType, callback) {
+InputLayer.prototype.setKeyboardAndMouse = function() {
+	var stageSelector = this.getSelector(LayerTypes.INPUT),
+		input = app.input;
+
+	//keyboard callbacks
+	stageSelector.keydown(function(e) { 
+		input.setState(Input.STATES.KEYBOARD_AND_MOUSE);
+		input.onKeyDown(e); 
+	});
+
+	stageSelector.keyup(function(e) { input.onKeyUp(e); });
+
+	//mouse callbacks
+	this.setListener(EventNames.STAGE_MOUSE_DOWN);
+	this.setListener(EventNames.STAGE_MOUSE_UP);
+
+	stageSelector.focus();
+};
+
+InputLayer.prototype.setListener = function(eventType) {
 	var stage = this.getStage(),
 		self = this;
 
@@ -87,22 +129,17 @@ InputLayer.prototype.setListener = function(eventType, callback) {
 
 	this.arrCallbacks[eventType] = function(e) {
 		self[InputLayer.ROUTER[eventType]](e);
-		callback(e);
 	};
 
 	stage.addEventListener(eventType, this.arrCallbacks[eventType]);
 };
 
-InputLayer.prototype.getIsMouseDown = function() {
-	return this.isMouseDown;
-};
-
 InputLayer.prototype.onStageMouseDown = function(e) {
-	this.isMouseDown = true;
+	app.input.arrMouseDown[e.nativeEvent.button] = true;
 };
 
 InputLayer.prototype.onStageMouseUp = function(e) {
-	this.isMouseDown = false;	
+	app.input.arrMouseDown[e.nativeEvent.button] = false;
 };
 
 goog.exportSymbol('InputLayer', InputLayer);

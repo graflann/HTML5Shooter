@@ -13,6 +13,7 @@ html { display: block;}
 
 body {
 	font-family: 'AXI_Fixed_Caps_5x5';
+	padding-top: 20px;
 	color: #6FC3DF;
 	background-color:#050D10; 
 	width:960px;

@@ -28,10 +28,10 @@ SpreadTurret.FIRE_OFFSETS = {
 *@public
 */
 SpreadTurret.prototype.init = function() {
-	this.fireThreshold = 18;
+	this.fireThreshold = 15;
 	this.fireCounter = this.fireThreshold - 1;
 
-	this.energyConsumption = -PlayerTank.MAX_ENERGY / 8;
+	this.energyConsumption = -PlayerTank.MAX_ENERGY / 12;
 
 	this.shape = new createjs.BitmapAnimation(app.assetsProxy.arrSpriteSheet["spreadTurret"]);
 	this.shape.regX = 16;
@@ -61,7 +61,7 @@ SpreadTurret.prototype.update = function(options) {
 SpreadTurret.prototype.enterDefaultFire = function(options) {
 	Turret.prototype.enterDefaultFire.call(this, options);
 
-	this.fireThreshold = 18;
+	this.fireThreshold = 15;
 	this.fireCounter = this.fireThreshold - 1;
 
 	this.maxSpread = SpreadTurret.FIRE_OFFSETS.DEFAULT.length;

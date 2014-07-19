@@ -135,12 +135,12 @@ Turret.prototype.manualControl = function(options) {
 	}
 
 	//aim with mouse
-	this.pointToMouse(options.camera);
+	this.checkMouseAim(options.camera);
 	
 	//fire if PlayerTank is not transitioning Turret instances
 	if(options.firingIsReady && options.energy !== 0) {
 		//Keyboard or Button fire
-		if(input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT]) || this.mouseFire) {
+		if(input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT]) || input.isMouseButtonDown(MouseCode.BUTTONS.LEFT)) {
 			if(this.fireCounter > this.fireThreshold) {
 				this.fire();
 				this.fireCounter = 0;
@@ -176,15 +176,17 @@ Turret.prototype.manualControl = function(options) {
 	}
 };
 
-Turret.prototype.pointToMouse = function(camera) {
-	var stage = app.layers.getStage(LayerTypes.INPUT),
-		deg = Math.radToDeg(Math.atan2(
-			stage.mouseY - (camera.position.y + (this.shape.parent.y + this.shape.y)), 
-			stage.mouseX - (camera.position.x + (this.shape.parent.x  + this.shape.x))
-		));
+Turret.prototype.checkMouseAim = function(camera) {
+	if(app.input.getState() == Input.STATES.KEYBOARD_AND_MOUSE) {
+		var stage = app.layers.getStage(LayerTypes.INPUT),
+			deg = Math.radToDeg(Math.atan2(
+				stage.mouseY - (camera.position.y + (this.shape.parent.y + this.shape.y)), 
+				stage.mouseX - (camera.position.x + (this.shape.parent.x  + this.shape.x))
+			));
 
-	//offset rotation
-	this.shape.rotation = deg + 90;
+		//offset rotation
+		this.shape.rotation = deg + 90;
+	}
 };
 
 Turret.prototype.aiControl = function(options) {
