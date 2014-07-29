@@ -265,6 +265,14 @@ TitlePanel.prototype.onLoadComplete = function(e) {
 TitlePanel.prototype.onOptionSelect = function(e) {
 	var self = this;
 
+	goog.events.unlisten(
+		this.gameOptions, 
+		EventNames.OPTION_SELECT, 
+		this.onOptionSelect, 
+		false, 
+		this
+	);
+
 	createjs.Sound.stop();
 
 	createjs.Tween.get(this.container)
@@ -276,14 +284,6 @@ TitlePanel.prototype.onOptionSelect = function(e) {
 
 TitlePanel.prototype.endOptionSelect = function(e) {
 	this.isInited = false;
-
-	goog.events.unlisten(
-		this.gameOptions, 
-		EventNames.OPTION_SELECT, 
-		this.onOptionSelect, 
-		false, 
-		this
-	);
 
 	goog.events.dispatchEvent(
 		this, 

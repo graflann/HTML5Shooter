@@ -24,6 +24,12 @@ ReflectProjectile = function(arrColors, options) {
 	this.alphaTimerThreshold =  this.timerThreshold * 0.75;
 
 	this.alphaDecrement = (this.timerThreshold - this.alphaTimerThreshold) / createjs.Ticker.getFPS();
+
+	this.damageTimer = 0;
+
+	this.damageTimerThreshold = this.timerThreshold * 0.5;
+	
+	this.damageDecrement = 0;
 	
 	this.init();
 };
@@ -45,6 +51,10 @@ ReflectProjectile.prototype.init = function(options) {
 	this.shape.snapToPixel = true;
 
 	this.alphaTimer = 0;
+
+	//spread shots go with 2x damage, reduced over time, to a default of 1 set by the damage threshold
+	this.damage = 2;
+	this.damageDecrement = (this.damage - 1) / this.damageTimerThreshold;
 	
 	this.setPhysics();
 
@@ -72,6 +82,11 @@ ReflectProjectile.prototype.update = function() {
 			}
 		}
 
+		//shots power gradually decreases to a threshold until
+		if(this.damageTimer++ < this.damageTimerThreshold) {
+			this.damage -= this.damageDecrement;
+		}
+
 		Projectile.prototype.update.call(this);
 	}
 };
@@ -79,8 +94,13 @@ ReflectProjectile.prototype.update = function() {
 ReflectProjectile.prototype.setIsAlive = function(value) {
 	Projectile.prototype.setIsAlive.call(this, value);
 
+	//reset alpha
 	this.shape.alpha = 1;
 	this.alphaTimer = 0;
+
+	//reset damage
+	this.damage = 2;
+	this.damageTimer = 0;
 };
 
 /**

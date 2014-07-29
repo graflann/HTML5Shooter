@@ -58,20 +58,17 @@ InputLayer.prototype.update = function(options) {
 			selector.css('cursor', 'none');
 		}
 
-		//if(selector.css('cursor') == 'none') {
-
-			if(app.input.getState() == Input.STATES.KEYBOARD_AND_MOUSE) {
-				if(cursorIndex < 0) {
-					this.cursor.add();
-				}
-
-				this.cursor.container.x = stage.mouseX;
-				this.cursor.container.y = stage.mouseY;
-				this.cursor.update();
-			} else if (app.input.getState() == Input.STATES.GAMEPAD && cursorIndex > -1) {
-				this.cursor.remove();
+		if(app.input.getState() == Input.STATES.KEYBOARD_AND_MOUSE) {
+			if(cursorIndex < 0) {
+				this.cursor.add();
 			}
-		//}
+
+			this.cursor.container.x = stage.mouseX;
+			this.cursor.container.y = stage.mouseY;
+			this.cursor.update();
+		} else if (app.input.getState() == Input.STATES.GAMEPAD && cursorIndex > -1) {
+			this.cursor.remove();
+		}
 	}
 	else
 	{

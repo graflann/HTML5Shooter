@@ -57,7 +57,6 @@ OptionText.prototype.update = function() {
 */
 OptionText.prototype.clear = function() {
 	this.text = null;
-
 	this.optionSelectedEvent = null;
 };
 

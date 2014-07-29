@@ -6,8 +6,7 @@ goog.require('Projectile');
 *@constructor
 *Ammo for Turret instaces
 */
-SpreadProjectile = function(arrColors, options)
-{
+SpreadProjectile = function(arrColors, options) {
 	Projectile.call(this, arrColors, options);
 
 	/**
@@ -25,7 +24,13 @@ SpreadProjectile = function(arrColors, options)
 	this.alphaTimerThreshold =  this.timerThreshold * 0.75;
 
 	this.alphaDecrement = (this.timerThreshold - this.alphaTimerThreshold) / createjs.Ticker.getFPS();
+
+	this.damageTimer = 0;
+
+	this.damageTimerThreshold = this.timerThreshold * 0.5;
 	
+	this.damageDecrement = 0;
+
 	this.init();
 };
 
@@ -35,8 +40,7 @@ goog.inherits(SpreadProjectile, Projectile)
 *@override
 *@public
 */
-SpreadProjectile.prototype.init = function(options)
-{
+SpreadProjectile.prototype.init = function(options) {
 	this.shape = new createjs.Shape();
 	this.shape.graphics
 		.ss(1)
@@ -49,6 +53,10 @@ SpreadProjectile.prototype.init = function(options)
 
 	this.alphaTimer = 0;
 	
+	//spread shots go with 2x damage, reduced over time, to a default of 1 set by the damage threshold
+	this.damage = 2;
+	this.damageDecrement = (this.damage - 1) / this.damageTimerThreshold;
+
 	this.setPhysics();
 
 	Projectile.prototype.init.call(this);
@@ -58,8 +66,7 @@ SpreadProjectile.prototype.init = function(options)
 *@override
 *@public
 */
-SpreadProjectile.prototype.update = function()
-{
+SpreadProjectile.prototype.update = function() {
 	if(this.isAlive) {
 		var scale = app.physicsScale;
 
@@ -76,6 +83,11 @@ SpreadProjectile.prototype.update = function()
 			}
 		}
 
+		//shots power gradually decreases to a threshold until
+		if(this.damageTimer++ < this.damageTimerThreshold) {
+			this.damage -= this.damageDecrement;
+		}
+
 		Projectile.prototype.update.call(this);
 	}
 };
@@ -83,8 +95,13 @@ SpreadProjectile.prototype.update = function()
 SpreadProjectile.prototype.setIsAlive = function(value) {
 	Projectile.prototype.setIsAlive.call(this, value);
 
+	//reset alpha
 	this.shape.alpha = 1;
 	this.alphaTimer = 0;
+
+	//reset damage
+	this.damage = 2;
+	this.damageTimer = 0;
 };
 
 /**

@@ -114,7 +114,9 @@ Game.prototype.enterGamepadStatus = function() {
 };
 
 Game.prototype.updateGamepadStatus = function() {
-	app.input.updateGamepads();
+	var input = app.input;
+
+	input.updateGamepads();
 };
 
 Game.prototype.exitGamepadStatus = function() {
@@ -218,7 +220,7 @@ Game.prototype.checkGamepad = function() {
 		//Need to validate polling of a well-formed gamepad instance per Chrome,
 		//If Chrome does not has a native gamepad reference cached, 
 		//the user is forced to enter a button to init native polling of gamepad
-		if(input.validateGamepad()) {
+		//if(input.validateGamepad()) {
 			//Chrome has previously resolved a raw gamepad reference so init with default gaming state
 			//this.addLoadingPanel();
 
@@ -229,10 +231,10 @@ Game.prototype.checkGamepad = function() {
 			//this.setPanel(PanelTypes.LOADING_PANEL);
 
 			this.stateMachine.setState(GameDefaultState.KEY);
-		} else {
-			//The polling test found no gamepad, so fire a modal to let user know to plug in / press button on pad to resolve its status
-			this.stateMachine.setState(GamePadStatusState.KEY);
-		}
+		//} else {
+		 	//The polling test found no gamepad, so fire a modal to let user know to plug in / press button on pad to resolve its status
+		 	//this.stateMachine.setState(GamePadStatusState.KEY);
+		//}
 	}
 	else //let the user know to get Chrome and a gamepad...
 	{
@@ -296,17 +298,17 @@ Game.prototype.onGamepadStatusChanged = function(e) {
 	console.log("Gamepad status changed: " + e.payload.toString());
 
 	//toggle the state 
-	switch(this.stateMachine.getCurrentState()) 
-	{
-	case GamePadStatusState.KEY:
-		var self = this;
+	// switch(this.stateMachine.getCurrentState()) 
+	// {
+	// case GamePadStatusState.KEY:
+	// 	var self = this;
 
-		this.modal.remove(function() {
-			self.stateMachine.setState(GameDefaultState.KEY);
-		})
-		break;
-	case GameDefaultState.KEY:
-		this.stateMachine.setState(GamePadStatusState.KEY);
-		break;
-	}
+	// 	this.modal.remove(function() {
+	// 		self.stateMachine.setState(GameDefaultState.KEY);
+	// 	})
+	// 	break;
+	// case GameDefaultState.KEY:
+	// 	this.stateMachine.setState(GamePadStatusState.KEY);
+	// 	break;
+	// }
 };

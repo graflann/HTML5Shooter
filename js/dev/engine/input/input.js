@@ -212,7 +212,7 @@ Input.prototype.pollGamepads = function() {
 Input.prototype.validateGamepad = function() {
 	this.pollGamepads();
 
-	return (this.gamepad) ? true : false;
+	return this.gamepad;
 };
 
 /**
@@ -230,11 +230,7 @@ Input.prototype.getTotalGamepads = function() {
 };
 
 /**
-* Checks for the gamepad status. Monitors the necessary data and notices
-* the differences from previous state (buttons for Chrome/Firefox,
-* new connects/disconnects for Chrome). If differences are noticed, asks
-* to update the display accordingly. Should run as close to 60 frames per
-* second as possible.
+* Checks for the gamepad status.
 */
 Input.prototype.updateGamepads = function() {
 	// Poll to see if gamepads are connected or disconnected. Necessary only on Chrome.
@@ -244,11 +240,6 @@ Input.prototype.updateGamepads = function() {
 
 	if(this.gamepad)
 	{
-		// Don’t do anything if the current timestamp is the same as previous
-		// one, which means that the state of the gamepad hasn’t changed.
-		// This is only supported by Chrome right now, so the first check
-		// makes sure we’re not doing anything if the timestamps are empty
-		// or undefined.
 		if (this.gamepad.timestamp && (this.gamepad.timestamp == this.prevTimestamps[0])) {
 			return;
 		}
@@ -263,13 +254,18 @@ Input.prototype.updateGamepads = function() {
 *@returns 	Boolean
 */
 Input.prototype.isButtonDown = function(gamepadCode) {
-	var value = Boolean(this.gamepad.buttons[gamepadCode]);
+	if(this.totalGamepads > 0) {
 
-	if(value) {
-		this.setState(Input.STATES.GAMEPAD);
+		var value = Boolean(this.gamepad.buttons[gamepadCode]);
+
+		if(value) {
+			this.setState(Input.STATES.GAMEPAD);
+		}
+
+		return value;
 	}
 
-	return value;
+	return false;
 };
 
 /**
@@ -286,12 +282,14 @@ Input.prototype.isPrevButtonDown = function(gamepadCode) {
  * @param	Array
  */
 Input.prototype.checkPrevButtonDown = function(arrGamepadCodes) {
-	var i = arrGamepadCodes.length,
-		gamepadCode;
-	
-	while(i--) {
-		gamepadCode = arrGamepadCodes[i];
-		this.arrPrevButtonDown[gamepadCode] = this.isButtonDown(gamepadCode);
+	if(this.totalGamepads > 0) {
+		var i = arrGamepadCodes.length,
+			gamepadCode;
+		
+		while(i--) {
+			gamepadCode = arrGamepadCodes[i];
+			this.arrPrevButtonDown[gamepadCode] = this.isButtonDown(gamepadCode);
+		}
 	}
 }
 
@@ -316,7 +314,11 @@ Input.prototype.isButtonPressedOnce = function(gamepadCode) {
 *@returns 	Boolean
 */
 Input.prototype.getAxis = function(gamepadCode) {
-	return this.gamepad.axes[gamepadCode];
+	if(this.totalGamepads > 0) {
+		return this.gamepad.axes[gamepadCode];
+	}
+
+	return 0;
 };
 
 /**
@@ -325,13 +327,17 @@ Input.prototype.getAxis = function(gamepadCode) {
 *@returns 	Boolean
 */
 Input.prototype.isButtonDown = function(gamepadCode) {
-	var value = Boolean(this.gamepad.buttons[gamepadCode]);
+	if(this.totalGamepads > 0) {
+		var value = Boolean(this.gamepad.buttons[gamepadCode]);
 
-	if(value) {
-		this.setState(Input.STATES.GAMEPAD);
+		if(value) {
+			this.setState(Input.STATES.GAMEPAD);
+		}
+
+		return value;
 	}
 
-	return value;
+	return false;
 };
 
 /**
@@ -340,15 +346,19 @@ Input.prototype.isButtonDown = function(gamepadCode) {
 *@returns 	Boolean
 */
 Input.prototype.isLeftVertUpOnce = function() {
-	var vert = this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT),
-		prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_VERT],
-		value = (vert < -Input.MOVE_THRESHOLD && prevVert != Math.round(vert));
+	if(this.totalGamepads > 0) {
+		var vert = this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT),
+			prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_VERT],
+			value = (vert < -Input.MOVE_THRESHOLD && prevVert != Math.round(vert));
 
-	if(value) {
-		this.setState(Input.STATES.GAMEPAD);
+		if(value) {
+			this.setState(Input.STATES.GAMEPAD);
+		}
+
+		return value;
 	}
 
-	return value;
+	return false;
 };
 
 /**
@@ -357,15 +367,19 @@ Input.prototype.isLeftVertUpOnce = function() {
 *@returns 	Boolean
 */
 Input.prototype.isLeftVertDownOnce = function() {
-	var vert = this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT),
-		prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_VERT],
-		value = (vert > Input.MOVE_THRESHOLD && prevVert != Math.round(vert));
+	if(this.totalGamepads > 0) {
+		var vert = this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT),
+			prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_VERT],
+			value = (vert > Input.MOVE_THRESHOLD && prevVert != Math.round(vert));
 
-	if(value) {
-		this.setState(Input.STATES.GAMEPAD);
+		if(value) {
+			this.setState(Input.STATES.GAMEPAD);
+		}
+
+		return value;
 	}
 
-	return value;
+	return false;
 };
 
 /**
@@ -374,15 +388,19 @@ Input.prototype.isLeftVertDownOnce = function() {
 *@returns 	Boolean
 */
 Input.prototype.isLeftHoriLeftOnce = function() {
-	var hori = this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR),
-		prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_HOR],
-		value = (hori < -Input.MOVE_THRESHOLD && prevHori != Math.round(hori));
+	if(this.totalGamepads > 0) {
+		var hori = this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR),
+			prevVert = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_HOR],
+			value = (hori < -Input.MOVE_THRESHOLD && prevHori != Math.round(hori));
 
-	if(value) {
-		this.setState(Input.STATES.GAMEPAD);
+		if(value) {
+			this.setState(Input.STATES.GAMEPAD);
+		}
+
+		return value;
 	}
 
-	return value;
+	return false;
 };
 
 /**
@@ -391,15 +409,19 @@ Input.prototype.isLeftHoriLeftOnce = function() {
 *@returns 	Boolean
 */
 Input.prototype.isLeftHoriRightOnce = function() {
-	var hori = this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR),
-		prevHori = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_HOR],
-		value = (hori > Input.MOVE_THRESHOLD && prevHori != Math.round(hori));
+	if(this.totalGamepads > 0) {
+		var hori = this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR),
+			prevHori = this.arrPrevAxesValues[GamepadCode.AXES.LEFT_STICK_HOR],
+			value = (hori > Input.MOVE_THRESHOLD && prevHori != Math.round(hori));
 
-	if(value) {
-		this.setState(Input.STATES.GAMEPAD);
+		if(value) {
+			this.setState(Input.STATES.GAMEPAD);
+		}
+
+		return value;
 	}
 
-	return value;
+	return false;
 };
 
 /**
@@ -407,12 +429,14 @@ Input.prototype.isLeftHoriRightOnce = function() {
  * @param	arrKeyCodes
  */
 Input.prototype.checkPrevAxesValues = function() {
-	var axisValue = null;
+	if(this.totalGamepads > 0) {
+		var axisValue = null;
 
-	for(var key in GamepadCode.AXES) {
-		axisValue = GamepadCode.AXES[key];
+		for(var key in GamepadCode.AXES) {
+			axisValue = GamepadCode.AXES[key];
 
-		this.arrPrevAxesValues[axisValue] = Math.round(this.getAxis(axisValue));
+			this.arrPrevAxesValues[axisValue] = Math.round(this.getAxis(axisValue));
+		}
 	}
 }
 
