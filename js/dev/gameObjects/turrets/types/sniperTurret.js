@@ -111,7 +111,7 @@ SniperTurret.prototype.enterDefaultFire = function(options) {
 SniperTurret.prototype.enterAltFire = function(options) {
 	Turret.prototype.enterAltFire.call(this, options);
 
-	this.fireThreshold = 5;
+	this.fireThreshold = 2;
 	this.fireCounter = this.fireThreshold - 1;
 };
 

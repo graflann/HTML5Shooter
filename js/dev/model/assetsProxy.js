@@ -111,7 +111,7 @@ AssetsProxy.prototype.loadSounds = function () {
 		this.soundQueue.addEventListener("error", 		function(e) { proxy.onError(e); });
 
 		//register and load sounds using manifest
-		createjs.Sound.registerManifest(this.arrSoundManifest, AssetsProxy.SOUND_PATH);
+		createjs.Sound.registerManifest(this.arrSoundManifest);
 
 		this.soundQueue.loadManifest(this.arrSoundManifest);
 	} else {
@@ -196,10 +196,6 @@ AssetsProxy.prototype.loadXHR = function() {
 	var proxy = this;
 
 	$.get(proxy.arrSpriteSheetData[proxy.assetIndex], function(data) {
-		//data = JSON.parse(data);
-
-		console.log(data);
-
 		//override image property to use preloaded img file from the queue
 		data.images[0] = proxy.imageQueue.getResult(proxy.arrImageManifest[proxy.assetIndex].id);
 
@@ -239,24 +235,22 @@ AssetsProxy.prototype.getSpriteSheet = function(id) {
 *@public
 */
 AssetsProxy.prototype.playSound = function(id, volume, isLooping) {
-	/*
-	var sound = createjs.Sound.play(id, createjs.Sound.INTERRUPT_ANY);//this.arrSoundInstances[id],
-		qualifiedVolume = volume || 1;
+	var sound = createjs.Sound.play(id, createjs.Sound.INTERRUPT_ANY),
+		qualifiedVolume = 0;//volume || 1;
+
+	sound.stop();
+	sound.volume = qualifiedVolume;
+	sound.play();
 
 	if(isLooping != undefined && isLooping == true) {
 
 		sound.addEventListener("complete", onComplete);
 
 		function onComplete() {
-			//sound.stop();
+			sound.stop();
 		    sound.play();
 		}
 	}
-
-	sound.volume = qualifiedVolume;
-	sound.stop();
-	sound.play();
-	*/
 };
 
 //EVENT HANDLERS////////////////////////////////////

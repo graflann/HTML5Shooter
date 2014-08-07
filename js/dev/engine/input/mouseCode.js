@@ -6,8 +6,9 @@ goog.provide('MouseCode');
 */
 MouseCode = {
 	BUTTONS: {
-		LEFT: 0,
-		RIGHT: 2
+		LEFT: 	0,
+		MIDDLE: 1,
+		RIGHT: 	2
 	}
 };
 

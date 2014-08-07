@@ -367,11 +367,11 @@ CollisionManager.prototype.playerVsEnemy = function(player, enemy) {
     if(player.isBoosting) {
         this.playerVsEnemyTrooper(player, enemy);
     } else {
-        player.onCollide(enemy, this.collisionOptions.player);
+        // player.onCollide(enemy, this.collisionOptions.player);
 
-        this.killList.push(player);
+        // this.killList.push(player);
 
-        app.assetsProxy.playSound("explosion1");
+        // app.assetsProxy.playSound("explosion1");
     }
 };
 

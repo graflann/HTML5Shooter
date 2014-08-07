@@ -13,7 +13,7 @@ SniperProjectile = function(arrColors, options) {
 	*physical body added to Box2D physicsWorld
 	*@type {}
 	*/
-	this.velocityMod = 2400;
+	this.velocityMod = 3200;
 	
 	this.init();
 };
@@ -26,16 +26,16 @@ goog.inherits(SniperProjectile, Projectile)
 */
 SniperProjectile.prototype.init = function() {	
 	this.shape = new createjs.Shape();
-	//this.shape.graphics.ss(2).s(this.color).f("#000").dc(0, 0, 5);
 
 	this.shape.graphics
 		.ss(8, "round")
 		.ls([this.arrColors[0], this.arrColors[1]], [0.5, 1], 0, 0, 0, 192)
 		.mt(0, 0)
 		.lt(0, 192);
-	this.shape.alpha = 0;
 	this.shape.snapToPixel = true;
 	this.shape.cache(-4, 0, 8, 192);
+
+	this.shape.scaleX = 0.1;
 
 	this.damage = 4;
 	
@@ -52,12 +52,11 @@ SniperProjectile.prototype.update = function(options) {
 	if(this.isAlive) {
 		var scale = app.physicsScale;
 
-		//this.shape.rotation = this.body.GetAngle() * (180 / Math.PI);
 		this.shape.x = this.body.GetWorldCenter().x * scale;
 		this.shape.y = this.body.GetWorldCenter().y * scale;
 
-		if(this.shape.alpha < 1) {
-			this.shape.alpha += 0.1;
+		if(this.shape.scaleX < 1) {
+			this.shape.scaleX += 0.05;
 		}
 
 		Projectile.prototype.update.call(this);
@@ -69,7 +68,7 @@ SniperProjectile.prototype.kill = function() {
 		this.setIsAlive(false);
 		this.shape.getStage().removeChild(this.shape);
 
-		this.shape.alpha = 0;
+		this.shape.scaleX = 0.1;
 	}
 };
 

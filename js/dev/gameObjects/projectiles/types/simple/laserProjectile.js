@@ -30,15 +30,15 @@ LaserProjectile.prototype.init = function() {
 	//this.shape.graphics.ss(2).s(this.color).f("#000").dc(0, 0, 5);
 
 	this.shape.graphics
-		.ss(8, "round")
+		.ss(2, "round")
 		.ls([this.arrColors[0], this.arrColors[1]], [0.5, 1], 0, 0, 0, 96)
 		.mt(0, 0)
 		.lt(0, 96);
 	this.shape.alpha = 0;
 	this.shape.snapToPixel = true;
-	this.shape.cache(-4, 0, 8, 96);
+	this.shape.cache(-1, 0, 8, 96);
 
-	this.damage = 4;
+	this.damage = 1;
 	
 	this.setPhysics();
 
@@ -53,7 +53,6 @@ LaserProjectile.prototype.update = function(options) {
 	if(this.isAlive) {
 		var scale = app.physicsScale;
 
-		//this.shape.rotation = this.body.GetAngle() * (180 / Math.PI);
 		this.shape.x = this.body.GetWorldCenter().x * scale;
 		this.shape.y = this.body.GetWorldCenter().y * scale;
 
@@ -87,7 +86,7 @@ LaserProjectile.prototype.setPhysics = function() {
 	fixDef.filter.categoryBits = this.categoryBits;
 	fixDef.filter.maskBits = this.maskBits;
 	fixDef.isSensor = true;
-	fixDef.shape = new app.b2CircleShape(0.35);
+	fixDef.shape = new app.b2CircleShape(0.175);
 	
 	bodyDef.type = app.b2Body.b2_dynamicBody;
 	this.body = app.physicsWorld.CreateBody(bodyDef);

@@ -305,7 +305,14 @@ PlayerTank.prototype.enterBoost = function(options) {
 			self.stateMachine.setState(PlayerRechargeState.KEY);
 		} else {
 			if(self.isOverdrive) {
-				self.stateMachine.setState(PlayerOverdriveState.KEY);
+				if(self.overdrive === 0) {
+					//force an overdrive exit as the tank is in a boost state
+					//then set back to a default state as overdrive has expired
+					self.exitOverdrive();
+					self.stateMachine.setState(PlayerDefaultState.KEY);
+				} else {
+					self.stateMachine.setState(PlayerOverdriveState.KEY);
+				}
 			} else {
 				self.stateMachine.setState(PlayerDefaultState.KEY);
 			}
@@ -641,7 +648,8 @@ PlayerTank.prototype.checkReload = function() {
 
 	if(!this.isHoming && 
 		(
-			input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.RELOAD]) || 
+			input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.RELOAD]) ||
+			input.isMouseButtonDown(MouseCode.BUTTONS.MIDDLE) ||
 			input.isKeyPressedOnce(KeyCode.X)
 		)
 	) {
@@ -1021,12 +1029,17 @@ PlayerTank.prototype.transformBodySensor = function(value) {
 	fixDef.friction = (value) ? 100 : 0;
 	fixDef.restitution = 0;
 	fixDef.filter.categoryBits = CollisionCategories.PLAYER_BASE;
-	fixDef.filter.maskBits = CollisionCategories.SCENE_OBJECT | CollisionCategories.GROUND_ENEMY | CollisionCategories.ITEM;
+
+	if(value) {
+		fixDef.filter.maskBits = CollisionCategories.GROUND_ENEMY | CollisionCategories.ITEM;
+	} else {
+		fixDef.filter.maskBits = CollisionCategories.SCENE_OBJECT | CollisionCategories.GROUND_ENEMY | CollisionCategories.ITEM;
+	}
+
 	fixDef.isSensor = value;
 	fixDef.shape = new app.b2PolygonShape();
 	fixDef.shape.SetAsOrientedBox(this.width / scale, this.height / scale, center);
 
-	
 	if(oldFixDef) {
 		this.body.DestroyFixture(oldFixDef);
 	}
