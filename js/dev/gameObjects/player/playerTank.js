@@ -413,9 +413,7 @@ PlayerTank.prototype.enterDeath = function(options) {
 /**
 *@public
 */
-PlayerTank.prototype.updateDeath = function(options) {
-	
-};
+PlayerTank.prototype.updateDeath = function(options) {};
 
 /**
 *@public

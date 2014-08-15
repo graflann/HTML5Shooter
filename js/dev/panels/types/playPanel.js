@@ -40,9 +40,9 @@ goog.require('PanelLevelCompleteState');
 *@constructor
 *Where the primary play activity takes place
 */
-PlayPanel = function() {
+PlayPanel = function(levelProxy) {
 	Panel.call(this);
-	
+
 	/**
 	*@type {Shape}
 	*/
@@ -77,8 +77,6 @@ PlayPanel = function() {
 
 	this.camera = null;
 
-	this.levelProxy = null;
-
 	this.level = null;
 
 	/**
@@ -109,17 +107,15 @@ PlayPanel.TIME_STEP = 1 / 60;
 *@protected
 */
 PlayPanel.prototype.load = function() {
-	this.levelProxy = new LevelProxy();
-
 	goog.events.listen(
-		this.levelProxy, 
+		app.levelProxy, 
 		EventNames.LOAD_COMPLETE, 
 		this.onLevelLoadComplete, 
 		false, 
 		this
 	);
 
-	this.levelProxy.load();
+	app.levelProxy.load();
 };
 
 /**
@@ -354,9 +350,6 @@ PlayPanel.prototype.clear = function() {
 	this.camera.clear();
 	this.camera = null;
 
-	this.levelProxy.clear();
-	this.levelProxy = null;
-
 	this.level.clear();
 	this.level = null;
 
@@ -375,7 +368,6 @@ PlayPanel.prototype.clear = function() {
 	}
 
 	app.physicsWorld.ClearForces();
-	//app.physicsWorld = null;
 };
 
 /**
@@ -725,7 +717,7 @@ PlayPanel.prototype.setPlayer = function() {
 };
 
 PlayPanel.prototype.setLevel = function() {
-	this.level = new Level(this.levelProxy.currentLevelData);
+	this.level = new Level(app.levelProxy.getLevelData());
 
 	this.hud.setRadar(
 		this.grid.width, 
@@ -1005,7 +997,7 @@ PlayPanel.prototype.removeEventListeners = function() {
 **/
 PlayPanel.prototype.onLevelLoadComplete = function(e) {
     goog.events.unlisten(
-    	this.levelProxy, 
+    	app.levelProxy, 
     	EventNames.LOAD_COMPLETE, 
     	this.onLevelLoadComplete, 
     	false, 
@@ -1021,8 +1013,8 @@ PlayPanel.prototype.onLevelLoadComplete = function(e) {
     );
 
    	app.assetsProxy.load(
-   		this.levelProxy.getImageNames(), 
-   		this.levelProxy.getSoundNames()
+   		app.levelProxy.getImageNames(), 
+   		app.levelProxy.getSoundNames()
    	);
 };
 

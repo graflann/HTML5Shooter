@@ -5,6 +5,7 @@ goog.require('BrowserUtils');
 goog.require('TrigonometricTable');
 goog.require('Input');
 goog.require('AssetsProxy');
+goog.require('LevelProxy');
 goog.require('LayerSystem');
 goog.require('ScoreManager');
 
@@ -23,6 +24,7 @@ Application = function() {
     app.input           = new Input();
     app.layers          = LayerSystem.getInstance();
     app.assetsProxy     = new AssetsProxy();
+    app.levelProxy      = new LevelProxy();
     app.vecZero         = new app.b2Vec2();
     app.physicsWorld    = new app.b2World(app.vecZero, false);
     app.scoreManager    = ScoreManager.getInstance();

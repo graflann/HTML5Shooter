@@ -40,7 +40,7 @@ WeaponSelectorContainer.prototype.init = function() {
 	this.container = new createjs.Container();
 
 	this.width = Constants.WIDTH;
-	this.height = Constants.UNIT * 2;;
+	this.height = Constants.UNIT * 2;
 
 	this.background = new createjs.Shape();
 	this.background.graphics

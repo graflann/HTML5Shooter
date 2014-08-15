@@ -35,7 +35,6 @@ OptionsPanel.prototype.init = function() {
 		exitLabel = "press b to exit";
 
 	this.container = new createjs.Container();
-	//this.container.alpha = 0;
 
 	this.background = new createjs.Shape();
 	this.background.graphics

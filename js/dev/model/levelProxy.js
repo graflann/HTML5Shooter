@@ -28,8 +28,8 @@ LevelProxy.PATH = "data/level";
 *@private
 */
 LevelProxy.prototype.init = function() {
-	this.setLevel(1);
-};
+	this.levelIndex = 0;
+}
 
 LevelProxy.prototype.clear = function() {
 	this.currentLevelData = null;
@@ -38,7 +38,11 @@ LevelProxy.prototype.clear = function() {
 /**
 *@private
 */
-LevelProxy.prototype.load = function() {
+LevelProxy.prototype.load = function(index) {
+	this.levelIndex = index || 0;
+
+	this.clear();
+	this.currentPath = LevelProxy.PATH + (this.levelIndex + 1).toString() + ".json";
 	this.loadXHR();
 };
 
@@ -51,7 +55,6 @@ LevelProxy.prototype.loadXHR = function() {
 	var proxy = this;
 
 	$.get(this.currentPath, function(data) {
-		//proxy.currentLevelData = JSON.parse(data);
 		proxy.currentLevelData = data;
 
 		goog.events.dispatchEvent(proxy, new goog.events.Event(EventNames.LOAD_COMPLETE, proxy));
@@ -67,8 +70,8 @@ LevelProxy.prototype.loadXHR = function() {
 	});
 };
 
-LevelProxy.prototype.setLevel = function(index) {
-	this.currentPath = LevelProxy.PATH + index.toString() + ".json";
+LevelProxy.prototype.getLevelData = function() {
+	return this.currentLevelData;
 };
 
 LevelProxy.prototype.getImageNames = function() {
@@ -77,6 +80,10 @@ LevelProxy.prototype.getImageNames = function() {
 
 LevelProxy.prototype.getSoundNames = function() {
 	return this.currentLevelData.sounds;
+};
+
+LevelProxy.prototype.getLevelIndex = function() {
+	return this.levelIndex;
 };
 
 goog.exportSymbol('LevelProxy', LevelProxy);
