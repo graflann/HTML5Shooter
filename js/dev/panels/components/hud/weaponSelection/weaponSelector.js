@@ -5,7 +5,7 @@ goog.provide('WeaponSelector');
 *WeaponSelector component
 */
 WeaponSelector = function(name) {	
-	this.name = name.toString();
+	this.name = name.toLowerCase();
 
 	/**
 	*@type {createjs.Container}
@@ -17,7 +17,9 @@ WeaponSelector = function(name) {
 	*/
 	this.background = null;
 
-	this.text = null;
+	this.icon = null;
+
+	//this.text = null;
 
 	this.width = 0;
 	this.height = 0;
@@ -31,19 +33,24 @@ WeaponSelector = function(name) {
 *@public
 */
 WeaponSelector.prototype.init = function() {
+	var iconSpriteSheet = app.assetsProxy.arrSpriteSheet[this.name + "Icon"];
+
 	this.container = new createjs.Container();
 
-	this.width = (Constants.WIDTH / 5);
-	this.height = (Constants.UNIT - 12);
+	this.width = iconSpriteSheet._frames[0].rect.width;
+	this.height = iconSpriteSheet._frames[0].rect.height;
 
 	this.background = new createjs.Shape();
 
-	this.text = new createjs.Text(this.name, "16px AXI_Fixed_Caps_5x5", Constants.DARK_BLUE);
-	this.text.x = (this.width * 0.5) - (this.name.length * app.charWidth);
-	this.text.y = 3;
+	this.icon = new createjs.BitmapAnimation(iconSpriteSheet);
+	this.icon.gotoAndStop(0);
+
+	// this.text = new createjs.Text(this.name, "16px AXI_Fixed_Caps_5x5", Constants.DARK_BLUE);
+	// this.text.x = (this.width * 0.5) - (this.name.length * app.charWidth);
+	// this.text.y = 3;
 
 	this.container.addChild(this.background);
-	this.container.addChild(this.text);
+	this.container.addChild(this.icon);
 	
 	this.setSelection(false);
 };
@@ -58,7 +65,8 @@ WeaponSelector.prototype.clear = function() {
 	this.background.graphics.clear();
 	this.background = null;
 
-	this.text = null;
+	//this.text = null;
+	this.icon = null;
 };
 
 /**
@@ -71,10 +79,10 @@ WeaponSelector.prototype.setSelection = function(value) {
 		this.background.graphics
 			.ss(1)
 			.s(Constants.DARK_BLUE)
-			.lf([Constants.LIGHT_BLUE, Constants.BLUE], [0, 1], 0, 0, this.width, 0)
+			.lf([Constants.BLUE, Constants.DARK_BLUE], [0, 1], 0, 0, this.width, 0)
 			.dr(0, 0, this.width, this.height);
 
-		this.text.color = Constants.BLACK;
+		//this.text.color = Constants.BLACK;
 	} else {
 		this.background.graphics
 			.ss(1)
@@ -82,6 +90,6 @@ WeaponSelector.prototype.setSelection = function(value) {
 			.lf([Constants.DARK_BLUE, Constants.BLUE], [0.75, 1], 0, 0, this.width, 0)
 			.dr(0, 0, this.width, this.height);
 
-		this.text.color = Constants.BLUE;
+		//this.text.color = Constants.BLUE;
 	}
 };

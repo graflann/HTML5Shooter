@@ -287,23 +287,6 @@ EnemyRanger.prototype.setIsAlive = function(value) {
 };
 
 /**
-*@public
-*/
-EnemyRanger.prototype.kill = function() {
-	if(this.isAlive) {
-		this.setIsAlive(false);
-
-		this.stateMachine.reset();
-
-		this.navigation.reset();
-
-		this.container.getStage().removeChild(this.container);
-
-		this.dispatchKillEvent();
-	}
-};
-
-/**
  *Face player and fires
 *@public
 */
@@ -357,38 +340,6 @@ EnemyRanger.prototype.fire = function() {
 		projectile.shape.rotation = this.container.rotation;
 		stage.addChild(projectile.shape);
 	}
-};
-
-/**
-*@private
-*/
-EnemyRanger.prototype.setPosition = function(x, y) {
-	this.position.x = this.container.x = x;
-	this.position.y = this.container.y = y;
-
-	this.physicalPosition.x = this.position.x / app.physicsScale;
-	this.physicalPosition.y = this.position.y / app.physicsScale;
-	
-	this.body.SetPosition(this.physicalPosition);
-};
-
-EnemyRanger.prototype.setPhysics = function() {
-	var fixDef = new app.b2FixtureDef(),
-		bodyDef = new app.b2BodyDef();
-	
-	fixDef.density = 1.0;
-	fixDef.friction = 0;
-	fixDef.restitution = 1.0;
-	fixDef.filter.categoryBits = this.categoryBits;
-	fixDef.filter.maskBits = this.maskBits;
-	fixDef.isSensor = true;
-	fixDef.shape = new app.b2CircleShape(0.65);
-	
-	bodyDef.type = app.b2Body.b2_dynamicBody;
-	this.body = app.physicsWorld.CreateBody(bodyDef);
-	this.body.CreateFixture(fixDef);
-	this.body.SetUserData(this);
-	this.body.SetAwake(true);
 };
 
 EnemyRanger.prototype.setStateMachine = function() {

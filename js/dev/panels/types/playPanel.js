@@ -209,8 +209,6 @@ PlayPanel.prototype.updateDefault = function(options) {
 
 	//toggles debug draw mode
 	if(input.isKeyPressedOnce(KeyCode.F2)) {
-		app.physicsDebug = !app.physicsDebug;
-
 		this.setDebug();
 	}
 
@@ -374,7 +372,7 @@ PlayPanel.prototype.clear = function() {
 *@private
 */
 PlayPanel.prototype.setDebug = function() {
-	app.layers.setDebug(app.physicsDebug);
+	app.physicsDebug = !app.physicsDebug;
 };
 
 /**
@@ -420,10 +418,6 @@ PlayPanel.prototype.updateItems = function() {
 PlayPanel.prototype.updatePhysics = function(options) {
 	//BOX2D STEP////////////////////////////////
 	app.physicsWorld.Step(PlayPanel.TIME_STEP, 10, 10);
-	
-	if (app.physicsDebug) {
-		app.physicsWorld.DrawDebugData();
-	}
 		
 	app.physicsWorld.ClearForces();
 	////////////////////////////////////////////
@@ -457,7 +451,6 @@ PlayPanel.prototype.setLayers = function() {
 	app.layers.add(LayerTypes.AIR);
 	app.layers.add(LayerTypes.HOMING);
 	app.layers.add(LayerTypes.HUD);
-	app.layers.addDebug();
 
 	this.background = new createjs.Shape();
 	this.background.graphics
@@ -487,8 +480,7 @@ PlayPanel.prototype.setLayers = function() {
 *@private
 */
 PlayPanel.prototype.setPhysics = function() {
-	var debugDraw 	= new app.b2DebugDraw(),
-		fixDef 		= new app.b2FixtureDef(),
+	var fixDef 		= new app.b2FixtureDef(),
 		bodyDef 	= new app.b2BodyDef(),
 		w 			= Constants.WIDTH / app.physicsScale,
 		h 			= Constants.HEIGHT / app.physicsScale,
@@ -527,12 +519,12 @@ PlayPanel.prototype.setPhysics = function() {
 	*/
 	
 	//draws the physics bodies when in debug mode (physicsDebug = true @ main.js)
-	debugDraw.SetSprite(app.layers.getDebugContext());
-	debugDraw.SetDrawScale(app.physicsScale);
-	debugDraw.SetFillAlpha(0.75);
-	debugDraw.SetLineThickness(3.0);
-	debugDraw.SetFlags(app.b2DebugDraw.e_shapeBit);
-	app.physicsWorld.SetDebugDraw(debugDraw);
+	// debugDraw.SetSprite(app.layers.getDebugContext());
+	// debugDraw.SetDrawScale(app.physicsScale);
+	// debugDraw.SetFillAlpha(0.75);
+	// debugDraw.SetLineThickness(3.0);
+	// debugDraw.SetFlags(app.b2DebugDraw.e_shapeBit);
+	// app.physicsWorld.SetDebugDraw(debugDraw);
 };
 
 /**
@@ -750,7 +742,6 @@ PlayPanel.prototype.setCamera = function() {
 			app.layers.getStage(LayerTypes.AIR),
 			app.layers.getStage(LayerTypes.HOMING)
 		],
-		app.layers.getDebugContext(),
 		new app.b2Vec2(
 			(Constants.WIDTH * 0.5) - (this.player.width * 0.5), 
 			(Constants.HEIGHT * 0.5) - (this.player.height * 0.5)

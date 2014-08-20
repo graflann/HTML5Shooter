@@ -25,6 +25,8 @@ Enemy = function() {
 
 	this.timer = null;
 
+	this.debugShape = null;
+
 	this.enemyKilledEvent = new goog.events.Event(EventNames.ENEMY_KILLED, this);
 	this.forcedKillEvent = new PayloadEvent(EventNames.FORCED_KILL, this, null);
 };
@@ -41,8 +43,24 @@ Enemy.prototype.init = function() {
 /**
 *@public
 */
-Enemy.prototype.update = function(options) {
-	
+Enemy.prototype.update = function(options) {};
+
+/**
+*@private
+*/
+Enemy.prototype.updateDebug = function() {
+	if(app.physicsDebug) {
+
+		if(this.debugShape.parent === null || this.debugShape.parent === undefined) {
+			this.container.getStage().addChild(this.debugShape);
+		}
+
+		this.debugShape.x = this.position.x;
+		this.debugShape.y = this.position.y;
+
+	} else if (!app.physicsDebug && (this.debugShape.parent != null || this.debugShape.parent != undefined)) {
+		this.container.getStage().removeChild(this.debugShape);
+	}
 };
 
 /**

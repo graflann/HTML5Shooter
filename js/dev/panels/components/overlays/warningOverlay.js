@@ -171,7 +171,7 @@ WarningOverlay.prototype.setTextContainer = function() {
 	this.strobeText = new createjs.Text(
 		"warning", 
 		"16px AXI_Fixed_Caps_5x5", 
-		Constants.BRIGHT_RED
+		Constants.PINK
 	);
 	this.strobeText.scaleX = this.strobeText.scaleY = 8;
 

@@ -1,0 +1,327 @@
+{
+	"images": [
+		"striker",
+		"strikerWheel",
+		"enemyDroneBase",
+		"enemyDroneTurret",
+		"vulcanTurret",
+		"spreadTurret",
+		"railTurret",
+		"bladeTurret",
+		"enemyVulcanTurret",
+		"turretTransition",
+		"copter",
+		"centipedeHead",
+		"centipedeSegment",
+		"centipedeTail",
+		"enemyTrooper",
+		"enemyFencer",
+		"enemyCarrier",
+		"boost",
+		"bladeIcon",
+		"railIcon",
+		"spreadIcon",
+		"vulcanIcon"
+	],
+
+	"sounds": [
+		"Glide",
+		"Dark Curiosity",
+		"intro1",
+		"laser_large",
+		"weaponchange1",
+		"weaponchange2",
+		"swoosh1",
+		"menuFX1",
+		"menuFX2",
+		"menuFX4",
+		"powerup1",
+		"impact1",
+		"explosion1",
+		"blade",
+		"vulcan",
+		"sniper",
+		"spread"
+	],
+
+	"dimensions": { 
+		"width": 3840, 
+		"height": 1440
+	},
+
+	"enemies": {
+		"enemyTank": {
+			"max": 64,
+			"projectileSystem": "ground"
+		},
+
+		"enemyRanger": {
+			"max": 64,
+			"projectileSystem": "ground"
+		},
+
+		"enemyFencer": {
+			"max": 64,
+			"projectileSystem": "blade"
+		},
+
+		"enemyCentipede": {
+			"max": 8,
+			"projectileSystem": "ground"
+		},
+
+		"enemyTurret": {
+			"max": 16, "projectileSystem": "air"
+		},
+
+		"enemyCopter": {
+			"max": 16,
+			"projectileSystem": "air"
+		},
+
+		"enemyCarrier": {
+			"max": 1,
+			"projectileSystem": "mine"
+		}
+	},
+
+	"waves" : [
+		[
+			{ 
+				"type": "enemyCarrier", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 1,
+				"positionX": -240, "positionY": 64, "hasWarning": true
+			}
+		]
+	],
+
+	"sceneObjects": {
+		"wall": [
+			{ 	
+				"width": 32,
+				"height": 512,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 512, 
+				"y": 64
+			},
+			{ 	
+				"width": 32,
+				"height": 512,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 512, 
+				"y": 896
+			},
+			{ 	
+				"width": 512,
+				"height": 32,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 640, 
+				"y": 576
+			},
+			{ 	
+				"width": 512,
+				"height": 32,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 640, 
+				"y": 864
+			},
+			{ 	
+				"width": 512,
+				"height": 32,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 2688, 
+				"y": 576
+			},
+			{ 	
+				"width": 512,
+				"height": 32,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 2688, 
+				"y": 864
+			},
+			{ 	
+				"width": 32,
+				"height": 512,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 3296, 
+				"y": 64
+			},
+			{ 	
+				"width": 32,
+				"height": 512,
+				"color": "#6FC3DF",
+				"numFloors": 4,
+				"x": 3296, 
+				"y": 896
+			}
+		 ],
+		"tower": [
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 112, 
+				"y": 112
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 112, 
+				"y": 400
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 112, 
+				"y": 688
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 112, 
+				"y": 976
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 112, 
+				"y": 1264
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1840, 
+				"y": 112
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1840, 
+				"y": 400
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1840, 
+				"y": 688
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1840, 
+				"y": 976
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1840, 
+				"y": 1264
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1936, 
+				"y": 112
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1936, 
+				"y": 400
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1936, 
+				"y": 688
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1936, 
+				"y": 976
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 1936, 
+				"y": 1264
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 3712, 
+				"y": 112
+			},
+			{ 	
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 3712, 
+				"y": 400
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 3712, 
+				"y": 688
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 3712, 
+				"y": 976
+			},
+			{ 
+				"width": 32,
+				"height": 32,
+				"color": "#6FC3DF",
+				"enemy": "enemyTurret", 
+				"x": 3712, 
+				"y": 1264
+			}
+		]
+	}
+}

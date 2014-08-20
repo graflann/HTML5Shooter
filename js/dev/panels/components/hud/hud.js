@@ -44,8 +44,8 @@ Hud.prototype.init = function() {
 	this.setMeters();
 
 	this.scoreComponent = new ScoreViewComponent();
-	this.scoreComponent.container.x = 16;
-	this.scoreComponent.container.y = this.weaponSelectorContainer.container.y;
+	this.scoreComponent.container.x = Constants.WIDTH * 0.5;
+	this.scoreComponent.container.y = Constants.UNIT * 0.25;
 
 	this.container.addChild(this.radar.container);
 	this.container.addChild(this.radar.externalContainer);

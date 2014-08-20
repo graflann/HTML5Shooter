@@ -440,7 +440,7 @@ EnemyCopter.prototype.setRotors = function() {
 		offset;
 
 	for(var i = 0; i < EnemyCopter.ROTOR_OFFSETS.length; i++) {
-		rotor = new Rotor(Constants.YELLOW, EnemyCopter.ROTOR_RADIUS);
+		rotor = new Rotor(Constants.DARK_PINK, EnemyCopter.ROTOR_RADIUS);
 		offset = EnemyCopter.ROTOR_OFFSETS[i];
 
 		rotor.container.x = this.shape.regX - offset.x;

@@ -84,38 +84,6 @@
 	"waves" : [
 		[
 			{ 
-				"type": "enemyFencer", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 4,
-				"positionX": 1920, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "ordinal": 1, "hasSpawnParticle": true
-			},
-			{ 
-				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 4,
-				"positionX": 2160, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "ordinal": 1, "hasSpawnParticle": true
-			}
-		],
-		[
-			{ 
-				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 8,
-				"positionX": 960, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
-			}
-		],
-		[
-			{ 
-				"type": "enemyRanger", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 8,
-				"positionX": 2880, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
-			}
-		],
-		[
-			{ 
-				"type": "enemyTank", "intervalTime": 2000, "intervalQuantity": 1, "targetQuantity": 2,
-				"positionX": 200, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "ordinal": 1, "hasSpawnParticle": true
-			},
-			{ 
-				"type": "enemyTank", "intervalTime": 2000, "intervalQuantity": 1, "targetQuantity": 2,
-				"positionX": 3640, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "ordinal": 1, "hasSpawnParticle": true
-			}
-		],
-		[
-			{ 
 				"type": "enemyCopter", "intervalTime": 3000, "intervalQuantity": 1, "targetQuantity": 2,
 				"positionX": 200, "positionY": 720, "posOffsetX": 32, "posOffsetY": 32, "ordinal": 1, "hasSpawnParticle": true
 			},

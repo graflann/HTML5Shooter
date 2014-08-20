@@ -43,7 +43,7 @@ EnemyTurret.prototype.init = function() {
 	this.shape = new createjs.Shape();
 	this.shape.graphics
 		.ss(1)
-		.s(Constants.RED)
+		.s(Constants.DARK_PINK)
 		.f(Constants.BLACK)
 		.dr(0, 0, Constants.UNIT, Constants.UNIT);
 	

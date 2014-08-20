@@ -326,7 +326,7 @@ Level.prototype.setProjectiles = function() {
 	//Ground enemy pool
 	this.arrEnemyProjectileSystems["ground"] = new ProjectileSystem(
 		ProjectileTypes.ENEMY, 
-		[Constants.RED],
+		[Constants.YELLOW],
 		32,
 		{
 			categoryBits: CollisionCategories.GROUND_ENEMY_PROJECTILE,
@@ -337,7 +337,7 @@ Level.prototype.setProjectiles = function() {
 	//Air enemy pool
 	this.arrEnemyProjectileSystems["air"] = new ProjectileSystem(
 		ProjectileTypes.ENEMY, 
-		[Constants.YELLOW],
+		[Constants.PINK],
 		32,
 		{
 			categoryBits: CollisionCategories.AIR_ENEMY_PROJECTILE,
@@ -348,7 +348,7 @@ Level.prototype.setProjectiles = function() {
 	//Mine pool
 	this.arrEnemyProjectileSystems[ProjectileTypes.MINE] = new ProjectileSystem(
 		ProjectileTypes.MINE, 
-		[Constants.YELLOW, Constants.RED],
+		[Constants.PINK, Constants.DARK_PINK],
 		8,
 		{
 			categoryBits: CollisionCategories.GROUND_ENEMY_PROJECTILE,
@@ -360,7 +360,7 @@ Level.prototype.setProjectiles = function() {
 	//Blade pool for "melee" attacks
 	this.arrEnemyProjectileSystems[ProjectileTypes.BLADE] = new ProjectileSystem(
 		ProjectileTypes.BLADE, 
-		[Constants.RED, Constants.RED], 
+		[Constants.YELLOW, Constants.YELLOW], 
 		128,
 		{
 			categoryBits: CollisionCategories.GROUND_ENEMY_PROJECTILE,

@@ -66,8 +66,6 @@ LayerSystem.prototype.update = function() {
 	}
 
 	this.getLayer(LayerTypes.INPUT).update();
-
-	//this.getDebugStage().update();
 };
 
 /**
@@ -90,11 +88,6 @@ LayerSystem.prototype.clear = function() {
 			this.remove(key);
 		}
 	}
-
-	if(this.debugLayer) {
-		this.debugLayer.clear();
-		this.debugLayer = null;
-	}
 };
 
 /**
@@ -113,13 +106,6 @@ LayerSystem.prototype.add = function(id, zIndex) {
 	this.arrLayers[id].getStage().mouseChildren = false;
 
 	return this.arrLayers[id];
-};
-
-/**
-*@public
-*/
-LayerSystem.prototype.addDebug = function() {
-	this.debugLayer = new Layer(this.container, LayerTypes.DEBUG, this.length());
 };
 
 /**
@@ -149,27 +135,11 @@ LayerSystem.prototype.getStage = function(id) {
 };
 
 /**
-*Returns CreateJS Stage instance of Layer 
-*@public
-*/
-LayerSystem.prototype.getDebugStage = function() {
-	return this.debugLayer.getStage();
-};
-
-/**
 *Returns Layer canvas 2D context 
 *@public
 */
 LayerSystem.prototype.getContext = function(id) {
 	return this.getLayer(id).getContext();
-};
-
-/**
-*Returns Layer canvas 2D context 
-*@public
-*/
-LayerSystem.prototype.getDebugContext = function() {
-	return this.debugLayer.getContext();
 };
 
 /**
@@ -205,24 +175,6 @@ LayerSystem.prototype.swapLayers = function(firstId, secondId) {
 */
 LayerSystem.prototype.length = function() {
 	return Object.size(this.arrLayers);
-};
-
-/**
-*@public
-*/
-LayerSystem.prototype.setDebug = function(isDebugging) {
-	var layers = this.arrLayers,
-		stage,
-		key;
-
-	for(key in layers) {
-		stage = this.getStage(key);
-
-		//stage.autoClear = !isDebugging;
-		stage.alpha = 1 - (isDebugging * 0.85); // draws the stage graphics with appropriate alpha
-	}
-
-	this.getDebugStage().autoClear = !isDebugging;
 };
 
 goog.exportSymbol('LayerSystem', LayerSystem);

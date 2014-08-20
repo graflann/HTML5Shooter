@@ -23,7 +23,10 @@ Constants = {
     BLACK:              '#000000',
     BLUE:               '#6FC3DF',
     DARK_BLUE:          '#0C141F',
-    LIGHT_BLUE:         '#E6FFFF'
+    LIGHT_BLUE:         '#E6FFFF',
+    PINK:               '#FF0066',
+    DARK_PINK:          '#995566',
+    CHARCOAL:           '#222222',
 };
 
 goog.exportSymbol('Constants', Constants);

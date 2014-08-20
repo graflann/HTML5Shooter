@@ -48,7 +48,7 @@ EnterLevelOverlay.prototype.init = function() {
 	this.levelText.scaleX = this.levelText.scaleY = 1.5;
 
 	this.designationText = new createjs.Text(
-		"0X01", 
+		"0x" + (app.levelProxy.getLevelIndex() + 1).toString(16), 
 		"16px AXI_Fixed_Caps_5x5", 
 		Constants.LIGHT_BLUE
 	);

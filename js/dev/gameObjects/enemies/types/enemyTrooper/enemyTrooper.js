@@ -56,6 +56,8 @@ EnemyTrooper.prototype.init = function() {
 EnemyTrooper.prototype.update = function(options) {
 	if(this.isAlive) {	
 		this.stateMachine.update(options);
+
+		this.updateDebug();
 	}
 };
 
@@ -94,13 +96,19 @@ EnemyTrooper.prototype.setIsAlive = function(value) {
 */
 EnemyTrooper.prototype.kill = function() {
 	if(this.isAlive) {
+		var stage = this.container.getStage();
+
 		this.setIsAlive(false);
 
 		this.stateMachine.reset();
 
 		this.navigation.reset();
 
-		this.container.getStage().removeChild(this.container);
+		stage.removeChild(this.container);
+
+		if(stage.getChildIndex(this.debugShape) > -1) {
+			stage.removeChild(this.debugShape);
+		}
 
 		this.dispatchKillEvent();
 	}
@@ -117,11 +125,14 @@ EnemyTrooper.prototype.setPosition = function(x, y) {
 	this.physicalPosition.y = this.position.y / app.physicsScale;
 	
 	this.body.SetPosition(this.physicalPosition);
+
+
 };
 
 EnemyTrooper.prototype.setPhysics = function() {
 	var fixDef = new app.b2FixtureDef(),
-		bodyDef = new app.b2BodyDef();
+		bodyDef = new app.b2BodyDef(),
+		fixDefDiameter = 0.65;
 	
 	fixDef.density = 1.0;
 	fixDef.friction = 0;
@@ -129,13 +140,20 @@ EnemyTrooper.prototype.setPhysics = function() {
 	fixDef.filter.categoryBits = this.categoryBits;
 	fixDef.filter.maskBits = this.maskBits;
 	fixDef.isSensor = true;
-	fixDef.shape = new app.b2CircleShape(0.65);
+	fixDef.shape = new app.b2CircleShape(fixDefDiameter);
 	
 	bodyDef.type = app.b2Body.b2_dynamicBody;
 	this.body = app.physicsWorld.CreateBody(bodyDef);
 	this.body.CreateFixture(fixDef);
 	this.body.SetUserData(this);
 	this.body.SetAwake(true);
+
+	//set the Shape instance that renders the body in debug mode
+	this.debugShape = new createjs.Shape();
+	this.debugShape.graphics
+		.f(Constants.GREEN)
+		.dc(0, 0, (app.physicsScale * fixDefDiameter));
+	this.debugShape.alpha = 0.5;
 };
 
 EnemyTrooper.prototype.setStateMachine = function() {

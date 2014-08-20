@@ -7,12 +7,10 @@ goog.require('goog.events');
 /**
 *@constructor
 */
-Camera = function(target, arrStages, debugContext, offset, minBounds, maxBounds) {
+Camera = function(target, arrStages, offset, minBounds, maxBounds) {
 	this.target = target;
 
 	this.arrStages = arrStages;
-
-	this.debugContext = debugContext;
 
 	/**
 	 * [offset description]
@@ -91,8 +89,6 @@ Camera.prototype.clear = function() {
 
 	this.arrStages = null;
 
-	this.debugContext = null;
-
 	this.offset = null;
 
 	this.minBounds = null;
@@ -119,11 +115,6 @@ Camera.prototype.updateStages = function() {
 		stage.x = this.position.x;
 		stage.y = this.position.y;
 	}
-
-	//update debug context
-	//this.debugContext.translate(this.translation.x, this.translation.y);
-	//app.layers.getDebugStage().x = this.position.x;
-	//app.layers.getDebugStage().y = this.position.y;
 };
 
 /**

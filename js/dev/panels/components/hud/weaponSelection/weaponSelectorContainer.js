@@ -49,15 +49,15 @@ WeaponSelectorContainer.prototype.init = function() {
 		.f(Constants.BLACK)
 		.dr(0, 0, this.width, this.height);
 
-	this.background.alpha = 0.5;
+	this.background.alpha = 0;
 
 	this.container.addChild(this.background);
 
 	for(key in WeaponTypes) {
 		weaponSelector = new WeaponSelector(WeaponTypes[key]);
 
-		weaponSelector.container.x = (Constants.WIDTH * 0.1) + i * weaponSelector.width;
-		weaponSelector.container.y = Constants.UNIT + 6;
+		weaponSelector.container.x = (Constants.UNIT * 0.5) + (i * weaponSelector.width);
+		weaponSelector.container.y = Constants.UNIT + (Constants.UNIT * 0.5);
 
 		this.arrWeaponSelectors[i] = weaponSelector;
 
@@ -65,8 +65,6 @@ WeaponSelectorContainer.prototype.init = function() {
 
 		i++;
 	}
-
-	this.container.y = Constants.HEIGHT - this.height;
 
 	this.setSelection(this.currentWeaponIndex);
 };

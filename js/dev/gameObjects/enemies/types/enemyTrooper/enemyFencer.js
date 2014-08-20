@@ -282,34 +282,9 @@ EnemyFencer.prototype.fire = function() {
 *@private
 */
 EnemyFencer.prototype.setPosition = function(x, y) {
-	this.position.x = this.container.x = x;
-	this.position.y = this.container.y = y;
-
-	this.physicalPosition.x = this.position.x / app.physicsScale;
-	this.physicalPosition.y = this.position.y / app.physicsScale;
-	
-	this.body.SetPosition(this.physicalPosition);
+	EnemyTrooper.prototype.setPosition.call(this, x, y);
 
 	this.shield.update({ target:this });
-};
-
-EnemyFencer.prototype.setPhysics = function() {
-	var fixDef = new app.b2FixtureDef(),
-		bodyDef = new app.b2BodyDef();
-	
-	fixDef.density = 1.0;
-	fixDef.friction = 0;
-	fixDef.restitution = 1.0;
-	fixDef.filter.categoryBits = this.categoryBits;
-	fixDef.filter.maskBits = this.maskBits;
-	fixDef.isSensor = true;
-	fixDef.shape = new app.b2CircleShape(0.65);
-	
-	bodyDef.type = app.b2Body.b2_dynamicBody;
-	this.body = app.physicsWorld.CreateBody(bodyDef);
-	this.body.CreateFixture(fixDef);
-	this.body.SetUserData(this);
-	this.body.SetAwake(true);
 };
 
 EnemyFencer.prototype.setStateMachine = function() {

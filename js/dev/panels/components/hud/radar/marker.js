@@ -27,19 +27,19 @@ Marker.prototype.init = function() {
 		var w = 0,
 			h = 0;
 
-		//Air enemies are yellow
+		//Air enemies are pink
 		if(this.gameObject instanceof EnemyTurret ||
 			this.gameObject instanceof EnemyCopter
 		) {
-			this.color = Constants.YELLOW;
+			this.color = Constants.PINK;
 		} else if(this.gameObject instanceof EnemyCarrier) {
-			this.color = Constants.YELLOW;
+			this.color = Constants.PINK;
 
 			//really large / boss enemies get a marker twice the default size
 			this.width *= 2;
 			this.height *= 2;
-		} else { //ground are red
-			this.color = Constants.RED;
+		} else { //ground are yellow
+			this.color = Constants.YELLOW;
 		}
 
 		w = this.width * 0.5;

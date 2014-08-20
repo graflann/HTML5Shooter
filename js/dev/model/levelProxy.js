@@ -28,7 +28,7 @@ LevelProxy.PATH = "data/level";
 *@private
 */
 LevelProxy.prototype.init = function() {
-	this.levelIndex = 0;
+	this.levelIndex = 1;
 }
 
 LevelProxy.prototype.clear = function() {
@@ -39,7 +39,7 @@ LevelProxy.prototype.clear = function() {
 *@private
 */
 LevelProxy.prototype.load = function(index) {
-	this.levelIndex = index || 0;
+	this.levelIndex = index || 1;
 
 	this.clear();
 	this.currentPath = LevelProxy.PATH + (this.levelIndex + 1).toString() + ".json";

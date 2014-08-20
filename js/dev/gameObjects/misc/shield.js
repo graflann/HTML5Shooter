@@ -111,7 +111,7 @@ Shield.prototype.clear = function() {
 };
 
 /**
-*Outer circle Shape that encloses the propellers
+*A gradient circle fill displaying the shield
 *@private
 */
 Shield.prototype.render = function() {

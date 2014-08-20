@@ -581,7 +581,7 @@ EnemyCarrier.prototype.setRotors = function() {
 
 	for(var i = 0; i < EnemyCarrier.ROTOR_OFFSETS.length; i++) {
 		rotor = new RotorEngine(
-			Constants.YELLOW, 
+			Constants.DARK_PINK, 
 			EnemyCarrier.ROTOR_RADIUS,
 			EnemyCarrier.ROTOR_THICKNESS,
 			this
@@ -618,7 +618,7 @@ EnemyCarrier.prototype.setRotors = function() {
 EnemyCarrier.prototype.setDoors = function() {
 	var door,
 		offset,
-		arrColors = [Constants.YELLOW, Constants.DARK_RED];
+		arrColors = [Constants.PINK, Constants.DARK_PINK];
 
 	//LEFT
 	door = new HatchDoor(
@@ -668,7 +668,7 @@ EnemyCarrier.prototype.setPlatforms = function() {
 		offset.x = Math.floor(door.width * 0.5);
 		offset.y = Math.floor(door.height * 0.5);
 
-		platform = new Platform(door.width, door.height, Constants.DARK_RED);
+		platform = new Platform(door.width, door.height, Constants.CHARCOAL);
 
 		if(i == EnemyCarrier.RIGHT_DOOR) {
 			platform.container.x = door.shape.x + offset.x;
