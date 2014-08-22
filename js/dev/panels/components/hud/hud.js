@@ -40,6 +40,8 @@ Hud.prototype.init = function() {
 
 	this.radar = new Radar();
 	this.weaponSelectorContainer = new WeaponSelectorContainer();
+	this.weaponSelectorContainer.container.x = Constants.UNIT * 1.5;
+	this.weaponSelectorContainer.container.y = (Constants.UNIT * 0.5) + 2;
 
 	this.setMeters();
 
@@ -86,13 +88,15 @@ Hud.prototype.clear = function() {
 };
 
 Hud.prototype.setMeters = function() {
+	var width = this.weaponSelectorContainer.arrWeaponSelectors[0].width * 4;
+
 	//Energy meter
 	this.energyMeter = new EnergyMeter(
-		this.weaponSelectorContainer.arrWeaponSelectors[0].width * 4, 
+		width, 
 		Constants.UNIT * 0.25
 	);
-	this.energyMeter.container.x = this.weaponSelectorContainer.arrWeaponSelectors[0].container.x;
-	this.energyMeter.container.y = this.weaponSelectorContainer.container.y + 2;
+	this.energyMeter.container.x = (Constants.WIDTH * 0.5) - (width * 0.5);
+	this.energyMeter.container.y = Constants.UNIT * 2;
 
 	//Overdrive meter
 	this.overdriveMeter = new OverdriveMeter(

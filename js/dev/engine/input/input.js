@@ -542,9 +542,37 @@ Input.prototype.isUp = function() {
 	return value || axisValue;
 }
 
+Input.prototype.isUpOmitDpad = function() {
+	var value = (
+			this.isKeyDown(KeyCode.W) || 
+			this.isKeyDown(KeyCode.UP) 
+		),
+		axisValue = (this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT) < -Input.MOVE_THRESHOLD);
+
+	if(axisValue) {
+		this.setState(Input.STATES.GAMEPAD);
+	}
+
+	return value || axisValue;
+}
+
 Input.prototype.isDown = function() {
 	var value = (
 			this.isButtonDown(GamepadCode.BUTTONS.DPAD_DOWN) ||
+			this.isKeyDown(KeyCode.S) ||
+			this.isKeyDown(KeyCode.DOWN)
+		),
+		axisValue = (this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT) > Input.MOVE_THRESHOLD);
+
+	if(axisValue) {
+		this.setState(Input.STATES.GAMEPAD);
+	}
+
+	return value || axisValue;
+}
+
+Input.prototype.isDownOmitDpad = function() {
+	var value = (
 			this.isKeyDown(KeyCode.S) ||
 			this.isKeyDown(KeyCode.DOWN)
 		),
@@ -572,9 +600,37 @@ Input.prototype.isLeft = function() {
 	return value || axisValue;
 }
 
+Input.prototype.isLeftOmitDpad = function() {
+	var value = (
+			this.isKeyDown(KeyCode.A) || 
+			this.isKeyDown(KeyCode.LEFT)
+		),
+		axisValue = (this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR) < -Input.MOVE_THRESHOLD);
+
+	if(axisValue) {
+		this.setState(Input.STATES.GAMEPAD);
+	}
+
+	return value || axisValue;
+}
+
 Input.prototype.isRight = function() {
 	var value = (
 			this.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT) || 
+			this.isKeyDown(KeyCode.D) ||
+			this.isKeyDown(KeyCode.RIGHT)
+		),
+		axisValue = (this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR) > Input.MOVE_THRESHOLD);
+
+	if(axisValue) {
+		this.setState(Input.STATES.GAMEPAD);
+	}
+
+	return value || axisValue;
+}
+
+Input.prototype.isRightOmitDpad = function() {
+	var value = (
 			this.isKeyDown(KeyCode.D) ||
 			this.isKeyDown(KeyCode.RIGHT)
 		),

@@ -49,6 +49,8 @@ PlayerTank = function(arrProjectileSystems, boostSystem) {
 	this.currentProjectileType = "";
 
 	this.currentWeaponIndex = 0;
+
+	this.prevWeaponIndex = 0;
 	
 	this.physicalPosition = null;
 
@@ -149,6 +151,8 @@ PlayerTank.prototype.init = function() {
 	this.height = 67;
 
 	this.velocity.x = this.velocity.y = 6400;
+
+	this.prevWeaponIndex = this.currentWeaponIndex;
 
 	this.baseContainer = new createjs.Container();
 
@@ -445,7 +449,7 @@ PlayerTank.prototype.checkMovement = function(options) {
 	this.isMoving = false;
 
 	//check vertical movement
-	if(input.isUp()) {
+	if(input.isUpOmitDpad()) {
 
 		this.force.x = 0;
 		this.force.y = -this.velocity.y;
@@ -454,7 +458,7 @@ PlayerTank.prototype.checkMovement = function(options) {
 		this.intendedRotation = 0;
 
 		this.isMoving = isUp = true;
-	} else if (input.isDown()) {
+	} else if (input.isDownOmitDpad()) {
 		this.force.x = 0;
 		this.force.y = this.velocity.y;
 		this.body.ApplyForce(this.force, worldCenter);
@@ -465,7 +469,7 @@ PlayerTank.prototype.checkMovement = function(options) {
 	}
 
 	//check horizontal movement
-	if(input.isLeft()) {
+	if(input.isLeftOmitDpad()) {
 
 		this.force.x = -this.velocity.x;
 		this.force.y = 0;
@@ -476,7 +480,7 @@ PlayerTank.prototype.checkMovement = function(options) {
 		else 			this.intendedRotation = 270;
 
 		this.isMoving = true;
-	} else if (input.isRight()) {
+	} else if (input.isRightOmitDpad()) {
 
 		this.force.x = this.velocity.x;
 		this.force.y = 0;
@@ -494,20 +498,30 @@ PlayerTank.prototype.checkMovement = function(options) {
 *@public
 */
 PlayerTank.prototype.checkTurretTransition = function(options) {
-	var input = app.input;
-
 	//WEAPON SELECT
 	if(!this.isTransitioning) {
-		if(input.isKeyPressedOnce(KeyCode.Z) || 
-			input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.SWITCH])) {
-				
-			app.assetsProxy.playSound("weaponchange1", 0.5);
+		var input = app.input;
 
+		if(input.isKeyPressedOnce(KeyCode.Z) || input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.SWITCH])) {
 			this.currentWeaponIndex++;
 
 			if(this.currentWeaponIndex > (WeaponMap.length - 1)) {
 				this.currentWeaponIndex = 0;
 			}
+			
+		//Check D-PAD 
+		} else if(input.isButtonDown(GamepadCode.BUTTONS.DPAD_UP)) {
+			this.currentWeaponIndex = 0;
+		} else if(input.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT)) {
+			this.currentWeaponIndex = 1;
+		} else if(input.isButtonDown(GamepadCode.BUTTONS.DPAD_DOWN)) {
+			this.currentWeaponIndex = 2;
+		} else if(input.isButtonDown(GamepadCode.BUTTONS.DPAD_LEFT)) {
+			this.currentWeaponIndex = 3;
+		}
+
+		if(this.prevWeaponIndex != this.currentWeaponIndex) {
+			app.assetsProxy.playSound("weaponchange1", 0.5);
 
 			this.setTurret(
 				WeaponMap[this.currentWeaponIndex].turretType,
@@ -517,6 +531,8 @@ PlayerTank.prototype.checkTurretTransition = function(options) {
 			//notify the HUD to represent current weapon selection
 			//handled by the PlayPanel instance
 			goog.events.dispatchEvent(this, this.weaponSelectEvent);
+
+			this.prevWeaponIndex = this.currentWeaponIndex;
 		}
 	}
 };

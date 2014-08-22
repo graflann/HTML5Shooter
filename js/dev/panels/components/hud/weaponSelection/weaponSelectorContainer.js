@@ -56,8 +56,19 @@ WeaponSelectorContainer.prototype.init = function() {
 	for(key in WeaponTypes) {
 		weaponSelector = new WeaponSelector(WeaponTypes[key]);
 
-		weaponSelector.container.x = (Constants.UNIT * 0.5) + (i * weaponSelector.width);
-		weaponSelector.container.y = Constants.UNIT + (Constants.UNIT * 0.5);
+		switch(WeaponTypes[key]) {
+			case WeaponTypes.SPREAD:
+				weaponSelector.container.x = weaponSelector.width;
+				weaponSelector.container.y = weaponSelector.height;
+				break;
+			case WeaponTypes.BLADE:
+				weaponSelector.container.y = weaponSelector.height * 2;
+				break;
+			case WeaponTypes.RAIL:
+				weaponSelector.container.x = -weaponSelector.width;
+				weaponSelector.container.y = weaponSelector.height;
+				break;
+		}
 
 		this.arrWeaponSelectors[i] = weaponSelector;
 

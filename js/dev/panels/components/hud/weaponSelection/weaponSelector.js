@@ -37,17 +37,15 @@ WeaponSelector.prototype.init = function() {
 
 	this.container = new createjs.Container();
 
-	this.width = iconSpriteSheet._frames[0].rect.width;
-	this.height = iconSpriteSheet._frames[0].rect.height;
+	this.width = iconSpriteSheet._frames[0].rect.width + 4;
+	this.height = iconSpriteSheet._frames[0].rect.height + 4;
 
 	this.background = new createjs.Shape();
 
 	this.icon = new createjs.BitmapAnimation(iconSpriteSheet);
+	this.icon.x = 2;
+	this.icon.y = 2;
 	this.icon.gotoAndStop(0);
-
-	// this.text = new createjs.Text(this.name, "16px AXI_Fixed_Caps_5x5", Constants.DARK_BLUE);
-	// this.text.x = (this.width * 0.5) - (this.name.length * app.charWidth);
-	// this.text.y = 3;
 
 	this.container.addChild(this.background);
 	this.container.addChild(this.icon);
@@ -65,7 +63,6 @@ WeaponSelector.prototype.clear = function() {
 	this.background.graphics.clear();
 	this.background = null;
 
-	//this.text = null;
 	this.icon = null;
 };
 
@@ -75,21 +72,19 @@ WeaponSelector.prototype.clear = function() {
 WeaponSelector.prototype.setSelection = function(value) {
 	this.isSelected = value;
 
+	this.background.graphics.clear();
+
 	if(this.isSelected) {
 		this.background.graphics
-			.ss(1)
-			.s(Constants.DARK_BLUE)
+			.ss(2)
+			.s(Constants.LIGHT_BLUE)
 			.lf([Constants.BLUE, Constants.DARK_BLUE], [0, 1], 0, 0, this.width, 0)
 			.dr(0, 0, this.width, this.height);
-
-		//this.text.color = Constants.BLACK;
 	} else {
 		this.background.graphics
 			.ss(1)
-			.s(Constants.LIGHT_BLUE)
+			.s(Constants.BLUE)
 			.lf([Constants.DARK_BLUE, Constants.BLUE], [0.75, 1], 0, 0, this.width, 0)
 			.dr(0, 0, this.width, this.height);
-
-		//this.text.color = Constants.BLUE;
 	}
 };
