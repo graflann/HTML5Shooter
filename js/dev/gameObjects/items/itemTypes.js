@@ -5,7 +5,8 @@ goog.provide('ItemTypes');
 */
 ItemTypes = {
     ENERGY: 	'energy',
-    OVERDRIVE: 	'overdrive'
+    OVERDRIVE: 	'overdrive',
+    HEALTH: 	'health'
 };
 
 goog.exportSymbol('ItemTypes', ItemTypes);

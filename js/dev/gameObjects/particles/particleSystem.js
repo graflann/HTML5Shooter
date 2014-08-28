@@ -105,6 +105,10 @@ ParticleSystem.prototype.getParticle = function() {
 	return null;
 };
 
+ParticleSystem.prototype.getParticleByIndex = function(index) {
+	return this.arrParticles[index];
+};
+
 ParticleSystem.prototype.getLastAlive = function() {
 	var i = this.max,
 		particle;

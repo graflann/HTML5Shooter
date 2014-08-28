@@ -344,13 +344,16 @@ EnemyCarrier.prototype.updateSeeking = function(options) {
 };
 
 EnemyCarrier.prototype.updateTransparency = function(options) {
-	var target = options.target,
-		distance = this.position.DistanceSqrd(target.position);
+	//4 times per second check transparency toggle
+	if(createjs.Ticker.getTicks() % 15 == 0) {
+		var target = options.target,
+			distance = this.position.DistanceSqrd(target.position);
 
-	if(distance < this.transparencyDistance) {
-		if(this.container.alpha != 0.25) this.container.alpha = 0.25;
-	} else {
-		if(this.container.alpha != 1) this.container.alpha = 1;
+		if(distance < this.transparencyDistance) {
+			if(this.container.alpha != 0.25) this.container.alpha = 0.25;
+		} else {
+			if(this.container.alpha != 1) this.container.alpha = 1;
+		}
 	}
 };
 

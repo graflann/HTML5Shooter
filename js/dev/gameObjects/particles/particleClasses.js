@@ -7,6 +7,7 @@ goog.require('GrenadeParticle');
 goog.require('PickUpParticle');
 goog.require('BoostParticle');
 goog.require('SpawnGeneratorParticle');
+goog.require('ParryParticle');
 
 /**
  * Exposes available Particle classes by String
@@ -19,7 +20,8 @@ ParticleClasses = {
 	grenade: 		GrenadeParticle,
 	pickUp: 		PickUpParticle,
 	boost: 			BoostParticle,
-	spawnGenerator: SpawnGeneratorParticle
+	spawnGenerator: SpawnGeneratorParticle,
+	parry: 			ParryParticle 
 };
 
 goog.exportSymbol('ParticleClasses', ParticleClasses);

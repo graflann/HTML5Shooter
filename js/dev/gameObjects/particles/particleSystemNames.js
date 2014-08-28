@@ -12,7 +12,8 @@ ParticleSystemNames = {
     GRENADE: 			'grenade',
     OVERDRIVE_PICK_UP:  'overdrivePickUp',
     BOOST:  			'boost',
-    SPAWN_GENERATOR:  	'spawnGenerator'
+    SPAWN_GENERATOR:  	'spawnGenerator',
+    PARRY: 				'parry'
 };
 
 goog.exportSymbol('ParticleSystemNames', ParticleSystemNames);

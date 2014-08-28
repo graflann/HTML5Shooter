@@ -38,6 +38,8 @@ Input = function() {
 
 	this.arrMouseDown = null;
 
+	this.arrPrevMouseDown = null;
+
 	this.gamepad = null;
 
 	// The canonical list of attached gamepads, without “holes” (always
@@ -139,8 +141,11 @@ Input.prototype.setKeyboard = function() {
  */
 Input.prototype.setMouse = function() {
 	this.arrMouseDown = [];
-	this.arrMouseDown[MouseCode.BUTTONS.LEFT] = false;
-	this.arrMouseDown[MouseCode.BUTTONS.RIGHT] = false;
+	this.arrPrevMouseDown = [];
+
+	this.arrPrevMouseDown[MouseCode.BUTTONS.LEFT] = this.arrMouseDown[MouseCode.BUTTONS.LEFT] = false;
+	this.arrPrevMouseDown[MouseCode.BUTTONS.MIDDLE] = this.arrMouseDown[MouseCode.BUTTONS.MIDDLE] = false;
+	this.arrPrevMouseDown[MouseCode.BUTTONS.RIGHT] = this.arrMouseDown[MouseCode.BUTTONS.RIGHT] = false;
 };
 
 /**
@@ -488,6 +493,37 @@ Input.prototype.isKeyPressedOnce = function(keyCode) {
 Input.prototype.isMouseButtonDown = function(mouseCode) {
 	return this.arrMouseDown[mouseCode];
 };
+
+/**
+*@private
+*@param 	e
+*@returns 	Boolean
+*/
+Input.prototype.isPrevMouseButtonDown = function(mouseCode) {
+	return this.arrPrevMouseDown[mouseCode];
+};
+
+/**
+ * @public
+ * @param	arrMouseCodes
+ */
+Input.prototype.checkPrevMouseDown = function(arrMouseCodes) {
+	var i = arrMouseCodes.length,
+		mouseCode;
+	
+	while(i--) {
+		mouseCode = arrMouseCodes[i];
+		this.arrPrevMouseDown[mouseCode] = this.arrMouseDown[mouseCode];
+	}
+}
+
+/**
+ * @public
+ * @param	arrKeyCodes
+ */
+Input.prototype.isMouseButtonPressedOnce = function(mouseCode) {
+	return this.isMouseButtonDown(mouseCode) && !this.isPrevMouseButtonDown(mouseCode);
+}
 
 //KEY HANDLERS
 /**

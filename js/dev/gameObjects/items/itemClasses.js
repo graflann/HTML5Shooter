@@ -2,6 +2,7 @@ goog.provide('ItemClasses');
 
 goog.require('EnergyItem');
 goog.require('OverdriveItem');
+goog.require('HealthItem');
 
 /**
  * Exposes available Particle classes by String
@@ -9,7 +10,8 @@ goog.require('OverdriveItem');
  */
 ItemClasses = {
 	energy: 	EnergyItem,
-	overdrive: 	OverdriveItem
+	overdrive: 	OverdriveItem,
+	health: 	HealthItem
 };
 
 goog.exportSymbol('ItemClasses', ItemClasses);

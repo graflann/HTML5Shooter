@@ -1,4 +1,4 @@
-goog.provide('OverdriveItem');
+goog.provide('HealthItem');
 
 goog.require('Item');
 
@@ -6,7 +6,7 @@ goog.require('Item');
 *@constructor
 *"Overdrive" mmo for Turret instances
 */
-OverdriveItem = function(categoryBits) {
+HealthItem = function(categoryBits) {
 	Item.call(this, categoryBits);
 
 	this.label = null;
@@ -27,26 +27,24 @@ OverdriveItem = function(categoryBits) {
 	this.init();
 };
 
-goog.inherits(OverdriveItem, Item);
-
-OverdriveItem.BONUS_PENALTY = -1;
+goog.inherits(HealthItem, Item);
 
 /**
 *@override
 *@public
 */
-OverdriveItem.prototype.init = function() {
+HealthItem.prototype.init = function() {
 	this.container = new createjs.Container();
 
 	this.shape = new createjs.Shape();
 	this.shape.graphics
 		.ss(2)
-		.s(Constants.YELLOW)
-		.f(Constants.DARK_RED)
+		.s(Constants.PINK)
+		.f(Constants.DARK_PINK)
 		.dc(0, 0, 12);
 	this.shape.snapToPixel = true;
 
-	this.label = new createjs.Text("O", "16px AXI_Fixed_Caps_5x5", Constants.YELLOW);
+	this.label = new createjs.Text("+", "16px AXI_Fixed_Caps_5x5", Constants.PINK);
 	this.label.x = -5;
 	this.label.y = -7;
 	
@@ -59,7 +57,7 @@ OverdriveItem.prototype.init = function() {
 	this.container.cache(-14, -14, 28, 28);
 
 	this.collisionRoutingObject = new CollisionRoutingObject();
-	this.collisionRoutingObject.type = ItemTypes.OVERDRIVE;
+	this.collisionRoutingObject.type = ItemTypes.HEALTH;
 
 	Item.prototype.init.call(this);
 };
@@ -68,7 +66,7 @@ OverdriveItem.prototype.init = function() {
 *@override
 *@public
 */
-OverdriveItem.prototype.update = function(options) {
+HealthItem.prototype.update = function(options) {
 	if(this.isAlive) {
 		this.physicalPosition = this.body.GetPosition();
 
@@ -83,9 +81,6 @@ OverdriveItem.prototype.update = function(options) {
 			if(this.container.alpha <= 0) {
 				this.alphaTimer = 0;
 				this.kill();
-
-				//penalize the bonus multiplier for the item's expiration
-				app.scoreManager.updateBonusMultiplier(OverdriveItem.BONUS_PENALTY);
 			}
 		}
 
@@ -97,13 +92,13 @@ OverdriveItem.prototype.update = function(options) {
 *@override
 *@public
 */
-OverdriveItem.prototype.clear = function() {
+HealthItem.prototype.clear = function() {
 	Item.prototype.clear.call(this);
 
 	this.label = null;
 };
 
-OverdriveItem.prototype.setIsAlive = function(value) {
+HealthItem.prototype.setIsAlive = function(value) {
 	Item.prototype.setIsAlive.call(this, value);
 
 	this.container.alpha = 1;
@@ -113,7 +108,7 @@ OverdriveItem.prototype.setIsAlive = function(value) {
 /**
 *@private
 */
-OverdriveItem.prototype.setPhysics = function() {
+HealthItem.prototype.setPhysics = function() {
 	var fixDef = new app.b2FixtureDef(),
 		bodyDef = new app.b2BodyDef();
 	

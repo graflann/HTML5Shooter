@@ -212,6 +212,14 @@ PlayPanel.prototype.updateDefault = function(options) {
 		this.setDebug();
 	}
 
+	input.checkPrevButtonDown([
+		input.config[InputConfig.BUTTONS.SHOOT]
+	]);
+
+	input.checkPrevMouseDown([
+		MouseCode.LEFT
+	]);
+
 	input.checkPrevKeyDown([
 		KeyCode.F2
 	]);
@@ -653,8 +661,20 @@ PlayPanel.prototype.setParticles = function() {
 		4
 	);
 
+	this.arrParticleSystems[ParticleSystemNames.HEALTH_PICK_UP] = new ParticleSystem(
+		ParticleTypes.PICK_UP,
+		Constants.PINK,
+		4
+	);
+
 	this.arrParticleSystems[ParticleSystemNames.BOOST] = new ParticleSystem(
 		ParticleTypes.BOOST,
+		null,
+		1
+	);
+
+	this.arrParticleSystems[ParticleSystemNames.PARRY] = new ParticleSystem(
+		ParticleTypes.PARRY,
 		null,
 		1
 	);
@@ -680,11 +700,6 @@ PlayPanel.prototype.setItems = function() {
 			16
 		);
 	}
-
-	// this.arrItemSystems[ItemTypes.ENERGY] = new ItemSystem(
-	// 	ItemTypes.ENERGY,
-	// 	16
-	// );
 };
 
 /**
@@ -693,7 +708,8 @@ PlayPanel.prototype.setItems = function() {
 PlayPanel.prototype.setPlayer = function() {
 	this.player = new PlayerTank(
 		this.arrPlayerProjectileSystems,
-		this.arrParticleSystems[ParticleSystemNames.BOOST]
+		this.arrParticleSystems[ParticleSystemNames.BOOST],
+		this.arrParticleSystems[ParticleSystemNames.PARRY]
 	);
 	
 	this.player.setPosition(

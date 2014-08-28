@@ -21,7 +21,7 @@ goog.require('RotationUtils');
 /**
 *@constructor
 */
-PlayerTank = function(arrProjectileSystems, boostSystem) {
+PlayerTank = function(arrProjectileSystems, boostSystem, parrySystem) {
 	GameObject.call(this);
 
 	/**
@@ -33,6 +33,11 @@ PlayerTank = function(arrProjectileSystems, boostSystem) {
 	 * @type {ParticleSystem}
 	 */
 	this.boostSystem = boostSystem;
+
+	/**
+	 * @type {ParticleSystem}
+	 */
+	this.parrySystem = parrySystem;
 	
 	/**
 	*@type {ProjectileSystem}
@@ -103,6 +108,8 @@ PlayerTank = function(arrProjectileSystems, boostSystem) {
 
 	this.overdriveTimer = PlayerOverdriveState.DURATION;
 
+	this.health = 0;
+
 	this.damage = 0;
 
 	this.stateMachine = null;
@@ -151,6 +158,8 @@ PlayerTank.prototype.init = function() {
 	this.height = 67;
 
 	this.velocity.x = this.velocity.y = 6400;
+
+	this.health = 100;
 
 	this.prevWeaponIndex = this.currentWeaponIndex;
 
@@ -690,6 +699,7 @@ PlayerTank.prototype.clear = function() {
 	this.arrProjectileSystems = null;
 
 	this.boostSystem = null;
+	this.parrySystem = null;
 	
 	this.currentProjectileSystem = null;
 
@@ -971,6 +981,14 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 			this
 		);
 
+		goog.events.unlisten(
+			this.turret, 
+			EventNames.ACTIVATE_PARRY, 
+			this.onActivateParry, 
+			false, 
+			this
+		);
+
 		this.turret.shape.rotation = prevTurret.shape.rotation;
 	}
 
@@ -979,6 +997,15 @@ PlayerTank.prototype.addTurret = function(turretType, prevTurret) {
 		this.turret, 
 		EventNames.ENERGY_CHANGE, 
 		this.onEnergyChange, 
+		false, 
+		this
+	);
+
+	//listen to the current turret's energy change event each time it fires
+	goog.events.listen(
+		this.turret, 
+		EventNames.ACTIVATE_PARRY, 
+		this.onActivateParry, 
 		false, 
 		this
 	);
@@ -1028,6 +1055,10 @@ PlayerTank.prototype.removeTurret = function(prevTurret) {
 		this.container.parent.removeChild(prevTurret.ballEffects);
 		this.container.parent.removeChild(prevTurret.laserSight);
 	}
+};
+
+PlayerTank.prototype.getTurret = function() {
+	return this.turret;
 };
 
 /**
@@ -1245,10 +1276,24 @@ PlayerTank.prototype.tickDownOverdrive = function() {
 	this.overdriveChangeEvent.payload = this.overdrive = 100 * (this.overdriveTimer / PlayerOverdriveState.DURATION);
 	goog.events.dispatchEvent(this, this.overdriveChangeEvent);
 
-	if(this.overdriveTimer === 0)
-	{
+	if(this.overdriveTimer === 0) {
 		this.stateMachine.setState(PlayerDefaultState.KEY);
 	}
+};
+
+/**
+*@public
+*/
+PlayerTank.prototype.modifyHealth = function(value) {
+	this.health += value;
+
+	if(this.health < 0) {
+		this.health = 0;
+	} else if(this.health > 100) {
+		this.health = 100;
+	}
+
+	return this.health;
 };
 
 PlayerTank.prototype.onEnergyChange = function(e) {
@@ -1267,11 +1312,19 @@ PlayerTank.prototype.onOverdriveChange = function(e) {
 	}
 };
 
+PlayerTank.prototype.onActivateParry = function(e) {
+	if(!this.parrySystem.getParticleByIndex(0).isAlive) {
+		this.changeEnergy(0);
+
+		this.parrySystem.emit(1, { target: this });
+	}
+};
+
 /**
 *@public
 */
 PlayerTank.prototype.onCollide = function(collisionObject, options) {
-	//if(this.modifyHealth(collisionObject.damage)) {
+	if(this.modifyHealth(-collisionObject.damage) == 0) {
 		var self = this;
 
 		//delay to coincide with sound fx
@@ -1285,9 +1338,9 @@ PlayerTank.prototype.onCollide = function(collisionObject, options) {
 				velY: 8
 			});
 		}, 1000);
-	//}
 
-	this.stateMachine.setState(PlayerDeathState.KEY);
+		this.stateMachine.setState(PlayerDeathState.KEY);
+	}
 };
 
 goog.exportSymbol('PlayerTank', PlayerTank);

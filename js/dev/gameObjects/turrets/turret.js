@@ -64,7 +64,13 @@ Turret = function(hasAI, arrProjectileSystems) {
 
 	this.mouseFire = false;
 
+	this.isParryActivationInit = false;
+	this.isParryActivationReady = false;
+
+	this.parryActivationTimer = 0;
+
 	this.energyChangeEvent = new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energyConsumption);
+	this.activateParryEvent = new goog.events.Event(EventNames.ACTIVATE_PARRY, this);
 };
 
 goog.inherits(Turret, GameObject);
@@ -75,6 +81,7 @@ Turret.FIRE_TYPES = {
 };
 
 Turret.ROTATION_RATE = 5;
+Turret.PARRY_THRESHOLD = 10;
 
 /**
 *@override
@@ -85,6 +92,10 @@ Turret.prototype.init = function() {
 		this.controlType = this.aiControl;
 	} else {
 		this.controlType = this.manualControl;
+
+		this.parryActivationTimer = 0;
+		this.isParryActivationInit = false;
+		this.isParryActivationReady = false;	
 	}
 };
 
@@ -124,6 +135,17 @@ Turret.prototype.manualControl = function(options) {
 	//always update fire delay
 	this.fireCounter++;
 
+	//update the parry activation timer if inited
+	if(this.isParryActivationInit) {
+	 	this.parryActivationTimer++;
+
+	 	if(this.parryActivationTimer > Turret.PARRY_THRESHOLD) {
+			this.isParryActivationInit = false;
+			this.isParryActivationReady = false;
+			this.parryActivationTimer = 0;
+		}
+	}
+
 	//rotate counter clock-wise
 	if(input.isButtonDown(input.config[InputConfig.BUTTONS.ROTATE_LEFT])) {
 		this.shape.rotation -= Turret.ROTATION_RATE;
@@ -141,6 +163,37 @@ Turret.prototype.manualControl = function(options) {
 	if(options.firingIsReady && options.energy !== 0) {
 		//Keyboard or Button fire
 		if(input.isButtonDown(input.config[InputConfig.BUTTONS.SHOOT]) || input.isMouseButtonDown(MouseCode.BUTTONS.LEFT)) {
+			
+			// if(this.isParryActivationReady) {
+			// 	goog.events.dispatchEvent(this, this.activateParryEvent);
+
+			// 	this.isParryActivationReady = false;
+			// 	this.parryActivationTimer = 0;
+
+			// 	return;
+			// }
+
+			// if(!this.isParryActivationReady && 
+			// 	(
+			// 		input.isButtonPressedOnce(input.config[InputConfig.BUTTONS.SHOOT]) || 
+			// 		input.isMouseButtonPressedOnce(MouseCode.BUTTONS.LEFT)
+			// 	)
+			// ) {
+			// 	this.isParryActivationReady = true;
+			// }
+
+			this.isParryActivationInit = true;
+
+			if(this.isParryActivationInit && this.isParryActivationReady) {
+				this.isParryActivationInit = false;
+			 	this.isParryActivationReady = false;
+			 	this.parryActivationTimer = 0;
+
+				goog.events.dispatchEvent(this, this.activateParryEvent);
+
+			 	return;
+			}
+
 			if(this.fireCounter > this.fireThreshold) {
 				this.fire();
 				this.fireCounter = 0;
@@ -172,6 +225,10 @@ Turret.prototype.manualControl = function(options) {
 			this.isFiring = true;
 		} else {
 			this.isFiring = false;
+
+			if(this.isParryActivationInit) {
+				this.isParryActivationReady = true;
+			}
 		}
 	}
 };

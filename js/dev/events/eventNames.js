@@ -23,6 +23,7 @@ EventNames = {
     REMOVE_HOMING_OVERLAY:      'removeHomingOverlay',
     ENERGY_CHANGE:              'energyChange',
     OVERDRIVE_CHANGE:           'overdriveChange',
+    ACTIVATE_PARRY:             'activateParry',
     UPDATE_SCORE:               'updateScore',
     UPDATE_BONUS:               'updateBonus',
     INIT_WARNING:               'initWarning',

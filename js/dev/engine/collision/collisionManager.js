@@ -269,13 +269,28 @@ CollisionManager.ROUTER = {
     ////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////
+    playerhealth:               "playerVsHealth",
+    healthplayer:               "healthVsPlayer",
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
     enemyCentipedesceneObject:  "enemyVsSceneObject",
     sceneObjectenemyCentipede:  "sceneObjectVsEnemy",
     ////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////
     overdrivesceneObject:       "itemVsSceneObject",
-    sceneObjectoverdrive:       "sceneObjectVsItem"
+    sceneObjectoverdrive:       "sceneObjectVsItem",
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
+    healthsceneObject:          "itemVsSceneObject",
+    sceneObjecthealth:          "sceneObjectVsItem",
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
+    parryprojectile:            "parryVsProjectile",
+    projectileparry:            "projectileVsParry"
     ////////////////////////////////////////////////////
 };
 
@@ -495,7 +510,26 @@ CollisionManager.prototype.playerVsOverdrive = function(player, overdriveItem) {
 };
 
 CollisionManager.prototype.overdriveVsPlayer = function(overdriveItem, player) {
-    this.projectileVsPlayerTank(player, overdriveItem);
+    this.playerVsOverdrive(player, overdriveItem);
+};
+/////////////////////////////////////////////////////////////////////
+
+//playerVsHealth/healthVsPlayer////////////////////////////////////////
+CollisionManager.prototype.playerVsHealth = function(player, healthItem) {
+    player.modifyHealth(healthItem.value);
+
+    this.arrParticleSystems[ParticleSystemNames.HEALTH_PICK_UP].emit(1, {
+        posX: player.position.x,
+        posY: player.position.y
+    });
+
+    this.killList.push(healthItem);
+
+    app.assetsProxy.playSound("menuFX1", 0.5);
+};
+
+CollisionManager.prototype.healthVsPlayer = function(healthItem, player) {
+    this.playerVsHealth(player, healthItem);
 };
 /////////////////////////////////////////////////////////////////////
 

@@ -10,7 +10,8 @@ ParticleTypes = {
     GRENADE: 			'grenade',
     PICK_UP: 			'pickUp',
     BOOST: 				'boost',
-    SPAWN_GENERATOR:  	'spawnGenerator'
+    SPAWN_GENERATOR:  	'spawnGenerator',
+    PARRY: 				'parry' 
 };
 
 goog.exportSymbol('ParticleTypes', ParticleTypes);
