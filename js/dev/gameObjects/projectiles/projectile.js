@@ -22,13 +22,13 @@ Projectile = function(arrColors, options) {
 	/**
 	*@type {DisplayObject}
 	*/
-	this.shape;
+	this.shape = null;
 	
 	/**
 	*physical body added to Box2D physicsWorld
 	*@type {Box2D.Dynamics.b2Body}
 	*/
-	this.body;
+	this.body = null;
 
 	this.physicalPosition = new app.b2Vec2();
 
@@ -120,7 +120,7 @@ Projectile.prototype.checkBounds = function() {
 */
 Projectile.prototype.onCollide = function(collisionObject, options) {
 
-	if(collisionObject instanceof Enemy || collisionObject instanceof PlayerTank) {
+	if(collisionObject instanceof Enemy || collisionObject instanceof PlayerTank || collisionObject instanceof RotorEngine) {
 		options.positiveHit.emit(1, {
 			posX: this.shape.x,
 			posY: this.shape.y,

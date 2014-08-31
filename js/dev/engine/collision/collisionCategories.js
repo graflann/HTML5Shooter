@@ -16,7 +16,8 @@ CollisionCategories = {
     HOMING_OVERLAY: 			0x0200,
     HOMING_PROJECTILE: 			0x0400,
     ITEM:                       0x0800,            
-    SHIELD:                     0x1000            
+    SHIELD:                     0x1000,
+    PARRY:                      0x2000            
 };
 
 goog.exportSymbol('CollisionCategories', CollisionCategories);

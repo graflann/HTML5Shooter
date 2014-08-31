@@ -663,7 +663,7 @@ PlayPanel.prototype.setParticles = function() {
 
 	this.arrParticleSystems[ParticleSystemNames.HEALTH_PICK_UP] = new ParticleSystem(
 		ParticleTypes.PICK_UP,
-		Constants.PINK,
+		Constants.BRIGHT_GREEN,
 		4
 	);
 

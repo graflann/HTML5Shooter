@@ -39,12 +39,12 @@ HealthItem.prototype.init = function() {
 	this.shape = new createjs.Shape();
 	this.shape.graphics
 		.ss(2)
-		.s(Constants.PINK)
-		.f(Constants.DARK_PINK)
+		.s(Constants.BRIGHT_GREEN)
+		.f(Constants.DARK_GREEN)
 		.dc(0, 0, 12);
 	this.shape.snapToPixel = true;
 
-	this.label = new createjs.Text("+", "16px AXI_Fixed_Caps_5x5", Constants.PINK);
+	this.label = new createjs.Text("+", "16px AXI_Fixed_Caps_5x5", Constants.BRIGHT_GREEN);
 	this.label.x = -5;
 	this.label.y = -7;
 	

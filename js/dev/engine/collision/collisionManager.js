@@ -516,7 +516,7 @@ CollisionManager.prototype.overdriveVsPlayer = function(overdriveItem, player) {
 
 //playerVsHealth/healthVsPlayer////////////////////////////////////////
 CollisionManager.prototype.playerVsHealth = function(player, healthItem) {
-    player.modifyHealth(healthItem.value);
+    // player.modifyHealth(healthItem.value);
 
     this.arrParticleSystems[ParticleSystemNames.HEALTH_PICK_UP].emit(1, {
         posX: player.position.x,
@@ -525,7 +525,7 @@ CollisionManager.prototype.playerVsHealth = function(player, healthItem) {
 
     this.killList.push(healthItem);
 
-    app.assetsProxy.playSound("menuFX1", 0.5);
+    // app.assetsProxy.playSound("menuFX1", 0.5);
 };
 
 CollisionManager.prototype.healthVsPlayer = function(healthItem, player) {
@@ -552,6 +552,30 @@ CollisionManager.prototype.itemVsSceneObject = function(item, sceneObject) {
 
 CollisionManager.prototype.sceneObjectVsItem = function(sceneObject, item) {
     this.itemVsSceneObject(item, sceneObject);
+};
+/////////////////////////////////////////////////////////////////////////////
+
+//parryVsProjectile/projectileVsParry////////////////////////////////////////
+CollisionManager.prototype.parryVsProjectile = function(parry, projectile) {
+    projectile.onCollide(parry, this.collisionOptions.projectile);
+
+    this.activationList.push(
+        {
+            system: this.arrItemSystems[ItemTypes.HEALTH],
+            qty: 1,
+            posX: projectile.shape.x, 
+            posY: projectile.shape.y,
+            velX: 64,
+            velY: 64,
+            isRotated: true
+        }
+    );
+
+    this.killList.push(projectile);
+};
+
+CollisionManager.prototype.projectileVsParry = function(projectile, parry) {
+    this.parryVsProjectile(parry, projectile);
 };
 /////////////////////////////////////////////////////////////////////////////
 

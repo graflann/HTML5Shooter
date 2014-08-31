@@ -330,7 +330,7 @@ Level.prototype.setProjectiles = function() {
 		32,
 		{
 			categoryBits: CollisionCategories.GROUND_ENEMY_PROJECTILE,
-			maskBits: CollisionCategories.PLAYER | CollisionCategories.SCENE_OBJECT
+			maskBits: CollisionCategories.PLAYER | CollisionCategories.SCENE_OBJECT | CollisionCategories.PARRY
 		}
 	);
 
@@ -341,7 +341,7 @@ Level.prototype.setProjectiles = function() {
 		32,
 		{
 			categoryBits: CollisionCategories.AIR_ENEMY_PROJECTILE,
-			maskBits: CollisionCategories.PLAYER
+			maskBits: CollisionCategories.PLAYER | CollisionCategories.PARRY
 		}
 	);
 
@@ -352,7 +352,7 @@ Level.prototype.setProjectiles = function() {
 		8,
 		{
 			categoryBits: CollisionCategories.GROUND_ENEMY_PROJECTILE,
-			maskBits: CollisionCategories.PLAYER,
+			maskBits: CollisionCategories.PLAYER | CollisionCategories.PARRY,
 			secondaryProjectileSystem: this.arrEnemyProjectileSystems["ground"]
 		}
 	);

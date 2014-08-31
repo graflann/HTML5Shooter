@@ -144,6 +144,8 @@ PlayerTank.REQUIRED_FOR_BOOST = PlayerTank.MAX_ENERGY * 0.5;
 PlayerTank.HOMING_INCREMENT = 2;
 PlayerTank.HOMING_LIMIT = PlayerTank.MAX_ENERGY * 0.5;
 
+PlayerTank.MAX_HEALTH = 8;
+
 /**
 *@override
 *@public
@@ -159,7 +161,7 @@ PlayerTank.prototype.init = function() {
 
 	this.velocity.x = this.velocity.y = 6400;
 
-	this.health = 100;
+	this.health = PlayerTank.MAX_HEALTH;
 
 	this.prevWeaponIndex = this.currentWeaponIndex;
 
