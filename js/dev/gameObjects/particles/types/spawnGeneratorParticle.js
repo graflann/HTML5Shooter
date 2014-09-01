@@ -66,11 +66,10 @@ SpawnGeneratorParticle.prototype.updateFX = function(options) {
 		var randRadius = Math.randomInRange(0.85, 1) * this.radius,
 			randOrigin = Math.randomInRange(0.1, 0.5) * this.radius;
 
-		this.shape.graphics.clear();
-
 		this.shape.alpha = Math.randomInRange(this.alpha * 0.5, this.alpha);
 
 		this.shape.graphics
+			.c()
 			.ss(1)
 			.s(Constants.RED)
 			.rf([Constants.RED, Constants.DARK_RED], [0, 1], 0, 0, this.radius * 0.5, 0, 0, this.radius)

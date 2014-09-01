@@ -6,16 +6,22 @@ goog.require('PlayerTank');
 *@constructor
 *Energy meter displaying user's current level
 */
-EnergyMeter = function(w, h) {	
-	this.width = w;
-	this.height = h;
+EnergyMeter = function(startAngle, endAngle, arrColors) {	
+	this.startAngle = Math.degToRad(startAngle);
+	this.endAngle = Math.degToRad(endAngle);
+
+	this.arrColors = arrColors;
+
+	this.maxAngle = Math.abs(startAngle - endAngle);
 
 	/**
 	*@type {Container}
 	*/
 	this.container = null;
 
-	this.label = null;
+	this.background = null;
+
+	this.border = null;
 
 	this.meter = null;
 
@@ -26,41 +32,34 @@ EnergyMeter = function(w, h) {
 	this.init();
 };
 
-EnergyMeter.MIN = 0;
-EnergyMeter.MAX = 0;
-
 /**
 *@public
 */
 EnergyMeter.prototype.init = function() {
 	this.container = new createjs.Container();
 
-	this.label = new createjs.Text("E", "16px AXI_Fixed_Caps_5x5", Constants.LIGHT_BLUE);
+	this.border = new createjs.Shape();
+	this.border.graphics
+		.ss(6)
+		.s(this.arrColors[0])
+		.a(0, 0, PlayerMeterContainer.RADIUS, this.startAngle, this.endAngle);
 
 	this.background = new createjs.Shape();
-	this.background.x = app.charWidth * 2;
-	this.background.y = 3;
 	this.background.graphics
-		.ss(1)
-		.s(Constants.BLUE)
-		.f(Constants.DARK_BLUE)
-		.dr(0, 0, this.width - this.background.x, this.height);
+		.ss(4)
+		.s(this.arrColors[1])
+		.a(0, 0, PlayerMeterContainer.RADIUS, this.startAngle, this.endAngle);
+
+	this.energy = this.maxAngle;
+	this.regenerationRate = this.maxAngle / PlayerTank.MAX_ENERGY;
 
 	this.meter = new createjs.Shape();
-	this.meter.x = this.background.x + 2;
-	this.meter.y = this.background.y + 4;
-
-	EnergyMeter.MAX = this.width - this.meter.x - 1;
-	this.energy = EnergyMeter.MAX;
-	this.regenerationRate = EnergyMeter.MAX / PlayerTank.MAX_ENERGY;
-
 	this.meter.graphics
-		.ss(4)
-		.s(Constants.LIGHT_BLUE)
-		.mt(0, 0)
-		.lt(this.energy, 0);
+		.ss(2)
+		.s(this.arrColors[2])
+		.a(0, 0, PlayerMeterContainer.RADIUS, this.startAngle, this.endAngle);
 
-	this.container.addChild(this.label);
+	this.container.addChild(this.border);
 	this.container.addChild(this.background);
 	this.container.addChild(this.meter);
 };
@@ -79,8 +78,8 @@ EnergyMeter.prototype.clear = function() {
 	this.container.removeAllChildren();
 	this.container = null;
 
-	this.label = null;
-
+	this.background = null;
+	this.border = null;
 	this.meter = null;
 };
 
@@ -90,17 +89,16 @@ EnergyMeter.prototype.clear = function() {
 EnergyMeter.prototype.changeEnergy = function(value) {
 	this.energy = this.regenerationRate * value;
 
-	if(this.energy < EnergyMeter.MIN) {
-		this.energy = EnergyMeter.MIN;
-	} else if (this.energy > EnergyMeter.MAX) {
-		this.energy = EnergyMeter.MAX
+	if(this.energy < 0) {
+		this.energy = 0;
+	} else if (this.energy > this.maxAngle) {
+		this.energy = this.maxAngle;
 	}
 
 	//adjust meter to reflect current level
 	this.meter.graphics
  		.c()
-		.ss(4)
-		.s(Constants.LIGHT_BLUE)
-		.mt(0, 0)
-		.lt(this.energy, 0);
+		.ss(2)
+		.s(this.arrColors[2])
+		.a(0, 0, PlayerMeterContainer.RADIUS, this.startAngle, this.startAngle + Math.degToRad(this.energy));
 };

@@ -123,6 +123,7 @@ PlayerTank = function(arrProjectileSystems, boostSystem, parrySystem) {
 	this.increaseHomingOverlayEvent = new PayloadEvent(EventNames.INCREASE_HOMING_OVERLAY, this, this.homingInc);
 	this.energyChangeEvent 			= new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energy);
 	this.overdriveChangeEvent 		= new PayloadEvent(EventNames.OVERDRIVE_CHANGE, this, this.overdrive);
+	this.modifiyHealthEvent 		= new PayloadEvent(EventNames.MODIFY_HEALTH, this, this.health);
 
 	this.init();
 };
@@ -1291,9 +1292,12 @@ PlayerTank.prototype.modifyHealth = function(value) {
 
 	if(this.health < 0) {
 		this.health = 0;
-	} else if(this.health > 100) {
-		this.health = 100;
+	} else if(this.health > PlayerTank.MAX_HEALTH) {
+		this.health = PlayerTank.MAX_HEALTH;
 	}
+
+	this.modifiyHealthEvent.payload = this.health;
+	goog.events.dispatchEvent(this, this.modifiyHealthEvent);
 
 	return this.health;
 };
@@ -1326,7 +1330,7 @@ PlayerTank.prototype.onActivateParry = function(e) {
 *@public
 */
 PlayerTank.prototype.onCollide = function(collisionObject, options) {
-	if(this.modifyHealth(-collisionObject.damage) == 0) {
+	if(this.modifyHealth(-collisionObject.damage) === 0) {
 		var self = this;
 
 		//delay to coincide with sound fx

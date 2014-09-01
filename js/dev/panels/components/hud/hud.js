@@ -2,8 +2,7 @@ goog.provide('Hud');
 
 goog.require('Radar');
 goog.require('WeaponSelectorContainer');
-goog.require('EnergyMeter');
-goog.require('OverdriveMeter');
+goog.require('PlayerMeterContainer');
 goog.require('ScoreViewComponent');
 
 /**
@@ -19,6 +18,8 @@ Hud = function() {
 	this.radar = null;
 
 	this.weaponSelectorContainer = null;
+
+	this.playerMeterContainer = null;
 
 	this.energyMeter = null;
 
@@ -39,6 +40,7 @@ Hud.prototype.init = function() {
 	this.container = new createjs.Container();
 
 	this.radar = new Radar();
+
 	this.weaponSelectorContainer = new WeaponSelectorContainer();
 	this.weaponSelectorContainer.container.x = Constants.UNIT * 1.5;
 	this.weaponSelectorContainer.container.y = (Constants.UNIT * 0.5) + 2;
@@ -52,8 +54,9 @@ Hud.prototype.init = function() {
 	this.container.addChild(this.radar.container);
 	this.container.addChild(this.radar.externalContainer);
 	this.container.addChild(this.weaponSelectorContainer.container);
-	this.container.addChild(this.energyMeter.container);
-	this.container.addChild(this.overdriveMeter.container);
+	this.container.addChild(this.playerMeterContainer.container);
+	//this.container.addChild(this.energyMeter.container);
+	//this.container.addChild(this.overdriveMeter.container);
 	this.container.addChild(this.scoreComponent.container);
 };
 
@@ -62,6 +65,7 @@ Hud.prototype.init = function() {
 */
 Hud.prototype.update = function(options) {
 	this.radar.update(options);
+	this.playerMeterContainer.update(options);
 };
 
 /**
@@ -77,34 +81,17 @@ Hud.prototype.clear = function() {
 	this.weaponSelectorContainer.clear();
 	this.weaponSelectorContainer = null;
 
-	this.energyMeter.clear();
-	this.energyMeter = null;
-
-	this.overdriveMeter.clear();
-	this.overdriveMeter = null;
+	this.playerMeterContainer.clear();
+	this.playerMeterContainer = null;
 
 	this.scoreComponent.clear();
 	this.scoreComponent = null;
 };
 
 Hud.prototype.setMeters = function() {
-	var width = this.weaponSelectorContainer.arrWeaponSelectors[0].width * 4;
-
-	//Energy meter
-	this.energyMeter = new EnergyMeter(
-		width, 
-		Constants.UNIT * 0.25
-	);
-	this.energyMeter.container.x = (Constants.WIDTH * 0.5) - (width * 0.5);
-	this.energyMeter.container.y = Constants.UNIT * 2;
-
-	//Overdrive meter
-	this.overdriveMeter = new OverdriveMeter(
-		this.energyMeter.width, 
-		Constants.UNIT * 0.25
-	);
-	this.overdriveMeter.container.x = this.energyMeter.container.x;
-	this.overdriveMeter.container.y = this.energyMeter.container.y + this.energyMeter.height + 8;
+	this.playerMeterContainer = new PlayerMeterContainer();
+	this.playerMeterContainer.container.x = Constants.WIDTH * 0.5;
+	this.playerMeterContainer.container.y = Constants.HEIGHT * 0.5;
 };
 
 Hud.prototype.setRadar = function(w, h, player, arrEnemySystems) {
@@ -116,11 +103,15 @@ Hud.prototype.setSelection = function(index) {
 };
 
 Hud.prototype.changeEnergy = function(value) {
-	this.energyMeter.changeEnergy(value);
+	this.playerMeterContainer.changeEnergy(value);
 };
 
 Hud.prototype.changeOverdrive = function(value) {
-	this.overdriveMeter.changeEnergy(value);
+	this.playerMeterContainer.changeOverdrive(value);
+};
+
+Hud.prototype.modifyHealth = function(value) {
+	this.playerMeterContainer.modifyHealth(value);
 };
 
 Hud.prototype.updateScore = function(value) {
