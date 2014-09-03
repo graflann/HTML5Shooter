@@ -55,8 +55,6 @@ Hud.prototype.init = function() {
 	this.container.addChild(this.radar.externalContainer);
 	this.container.addChild(this.weaponSelectorContainer.container);
 	this.container.addChild(this.playerMeterContainer.container);
-	//this.container.addChild(this.energyMeter.container);
-	//this.container.addChild(this.overdriveMeter.container);
 	this.container.addChild(this.scoreComponent.container);
 };
 
@@ -90,8 +88,6 @@ Hud.prototype.clear = function() {
 
 Hud.prototype.setMeters = function() {
 	this.playerMeterContainer = new PlayerMeterContainer();
-	this.playerMeterContainer.container.x = Constants.WIDTH * 0.5;
-	this.playerMeterContainer.container.y = Constants.HEIGHT * 0.5;
 };
 
 Hud.prototype.setRadar = function(w, h, player, arrEnemySystems) {

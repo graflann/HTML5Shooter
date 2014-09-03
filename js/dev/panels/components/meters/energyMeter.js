@@ -6,13 +6,15 @@ goog.require('PlayerTank');
 *@constructor
 *Energy meter displaying user's current level
 */
-EnergyMeter = function(startAngle, endAngle, arrColors) {	
+EnergyMeter = function(startAngle, endAngle, arrColors, maxEnergyValue) {
 	this.startAngle = Math.degToRad(startAngle);
 	this.endAngle = Math.degToRad(endAngle);
 
 	this.arrColors = arrColors;
 
-	this.maxAngle = Math.abs(startAngle - endAngle);
+	this.angleValue = Math.abs(startAngle - endAngle);
+
+	this.maxEnergyValue = maxEnergyValue || PlayerTank.MAX_ENERGY;
 
 	/**
 	*@type {Container}
@@ -27,7 +29,7 @@ EnergyMeter = function(startAngle, endAngle, arrColors) {
 
 	this.energy = 0;
 
-	this.regenerationRate = 0;
+	this.incValue = 0;
 	
 	this.init();
 };
@@ -50,14 +52,14 @@ EnergyMeter.prototype.init = function() {
 		.s(this.arrColors[1])
 		.a(0, 0, PlayerMeterContainer.RADIUS, this.startAngle, this.endAngle);
 
-	this.energy = this.maxAngle;
-	this.regenerationRate = this.maxAngle / PlayerTank.MAX_ENERGY;
-
 	this.meter = new createjs.Shape();
 	this.meter.graphics
 		.ss(2)
 		.s(this.arrColors[2])
 		.a(0, 0, PlayerMeterContainer.RADIUS, this.startAngle, this.endAngle);
+
+	this.energy = this.angleValue;
+	this.incValue = this.angleValue / this.maxEnergyValue;
 
 	this.container.addChild(this.border);
 	this.container.addChild(this.background);
@@ -86,13 +88,13 @@ EnergyMeter.prototype.clear = function() {
 /**
 *@public
 */
-EnergyMeter.prototype.changeEnergy = function(value) {
-	this.energy = this.regenerationRate * value;
+EnergyMeter.prototype.setMeter = function(value) {
+	this.energy = this.incValue * value;
 
 	if(this.energy < 0) {
 		this.energy = 0;
-	} else if (this.energy > this.maxAngle) {
-		this.energy = this.maxAngle;
+	} else if (this.energy > this.angleValue) {
+		this.energy = this.angleValue;
 	}
 
 	//adjust meter to reflect current level

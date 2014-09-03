@@ -358,13 +358,15 @@ CollisionManager.prototype.projectileVsPlayer = function(projectile, player) {
     //PROCESS PROJECTILE
     projectile.onCollide(player, this.collisionOptions.projectile);
 
-    // if(!player.isBoosting) {
-    //     player.onCollide(projectile, this.collisionOptions.player);
+    if(!player.isBoosting) {
+        player.onCollide(projectile, this.collisionOptions.player);
 
-    //     app.assetsProxy.playSound("explosion1");
+        app.assetsProxy.playSound("explosion1");
 
-    //     this.killList.push(player);
-    // }
+        // if(player.getHealth() == 0) {
+        //     this.killList.push(player);
+        // }
+    }
 
     //set projectile up for removal during update
     this.killList.push(projectile);
@@ -516,7 +518,7 @@ CollisionManager.prototype.overdriveVsPlayer = function(overdriveItem, player) {
 
 //playerVsHealth/healthVsPlayer////////////////////////////////////////
 CollisionManager.prototype.playerVsHealth = function(player, healthItem) {
-    // player.modifyHealth(healthItem.value);
+    player.modifyHealth(healthItem.value);
 
     this.arrParticleSystems[ParticleSystemNames.HEALTH_PICK_UP].emit(1, {
         posX: player.position.x,

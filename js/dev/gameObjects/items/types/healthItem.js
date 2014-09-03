@@ -11,7 +11,7 @@ HealthItem = function(categoryBits) {
 
 	this.label = null;
 
-	this.value = 10;
+	this.value = 1;
 
 	this.secondsAlive = 16;
 

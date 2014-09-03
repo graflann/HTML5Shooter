@@ -112,6 +112,8 @@ PlayerTank = function(arrProjectileSystems, boostSystem, parrySystem) {
 
 	this.damage = 0;
 
+	this.hudOffset = null;
+
 	this.stateMachine = null;
 
 	//cache events
@@ -205,6 +207,8 @@ PlayerTank.prototype.init = function() {
 	this.position = new app.b2Vec2();
 	this.physicalPosition = new app.b2Vec2();
 	this.force = new app.b2Vec2();
+
+	this.hudOffset = new app.b2Vec2(this.width * 0.5, this.width * 0.9);
 
 	this.collisionRoutingObject = new CollisionRoutingObject();
 	this.collisionRoutingObject.type = "player";
@@ -751,6 +755,8 @@ PlayerTank.prototype.clear = function() {
 
 	this.turret = null;
 
+	this.hudOffset = null;
+
 	this.stateMachine.clear();
 	this.stateMachine = null;
 
@@ -1284,6 +1290,10 @@ PlayerTank.prototype.tickDownOverdrive = function() {
 	}
 };
 
+PlayerTank.prototype.getHealth = function() {
+	return this.health;
+};
+
 /**
 *@public
 */
@@ -1331,21 +1341,21 @@ PlayerTank.prototype.onActivateParry = function(e) {
 */
 PlayerTank.prototype.onCollide = function(collisionObject, options) {
 	if(this.modifyHealth(-collisionObject.damage) === 0) {
-		var self = this;
+		// var self = this;
 
-		//delay to coincide with sound fx
-		setTimeout(function() {
-			options.explosions.emit(32, {
-				posX: self.position.x,
-				posY: self.position.y,
-				posOffsetX: 16,
-				posOffsetY: 16,
-				velX: 8,
-				velY: 8
-			});
-		}, 1000);
+		// //delay to coincide with sound fx
+		// setTimeout(function() {
+		// 	options.explosions.emit(32, {
+		// 		posX: self.position.x,
+		// 		posY: self.position.y,
+		// 		posOffsetX: 16,
+		// 		posOffsetY: 16,
+		// 		velX: 8,
+		// 		velY: 8
+		// 	});
+		// }, 1000);
 
-		this.stateMachine.setState(PlayerDeathState.KEY);
+		// this.stateMachine.setState(PlayerDeathState.KEY);
 	}
 };
 

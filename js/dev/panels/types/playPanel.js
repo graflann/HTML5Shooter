@@ -847,6 +847,14 @@ PlayPanel.prototype.setEventListeners = function() {
 
 	goog.events.listen(
 		this.player, 
+		EventNames.MODIFY_HEALTH, 
+		this.onModifyHealth, 
+		false, 
+		this
+	);
+
+	goog.events.listen(
+		this.player, 
 		EventNames.GAME_OVER, 
 		this.onGameOver, 
 		false, 
@@ -950,6 +958,14 @@ PlayPanel.prototype.removeEventListeners = function() {
 		this.player, 
 		EventNames.OVERDRIVE_CHANGE, 
 		this.onOverdriveChange, 
+		false, 
+		this
+	);
+
+	goog.events.unlisten(
+		this.player, 
+		EventNames.MODIFY_HEALTH, 
+		this.onModifyHealth, 
 		false, 
 		this
 	);
@@ -1094,6 +1110,13 @@ PlayPanel.prototype.onEnergyChange = function(e) {
 */
 PlayPanel.prototype.onOverdriveChange = function(e) {
 	this.hud.changeOverdrive(e.payload);
+};
+
+/**
+*@private
+*/
+PlayPanel.prototype.onModifyHealth = function(e) {
+	this.hud.modifyHealth(e.payload);
 };
 
 /**
