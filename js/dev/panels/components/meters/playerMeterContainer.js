@@ -28,7 +28,7 @@ PlayerMeterContainer = function() {
 
 PlayerMeterContainer.RADIUS = Constants.UNIT * 3;
 
-PlayerMeterContainer.INC = 1 / 30;
+PlayerMeterContainer.INC = 1 / 60;
 PlayerMeterContainer.ACTIVE_DURATION = 45;
 
 /**
@@ -38,11 +38,14 @@ PlayerMeterContainer.prototype.init = function() {
 	this.container = new createjs.Container();
 	this.container.alpha = 0;
 
-	this.healthMeter = new EnergyMeter(-150, -30, [Constants.GREEN, Constants.DARK_GREEN, Constants.LIGHT_GREEN], PlayerTank.MAX_HEALTH);
+	this.healthMeter = new EnergyMeter(-150, -30, 
+		[Constants.GREEN, Constants.DARK_GREEN, Constants.LIGHT_GREEN, Constants.BRIGHT_RED], 
+		PlayerTank.MAX_HEALTH
+	);
 
-	this.energyMeter = new EnergyMeter(-30, 90, [Constants.BLUE, Constants.DARK_BLUE, Constants.LIGHT_BLUE]);
+	this.energyMeter = new EnergyMeter(-30, 90, [Constants.BLUE, Constants.DARK_BLUE, Constants.LIGHT_BLUE, Constants.DARK_BLUE]);
 
-	this.overdriveMeter = new EnergyMeter(90, 210, [Constants.ORANGE, Constants.DARK_RED, Constants.YELLOW]);
+	this.overdriveMeter = new EnergyMeter(90, 210, [Constants.ORANGE, Constants.DARK_RED, Constants.YELLOW, Constants.PLATINUM]);
 	this.overdriveMeter.setMeter(0);
 
 	this.container.addChild(this.healthMeter.container);
@@ -67,7 +70,13 @@ PlayerMeterContainer.prototype.update = function(options) {
 		this.container.x = target.container.x + camera.position.x + target.hudOffset.x;
 		this.container.y = target.container.y + camera.position.y + target.hudOffset.y;
 
-		//control 
+		this.energyMeter.update(options);
+		this.healthMeter.update(options);
+
+		this.overdriveMeter.setIsPulsing(target.getIsOverdrive());
+		this.overdriveMeter.update(options);
+
+		//active meter fades in and out, with a duration of pause, when any meter values are updated
 		if(this.isActive) {
 			if(this.container.alpha < 1) {
 				this.container.alpha += PlayerMeterContainer.INC;

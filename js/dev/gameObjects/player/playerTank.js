@@ -1070,6 +1070,10 @@ PlayerTank.prototype.getTurret = function() {
 	return this.turret;
 };
 
+PlayerTank.prototype.getIsOverdrive = function() {
+	return this.isOverdrive;
+};
+
 /**
 *@public
 */
