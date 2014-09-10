@@ -54,6 +54,8 @@ EnergyItem.prototype.init = function() {
 *@public
 */
 EnergyItem.prototype.clear = function() {
+	this.container.uncache();
+
 	Item.prototype.clear.call(this);
 
 	this.label = null;

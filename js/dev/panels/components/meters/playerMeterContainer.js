@@ -71,6 +71,8 @@ PlayerMeterContainer.prototype.update = function(options) {
 		this.container.y = target.container.y + camera.position.y + target.hudOffset.y;
 
 		this.energyMeter.update(options);
+
+		this.healthMeter.setIsPulsing(target.getIsHealthModified());
 		this.healthMeter.update(options);
 
 		this.overdriveMeter.setIsPulsing(target.getIsOverdrive());
@@ -118,7 +120,10 @@ PlayerMeterContainer.prototype.clear = function() {
 };
 
 PlayerMeterContainer.prototype.modifyHealth = function (value) {
-	this.healthMeter.setMeter(value);
+	(value.inc > 0) ? this.healthMeter.setPulseColor(Constants.PLATINUM) : this.healthMeter.setPulseColor(Constants.RED);
+
+	this.healthMeter.setMeter(value.health);
+
 	this.activate();
 };
 

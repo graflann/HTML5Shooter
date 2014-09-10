@@ -89,9 +89,6 @@ EnemyTank.prototype.init = function() {
 
 	this.setStateMachine();
 
-	this.collisionRoutingObject = new CollisionRoutingObject();
-	this.collisionRoutingObject.type = EnemyTypes.TANK;
-
 	this.setIsAlive(false);
 };
 

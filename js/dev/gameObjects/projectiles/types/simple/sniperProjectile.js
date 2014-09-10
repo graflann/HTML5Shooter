@@ -63,6 +63,16 @@ SniperProjectile.prototype.update = function(options) {
 	}
 };
 
+/**
+*@override
+*@public
+*/
+SniperProjectile.prototype.clear = function() {
+	this.shape.uncache();
+
+	Projectile.prototype.clear.call(this);
+};
+
 SniperProjectile.prototype.kill = function() {
 	if(this.isAlive) {
 		this.setIsAlive(false);

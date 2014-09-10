@@ -189,7 +189,7 @@ TargetCursor.prototype.setReticles = function() {
 		.mt(-innerRadius, 0)
 		.lt(-(innerRadius * 0.5), 0);
 	this.innerReticle.snapToPixel = true;
-	this.innerReticle.cache(-innerCache, -innerCache, (innerCache * 2), (innerCache * 2));
+	//this.innerReticle.cache(-innerCache, -innerCache, (innerCache * 2), (innerCache * 2));
 
 	//outer reticle markers
 	this.outerReticle = new createjs.Shape();

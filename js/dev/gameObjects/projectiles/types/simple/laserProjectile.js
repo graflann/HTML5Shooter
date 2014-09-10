@@ -64,6 +64,16 @@ LaserProjectile.prototype.update = function(options) {
 	}
 };
 
+/**
+*@override
+*@public
+*/
+LaserProjectile.prototype.clear = function() {
+	this.shape.uncache();
+
+	Projectile.prototype.clear.call(this);
+};
+
 LaserProjectile.prototype.kill = function() {
 	if(this.isAlive) {
 		this.setIsAlive(false);

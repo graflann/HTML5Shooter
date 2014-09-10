@@ -49,7 +49,7 @@ SpreadProjectile.prototype.init = function(options) {
 		.dc(0, 0, 6);
 
 	this.shape.snapToPixel = true;
-	this.shape.cache(-9, -9, 18, 18);
+	//this.shape.cache(-9, -9, 18, 18);
 
 	this.alphaTimer = 0;
 	
@@ -90,6 +90,16 @@ SpreadProjectile.prototype.update = function() {
 
 		Projectile.prototype.update.call(this);
 	}
+};
+
+/**
+*@override
+*@public
+*/
+SpreadProjectile.prototype.clear = function() {
+	this.shape.uncache();
+
+	Projectile.prototype.clear.call(this);
 };
 
 SpreadProjectile.prototype.setIsAlive = function(value) {

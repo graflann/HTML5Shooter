@@ -160,3 +160,7 @@ EnergyMeter.prototype.setIsPulsing = function (value) {
 EnergyMeter.prototype.getIsPulsing = function () {
 	return this.isPulsing;
 };
+
+EnergyMeter.prototype.setPulseColor = function (value) {
+	this.arrColors[3] = value;
+};

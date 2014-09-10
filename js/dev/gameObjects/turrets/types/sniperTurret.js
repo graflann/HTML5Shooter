@@ -58,7 +58,7 @@ SniperTurret.prototype.init = function() {
 		.lt(0, -Constants.HEIGHT);
 	this.laserSight.alpha = 0.5;
 
-	this.laserSight.cache(-2, -Constants.HEIGHT, 2, Constants.HEIGHT);
+	//this.laserSight.cache(-2, -Constants.HEIGHT, 2, Constants.HEIGHT);
 
 	this.setStateMachine();
 	this.setFiringState(Turret.FIRE_TYPES.DEFAULT);

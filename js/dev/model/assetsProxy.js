@@ -236,7 +236,7 @@ AssetsProxy.prototype.getSpriteSheet = function(id) {
 */
 AssetsProxy.prototype.playSound = function(id, volume, isLooping) {
 	var sound = createjs.Sound.play(id, createjs.Sound.INTERRUPT_ANY),
-		qualifiedVolume = 0;//volume || 1;
+		qualifiedVolume = 0; // volume || 1;
 
 	sound.stop();
 	sound.volume = qualifiedVolume;

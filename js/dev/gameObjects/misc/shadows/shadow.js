@@ -57,6 +57,7 @@ Shadow.prototype.clear = function() {
 	this.container.removeAllChildren();
 	this.container = null;
 
+	this.shape.uncache();
 	this.shape = null;
 };
 

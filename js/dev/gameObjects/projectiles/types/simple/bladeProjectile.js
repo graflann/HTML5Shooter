@@ -80,6 +80,16 @@ BladeProjectile.prototype.update = function(options) {
 };
 
 /**
+*@override
+*@public
+*/
+BladeProjectile.prototype.clear = function() {
+	this.shape.uncache();
+
+	Projectile.prototype.clear.call(this);
+};
+
+/**
 *@private
 */
 BladeProjectile.prototype.setPhysics = function() {

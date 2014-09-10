@@ -80,6 +80,16 @@ RotarySawProjectile.prototype.update = function(options) {
 };
 
 /**
+*@override
+*@public
+*/
+RotarySawProjectile.prototype.clear = function() {
+	this.shape.uncache();
+
+	Projectile.prototype.clear.call(this);
+};
+
+/**
 *@private
 */
 RotarySawProjectile.prototype.setPhysics = function() {

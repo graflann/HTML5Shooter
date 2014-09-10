@@ -21,9 +21,10 @@ ExplosionParticle.prototype.init = function() {
 	Particle.prototype.init.call(this);
 
 	this.shape = new createjs.Shape();
-	this.shape.graphics.ss(0.5).s(this.color).f("#000").dc(0, 0, 3);
+	this.shape.graphics.ss(1).s(this.color).f("#000").dc(0, 0, 3);
 
 	this.shape.scaleX = this.shape.scaleY = Math.randomInRange(0.25, 3);
+	this.shape.cache(-4, -4, 8, 8);
 };
 
 /**
@@ -42,6 +43,16 @@ ExplosionParticle.prototype.update = function(options) {
 			this.kill();
 		}
 	}
+};
+
+/**
+*@override
+*@public
+*/
+ExplosionParticle.prototype.clear = function() {
+	this.shape.uncache();
+
+	Particle.prototype.clear.call(this);
 };
 
 /**

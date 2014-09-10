@@ -39,7 +39,7 @@ HatchDoor.prototype.init = function() {
 
 	this.shape.alpha = this.alpha;
 
-	this.shape.cache(0, 0, this.width, this.height);
+	// this.shape.cache(0, 0, this.width, this.height);
 };
 
 /**

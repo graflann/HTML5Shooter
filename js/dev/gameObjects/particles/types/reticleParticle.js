@@ -51,6 +51,16 @@ ReticleParticle.prototype.update = function(options) {
 *@override
 *@public
 */
+ReticleParticle.prototype.clear = function() {
+	this.shape.uncache();
+
+	Particle.prototype.clear.call(this);
+};
+
+/**
+*@override
+*@public
+*/
 ReticleParticle.prototype.create = function(options) {
 	this.shape.x = Math.randomInRange(
 		options.posX - options.posOffsetX, 

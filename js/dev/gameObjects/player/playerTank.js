@@ -109,6 +109,8 @@ PlayerTank = function(arrProjectileSystems, boostSystem, parrySystem) {
 	this.overdriveTimer = PlayerOverdriveState.DURATION;
 
 	this.health = 0;
+	this.isHealthModified = false;
+	this.healthModificationTimer = 0;
 
 	this.damage = 0;
 
@@ -125,7 +127,7 @@ PlayerTank = function(arrProjectileSystems, boostSystem, parrySystem) {
 	this.increaseHomingOverlayEvent = new PayloadEvent(EventNames.INCREASE_HOMING_OVERLAY, this, this.homingInc);
 	this.energyChangeEvent 			= new PayloadEvent(EventNames.ENERGY_CHANGE, this, this.energy);
 	this.overdriveChangeEvent 		= new PayloadEvent(EventNames.OVERDRIVE_CHANGE, this, this.overdrive);
-	this.modifiyHealthEvent 		= new PayloadEvent(EventNames.MODIFY_HEALTH, this, this.health);
+	this.modifyHealthEvent 			= new PayloadEvent(EventNames.MODIFY_HEALTH, this, this.health);
 
 	this.init();
 };
@@ -148,6 +150,7 @@ PlayerTank.HOMING_INCREMENT = 2;
 PlayerTank.HOMING_LIMIT = PlayerTank.MAX_ENERGY * 0.5;
 
 PlayerTank.MAX_HEALTH = 8;
+PlayerTank.HEALTH_MODIFICATION_LIMIT = 60;
 
 /**
 *@override
@@ -165,6 +168,8 @@ PlayerTank.prototype.init = function() {
 	this.velocity.x = this.velocity.y = 6400;
 
 	this.health = PlayerTank.MAX_HEALTH;
+	this.isHealthModified = false;
+	this.healthModificationTimer = 0;
 
 	this.prevWeaponIndex = this.currentWeaponIndex;
 
@@ -230,6 +235,9 @@ PlayerTank.prototype.update = function(options) {
 
 		//update current state
 		this.stateMachine.update(options);
+
+		//health timer gets a constant update
+		this.updateHealthTimer();
 
 		input.checkPrevKeyDown([
 			KeyCode.Z, 		//switch
@@ -656,6 +664,17 @@ PlayerTank.prototype.updateTurret = function(options) {
 	this.turretTransition.rotation = this.turret.shape.rotation;
 	this.turretTransitionAddAnimUtil.update();
 	this.turretTransitionRemoveAnimUtil.update();
+};
+
+PlayerTank.prototype.updateHealthTimer =  function() {
+	if(this.isHealthModified) {
+		this.healthModificationTimer++;
+
+		if(this.healthModificationTimer > PlayerTank.HEALTH_MODIFICATION_LIMIT) {
+			this.isHealthModified = false;
+			this.healthModificationTimer = 0;
+		}
+	}
 };
 
 PlayerTank.prototype.checkBoost = function() {
@@ -1298,11 +1317,18 @@ PlayerTank.prototype.getHealth = function() {
 	return this.health;
 };
 
+PlayerTank.prototype.getIsHealthModified = function() {
+	return this.isHealthModified;
+};
+
 /**
 *@public
 */
 PlayerTank.prototype.modifyHealth = function(value) {
 	this.health += value;
+
+	this.isHealthModified = true;
+	this.healthModificationTimer = 0;
 
 	if(this.health < 0) {
 		this.health = 0;
@@ -1310,8 +1336,12 @@ PlayerTank.prototype.modifyHealth = function(value) {
 		this.health = PlayerTank.MAX_HEALTH;
 	}
 
-	this.modifiyHealthEvent.payload = this.health;
-	goog.events.dispatchEvent(this, this.modifiyHealthEvent);
+	this.modifyHealthEvent.payload = {
+		health: this.health, 
+		inc: value
+	};
+	
+	goog.events.dispatchEvent(this, this.modifyHealthEvent);
 
 	return this.health;
 };

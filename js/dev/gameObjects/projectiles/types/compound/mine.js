@@ -125,6 +125,8 @@ Mine.prototype.explode = function() {
 *@public
 */
 Mine.prototype.clear = function() {
+	this.shape.uncache();
+	
 	Projectile.prototype.clear.call(this);
 
 	this.projectileSystem = null;

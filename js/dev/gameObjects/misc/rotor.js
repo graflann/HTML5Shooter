@@ -46,9 +46,9 @@ Rotor.prototype.update = function(options) {
 *@public
 */
 Rotor.prototype.clear = function() {
-	GameObject.prototype.clear.call(this);
-
 	this.container.uncache();
+
+	GameObject.prototype.clear.call(this);
 	this.container.removeAllChildren();
 
 	this.shape.graphics.clear();

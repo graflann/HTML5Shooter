@@ -120,6 +120,7 @@ Radar.prototype.clear = function() {
 	this.externalContainer.removeAllChildren();
 	this.externalContainer = null;
 
+	this.fieldContainer.uncache();
 	this.fieldContainer.removeAllChildren();
 	this.fieldContainer = null;
 
@@ -133,6 +134,7 @@ Radar.prototype.clear = function() {
 	this.fieldBoarder.graphics.clear();
 	this.fieldBoarder = null;
 
+	this.echo.uncache();
 	this.echo.removeAllChildren();
 	this.echo = null;
 

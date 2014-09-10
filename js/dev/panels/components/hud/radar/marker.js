@@ -71,6 +71,7 @@ Marker.prototype.init = function() {
 *@public
 */
 Marker.prototype.clear = function() {
+	this.shape.uncache();
 	this.shape.graphics.clear();
 	this.shape = null;
 };

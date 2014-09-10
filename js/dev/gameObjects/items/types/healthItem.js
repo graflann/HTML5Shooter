@@ -93,6 +93,8 @@ HealthItem.prototype.update = function(options) {
 *@public
 */
 HealthItem.prototype.clear = function() {
+	this.container.uncache();
+
 	Item.prototype.clear.call(this);
 
 	this.label = null;

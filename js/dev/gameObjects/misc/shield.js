@@ -87,7 +87,7 @@ Shield.prototype.clear = function() {
 	GameObject.prototype.clear.call(this);
 
 	if(this.container) {
-		this.container.uncache();
+		//this.container.uncache();
 		this.container.removeAllChildren();
 		this.container = null;
 	}
@@ -130,7 +130,7 @@ Shield.prototype.render = function() {
 
 	//cache dims include stroke thickness or the image is inappropriately cropped
 	this.container.addChild(this.shape);
-	this.container.cache(-cacheRadius, -cacheRadius, cacheDiameter, cacheDiameter);
+	//this.container.cache(-cacheRadius, -cacheRadius, cacheDiameter, cacheDiameter);
 };
 
 Shield.prototype.setPhysics = function() {

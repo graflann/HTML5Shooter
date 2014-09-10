@@ -26,7 +26,7 @@ goog.inherits(VulcanProjectile, Projectile)
 */
 VulcanProjectile.prototype.init = function() {
 	this.shape = new createjs.Shape();
-	//this.shape.graphics.ss(2).s(this.color).f("#000").dc(0, 0, 2);
+
 	this.shape.graphics
 		.ss(4, "round")
 		.ls([this.arrColors[0], this.arrColors[1]], [0.5, 1], 0, 0, 0, 32)
@@ -35,7 +35,7 @@ VulcanProjectile.prototype.init = function() {
 		
 	this.shape.alpha = 0;
 	this.shape.snapToPixel = true;
-	this.shape.cache(-2, 0, 2, 32);
+	this.shape.cache(-4, 0, 4, 32);
 	
 	this.setPhysics();
 
@@ -59,6 +59,16 @@ VulcanProjectile.prototype.update = function(options) {
 
 		Projectile.prototype.update.call(this);
 	}
+};
+
+/**
+*@override
+*@public
+*/
+VulcanProjectile.prototype.clear = function() {
+	this.shape.uncache();
+
+	Projectile.prototype.clear.call(this);
 };
 
 VulcanProjectile.prototype.kill = function() {

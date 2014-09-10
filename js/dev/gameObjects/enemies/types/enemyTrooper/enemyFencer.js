@@ -51,8 +51,7 @@ EnemyFencer.prototype.init = function() {
 	this.velocityMod = 0.75;
 
 	this.shape = new createjs.BitmapAnimation(trooperSpriteSheet);
-	//this.shape.gotoAndStop(0);
-	//this.shape.cache(0, 0, this.width, this.height);
+	this.shape.gotoAndStop(0);
 	this.shape.regX = this.width * 0.5;
 	this.shape.regY = this.height * 0.5;
 

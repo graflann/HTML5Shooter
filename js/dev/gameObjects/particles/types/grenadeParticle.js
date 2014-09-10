@@ -29,9 +29,10 @@ goog.inherits(GrenadeParticle, Particle)
 */
 GrenadeParticle.prototype.init = function() {
 	this.shape = new createjs.Shape();
-	this.shape.graphics.ss(0.5).s(this.color).f("#000").dc(0, 0, 3);
+	this.shape.graphics.ss(1).s(this.color).f("#000").dc(0, 0, 3);
 
 	this.shape.scaleX = this.shape.scaleY = Math.randomInRange(0.25, 3);
+	this.shape.cache(-4, -4, 8, 8);
 
 	this.setPhysics();
 
@@ -60,6 +61,8 @@ GrenadeParticle.prototype.update = function(options) {
 };
 
 GrenadeParticle.prototype.clear = function() {
+	this.shape.uncache();
+
 	Particle.prototype.clear.call(this);
 
 	this.body.DestroyFixture(this.body.GetFixtureList());

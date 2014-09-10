@@ -54,6 +54,7 @@ EnemyCopterShadow.prototype.clear = function() {
 	Shadow.prototype.clear.call(this);
 
 	while(++i < length) {
+		this.arrRotors[i].uncache();
 	 	this.arrRotors[i] = null;
 	 	delete this.arrRotors[i];
 	}	

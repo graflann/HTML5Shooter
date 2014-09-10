@@ -55,6 +55,16 @@ EnemyProjectile.prototype.update = function(options) {
 	}
 };
 
+/**
+*@override
+*@public
+*/
+EnemyProjectile.prototype.clear = function() {
+	this.shape.uncache();
+	
+	Projectile.prototype.clear.call(this);
+};
+
 EnemyProjectile.prototype.kill = function() {
 	if(this.isAlive) {
 		this.setIsAlive(false);

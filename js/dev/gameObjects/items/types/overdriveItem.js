@@ -98,6 +98,8 @@ OverdriveItem.prototype.update = function(options) {
 *@public
 */
 OverdriveItem.prototype.clear = function() {
+	this.container.uncache();
+
 	Item.prototype.clear.call(this);
 
 	this.label = null;

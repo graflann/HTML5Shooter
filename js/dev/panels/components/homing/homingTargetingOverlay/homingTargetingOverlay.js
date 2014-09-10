@@ -338,25 +338,27 @@ HomingTargetingOverlay.prototype.forceRemove = function() {
 *@public
 */
 HomingTargetingOverlay.prototype.scaleSensor = function() {
-	var fixDef = new app.b2FixtureDef(),
-		oldFixDef = this.body.GetFixtureList();
-	
-	this.radius = (this.container.scaleX * HomingTargetingOverlay.MAX_RADIUS) / app.physicsScale;
+	if(createjs.Ticker.getTicks() % 4 == 0) {
+		var fixDef = new app.b2FixtureDef(),
+			oldFixDef = this.body.GetFixtureList();
+		
+		this.radius = (this.container.scaleX * HomingTargetingOverlay.MAX_RADIUS) / app.physicsScale;
 
-	fixDef.density = 1.0;
-	fixDef.friction = 0;
-	fixDef.restitution = 1.0;
-	fixDef.filter.categoryBits = CollisionCategories.HOMING_OVERLAY;
-	fixDef.filter.maskBits = CollisionCategories.AIR_ENEMY;
-	fixDef.isSensor = true;
-	fixDef.shape = new app.b2CircleShape(this.radius);
+		fixDef.density = 1.0;
+		fixDef.friction = 0;
+		fixDef.restitution = 1.0;
+		fixDef.filter.categoryBits = CollisionCategories.HOMING_OVERLAY;
+		fixDef.filter.maskBits = CollisionCategories.AIR_ENEMY;
+		fixDef.isSensor = true;
+		fixDef.shape = new app.b2CircleShape(this.radius);
 
-	
-	if(oldFixDef) {
-		this.body.DestroyFixture(oldFixDef);
+		
+		if(oldFixDef) {
+			this.body.DestroyFixture(oldFixDef);
+		}
+		
+		this.body.CreateFixture(fixDef);
 	}
-	
-	this.body.CreateFixture(fixDef);
 };
 
 /**
