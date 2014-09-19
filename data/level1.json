@@ -88,6 +88,12 @@
 		"waves" : [
 		[
 			{ 
+				"type": "enemyCentipede", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 1,
+				"positionX": 1920, "positionY": 240, "posOffsetX": 32, "posOffsetY": 32, "hasSpawnParticle": true
+			}
+		],
+		[
+			{ 
 				"type": "enemyFencer", "intervalTime": 1000, "intervalQuantity": 1, "targetQuantity": 4,
 				"positionX": 1920, "positionY": 480, "posOffsetX": 32, "posOffsetY": 32, "ordinal": 1, "hasSpawnParticle": true
 			},

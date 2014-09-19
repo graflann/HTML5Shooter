@@ -1,6 +1,7 @@
 goog.provide('CentipedeSegment');
 
 goog.require('Enemy');
+goog.require('BoundsUtils');
 
 
 /**
@@ -87,6 +88,8 @@ CentipedeSegment.prototype.init = function() {
 	this.setPhysics();
 
 	this.setIsAlive(false);
+
+	this.scoreValue = 0;
 };
 
 /**
@@ -118,6 +121,8 @@ CentipedeSegment.prototype.update = function(options) {
 			(this.segmentAnchorDistance * trigTable.cos(this.container.rotation));
 		this.segmentAnchor.y = this.position.y - 
 			(this.segmentAnchorDistance * trigTable.sin(this.container.rotation));
+
+		BoundsUtils.checkBounds(this.position, this.container, options.camera);
 	}
 };
 

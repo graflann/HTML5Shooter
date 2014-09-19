@@ -38,6 +38,7 @@ SceneObject.prototype.init = function() {
 *@public
 */
 SceneObject.prototype.update = function(options) {
+	
 	this.checkBounds();
 };
 

@@ -50,12 +50,14 @@ Item.prototype.update = function(options) {
 	if(this.isAlive) {
 		this.physicalPosition = this.body.GetPosition();
 
-		this.container.x = this.physicalPosition.x * app.physicsScale;
-		this.container.y = this.physicalPosition.y * app.physicsScale;
+		this.container.x = this.position.x = (this.physicalPosition.x * app.physicsScale);
+		this.container.y = this.position.y = (this.physicalPosition.y * app.physicsScale);
 
 		this.container.rotation = Math.radToDeg(this.body.GetAngle());
 
 		this.checkBounds();
+
+		BoundsUtils.checkBounds(this.position, this.container, options.camera);
 	}
 };
 

@@ -123,6 +123,8 @@ AssetsProxy.prototype.loadSounds = function () {
 *@private
 */
 AssetsProxy.prototype.setImageManifest = function(arrImageNames) {
+	var key;
+
 	if(this.arrImageNames) {
 		this.arrImageNames.length = 0;
 		this.arrImageNames = null;
@@ -130,11 +132,17 @@ AssetsProxy.prototype.setImageManifest = function(arrImageNames) {
 
 	this.arrImageNames = arrImageNames;
 
-	for(var key in this.arrSpriteSheet) {
+	for(key in this.arrSpriteSheet) {
 		this.arrSpriteSheet[key] = null;
 	}
 	this.arrSpriteSheet = null;
 	this.arrSpriteSheet = [];
+
+	for(key in this.arrProgrammaticSpriteSheet) {
+		this.arrProgrammaticSpriteSheet[key] = null;
+	}
+	this.arrProgrammaticSpriteSheet = null;
+	this.arrProgrammaticSpriteSheet = [];
 
 	this.arrImageManifest.length = 0;
 	this.arrSpriteSheetData.length = 0;
@@ -226,8 +234,8 @@ AssetsProxy.prototype.loadXHR = function() {
 /**
 *@public
 */
-AssetsProxy.prototype.getSpriteSheet = function(id) {
-	return proxy.arrSpriteSheet[id];
+AssetsProxy.prototype.getSpriteSheet = function(key) {
+	return proxy.arrSpriteSheet[key];
 };
 
 //SOUND

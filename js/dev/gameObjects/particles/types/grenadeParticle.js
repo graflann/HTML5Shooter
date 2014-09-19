@@ -1,6 +1,7 @@
 goog.provide('GrenadeParticle');
 
 goog.require('Particle');
+goog.require('BoundsUtils');
 
 /**
 *@constructor
@@ -57,6 +58,8 @@ GrenadeParticle.prototype.update = function(options) {
 		if(this.shape.alpha < 0) {
 			this.kill();
 		}
+
+		BoundsUtils.checkBounds(this.position, this.shape, options.camera);
 	}
 };
 

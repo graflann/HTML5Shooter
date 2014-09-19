@@ -56,8 +56,7 @@ ScoreManager.prototype.updateBonusMultiplier = function(value) {
     //cap the min / max values of the bonus multiplier
     if(this.bonusMultiplier > ScoreManager.MAX_BONUS_MULTIPLIER) {
         this.bonusMultiplier = ScoreManager.MAX_BONUS_MULTIPLIER;
-    }
-    else if(this.bonusMultiplier < ScoreManager.MIN_BONUS_MULTIPLIER) {
+    } else if(this.bonusMultiplier < ScoreManager.MIN_BONUS_MULTIPLIER) {
         this.bonusMultiplier = ScoreManager.MIN_BONUS_MULTIPLIER;
     }
 

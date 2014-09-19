@@ -7,6 +7,7 @@ goog.require('EnemySnipingState');
 goog.require('EnemySeekingState');
 goog.require('EnemyStrafingState');
 goog.require('RotationUtils');
+goog.require('BoundsUtils');
 
 /**
 *@constructor
@@ -33,9 +34,9 @@ EnemyCopter = function(projectileSystem) {
 
 	this.fireCounter = 0;
 
-	this.minSeekDistance = Math.pow(160, 2);
+	this.minSeekDistance = Math.pow(144, 2);
 
-	this.minStrafeDistance = Math.pow(9, 2);
+	this.minStrafeDistance = Math.pow(32, 2);
 
 	this.shadow = null;
 
@@ -75,8 +76,8 @@ EnemyCopter.SHADOW_OFFSET = new Box2D.Common.Math.b2Vec2(48, 48);
 
 EnemyCopter.SHADOW_SCALE = 0.6;
 
-EnemyCopter.MIN_STAFE_DISTANCE = 200;
-EnemyCopter.MAX_STAFE_DISTANCE = 350;
+EnemyCopter.MIN_STRAFE_DISTANCE = 200;
+EnemyCopter.MAX_STRAFE_DISTANCE = 350;
 
 /**
 *@override
@@ -113,6 +114,8 @@ EnemyCopter.prototype.init = function() {
 	this.setStateMachine();
 
 	this.setIsAlive(false);
+
+	this.scoreValue = 400;
 };
 
 /**
@@ -139,6 +142,9 @@ EnemyCopter.prototype.update = function(options) {
 			this.reticle.shape.x = this.position.x;
 			this.reticle.shape.y = this.position.y;
 		}
+
+		BoundsUtils.checkBounds(this.position, this.container, options.camera);
+		this.shadow.container.visible = this.container.visible;
 	}
 };
 
@@ -249,12 +255,17 @@ EnemyCopter.prototype.updateSeeking = function(options) {
 
 EnemyCopter.prototype.enterSniping = function(options) {
 	var self = this,
-		randomInRange = Math.randomInRange(2000, 3500);
+		randomInRange = Math.randomInRange(1000, 2500);
 
 	this.clearTimer();
 
 	this.timer = setTimeout(function() {
-		self.stateMachine.setState(EnemyStrafingState.KEY);
+
+		if(Math.random() < 0.5) {
+			self.stateMachine.setState(EnemySeekingState.KEY);
+		} else {
+			self.stateMachine.setState(EnemyStrafingState.KEY);
+		}
 	}, randomInRange);
 };
 
@@ -284,16 +295,14 @@ EnemyCopter.prototype.updateSniping = function(options) {
 };
 
 EnemyCopter.prototype.enterStrafing = function(options) {
-	var rand = Math.random();
-
 	this.velocityMod = 6;
 
 	this.strafeDistance = Math.randomInRange(
-		EnemyCopter.MIN_STAFE_DISTANCE, 
-		EnemyCopter.MAX_STAFE_DISTANCE
+		EnemyCopter.MIN_STRAFE_DISTANCE, 
+		EnemyCopter.MAX_STRAFE_DISTANCE
 	);
 
-	if(rand < 0.5) {
+	if(Math.random() < 0.5) {
 		this.strafeAngleOffset = Math.randomInRangeWhole(-90, -45);
 	} else {
 		this.strafeAngleOffset = Math.randomInRangeWhole(45, 90);
@@ -347,7 +356,7 @@ EnemyCopter.prototype.updateStrafing = function(options) {
 		distance = this.position.DistanceSqrd(this.strafeMovingPosition);
 
 		if(distance < this.minStrafeDistance) {
-			this.stateMachine.setState(EnemySeekingState.KEY);
+			this.stateMachine.setState(EnemySnipingState.KEY);
 		}
 	}
 

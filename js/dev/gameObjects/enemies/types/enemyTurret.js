@@ -2,6 +2,7 @@ goog.provide('EnemyTurret');
 
 goog.require('Enemy');
 goog.require('Turret');
+goog.require('BoundsUtils');
 
 
 /**
@@ -63,6 +64,8 @@ EnemyTurret.prototype.init = function() {
 	this.setPhysics();
 	
 	this.setIsAlive(false);
+
+	this.scoreValue = 200;
 };
 
 /**
@@ -78,6 +81,8 @@ EnemyTurret.prototype.update = function(options) {
 			this.reticle.shape.x = this.position.x;
 			this.reticle.shape.y = this.position.y;
 		}
+
+		BoundsUtils.checkBounds(this.position, this.container, options.camera);
 	}
 };
 

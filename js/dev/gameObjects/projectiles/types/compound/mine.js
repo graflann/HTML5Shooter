@@ -1,6 +1,7 @@
 goog.provide('Mine');
 
 goog.require('Projectile');
+goog.require('BoundsUtils');
 
 /**
 *@constructor

@@ -50,16 +50,12 @@ SniperProjectile.prototype.init = function() {
 */
 SniperProjectile.prototype.update = function(options) {
 	if(this.isAlive) {
-		var scale = app.physicsScale;
-
-		this.shape.x = this.body.GetWorldCenter().x * scale;
-		this.shape.y = this.body.GetWorldCenter().y * scale;
 
 		if(this.shape.scaleX < 1) {
 			this.shape.scaleX += 0.05;
 		}
 
-		Projectile.prototype.update.call(this);
+		Projectile.prototype.update.call(this, options);
 	}
 };
 

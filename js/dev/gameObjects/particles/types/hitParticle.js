@@ -1,6 +1,8 @@
 goog.provide('HitParticle');
 
 goog.require('Particle');
+goog.require('BoundsUtils');
+
 
 /**
 *@constructor
@@ -43,6 +45,9 @@ HitParticle.prototype.init = function() {
 */
 HitParticle.prototype.update = function(options) {
 	if (this.isAlive) {
+		this.position.x = this.shape.x;
+		this.position.y = this.shape.y;
+
 		this.shape.rotation += Math.randomInRange(5, 15);
 
 		this.shape.alpha -= 0.075;
@@ -52,6 +57,8 @@ HitParticle.prototype.update = function(options) {
 		if(this.shape.alpha < 0) {
 			this.kill();
 		}
+
+		BoundsUtils.checkBounds(this.position, this.shape, options.camera);
 	}
 };
 

@@ -142,11 +142,20 @@ CollisionManager.prototype.updateHomingList = function(options) {
 };
 
 CollisionManager.prototype.updateKills = function() {
-    var i = -1;
+    var i = -1,
+        objectToKill;
 
     //"kills" everything that qualified for removal during collision step
     while(++i < this.killList.length) {
-        this.killList[i].kill();
+        objectToKill = this.killList[i];
+
+        //scores killed enemies with point value X bonus multiplier
+        //Note: EnemyCentipede handles scoring internally on kill
+        if(objectToKill.getScoreValue) {
+            app.scoreManager.updateScore(objectToKill.getScoreValue());
+        }
+
+        objectToKill.kill();
     }
 
     //reset the list
@@ -304,6 +313,7 @@ CollisionManager.prototype.projectileVsEnemy = function(projectile, enemy) {
     enemy.onCollide(projectile, this.collisionOptions.enemy);
 
     if(enemy.health <= 0) {
+
         this.killList.push(enemy);
         this.activationList.push(
             {

@@ -65,13 +65,10 @@ ReflectProjectile.prototype.init = function(options) {
 *@override
 *@public
 */
-ReflectProjectile.prototype.update = function() {
+ReflectProjectile.prototype.update = function(options) {
 	if(this.isAlive) {
-		var scale = app.physicsScale;
 
-		//this.shape.rotation = this.body.GetAngle() * (180 / Math.PI);
-		this.shape.x = this.body.GetWorldCenter().x * scale;
-		this.shape.y = this.body.GetWorldCenter().y * scale;
+		Projectile.prototype.update.call(this, options);
 
 		if(++this.alphaTimer > this.alphaTimerThreshold) {
 			this.shape.alpha -= this.alphaDecrement;
@@ -86,8 +83,6 @@ ReflectProjectile.prototype.update = function() {
 		if(this.damageTimer++ < this.damageTimerThreshold) {
 			this.damage -= this.damageDecrement;
 		}
-
-		Projectile.prototype.update.call(this);
 	}
 };
 

@@ -202,7 +202,7 @@ PlayPanel.prototype.updateDefault = function(options) {
 	this.updatePlayer(options);
 	this.updateLevel(options);
 	this.updateParticles(options);
-	this.updateItems();
+	this.updateItems(options);
 	this.updatePhysics(options);
 	this.camera.update();
 	this.updateHud(options);
@@ -414,9 +414,9 @@ PlayPanel.prototype.updateParticles = function(options) {
 /**
 *@private
 */
-PlayPanel.prototype.updateItems = function() {
+PlayPanel.prototype.updateItems = function(options) {
 	for(var key in this.arrItemSystems) {
-		this.arrItemSystems[key].update();
+		this.arrItemSystems[key].update(options);
 	}
 };
 

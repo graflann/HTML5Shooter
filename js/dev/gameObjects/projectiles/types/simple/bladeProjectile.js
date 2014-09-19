@@ -62,10 +62,6 @@ BladeProjectile.prototype.init = function() {
 */
 BladeProjectile.prototype.update = function(options) {
 	if(this.isAlive) {
-		var scale = app.physicsScale;
-
-		this.shape.x = this.body.GetWorldCenter().x * scale;
-		this.shape.y = this.body.GetWorldCenter().y * scale;
 
 		this.shape.alpha += 0.25;
 
@@ -75,7 +71,7 @@ BladeProjectile.prototype.update = function(options) {
 			this.kill();
 		}
 
-		Projectile.prototype.update.call(this);
+		Projectile.prototype.update.call(this, options);
 	}
 };
 

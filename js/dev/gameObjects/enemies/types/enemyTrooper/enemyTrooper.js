@@ -6,6 +6,7 @@ goog.require('EnemyRoamingState');
 goog.require('EnemySnipingState');
 goog.require('EnemyStrafingState');
 goog.require('RotationUtils');
+goog.require('BoundsUtils');
 
 EnemyTrooper = function() {
 	Enemy.call(this);
@@ -58,6 +59,8 @@ EnemyTrooper.prototype.update = function(options) {
 		this.stateMachine.update(options);
 
 		this.updateDebug();
+
+		BoundsUtils.checkBounds(this.position, this.shape, options.camera);
 	}
 };
 

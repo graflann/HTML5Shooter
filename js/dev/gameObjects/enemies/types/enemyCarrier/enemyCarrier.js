@@ -8,6 +8,7 @@ goog.require('EnemyCopterShadow');
 goog.require('EnemySnipingState');
 goog.require('EnemySeekingState');
 goog.require('RotationUtils');
+goog.require('BoundsUtils');
 
 /**
 *@constructor
@@ -146,6 +147,8 @@ EnemyCarrier.prototype.init = function() {
 	this.setStateMachine();
 
 	this.setIsAlive(false);
+
+	this.scoreValue = 6400;
 };
 
 /**
@@ -169,6 +172,9 @@ EnemyCarrier.prototype.update = function(options) {
 
 		//check toggling transparency
 		this.updateTransparency(options);
+
+		BoundsUtils.checkBounds(this.position, this.container, options.camera);
+		this.shadow.container.visible = this.container.visible;
 	}
 };
 

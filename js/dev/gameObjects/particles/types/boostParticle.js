@@ -1,6 +1,7 @@
 goog.provide('BoostParticle');
 
 goog.require('Particle');
+goog.require('BoundsUtils');
 
 /**
 *@constructor
@@ -58,8 +59,8 @@ BoostParticle.prototype.update = function(options) {
 		var target = options.target;
 
 		this.shape.rotation = target.baseContainer.rotation;
-		this.shape.x = target.position.x;
-		this.shape.y = target.position.y;
+		this.position.x = this.shape.x = target.position.x;
+		this.position.y = this.shape.y = target.position.y;
 
 		this.shape.alpha += this.inc;
 
@@ -85,6 +86,8 @@ BoostParticle.prototype.update = function(options) {
 		if(this.shape.alpha < 0) {
 			this.kill();
 		}
+
+		BoundsUtils.checkBounds(this.position, this.shape, options.camera);
 	}
 };
 

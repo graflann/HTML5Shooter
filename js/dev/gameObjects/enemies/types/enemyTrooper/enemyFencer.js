@@ -65,6 +65,8 @@ EnemyFencer.prototype.init = function() {
 	this.collisionRoutingObject.type = EnemyTypes.FENCER;
 
 	EnemyTrooper.prototype.init.call(this);
+
+	this.scoreValue = 200;
 };
 
 EnemyFencer.prototype.addShield = function() {

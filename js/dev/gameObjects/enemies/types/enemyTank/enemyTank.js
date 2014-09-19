@@ -7,6 +7,7 @@ goog.require('EnemyRoamingState');
 goog.require('EnemySnipingState');
 goog.require('EnemyStrafingState');
 goog.require('RotationUtils');
+goog.require('BoundsUtils');
 
 /**
 *@constructor
@@ -90,6 +91,8 @@ EnemyTank.prototype.init = function() {
 	this.setStateMachine();
 
 	this.setIsAlive(false);
+
+	this.scoreValue = 200;
 };
 
 /**
@@ -99,6 +102,8 @@ EnemyTank.prototype.init = function() {
 EnemyTank.prototype.update = function(options) {
 	if(this.isAlive) {	
 		this.stateMachine.update(options);
+
+		BoundsUtils.checkBounds(this.position, this.container, options.camera);
 	}
 };
 

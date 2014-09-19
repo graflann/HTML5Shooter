@@ -1,6 +1,7 @@
 goog.provide('HealthItem');
 
 goog.require('Item');
+goog.require('BoundsUtils');
 
 /**
 *@constructor
@@ -85,6 +86,7 @@ HealthItem.prototype.update = function(options) {
 		}
 
 		this.checkBounds();
+		BoundsUtils.checkBounds(this.position, this.container, options.camera);
 	}
 };
 

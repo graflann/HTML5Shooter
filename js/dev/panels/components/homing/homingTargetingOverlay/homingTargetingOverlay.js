@@ -137,6 +137,9 @@ HomingTargetingOverlay.prototype.enterOperation = function(options) {
 
 	this.body.SetAwake(true);
 	this.body.SetActive(true);
+
+	//force update of sensor size
+	this.scaleSensor();
 };
 
 /**
@@ -317,7 +320,7 @@ HomingTargetingOverlay.prototype.increase = function(qty) {
 		this.container.scaleY = this.container.scaleX;
 
 		//scales the Box2D physics world sensor to match the container size
-		this.scaleSensor();
+		this.updateSensor();
 	}
 };
 
@@ -337,28 +340,35 @@ HomingTargetingOverlay.prototype.forceRemove = function() {
 /**
 *@public
 */
-HomingTargetingOverlay.prototype.scaleSensor = function() {
+HomingTargetingOverlay.prototype.updateSensor = function() {
 	if(createjs.Ticker.getTicks() % 4 == 0) {
-		var fixDef = new app.b2FixtureDef(),
-			oldFixDef = this.body.GetFixtureList();
-		
-		this.radius = (this.container.scaleX * HomingTargetingOverlay.MAX_RADIUS) / app.physicsScale;
-
-		fixDef.density = 1.0;
-		fixDef.friction = 0;
-		fixDef.restitution = 1.0;
-		fixDef.filter.categoryBits = CollisionCategories.HOMING_OVERLAY;
-		fixDef.filter.maskBits = CollisionCategories.AIR_ENEMY;
-		fixDef.isSensor = true;
-		fixDef.shape = new app.b2CircleShape(this.radius);
-
-		
-		if(oldFixDef) {
-			this.body.DestroyFixture(oldFixDef);
-		}
-		
-		this.body.CreateFixture(fixDef);
+		this.scaleSensor();
 	}
+}
+
+/**
+*@public
+*/
+HomingTargetingOverlay.prototype.scaleSensor = function() {
+	var fixDef = new app.b2FixtureDef(),
+		oldFixDef = this.body.GetFixtureList();
+	
+	this.radius = (this.container.scaleX * HomingTargetingOverlay.MAX_RADIUS) / app.physicsScale;
+
+	fixDef.density = 1.0;
+	fixDef.friction = 0;
+	fixDef.restitution = 1.0;
+	fixDef.filter.categoryBits = CollisionCategories.HOMING_OVERLAY;
+	fixDef.filter.maskBits = CollisionCategories.AIR_ENEMY;
+	fixDef.isSensor = true;
+	fixDef.shape = new app.b2CircleShape(this.radius);
+
+	
+	if(oldFixDef) {
+		this.body.DestroyFixture(oldFixDef);
+	}
+	
+	this.body.CreateFixture(fixDef);
 };
 
 /**

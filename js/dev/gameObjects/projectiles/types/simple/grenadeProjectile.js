@@ -51,16 +51,12 @@ GrenadeProjectile.prototype.init = function()
 GrenadeProjectile.prototype.update = function(options)
 {
 	if(this.isAlive) {
-		var scale = app.physicsScale;
-
-		this.shape.x = this.body.GetWorldCenter().x * scale;
-		this.shape.y = this.body.GetWorldCenter().y * scale;
 
 		if(this.shape.alpha < 1) {
 			this.shape.alpha += 0.15;
 		}
 
-		Projectile.prototype.update.call(this);
+		Projectile.prototype.update.call(this, options);
 	}
 };
 

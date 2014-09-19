@@ -1,6 +1,7 @@
 goog.provide('OverdriveItem');
 
 goog.require('Item');
+goog.require('BoundsUtils');
 
 /**
 *@constructor
@@ -90,6 +91,8 @@ OverdriveItem.prototype.update = function(options) {
 		}
 
 		this.checkBounds();
+
+		BoundsUtils.checkBounds(this.position, this.container, options.camera);
 	}
 };
 

@@ -1,6 +1,7 @@
 goog.provide('Tower');
 
 goog.require('SceneObject');
+goog.require('BoundsUtils');
 
 /**
 *@constructor
@@ -90,6 +91,8 @@ Tower.prototype.update = function(options) {
 		y,
 		i = -1,
 		length = this.arrFloors.length;
+
+	BoundsUtils.checkBounds(this.position, this.shape, options.camera);
 	 
 	while(++i < length) {
 		floor = this.arrFloors[i];
@@ -100,6 +103,8 @@ Tower.prototype.update = function(options) {
 
 		floor.x = this.position.x + x;
 		floor.y = this.position.y + y;
+
+		floor.visible = this.shape.visible;
 	}
 
 	//update enemy on tower if present and alive

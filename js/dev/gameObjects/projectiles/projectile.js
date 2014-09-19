@@ -59,9 +59,10 @@ Projectile.prototype.init = function() {
 *@public
 */
 Projectile.prototype.update = function(options) {
-	this.physicalPosition.x = this.position.x / app.physicalScale;
-	this.physicalPosition.y = this.position.y / app.physicalScale;
+	this.setPosition(this.position.x, this.position.y);
 
+	BoundsUtils.checkBounds(this.position, this.shape, options.camera);
+	
 	this.checkBounds();
 };
 
@@ -88,6 +89,16 @@ Projectile.prototype.kill = function() {
 		this.setIsAlive(false);
 		this.shape.getStage().removeChild(this.shape);
 	}
+};
+
+Projectile.prototype.setPosition = function(x, y) {
+	var scale = app.physicsScale;
+
+	this.position.x = this.shape.x = this.body.GetWorldCenter().x * scale;
+	this.position.y = this.shape.y = this.body.GetWorldCenter().y * scale;
+
+	this.physicalPosition.x = this.position.x / app.physicalScale;
+	this.physicalPosition.y = this.position.y / app.physicalScale;
 };
 
 Projectile.prototype.setIsAlive = function(value) {

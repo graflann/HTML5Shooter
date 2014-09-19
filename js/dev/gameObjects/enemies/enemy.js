@@ -27,6 +27,8 @@ Enemy = function() {
 
 	this.debugShape = null;
 
+	this.scoreValue = 100;
+
 	this.enemyKilledEvent = new goog.events.Event(EventNames.ENEMY_KILLED, this);
 	this.forcedKillEvent = new PayloadEvent(EventNames.FORCED_KILL, this, null);
 };
@@ -151,6 +153,13 @@ Enemy.prototype.getCategoryBits = function() {
 */
 Enemy.prototype.getMaskBits = function() {
 	return this.maskBits;
+};
+
+/**
+*@public
+*/
+Enemy.prototype.getScoreValue = function() {
+	return this.scoreValue;
 };
 
 /**

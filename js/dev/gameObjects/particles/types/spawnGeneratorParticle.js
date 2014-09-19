@@ -5,6 +5,7 @@ goog.require('StateMachine');
 goog.require('ParticleInitializationState');
 goog.require('ParticleOperationState');
 goog.require('ParticleRemovalState');
+goog.require('BoundsUtils');
 
 /**
 *@constructor
@@ -56,13 +57,15 @@ SpawnGeneratorParticle.prototype.update = function(options) {
 	if (this.isAlive) {
 		this.stateMachine.update(options);
 
+		BoundsUtils.checkBounds(this.position, this.shape, options.camera);
+
 		this.updateFX(options);
 	}
 };
 
 SpawnGeneratorParticle.prototype.updateFX = function(options) {
 	//redraw ball for dynamic fx
-	if(createjs.Ticker.getTicks() % 5 == 0) {
+	if(this.shape.visible && createjs.Ticker.getTicks() % 5 == 0) {
 		var randRadius = Math.randomInRange(0.85, 1) * this.radius,
 			randOrigin = Math.randomInRange(0.1, 0.5) * this.radius;
 
@@ -150,11 +153,12 @@ SpawnGeneratorParticle.prototype.onRemove = function(e) {
 *@public
 */
 SpawnGeneratorParticle.prototype.create = function(options) {
-	this.shape.x = Math.randomInRange(
+	this.position.x = this.shape.x = Math.randomInRange(
 		options.posX - options.posOffsetX, 
 		options.posX + options.posOffsetX
 	);
-	this.shape.y = Math.randomInRange(
+
+	this.position.y = this.shape.y = Math.randomInRange(
 		options.posY - options.posOffsetY, 
 		options.posY + options.posOffsetY
 	);

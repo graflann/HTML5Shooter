@@ -46,6 +46,8 @@ EnemyCentipede.prototype.init = function() {
 	this.setStateMachine();
 
 	this.setIsAlive(false);
+
+	this.scoreValue = 1600;
 };
 
 /**
@@ -79,7 +81,8 @@ EnemyCentipede.prototype.updateSeeking = function(options) {
 	var target = options.target;
 
 	this.head.update({
-		target: target.position
+		target: target.position,
+		camera: options.camera
 	});
 };
 
@@ -101,7 +104,8 @@ EnemyCentipede.prototype.enterRetreating = function(options) {
 */
 EnemyCentipede.prototype.updateRetreating = function(options) {
 	this.head.update({ 
-		target: this.retreatTarget 
+		target: this.retreatTarget,
+		camera: options.camera
 	});
 
 	//shots fire from the tail leg hooks
@@ -136,6 +140,7 @@ EnemyCentipede.prototype.updateSegments = function(options) {
 
 		segment.update({ 
 			target: target.position,
+			camera: options.camera,
 			prevSegment: prevSegment 
 		});
 	}
@@ -205,6 +210,10 @@ EnemyCentipede.prototype.kill = function() {
 		this.numPiecesKilled = 0;
 
 		this.tail = this.arrSegments[this.arrSegments.length - 1];
+
+		//EnemyCentipede handles this internally; 
+		//other enemy instnace scoring handled during CollisionManager killList processing
+		app.scoreManager.updateScore(this.getScoreValue());
 
 		this.dispatchKillEvent();
 	}

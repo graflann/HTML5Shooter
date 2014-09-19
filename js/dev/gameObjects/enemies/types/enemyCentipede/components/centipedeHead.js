@@ -2,6 +2,7 @@ goog.provide('CentipedeHead');
 
 goog.require('Enemy');
 goog.require('CollisionEvent');
+goog.require('CollisionEvent');
 
 
 /**
@@ -71,6 +72,8 @@ CentipedeHead.prototype.init = function() {
 	this.setPhysics();
 
 	this.setIsAlive(false);
+
+	this.scoreValue = 0;
 };
 
 /**
@@ -105,6 +108,8 @@ CentipedeHead.prototype.update = function(options) {
 		this.setPosition(this.body.GetPosition());
 
 		this.headAnimUtil.update();
+
+		BoundsUtils.checkBounds(this.position, this.container, options.camera);
 	}
 };
 
