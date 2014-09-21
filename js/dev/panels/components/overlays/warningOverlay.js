@@ -193,7 +193,7 @@ WarningOverlay.prototype.setTextContainer = function() {
 	this.enemyApproachingText = new createjs.Text(
 		"large enemy approaching", 
 		"16px AXI_Fixed_Caps_5x5", 
-		Constants.LIGHT_BLUE
+		Constants.DARK_RED
 	);
 	this.enemyApproachingText.x = w;
 	this.enemyApproachingText.y = h * 0.8;

@@ -1374,22 +1374,24 @@ PlayerTank.prototype.onActivateParry = function(e) {
 *@public
 */
 PlayerTank.prototype.onCollide = function(collisionObject, options) {
-	if(this.modifyHealth(-collisionObject.damage) === 0) {
-		// var self = this;
+	var damage = -collisionObject.damage || -1;
 
-		// //delay to coincide with sound fx
-		// setTimeout(function() {
-		// 	options.explosions.emit(32, {
-		// 		posX: self.position.x,
-		// 		posY: self.position.y,
-		// 		posOffsetX: 16,
-		// 		posOffsetY: 16,
-		// 		velX: 8,
-		// 		velY: 8
-		// 	});
-		// }, 1000);
+	if(this.modifyHealth(damage) === 0) {
+		var self = this;
 
-		// this.stateMachine.setState(PlayerDeathState.KEY);
+		//delay to coincide with sound fx
+		setTimeout(function() {
+			options.explosions.emit(32, {
+				posX: self.position.x,
+				posY: self.position.y,
+				posOffsetX: 16,
+				posOffsetY: 16,
+				velX: 8,
+				velY: 8
+			});
+		}, 1000);
+
+		this.stateMachine.setState(PlayerDeathState.KEY);
 	}
 };
 

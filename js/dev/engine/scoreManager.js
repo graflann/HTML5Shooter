@@ -40,6 +40,10 @@ ScoreManager.getInstance = function() {
     return ScoreManager.instance;
 };
 
+ScoreManager.prototype.getScore = function() {
+    return this.score;
+};
+
 ScoreManager.prototype.updateScore = function(value) {
     this.bonusValue = value * this.bonusMultiplier;
 

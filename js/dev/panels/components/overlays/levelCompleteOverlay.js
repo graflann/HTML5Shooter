@@ -20,6 +20,8 @@ LevelCompleteOverlay = function(panel) {
 
 	this.completeText = null;
 
+	this.scoreText = null;
+
 	this.gameOptions = null;
 
 	this.init();
@@ -61,6 +63,11 @@ LevelCompleteOverlay.prototype.init = function() {
 	this.completeText.scaleX = this.completeText.scaleY = 1.5;
 	this.completeText.alpha = 0;
 
+	this.scoreText = new createjs.Text(app.scoreManager.getScore(), "16px AXI_Fixed_Caps_5x5", Constants.LIGHT_BLUE); 
+	this.scoreText.x = (Constants.WIDTH * 0.5);
+	this.scoreText.y = this.overText.y + (Constants.UNIT * 2);
+	this.scoreText.textAlign = "center";
+
 	this.gameOptions = new GameOptions(
 		[
 			new OptionText("restart level", PanelTypes.PLAY_PANEL),
@@ -73,6 +80,7 @@ LevelCompleteOverlay.prototype.init = function() {
 
 	this.textContainer.addChild(this.levelText);
 	this.textContainer.addChild(this.completeText);
+	this.textContainer.addChild(this.scoreText);
 	this.textContainer.addChild(this.gameOptions.container);
 
 	this.container.addChild(this.background);
@@ -140,6 +148,7 @@ LevelCompleteOverlay.prototype.clear = function() {
 
 	this.gameText = null;
 	this.overText = null;
+	this.scoreText = null;
 
 	this.gameOptions.clear();
 	this.gameOptions = null;

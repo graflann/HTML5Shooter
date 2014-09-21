@@ -32,7 +32,7 @@ goog.inherits(OptionsPanel, Panel);
 OptionsPanel.prototype.init = function() {
 	var self = this,
 		stage = app.layers.getStage(LayerTypes.MAIN),
-		exitLabel = "press b to exit";
+		exitLabel = "press b or esc key to exit";
 
 	this.container = new createjs.Container();
 

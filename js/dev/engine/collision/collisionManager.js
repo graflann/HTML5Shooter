@@ -371,11 +371,10 @@ CollisionManager.prototype.projectileVsPlayer = function(projectile, player) {
     if(!player.isBoosting) {
         player.onCollide(projectile, this.collisionOptions.player);
 
-        app.assetsProxy.playSound("explosion1");
-
-        // if(player.getHealth() == 0) {
-        //     this.killList.push(player);
-        // }
+        if(player.getHealth() == 0) {
+            this.killList.push(player);
+            app.assetsProxy.playSound("explosion1");
+        }
     }
 
     //set projectile up for removal during update
@@ -394,11 +393,12 @@ CollisionManager.prototype.playerVsEnemy = function(player, enemy) {
     if(player.isBoosting) {
         this.playerVsEnemyTrooper(player, enemy);
     } else {
-        // player.onCollide(enemy, this.collisionOptions.player);
+        player.onCollide(enemy, this.collisionOptions.player);
 
-        // this.killList.push(player);
-
-        // app.assetsProxy.playSound("explosion1");
+        if(player.getHealth() == 0) {
+            this.killList.push(player);
+            app.assetsProxy.playSound("explosion1");
+        }
     }
 };
 

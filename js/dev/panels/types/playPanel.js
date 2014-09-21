@@ -163,7 +163,6 @@ PlayPanel.prototype.enterIntro = function(options) {
 	stage.addChild(this.overlay.container);
 
 	app.assetsProxy.playSound('Glide', 1, true);
-	//app.assetsProxy.playSound('Going Somewhere', 1, true);
 
 	//some delays set to let the overlay animate correctly
 	setTimeout(function() {
@@ -261,6 +260,13 @@ PlayPanel.prototype.updateGameOver = function(options) {
 		GamepadCode.BUTTONS.START,
 		GamepadCode.BUTTONS.A
 	]);
+
+	input.checkPrevKeyDown([
+		KeyCode.SPACE,
+		KeyCode.ENTER,
+		KeyCode.UP,
+		KeyCode.DOWN
+	]);
 };
 
 PlayPanel.prototype.exitGameOver = function(options) {};
@@ -294,6 +300,13 @@ PlayPanel.prototype.updateLevelComplete = function(options) {
 		GamepadCode.BUTTONS.DPAD_RIGHT,
 		GamepadCode.BUTTONS.START,
 		GamepadCode.BUTTONS.A
+	]);
+
+	input.checkPrevKeyDown([
+		KeyCode.SPACE,
+		KeyCode.ENTER,
+		KeyCode.UP,
+		KeyCode.DOWN
 	]);
 };
 

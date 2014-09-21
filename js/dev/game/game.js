@@ -80,8 +80,8 @@ Game.prototype.enterGame = function() {
 	if(!this.currentPanel) {
 		this.addLoadingPanel();
 
-		//this.setPanel(PanelTypes.TITLE_PANEL);
-		this.setPanel(PanelTypes.LEVEL_SELECT_PANEL);
+		this.setPanel(PanelTypes.TITLE_PANEL);
+		//this.setPanel(PanelTypes.LEVEL_SELECT_PANEL);
 	}
 };
 
