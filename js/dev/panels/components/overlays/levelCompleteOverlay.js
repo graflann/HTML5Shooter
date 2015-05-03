@@ -65,7 +65,7 @@ LevelCompleteOverlay.prototype.init = function() {
 
 	this.scoreText = new createjs.Text(app.scoreManager.getScore(), "16px AXI_Fixed_Caps_5x5", Constants.LIGHT_BLUE); 
 	this.scoreText.x = (Constants.WIDTH * 0.5);
-	this.scoreText.y = this.overText.y + (Constants.UNIT * 2);
+	this.scoreText.y = this.completeText.y + (Constants.UNIT * 2);
 	this.scoreText.textAlign = "center";
 
 	this.gameOptions = new GameOptions(

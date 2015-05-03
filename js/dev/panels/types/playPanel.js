@@ -265,7 +265,9 @@ PlayPanel.prototype.updateGameOver = function(options) {
 		KeyCode.SPACE,
 		KeyCode.ENTER,
 		KeyCode.UP,
-		KeyCode.DOWN
+		KeyCode.DOWN,
+		KeyCode.W,
+		KeyCode.S
 	]);
 };
 
@@ -306,7 +308,9 @@ PlayPanel.prototype.updateLevelComplete = function(options) {
 		KeyCode.SPACE,
 		KeyCode.ENTER,
 		KeyCode.UP,
-		KeyCode.DOWN
+		KeyCode.DOWN,
+		KeyCode.W,
+		KeyCode.S
 	]);
 };
 

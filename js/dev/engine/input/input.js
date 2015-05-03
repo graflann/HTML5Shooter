@@ -159,7 +159,8 @@ Input.prototype.setGamepad = function() {
 	// (The preceding two clauses are for Chrome.)
 	var i = Input.TYPICAL_BUTTON_COUNT;
 
-	this.gamepadSupportAvailable = !!navigator.webkitGetGamepads || !!navigator.webkitGamepads;
+	//this.gamepadSupportAvailable = !!navigator.webkitGetGamepads || !!navigator.webkitGamepads;
+	this.gamepadSupportAvailable = "getGamepads" in navigator;
 
 	console.log("Is gamepad support available? " + this.gamepadSupportAvailable.toString());
 
@@ -182,9 +183,8 @@ Input.prototype.setGamepad = function() {
 // This function is called only on Chrome, which does not yet support connection/disconnection events,
 // but requires you to monitor an array for changes.
 Input.prototype.pollGamepads = function() {
-	// Get the array of gamepads – the first method (function call) is the most modern one, the second is there for compatibility with
-	// slightly older versions of Chrome, but it shouldn’t be necessary for long.
-	var rawGamepads = (navigator.webkitGetGamepads && navigator.webkitGetGamepads()) || navigator.webkitGamepads,
+	// Get the array of gamepads
+	var rawGamepads = navigator.getGamepads(),
 		gamepad = null;
 
 	if (rawGamepads) {

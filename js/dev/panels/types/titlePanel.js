@@ -127,7 +127,9 @@ TitlePanel.prototype.update = function() {
 		KeyCode.SPACE,
 		KeyCode.ENTER,
 		KeyCode.UP,
-		KeyCode.DOWN
+		KeyCode.DOWN,
+		KeyCode.W,
+		KeyCode.S
 	]);
 };
 
