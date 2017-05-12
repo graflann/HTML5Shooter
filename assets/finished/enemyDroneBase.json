@@ -1,0 +1,19 @@
+{
+"images": ["enemyDroneBase.png"],
+"frames": [
+
+    [2, 2, 37, 42], 
+    [41, 2, 37, 42], 
+    [80, 2, 37, 42]
+],
+"animations": {
+    
+        "enemyDroneBase1":[0], 
+        "enemyDroneBase2":[1], 
+        "enemyDroneBase3":[2]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:11bad295a46c5b647e617485b475f4ff:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

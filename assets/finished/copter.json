@@ -1,0 +1,15 @@
+{
+"images": ["copter.png"],
+"frames": [
+
+    [2, 2, 89, 107]
+],
+"animations": {
+    
+        "copter1":[0]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:c6a8100f3ca6f554610b66ae83de5afa:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

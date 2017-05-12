@@ -1,0 +1,25 @@
+{
+"images": ["railTurret.png"],
+"frames": [
+
+    [2, 2, 33, 90], 
+    [37, 2, 33, 90], 
+    [72, 2, 33, 90], 
+    [2, 94, 33, 90], 
+    [37, 94, 33, 90], 
+    [72, 94, 33, 90]
+],
+"animations": {
+    
+        "railTurretEnterFire": {
+            "frames": [0, 1, 2, 3, 4, 5]
+        },
+        "railTurretExitFire": {
+            "frames": [5, 4, 3, 2, 1, 0]
+        }
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:1e1c2a9b685af5d934c472ef616dd634:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

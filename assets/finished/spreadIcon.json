@@ -1,0 +1,15 @@
+{
+"images": ["spreadIcon.png"],
+"frames": [
+
+    [0, 0, 32, 32]
+],
+"animations": {
+    
+        "spreadIcon1":[0]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:1f4660058c4f3fad8fb3618d165637d3:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

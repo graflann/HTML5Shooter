@@ -1,0 +1,19 @@
+{
+"images": ["enemyVulcanTurret.png"],
+"frames": [
+
+    [2, 2, 33, 61], 
+    [37, 2, 33, 61], 
+    [72, 2, 33, 61]
+],
+"animations": {
+    
+        "enemyVulcanTurret": {
+        	"frames": [0, 1, 2]
+        }
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:47f20738f24555c3c7e76783a891f4f5:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

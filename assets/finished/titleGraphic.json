@@ -1,0 +1,15 @@
+{
+"images": ["titleGraphic.png"],
+"frames": [
+
+    [2, 2, 480, 160]
+],
+"animations": {
+    
+        "titleGraphic1":[0]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:762f90be6ba6533b4b856391f0e75599:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

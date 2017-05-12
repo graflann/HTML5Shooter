@@ -1,0 +1,15 @@
+{
+"images": ["railIcon.png"],
+"frames": [
+
+    [0, 0, 32, 32]
+],
+"animations": {
+    
+        "railIcon1":[0]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:614bb70fad1e82b2d902a6f4972adc5b:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

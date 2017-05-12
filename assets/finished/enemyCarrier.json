@@ -1,0 +1,15 @@
+{
+"images": ["enemyCarrier.png"],
+"frames": [
+
+    [2, 2, 480, 336]
+],
+"animations": {
+    
+        "enemyCarrier1":[0]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:23581ccfb490e2e2425aa9801bc31a6e:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

@@ -1,0 +1,19 @@
+{
+"images": ["striker.png"],
+"frames": [
+
+    [2, 2, 52, 67], 
+    [2, 71, 52, 67], 
+    [2, 140, 52, 67]
+],
+"animations": {
+    
+        "striker1":[0], 
+        "striker2":[1], 
+        "striker3":[2]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:193eaeff4eb82e04ebc4bcf636513441:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

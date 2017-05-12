@@ -1,0 +1,17 @@
+{
+"images": ["enemyDroneTurret.png"],
+"frames": [
+
+    [2, 2, 47, 52], 
+    [2, 56, 47, 52]
+],
+"animations": {
+        "enemyDroneTurret":{
+        	"frames": [0, 1]
+        }
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:c374cfe0fa2dc0111bafacea95be106f:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

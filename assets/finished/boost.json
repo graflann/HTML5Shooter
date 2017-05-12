@@ -1,0 +1,19 @@
+{
+"images": ["boost.png"],
+"frames": [
+
+    [2, 2, 72, 96], 
+    [76, 2, 72, 96], 
+    [150, 2, 72, 96]
+],
+"animations": {
+    
+        "boost1":[0], 
+        "boost2":[1], 
+        "boost3":[2]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:552a9b3ac68793c1812ab7e259ddc2d9:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

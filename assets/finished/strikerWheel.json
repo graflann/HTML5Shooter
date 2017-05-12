@@ -1,0 +1,19 @@
+{
+"images": ["strikerWheel.png"],
+"frames": [
+
+    [2, 2, 21, 21], 
+    [25, 2, 21, 21], 
+    [2, 25, 21, 21]
+],
+"animations": {
+    
+        "strikerWheel1":[0], 
+        "strikerWheel2":[1], 
+        "strikerWheel3":[2]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:ab585965640e1f0e37e00fee2992e6df:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

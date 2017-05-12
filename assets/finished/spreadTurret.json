@@ -1,0 +1,17 @@
+{
+"images": ["spreadTurret.png"],
+"frames": [
+
+    [2, 2, 33, 61], 
+    [2, 2, 33, 61]
+],
+"animations": {
+    
+        "spreadTurret1":[0], 
+        "spreadTurret2":[1]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:b26a4dd292d959c8d18335cf91cbfcb0:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

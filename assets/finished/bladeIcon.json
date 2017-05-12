@@ -1,0 +1,15 @@
+{
+"images": ["bladeIcon.png"],
+"frames": [
+
+    [0, 0, 32, 32]
+],
+"animations": {
+    
+        "bladeIcon1":[0]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:609107dd5e5a1c3200bc796cd1a0e4ee:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

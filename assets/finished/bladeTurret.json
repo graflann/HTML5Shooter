@@ -1,0 +1,17 @@
+{
+"images": ["bladeTurret.png"],
+"frames": [
+
+    [2, 2, 95, 95], 
+    [2, 99, 95, 95]
+],
+"animations": {
+    
+        "bladeTurret1":[0], 
+        "bladeTurret2":[1]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:d277620d5e912d503db2973a4a395393:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

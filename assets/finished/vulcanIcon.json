@@ -1,0 +1,15 @@
+{
+"images": ["vulcanIcon.png"],
+"frames": [
+
+    [0, 0, 32, 32]
+],
+"animations": {
+    
+        "vulcanIcon1":[0]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:1d240b6e8172de47444e5654faff0046:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

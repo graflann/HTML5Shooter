@@ -1,0 +1,18 @@
+{
+"images": ["enemyTrooper.png"],
+"frames": [
+
+    [2, 2, 33, 33],
+    [2, 37, 33, 33],
+    [2, 72, 33, 33]
+],
+"animations": {
+    "walk": {
+        "frames": [0, 1, 0, 2]
+    }
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:97344a13cf9d0a04b75c536a1d271808:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

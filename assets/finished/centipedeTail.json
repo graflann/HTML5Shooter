@@ -1,0 +1,15 @@
+{
+"images": ["centipedeTail.png"],
+"frames": [
+
+    [2, 2, 128, 96]
+],
+"animations": {
+    
+        "centipedeTail1":[0]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:ec5bde4f3673ad3615495f854eb5c230:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

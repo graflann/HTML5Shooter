@@ -1,0 +1,19 @@
+{
+"images": ["centipedeHead.png"],
+"frames": [
+
+    [2, 2, 64, 64], 
+    [2, 68, 64, 64], 
+    [2, 134, 64, 64]
+],
+"animations": {
+   
+    "centipedeHead": {
+        "frames": [0, 1, 2]
+    }
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:44f428d0cfd1f60713469daf0c6f0a36:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}

@@ -1,0 +1,23 @@
+{
+"images": ["centipedeSegment.png"],
+"frames": [
+
+    [2, 2, 128, 96], 
+    [2, 100, 128, 96], 
+    [2, 198, 128, 96], 
+    [2, 296, 128, 96], 
+    [2, 394, 128, 96]
+],
+"animations": {
+    
+        "centipedeSegment1":[0], 
+        "centipedeSegment2":[1], 
+        "centipedeSegment3":[2], 
+        "centipedeSegment4":[3], 
+        "centipedeSegment5":[4]
+},
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:3c5f0d76cc8ebf010df002ce4a7eabfb:1/1$",
+        "Created with TexturePacker (http://www.texturepacker.com) for EaselJS"
+]
+}
