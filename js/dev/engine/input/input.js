@@ -12,14 +12,14 @@ goog.require('InputConfig');
 *@constructor
 *Handles key input
 */
-Input = function() {	
+Input = function() {
 	this.config = [];
 
 	/**
 	*type {Array.<Boolean>}
 	*/
 	this.arrKeyDown = null;
-	
+
 	/**
 	*type {Array.<Boolean>}
 	*/
@@ -59,7 +59,7 @@ Input = function() {
 
 	this.gamePadSupportUnavailableEvent = new goog.events.Event(EventNames.GAMEPAD_SUPPORT_UNAVAILABLE, this);
 	this.gamePadStatusChangedEvent = new goog.events.Event(EventNames.GAMEPAD_STATUS_CHANGED, this);
-	
+
 	this.init();
 };
 
@@ -125,10 +125,10 @@ Input.prototype.setKeyboard = function() {
 	var self = this,
 		length = 256,
 		i = length;
-	
+
 	this.arrKeyDown = new Array(length);
 	this.arrPrevKeyDown = new Array(length);
-	
+
 	//init input Array instances
 	while(i--) {
 		this.arrPrevKeyDown[i] = this.arrKeyDown[i] = false;
@@ -154,12 +154,8 @@ Input.prototype.setMouse = function() {
  * @return {[type]} [description]
  */
 Input.prototype.setGamepad = function() {
-	// As of writing, it seems impossible to detect Gamepad API support
-	// in Firefox, hence we need to hardcode it in the third clause. 
-	// (The preceding two clauses are for Chrome.)
 	var i = Input.TYPICAL_BUTTON_COUNT;
 
-	//this.gamepadSupportAvailable = !!navigator.webkitGetGamepads || !!navigator.webkitGamepads;
 	this.gamepadSupportAvailable = "getGamepads" in navigator;
 
 	console.log("Is gamepad support available? " + this.gamepadSupportAvailable.toString());
@@ -188,14 +184,14 @@ Input.prototype.pollGamepads = function() {
 		gamepad = null;
 
 	if (rawGamepads) {
-		// We don’t want to use rawGamepads coming straight from the browser, since it can have “holes” 
+		// We don’t want to use rawGamepads coming straight from the browser, since it can have “holes”
 		// (e.g. if you plug two gamepads, and then unplug the first one, the remaining one will be at index [1]).
 		this.arrGamepads.length = 0;
 
 		for (var i = 0; i < rawGamepads.length; i++) {
 			gamepad = rawGamepads[i];
 
-			//ensure a defined and well-formed gamepad instance (sometimes unexpected devices qualify in rawGamepads) 
+			//ensure a defined and well-formed gamepad instance (sometimes unexpected devices qualify in rawGamepads)
 			//by inspecting the button Array, a qualifying gamepad device can be validated
 			if(gamepad && gamepad.buttons.length > 0) {
 				this.arrGamepads.push(gamepad);
@@ -290,7 +286,7 @@ Input.prototype.checkPrevButtonDown = function(arrGamepadCodes) {
 	if(this.totalGamepads > 0) {
 		var i = arrGamepadCodes.length,
 			gamepadCode;
-		
+
 		while(i--) {
 			gamepadCode = arrGamepadCodes[i];
 			this.arrPrevButtonDown[gamepadCode] = this.isButtonDown(gamepadCode);
@@ -333,7 +329,8 @@ Input.prototype.getAxis = function(gamepadCode) {
 */
 Input.prototype.isButtonDown = function(gamepadCode) {
 	if(this.totalGamepads > 0) {
-		var value = Boolean(this.gamepad.buttons[gamepadCode]);
+		var button = this.gamepad.buttons[gamepadCode],
+			value = button.pressed || button.value > 0;
 
 		if(value) {
 			this.setState(Input.STATES.GAMEPAD);
@@ -470,7 +467,7 @@ Input.prototype.isPrevKeyDown = function(keyCode) {
 Input.prototype.checkPrevKeyDown = function(arrKeyCodes) {
 	var i = arrKeyCodes.length,
 		keyCode;
-	
+
 	while(i--) {
 		keyCode = arrKeyCodes[i];
 		this.arrPrevKeyDown[keyCode] = this.arrKeyDown[keyCode];
@@ -510,7 +507,7 @@ Input.prototype.isPrevMouseButtonDown = function(mouseCode) {
 Input.prototype.checkPrevMouseDown = function(arrMouseCodes) {
 	var i = arrMouseCodes.length,
 		mouseCode;
-	
+
 	while(i--) {
 		mouseCode = arrMouseCodes[i];
 		this.arrPrevMouseDown[mouseCode] = this.arrMouseDown[mouseCode];
@@ -565,9 +562,9 @@ Input.prototype.isExiting = function() {
 
 Input.prototype.isUp = function() {
 	var value = (
-			this.isButtonDown(GamepadCode.BUTTONS.DPAD_UP) || 
-			this.isKeyDown(KeyCode.W) || 
-			this.isKeyDown(KeyCode.UP) 
+			this.isButtonDown(GamepadCode.BUTTONS.DPAD_UP) ||
+			this.isKeyDown(KeyCode.W) ||
+			this.isKeyDown(KeyCode.UP)
 		),
 		axisValue = (this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT) < -Input.MOVE_THRESHOLD);
 
@@ -580,8 +577,8 @@ Input.prototype.isUp = function() {
 
 Input.prototype.isUpOmitDpad = function() {
 	var value = (
-			this.isKeyDown(KeyCode.W) || 
-			this.isKeyDown(KeyCode.UP) 
+			this.isKeyDown(KeyCode.W) ||
+			this.isKeyDown(KeyCode.UP)
 		),
 		axisValue = (this.getAxis(GamepadCode.AXES.LEFT_STICK_VERT) < -Input.MOVE_THRESHOLD);
 
@@ -624,7 +621,7 @@ Input.prototype.isDownOmitDpad = function() {
 Input.prototype.isLeft = function() {
 	var value = (
 			this.isButtonDown(GamepadCode.BUTTONS.DPAD_LEFT) ||
-			this.isKeyDown(KeyCode.A) || 
+			this.isKeyDown(KeyCode.A) ||
 			this.isKeyDown(KeyCode.LEFT)
 		),
 		axisValue = (this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR) < -Input.MOVE_THRESHOLD);
@@ -638,7 +635,7 @@ Input.prototype.isLeft = function() {
 
 Input.prototype.isLeftOmitDpad = function() {
 	var value = (
-			this.isKeyDown(KeyCode.A) || 
+			this.isKeyDown(KeyCode.A) ||
 			this.isKeyDown(KeyCode.LEFT)
 		),
 		axisValue = (this.getAxis(GamepadCode.AXES.LEFT_STICK_HOR) < -Input.MOVE_THRESHOLD);
@@ -652,7 +649,7 @@ Input.prototype.isLeftOmitDpad = function() {
 
 Input.prototype.isRight = function() {
 	var value = (
-			this.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT) || 
+			this.isButtonDown(GamepadCode.BUTTONS.DPAD_RIGHT) ||
 			this.isKeyDown(KeyCode.D) ||
 			this.isKeyDown(KeyCode.RIGHT)
 		),
